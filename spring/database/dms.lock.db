@@ -1,6 +1,6 @@
 #FileLock
-#Sat Jan 26 18:40:27 EET 2019
-hostName=DESKTOP-UCSE71J.mshome.net
-id=1688b08a1c61d7f95997cea5ad5c5e447d52814c0aa
+#Fri Jan 25 15:11:31 EET 2019
+hostName=augustas-305U1A
+id=1688522fcd7dda50de2ccbc4b5141623f3299bba4cd
 method=file
-server=172.17.13.65\:63868
+server=127.0.1.1\:37917
