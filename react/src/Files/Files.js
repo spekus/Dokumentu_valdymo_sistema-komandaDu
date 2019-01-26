@@ -62,22 +62,21 @@ class Files extends Component {
 
   render() {
     return (
-      <div className="App">
-        <header className="App-header">
-          <img src={reactLogo} className="App-logo" alt="reactLogo" />
-          <img src={springBootLogo} className="App-logo" alt="springBootLogo" />
-          <h1 className="App-title">Simple Uploading & Downloading of files with Spring Boot & React</h1>
-        </header>
-        <div className="App-intro">
+      <div className="container">
+
+        <div className="border border-danger rounded element2">
           <h3>Upload a file</h3>
           <h4 style={{color: 'red'}}>{this.state.error}</h4>
           <h4 style={{color: 'green'}}>{this.state.msg}</h4>
-          <input onChange={this.onFileChange} type="file"></input>
-          <button onClick={this.uploadFile}>Upload</button>   
+          <input class="btn btn-outline-danger" onChange={this.onFileChange} type="file"></input>
+          <button type="button" class="btn btn-outline-danger ml-2" onClick={this.uploadFile}>Upload</button>
         </div>
-        <div className="App-intro">
+
+
+
+        <div className="border border-danger rounded element2">
           <h3>Download a random file</h3>
-          <button onClick={this.downloadRandomImage}>Download</button>
+          <button type="button" class="btn btn-outline-danger" onClick={this.downloadRandomImage}>Download</button>
         </div>
       </div>
     );

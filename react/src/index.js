@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom';
 import BasicNavigation from './Navigation/BasicNavigation';
 // import 'bootstrap/dist/css/bootstrap.css';
 
+import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 
 
 

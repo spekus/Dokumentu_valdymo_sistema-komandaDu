@@ -3,6 +3,10 @@ import reactLogo from './logo.svg';
 import springBootLogo from './spring-boot-logo.png';
 import './App.css';
 
+import React from 'react';
+
+
+
 class App extends Component {
 
   state = {
@@ -64,10 +68,9 @@ class App extends Component {
     return (
       <div className="App">
         <header className="App-header">
-          <img src={reactLogo} className="App-logo" alt="reactLogo" />
-          <img src={springBootLogo} className="App-logo" alt="springBootLogo" />
           <h1 className="App-title">Simple Uploading & Downloading of files with Spring Boot & React</h1>
         </header>
+
         <div className="App-intro">
           <h3>Upload a file</h3>
           <h4 style={{color: 'red'}}>{this.state.error}</h4>
@@ -85,3 +88,5 @@ class App extends Component {
 }
 
 export default App;
+
+

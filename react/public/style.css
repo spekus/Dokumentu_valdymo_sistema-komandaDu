@@ -1,0 +1,27 @@
+main {
+    margin-left : 64px;
+    padding: 10px;
+}
+
+main.pushedToRight {
+    margin-left : 240px;
+}
+
+.head{
+    background-color: indianred;
+    text-align: center;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.element1{
+    margin:10px;
+    width: 300px;
+    font-size: smaller;
+}
+
+.element2{
+    text-align: center;
+    margin: 50px;
+    padding: 50px;
+}
