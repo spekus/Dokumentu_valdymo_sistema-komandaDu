@@ -1,0 +1,7 @@
+it\akademija\App.class
+it\akademija\files\service\FileServiceObject.class
+it\akademija\files\repository\FileRepository.class
+it\akademija\files\repository\FileEntity.class
+it\akademija\files\service\FileService.class
+it\akademija\files\controller\FileController.class
+it\akademija\CorsConfig.class
