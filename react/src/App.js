@@ -1,92 +1,118 @@
-import React, { Component } from 'react';
-import reactLogo from './logo.svg';
-import springBootLogo from './spring-boot-logo.png';
-import './App.css';
-
 import React from 'react';
+import {Route, BrowserRouter as Router, Switch} from 'react-router-dom'
+import PropTypes from 'prop-types';
+import classNames from 'classnames';
+import {withStyles} from '@material-ui/core/styles';
+import CssBaseline from '@material-ui/core/CssBaseline';
+import Drawer from '@material-ui/core/Drawer';
+import AppBar from '@material-ui/core/AppBar';
+import Toolbar from '@material-ui/core/Toolbar';
+import Typography from '@material-ui/core/Typography';
+import IconButton from '@material-ui/core/IconButton';
+import Badge from '@material-ui/core/Badge';
+import MenuIcon from '@material-ui/icons/Menu';
+import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
+import NotificationsIcon from '@material-ui/icons/Notifications';
+import {sideBarList} from './Components/UI/Menus/sideBarList';
+import {style} from './Components/UI/Style/style';
+import Dashboard from "./Components/Dashboard/Dashboard";
+import UsersHome from "./Components/Users/UsersHome";
+import ReportsHome from "./Components/Reports/ReportsHome";
+import DocumentsHome from "./Components/Documents/DocumentsHome";
+import NotFound from "./Components/UI/ServicePages/NotFound";
+import FileUploader from "./Components/Files/FileUploader";
 
 
+class App extends React.Component {
+    state = {
+        open: true,
+    };
 
-class App extends Component {
+    handleDrawerOpen = () => {
+        this.setState({open: true});
+    };
 
-  state = {
-    file: '',
-    error: '',
-    msg: ''
-  }
+    handleDrawerClose = () => {
+        this.setState({open: false});
+    };
 
-  uploadFile = (event) => {
-    event.preventDefault();
-    this.setState({error: '', msg: ''});
+    render() {
+        const {classes} = this.props;
 
-    if(!this.state.file) {
-      this.setState({error: 'Please upload a file.'})
-      return;
+
+        return (
+            <div className={classes.root}>
+                <Router>
+                    <React.Fragment>
+                        <CssBaseline/>
+                        <AppBar
+                            position="absolute"
+                            className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
+                        >
+                            <Toolbar disableGutters={!this.state.open} className={classes.toolbar}>
+                                <IconButton
+                                    color="inherit"
+                                    aria-label="Open drawer"
+                                    onClick={this.handleDrawerOpen}
+                                    className={classNames(
+                                        classes.menuButton,
+                                        this.state.open && classes.menuButtonHidden,
+                                    )}
+                                >
+                                    <MenuIcon/>
+                                </IconButton>
+                                <Typography
+                                    component="h1"
+                                    variant="h6"
+                                    color="inherit"
+                                    noWrap
+                                    className={classes.title}
+                                >
+                                    Dashboard
+                                </Typography>
+                                <IconButton color="inherit">
+                                    <Badge badgeContent={4} color="secondary">
+                                        <NotificationsIcon/>
+                                    </Badge>
+                                </IconButton>
+                            </Toolbar>
+                        </AppBar>
+                        <Drawer
+                            variant="permanent"
+                            classes={{
+                                paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
+                            }}
+                            open={this.state.open}
+                        >
+                            <div className={classes.toolbarIcon}>
+                                <IconButton onClick={this.handleDrawerClose}>
+                                    <ChevronLeftIcon/>
+                                </IconButton>
+                            </div>
+
+                            {sideBarList}
+
+                        </Drawer>
+                        <main className={classes.content}>
+                            <div className={this.props.classes.appBarSpacer}/>
+                            <Switch>
+                                <Route exact path="/" component={Dashboard}/>
+                                <Route path="/documents" component={DocumentsHome}/>
+                                <Route path="/users" component={UsersHome}/>
+                                <Route path="/reports" component={ReportsHome}/>
+                                <Route exact path="/upload-file" component={FileUploader}/>
+                                <Route component={NotFound}/>
+                            </Switch>
+                        </main>
+                    </React.Fragment>
+                </Router>
+            </div>
+        );
     }
-
-    if(this.state.file.size >= 2000000) {
-      this.setState({error: 'File size exceeds limit of 2MB.'})
-      return;
-    }
-
-    let data = new FormData();
-    data.append('file', this.state.file);
-    data.append('name', this.state.file.name);
-
-    fetch('http://localhost:8181/api/files', {
-      method: 'POST',
-      body: data
-    }).then(response => {
-      this.setState({error: '', msg: 'Sucessfully uploaded file'});
-    }).catch(err => {
-      this.setState({error: err});
-    });
-
-  }
-
-  downloadRandomImage = () => {
-    fetch('http://localhost:8181/api/files')
-      .then(response => {
-        const filename =  response.headers.get('Content-Disposition').split('filename=')[1];
-        response.blob().then(blob => {
-          let url=  window.URL.createObjectURL(blob);
-          let a = document.createElement('a');
-          a.href = url;
-          a.download = filename;
-          a.click();
-        });
-    });
-  }
-
-  onFileChange = (event) => {
-    this.setState({
-      file: event.target.files[0]
-    });
-  }
-
-  render() {
-    return (
-      <div className="App">
-        <header className="App-header">
-          <h1 className="App-title">Simple Uploading & Downloading of files with Spring Boot & React</h1>
-        </header>
-
-        <div className="App-intro">
-          <h3>Upload a file</h3>
-          <h4 style={{color: 'red'}}>{this.state.error}</h4>
-          <h4 style={{color: 'green'}}>{this.state.msg}</h4>
-          <input onChange={this.onFileChange} type="file"></input>
-          <button onClick={this.uploadFile}>Upload</button>   
-        </div>
-        <div className="App-intro">
-          <h3>Download a random file</h3>
-          <button onClick={this.downloadRandomImage}>Download</button>
-        </div>
-      </div>
-    );
-  }
 }
 
-export default App;
+App.propTypes = {
+    classes: PropTypes.object.isRequired,
+};
 
-
+export default withStyles(style)(App);
