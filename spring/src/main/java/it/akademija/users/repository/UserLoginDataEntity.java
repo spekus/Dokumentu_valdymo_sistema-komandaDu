@@ -1,9 +1,6 @@
 package it.akademija.users.repository;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToOne;
+import javax.persistence.*;
 
 @Entity
 public class UserLoginDataEntity {
@@ -12,7 +9,7 @@ public class UserLoginDataEntity {
     protected Long id;
     private String login;
     private String password;
-    @OneToOne
+    @OneToOne(cascade= CascadeType.ALL)
     private UserEntity user;
 
     protected UserLoginDataEntity(){}

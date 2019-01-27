@@ -11,7 +11,7 @@ public class UserEntity {
     private String name;
     private String surname;
 
-    @OneToMany(cascade= CascadeType.ALL)
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<UserGroupEntity> userGroups;
 
 

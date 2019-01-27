@@ -1,11 +1,10 @@
 package it.akademija.users.repository;
 
 import it.akademija.documents.repository.DocumentEntity;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.OneToMany;
+import javax.persistence.*;
 import java.util.List;
 
 @Entity
@@ -16,8 +15,10 @@ public class UserGroupEntity {
     private String title;
 
     @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<DocumentEntity> documentToApprove;
     @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     private List<DocumentEntity> documentToUpload;
 
     protected UserGroupEntity(){}
