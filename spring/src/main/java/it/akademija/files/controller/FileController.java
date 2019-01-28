@@ -22,7 +22,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/files")
 @CrossOrigin(value = {"*"}, exposedHeaders = {"Content-Disposition"})
 public class FileController {
 

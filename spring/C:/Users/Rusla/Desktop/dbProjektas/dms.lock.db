@@ -1,6 +1,6 @@
 #FileLock
-#Mon Jan 28 13:29:08 EET 2019
+#Mon Jan 28 14:39:27 EET 2019
 hostName=augustas-305U1A
-id=16894385d9c5681798df08c47bbe955f996fa670508
+id=1689478b3bcd78f8195005c3b32cbdc4603fd5f4fa4
 method=file
-server=127.0.1.1\:44475
+server=127.0.1.1\:42591

@@ -4,6 +4,9 @@ import Grid from "@material-ui/core/Grid/Grid";
 import Typography from "@material-ui/core/Typography/Typography";
 import Divider from "@material-ui/core/Divider/Divider";
 import Input from "@material-ui/core/Input/Input";
+import FileSaver from 'file-saver';
+// run npm install file-saver --save
+
 
 export default class FileUploader extends Component {
 
@@ -46,28 +49,35 @@ export default class FileUploader extends Component {
 
     }
 
-    downloadRandomImage = () => {
-        fetch('http://localhost:8181/api/files')
-            .then(response => {
-                const filename = response.headers.get('Content-Disposition').split('filename=')[1];
-                response.blob().then(blob => {
-                    let url = window.URL.createObjectURL(blob);
-                    let a = document.createElement('a');
-                    a.href = url;
-                    a.download = filename;
-                    a.click();
-                });
-            })
-            .catch(err => {
-                this.setState({error: err.message});
-            });
-    }
+
 
     onFileChange = (event) => {
         this.setState({
             file: event.target.files[0]
         });
     }
+
+    downloadFile = () => {
+        fetch("http://localhost:8181/api/files/download/" + "4-uzduoties-egzamine-pvz.pdf")
+        .then(response => {
+          console.log(response);
+          console.log("downloadRandomStuff");
+        // Log somewhat to show that the browser actually exposes the custom HTTP header
+        const fileNameHeader = "x-suggested-filename";
+        const suggestedFileName = response.headers[fileNameHeader];
+        const effectiveFileName = (suggestedFileName === undefined
+                    ? "document.txt"
+                    : suggestedFileName);
+        console.log("Received header [" + fileNameHeader + "]: " + suggestedFileName
+                    + ", effective fileName: " + effectiveFileName);
+    
+        // Let the user save the file.
+        FileSaver.saveAs(response.url, effectiveFileName);
+    
+        }).catch((response) => {
+            console.error("Could not Download the Excel report from the backend.", response);
+        });
+      }
 
     render() {
         return (
@@ -91,7 +101,7 @@ export default class FileUploader extends Component {
                             Download
                         </Typography>
                         <Divider/>
-                        <Button onClick={this.downloadRandomImage}>Download a random file</Button>
+                        <Button onClick={this.downloadFile}>Download a random file</Button>
                     </Grid>
 
                 </Grid>
