@@ -8,10 +8,16 @@ public class FileServiceObject {
 
     private String fileLocation;
 
-    public FileServiceObject(String fileName, String contentType, String fileLocation) {
+    private Long size;
+
+
+    public FileServiceObject() {}
+
+    public FileServiceObject(String fileName, String contentType, String fileLocation, Long size) {
         this.fileName = fileName;
         this.contentType = contentType;
         this.fileLocation = fileLocation;
+        this.size = size;
     }
 
     public String getFileName() {
@@ -36,5 +42,13 @@ public class FileServiceObject {
 
     public void setFileLocation(String fileLocation) {
         this.fileLocation = fileLocation;
+    }
+
+    public Long getSize() {
+        return size;
+    }
+
+    public void setSize(Long size) {
+        this.size = size;
     }
 }
