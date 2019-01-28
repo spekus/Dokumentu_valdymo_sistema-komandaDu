@@ -3,8 +3,8 @@ package it.akademija.documents.service;
 
 import it.akademija.documents.repository.Document;
 import it.akademija.documents.repository.DocumentRepository;
-import it.akademija.users.repository.User;
-import it.akademija.users.repository.UserRepository;
+//import it.akademija.users.repository.User;
+//import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
