@@ -52,7 +52,8 @@ export const sideBarList = (
             </ListItem>
             <Divider/>
             <ListSubheader inset>DEV links</ListSubheader>
-            <ListItem button component={Link} href='https://material.io/tools/icons/?icon=view_list&style=baseline' target='_blank'>
+            <ListItem button component={Link} href='https://material.io/tools/icons/?icon=view_list&style=baseline'
+                      target='_blank'>
                 <ListItemIcon>
                     <InfoIcon/>
                 </ListItemIcon>
