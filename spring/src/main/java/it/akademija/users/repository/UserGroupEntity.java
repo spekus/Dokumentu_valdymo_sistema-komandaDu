@@ -8,6 +8,7 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Entity
@@ -19,13 +20,13 @@ public class UserGroupEntity {
 
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
-    private Set<DocumentTypeEntity> availableDocumentTypesToApprove;
+    private Set<DocumentTypeEntity> availableDocumentTypesToApprove = new HashSet<>();
+
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
-
-    private Set<DocumentTypeEntity> availableDocumentTypesToUpload;
+    private Set<DocumentTypeEntity> availableDocumentTypesToUpload = new HashSet<>();
     @OneToMany
-    Set<DocumentEntity> documentsToApprove;
+    private Set<DocumentEntity> documentsToApprove= new HashSet<>();
 
 
     protected UserGroupEntity(){}
@@ -72,6 +73,18 @@ public class UserGroupEntity {
 
     public void setDocumentsToApprove(Set<DocumentEntity> documentsToApprove) {
         this.documentsToApprove = documentsToApprove;
+    }
+
+    public void addAvailableDocumentTypeToUpload (DocumentTypeEntity documentTypeEntity) {
+        this.availableDocumentTypesToUpload.add(documentTypeEntity);
+    }
+
+    public void addAvailableDocumentTypeToApprove (DocumentTypeEntity documentTypeEntity) {
+        this.availableDocumentTypesToApprove.add(documentTypeEntity);
+    }
+
+    public void addDocumentsToApprove(DocumentEntity documentEntity) {
+        this.documentsToApprove.add(documentEntity);
     }
 
 

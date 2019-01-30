@@ -1,5 +1,9 @@
 package it.akademija.users.service;
 
+import it.akademija.documents.repository.DocumentEntity;
+import it.akademija.documents.repository.DocumentRepository;
+import it.akademija.documents.repository.DocumentTypeEntity;
+import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +20,17 @@ public class UserGroupService {
     @Autowired
     private UserGroupRepository userGroupRepository;
 
-    public UserGroupService(UserGroupRepository userGroupRepository) {
+    @Autowired
+    private DocumentTypeRepository documentTypeRepository;
+
+    @Autowired
+    private DocumentRepository documentRepository;
+
+    public UserGroupService(UserGroupRepository userGroupRepository, DocumentTypeRepository documentTypeRepository,
+                            DocumentRepository documentRepository) {
         this.userGroupRepository = userGroupRepository;
+        this.documentTypeRepository=documentTypeRepository;
+        this.documentRepository=documentRepository;
     }
 
 
@@ -70,6 +83,40 @@ public class UserGroupService {
         savedUserGroupEntity.setTitle(title);
         UserGroupEntity updateUserGroupEntit=userGroupRepository.save(savedUserGroupEntity);
     }
+
+    @Transactional
+    public void addDocumentTypeToUpload(String userGroupTitle, String documentTypeTitle) {
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
+        DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
+        if (userGroupEntity!=null && documentTypeEntity!=null) {
+            userGroupEntity.addAvailableDocumentTypeToUpload(documentTypeEntity);
+        }
+
+
+    }
+
+    @Transactional
+    public void addDocumentTypeToApprove(String userGroupTitle, String documentTypeTitle) {
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
+        DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
+        if (userGroupEntity!=null && documentTypeEntity!=null) {
+            userGroupEntity.addAvailableDocumentTypeToApprove(documentTypeEntity);
+        }
+
+
+    }
+
+    @Transactional
+    public void addDocumentsToApprove(String userGroupTitle, String documentIdentifier) {
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
+        DocumentEntity documentEntity = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+        if (userGroupEntity!=null && documentEntity!=null) {
+            userGroupEntity.addDocumentsToApprove(documentEntity);
+        }
+
+
+    }
+
 
 
 

@@ -56,5 +56,25 @@ public class UserGroupController {
         userGroupService.updateGroupByTitle(title);
     }
 
+    @RequestMapping(value = "/addDocumentTypeToUpload", method = RequestMethod.PUT)
+    public void addDocumentTypeToUpload(@RequestParam("userGroupTitle") String userGroupTitle,
+                                        @RequestParam("documentTypeTitle") String documentTypeTitle) {
+        userGroupService.addDocumentTypeToUpload(userGroupTitle,documentTypeTitle);
+    }
+
+    @RequestMapping(value = "/addDocumentTypeToApprove", method = RequestMethod.PUT)
+    public void addDocumentTypeToApprove(@RequestParam("userGroupTitle") String userGroupTitle,
+                                        @RequestParam("documentTypeTitle") String documentTypeTitle) {
+        userGroupService.addDocumentTypeToApprove(userGroupTitle,documentTypeTitle);
+    }
+
+    @RequestMapping(value = "/addDocumentsToApprove", method = RequestMethod.PUT)
+    public void addDocumentsToApprove(@RequestParam("userGroupTitle") String userGroupTitle,
+                                         @RequestParam("documentIdentifier") String documentIdentifier) {
+        userGroupService.addDocumentsToApprove(userGroupTitle,documentIdentifier);
+    }
+
+
+
 
 }
