@@ -4,6 +4,7 @@ public class UserGroupServiceObject {
 
     private String title;
 
+
     public UserGroupServiceObject(){
 
     }

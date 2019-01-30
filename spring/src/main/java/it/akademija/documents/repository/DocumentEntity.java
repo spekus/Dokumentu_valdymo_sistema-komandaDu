@@ -1,6 +1,5 @@
 package it.akademija.documents.repository;
 
-
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.MyGenerator;
 import org.hibernate.annotations.GenericGenerator;
@@ -15,8 +14,8 @@ public class DocumentEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(unique=true, nullable=false)
-    @GeneratedValue(generator= MyGenerator.generatorName)
+    @Column(unique = true, nullable = false)
+    @GeneratedValue(generator = MyGenerator.generatorName)
     @GenericGenerator(name = MyGenerator.generatorName, strategy = "a.b.c.MyGenerator")
     private String documentIdentifier;
 
@@ -27,8 +26,10 @@ public class DocumentEntity {
     private String description;
 
     private String type;
+
     @Enumerated(EnumType.STRING)
-    private DocumentState documentState=DocumentState.CREATED;
+    private DocumentState documentState = DocumentState.CREATED;
+
 
     private LocalDateTime postedDate;
     private LocalDateTime approvalDate;
@@ -37,15 +38,14 @@ public class DocumentEntity {
     private String rejectionReason;
 
 
-
     public DocumentEntity() {
 
     }
 
     public DocumentEntity(String title, String description, String type) {
-        this.title=title;
-        this.description=description;
-        this.type=type;
+        this.title = title;
+        this.description = description;
+        this.type = type;
 
 
     }
@@ -85,6 +85,7 @@ public class DocumentEntity {
 
     public String getType() {
         return type;
+
     }
 
     public void setType(String type) {
@@ -146,7 +147,10 @@ public class DocumentEntity {
 
     public void setDocumentState(DocumentState documentState) {
         this.documentState = documentState;
+
     }
+
+
 }
 
 

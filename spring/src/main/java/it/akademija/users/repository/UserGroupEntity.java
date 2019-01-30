@@ -1,12 +1,13 @@
 package it.akademija.users.repository;
 
+
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.util.List;
+
 import java.util.Set;
 
 @Entity
@@ -21,9 +22,11 @@ public class UserGroupEntity {
     private Set<DocumentTypeEntity> availableDocumentTypesToApprove;
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
+
     private Set<DocumentTypeEntity> availableDocumentTypesToUpload;
     @OneToMany
     Set<DocumentEntity> documentsToApprove;
+
 
     protected UserGroupEntity(){}
 
@@ -70,4 +73,6 @@ public class UserGroupEntity {
     public void setDocumentsToApprove(Set<DocumentEntity> documentsToApprove) {
         this.documentsToApprove = documentsToApprove;
     }
+
+
 }

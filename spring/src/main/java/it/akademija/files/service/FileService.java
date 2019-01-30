@@ -18,79 +18,44 @@ public class FileService {
     @Transactional
     public void addFileToDataBase(MultipartFile multipartFile) {
 
-        File uploadingLocation = uploadFileToLocalServer(multipartFile, multipartFile.getContentType()); //uploads file to the server
-        System.out.println("uploading done - " + uploadingLocation);
-        System.out.println("file name - " + multipartFile.getOriginalFilename());
+        File uploadingLocation = uploadFileToLocalServer(multipartFile); //uploads file to the server
 
+        //creating and saving data base entity
         FileEntity fileEntity = new FileEntity(multipartFile.getOriginalFilename());
         fileEntity.setFileLocation(uploadingLocation.getAbsolutePath());
         fileEntity.setContentType(multipartFile.getContentType());
+        fileEntity.setSize(multipartFile.getSize());
         fileRepository.save(fileEntity);
 
+    }
 
+    public File uploadFileToLocalServer(MultipartFile file) {
 
-//        fileRepository.save(fileEntity);
+        try {
+            File fileLocation = new File(File.separator + "home"
+                    + File.separator + "augustas" + File.separator + "tmpDocs" + File.separator
+                    + file.getOriginalFilename());
 
-
-//
-//        URI location = ServletUriComponentsBuilder.fromCurrentRequest().build().toUri();
-//        return ResponseEntity.created(location).build();
-//
-
-
-
-//        public void addSventeToDataBase(SventeObject cmd) {
-//            Svente svente = new Svente();
-//            svente.setDescription(cmd.getDescription());
-//            svente.setName(cmd.getName());
-//            svente.setFlagUpTrue(cmd.isFlagUpTrue());
-//            svente.setPicture(cmd.getPicture());
-//            svente.setType(cmd.getType());
-//
-//            sventeRepository.save(svente);
-
+            file.transferTo(fileLocation);
+            return fileLocation;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new File(File.separator + "home"
+                    + File.separator + "augustas" + File.separator + "tmpDocs");
         }
-
-    public File uploadFileToLocalServer(MultipartFile file, String format) {
-
-
-        String fileName = file.getOriginalFilename();
-        if (true) {
-
-
-            File targetFile = new File(File.separator + "home"
-                    + File.separator + "tmpDocs" + File.separator + "files" + File.separator, fileName);
-            if (!targetFile.exists()) {
-                targetFile.mkdirs();
-            }
-            // 保存
-            try {
-                File fileLocation = new File(File.separator + "home"
-                        + File.separator + "augustas" + File.separator + "tmpDocs" + File.separator
-                        + file.getOriginalFilename());
-//                fileLocation.mkdir();
-                file.transferTo(fileLocation);
-
-//                fileLocation.createNewFile();
-//                System.out.println("fdfdf");
-
-                return fileLocation;
-            } catch (Exception e) {
-                e.printStackTrace();
-                return new File(File.separator + "home"
-                        + File.separator + "augustas" + File.separator + "tmpDocs");
-            }
-
-
-
-        }
-        return new File(File.separator + "home"
-                + File.separator + "augustas" + File.separator + "tmpDocs");
     }
 
 
-
+    public FileServiceObject findFile(String identifier) {
+        FileEntity fileEntity = fileRepository.getFileByFileName(identifier);
+        FileServiceObject fileServiceObject = new FileServiceObject();
+        fileServiceObject.setContentType(fileEntity.getContentType());
+        fileServiceObject.setFileLocation(fileEntity.getFileLocation());
+        fileServiceObject.setFileName(fileEntity.getFileName());
+        fileServiceObject.setSize(fileEntity.getSize());
+        return fileServiceObject;
     }
+}
 
 
 

@@ -1,12 +1,14 @@
 package it.akademija.users.repository;
 
+
 import it.akademija.documents.MyGenerator;
 import it.akademija.documents.repository.DocumentEntity;
 import org.hibernate.annotations.GenericGenerator;
 
+
 import javax.persistence.*;
 import java.util.HashSet;
-import java.util.List;
+
 import java.util.Set;
 
 @Entity
@@ -15,6 +17,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
+
 
 //    @Column(unique=true, nullable=false)
 //    @GeneratedValue(generator= MyGenerator.generatorName)
@@ -31,16 +34,15 @@ public class UserEntity {
     @OneToMany(fetch = FetchType.EAGER)
     private Set<UserGroupEntity> userGroups=new HashSet<>();
 
-    public UserEntity() {
+    public UserEntity() {}
 
-    }
+    public UserEntity(String userIdentifier, String firstname, String lastname, String username, String password) {
+        this.userIdentifier = userIdentifier;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.password = password;
 
-    public UserEntity(String userIdentifier, String username, String firstname, String lastname, String password) {
-        this.userIdentifier=userIdentifier;
-        this.username=username;
-        this.firstname=firstname;
-        this.lastname=lastname;
-        this.password=password;
     }
 
     public long getId() {
@@ -51,13 +53,13 @@ public class UserEntity {
         this.id = id;
     }
 
-
     public String getUsername() {
         return username;
     }
 
     public void setUsername(String username) {
         this.username = username;
+
     }
 
     public String getFirstname() {
@@ -110,6 +112,7 @@ public class UserEntity {
 
     public void setDocumentEntities(Set<DocumentEntity> documentEntities) {
         this.documentEntities = documentEntities;
+
     }
 
     public Set<UserGroupEntity> getUserGroups() {
@@ -119,6 +122,9 @@ public class UserEntity {
     public void setUserGroups(Set<UserGroupEntity> userGroups) {
         this.userGroups = userGroups;
     }
+
+
+
 
     //    public Set<UserGroupEntity> getUserGroups() {
 //        return userGroups;

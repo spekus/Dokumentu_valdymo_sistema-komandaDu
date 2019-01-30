@@ -1,22 +1,34 @@
 package it.akademija.users.controller;
 
-
 import it.akademija.users.service.UserGroupService;
 import it.akademija.users.service.UserGroupServiceObject;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 
 @RestController
+
 @RequestMapping("/api/userGroups")
 public class UserGroupController {
+
     @Autowired
     private UserGroupService userGroupService;
 
     public UserGroupController(UserGroupService userGroupService) {
         this.userGroupService = userGroupService;
     }
+
+
+    public UserGroupService getUserGroupService() {
+        return userGroupService;
+    }
+
+    public void setUserGroupService(UserGroupService userGroupService) {
+        this.userGroupService = userGroupService;
+    }
+
 
     @RequestMapping(value = "/addNewGroup", method = RequestMethod.POST)
     public void addNewUserGroup(@RequestBody UserGroupServiceObject userGroupServiceObject) {
@@ -45,14 +57,4 @@ public class UserGroupController {
     }
 
 
-
-
-
-    public UserGroupService getUserGroupService() {
-        return userGroupService;
-    }
-
-    public void setUserGroupService(UserGroupService userGroupService) {
-        this.userGroupService = userGroupService;
-    }
 }

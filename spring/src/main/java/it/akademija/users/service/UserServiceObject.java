@@ -1,8 +1,5 @@
 package it.akademija.users.service;
 
-import it.akademija.users.repository.UserGroupEntity;
-import java.util.Set;
-
 public class UserServiceObject {
 
     private String userIdentifier;

@@ -1,5 +1,6 @@
 package it.akademija.users.repository;
 
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

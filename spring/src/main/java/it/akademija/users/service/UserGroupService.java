@@ -20,6 +20,16 @@ public class UserGroupService {
         this.userGroupRepository = userGroupRepository;
     }
 
+
+    public UserGroupRepository getUserGroupRepository() {
+        return userGroupRepository;
+    }
+
+    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
+        this.userGroupRepository = userGroupRepository;
+    }
+
+
     @Transactional
     public void addNewUserGroup(UserGroupServiceObject userGroupServiceObject) {
         UserGroupEntity userGroupEntity = new UserGroupEntity(userGroupServiceObject.getTitle());
@@ -61,14 +71,12 @@ public class UserGroupService {
         UserGroupEntity updateUserGroupEntit=userGroupRepository.save(savedUserGroupEntity);
     }
 
-    public UserGroupRepository getUserGroupRepository() {
-        return userGroupRepository;
-    }
 
-    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
-        this.userGroupRepository = userGroupRepository;
-    }
+
 
 
 
 }
+
+
+

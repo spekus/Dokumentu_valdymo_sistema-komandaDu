@@ -25,6 +25,7 @@ public class UserController {
         this.userService = userService;
     }
 
+
     @RequestMapping(value = "/add", method = RequestMethod.POST)
     public void addNewUser(@RequestBody UserServiceObject userServiceObject) {
         userService.addNewUser(userServiceObject);
@@ -45,7 +46,6 @@ public class UserController {
         return userService.getAllUsersWithPasswords();
     }
 
-
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public void deleteUser(@RequestParam("userIdentifier") String userIdentifier) {
         userService.deleteUserByIdentifier(userIdentifier);
@@ -58,5 +58,19 @@ public class UserController {
     }
 
 
+
+    @RequestMapping(value = "/get/login", method = RequestMethod.GET, produces = "application/json")
+    public UserServiceObject getUser(@RequestParam("username") String username,
+                                     @RequestParam("password") String password) {
+        return userService.getUserForLogin(username, password);
+
+    }
+
+
+    @RequestMapping(value = "/addGroup", method = RequestMethod.PUT)
+    public void addGroupToUser(@RequestParam("userIdentifier") String userIdentifier,
+                               @RequestParam("title") String title) {
+        userService.addGroupToUser(userIdentifier, title);
+    }
 
 }
