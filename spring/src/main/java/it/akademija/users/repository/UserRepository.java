@@ -1,13 +1,27 @@
 package it.akademija.users.repository;
 
-import it.akademija.documents.repository.Document;
+import it.akademija.documents.repository.DocumentEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-    User findUserByUserIdentifier(String userIdentifier);
-    List<Document> findDocumentsByUserIdentifier(String userIdentifier);
+    public List<DocumentEntity> findDocumentsByUserIdentifier(String userIdentifier);
+
+    public UserEntity findUserByUserIdentifier(String userIdentifier);
+
+    public UserEntity findUserByUsername(String username);
+
+    public List<UserEntity> findAll();
+
+    public void deleteByUserIdentifier(String userIdentifier);
+
+    public UserEntity findUserByUsernameAndPassword(String username, String password);
 
 }
+
+
+

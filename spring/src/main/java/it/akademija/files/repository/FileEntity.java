@@ -15,11 +15,11 @@ public class FileEntity {
 
     private String fileLocation;
 
+    private Long size;
 
-
-
-    @Lob
-    private byte[] data;
+//
+//    @Lob
+//    private byte[] data;
 
     public FileEntity() {
     }
@@ -28,10 +28,11 @@ public class FileEntity {
         this.fileName = fileName;
     }
 
-    public FileEntity(String fileName, String contentType, String fileLocation) {
+    public FileEntity(String fileName, String contentType, String fileLocation, Long size) {
         this.fileName = fileName;
         this.contentType = contentType;
         this.fileLocation = fileLocation;
+        this.size = size;
 
 
     }
@@ -68,11 +69,19 @@ public class FileEntity {
         this.contentType = contentType;
     }
 
-    public byte[] getData() {
-        return data;
+//    public byte[] getData() {
+//        return data;
+//    }
+//
+//    public void setData(byte[] data) {
+//        this.data = data;
+//    }
+
+    public Long getSize() {
+        return size;
     }
 
-    public void setData(byte[] data) {
-        this.data = data;
+    public void setSize(Long size) {
+        this.size = size;
     }
 }

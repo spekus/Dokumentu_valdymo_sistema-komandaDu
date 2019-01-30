@@ -44,10 +44,10 @@ public class DocumentController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value="Edit document",notes="Changes selected document's data")
     public void updateDocument(
-            @ApiParam(value="Document identifier",required=true)
+            @ApiParam(value="DocumentEntity identifier",required=true)
             @Valid
             @PathVariable final String documentIdentifier,
-            @ApiParam(value="Document data",required=true)
+            @ApiParam(value="DocumentEntity data",required=true)
             @Valid
             @RequestBody final CreateDocumentCommand cmd) {
 
@@ -59,7 +59,7 @@ public class DocumentController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value="Submit document",notes="Submits document for approval")
     public void submitDocument(
-            @ApiParam(value="Document identifier",required=true)
+            @ApiParam(value="DocumentEntity identifier",required=true)
             @Valid
             @PathVariable final String documentIdentifier) {
 
