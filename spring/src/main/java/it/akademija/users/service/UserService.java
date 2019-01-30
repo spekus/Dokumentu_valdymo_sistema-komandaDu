@@ -8,6 +8,7 @@ import it.akademija.users.repository.UserGroupRepository;
 import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -119,11 +120,13 @@ public class UserService {
     public UserServiceObject getUserForLogin(String username, String password) {
         UserEntity userEntity = userRepository.findUserByUsernameAndPassword(username, password);
         if (userEntity != null) {
+
             UserServiceObject userServiceObject = new UserServiceObject(userEntity.getUserIdentifier(), userEntity.getFirstname(),
                     userEntity.getLastname(), userEntity.getUsername());
             return userServiceObject;
         }
         return null;
+
     }
 
     @Transactional
