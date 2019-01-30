@@ -17,7 +17,7 @@ import java.io.IOException;
 import java.util.Collection;
 
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 public class UserController {
     @Autowired
     private UserService userService;
@@ -50,6 +50,10 @@ public class UserController {
         return userService.getAllUsers();
     }
 
+    @RequestMapping(value = "/AdminShowAll", method = RequestMethod.GET)
+    public Collection<UserServiceObject> getAllUsersWithPasswords() {
+        return userService.getAllUsersWithPasswords();
+    }
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public void deleteUser(@RequestParam("userIdentifier") String userIdentifier) {
@@ -63,10 +67,12 @@ public class UserController {
     }
 
 
+
     @RequestMapping(value = "/get/login", method = RequestMethod.GET, produces = "application/json")
     public UserServiceObject getUser(@RequestParam("username") String username,
                                      @RequestParam("password") String password) {
         return userService.getUserForLogin(username, password);
+
     }
 
 

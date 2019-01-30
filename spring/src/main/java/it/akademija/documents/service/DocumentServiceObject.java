@@ -1,6 +1,5 @@
 package it.akademija.documents.service;
 
-
 import java.time.LocalDateTime;
 
 public class DocumentServiceObject {

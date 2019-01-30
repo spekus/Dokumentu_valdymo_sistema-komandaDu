@@ -1,9 +1,17 @@
 package it.akademija.users.repository;
 
+
+import it.akademija.documents.MyGenerator;
 import it.akademija.documents.repository.DocumentEntity;
+import org.hibernate.annotations.GenericGenerator;
+
 
 import javax.persistence.*;
+
 import javax.validation.constraints.NotBlank;
+
+import java.util.HashSet;
+
 import java.util.Set;
 
 @Entity
@@ -13,22 +21,23 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(unique = true, nullable = false)
+
+//    @Column(unique=true, nullable=false)
 //    @GeneratedValue(generator= MyGenerator.generatorName)
 //    @GenericGenerator(name = MyGenerator.generatorName, strategy = "a.b.c.MyGenerator")
     private String userIdentifier;
+    private String username;
     private String firstname;
     private String lastname;
-    private String username;
-    @NotBlank
+
+
     private String password;
 
     @OneToMany
-    private Set<DocumentEntity> userDocumentEntities;
+    private Set<DocumentEntity> documentEntities=new HashSet<>();
 
-    @OneToMany
-    private Set<UserGroupEntity> userGroups;
-
+    @OneToMany(fetch = FetchType.EAGER)
+    private Set<UserGroupEntity> userGroups=new HashSet<>();
 
     public UserEntity() {}
 
@@ -38,6 +47,7 @@ public class UserEntity {
         this.lastname = lastname;
         this.username = username;
         this.password = password;
+
     }
 
     public long getId() {
@@ -48,12 +58,13 @@ public class UserEntity {
         this.id = id;
     }
 
-    public String getUserIdentifier() {
-        return userIdentifier;
+    public String getUsername() {
+        return username;
     }
 
-    public void setUserIdentifier(String userIdentifier) {
-        this.userIdentifier = userIdentifier;
+    public void setUsername(String username) {
+        this.username = username;
+
     }
 
     public String getFirstname() {
@@ -72,28 +83,24 @@ public class UserEntity {
         this.lastname = lastname;
     }
 
-    public String getUsername() {
-        return username;
+    public String getUserIdentifier() {
+        return userIdentifier;
     }
 
-    public void setUsername(String username) {
-        this.username = username;
+    public void setUserIdentifier(String userIdentifier) {
+        this.userIdentifier = userIdentifier;
     }
 
-    public Set<DocumentEntity> getUserDocumentEntities() {
-        return userDocumentEntities;
+    public Set<DocumentEntity> getDocuments() {
+        return documentEntities;
     }
 
-    public void setUserDocumentEntities(Set<DocumentEntity> userDocumentEntities) {
-        this.userDocumentEntities = userDocumentEntities;
+    public void setDocuments(Set<DocumentEntity> documentEntities) {
+        this.documentEntities = documentEntities;
     }
 
-    public Set<UserGroupEntity> getUserGroups() {
-        return userGroups;
-    }
-
-    public void setUserGroups(Set<UserGroupEntity> userGroups) {
-        this.userGroups = userGroups;
+    public void addDocument(DocumentEntity documentEntity) {
+        this.documentEntities.add(documentEntity);
     }
 
     public String getPassword() {
@@ -104,7 +111,37 @@ public class UserEntity {
         this.password = password;
     }
 
-    public void addDocument(DocumentEntity documentEntity) {
-        this.userDocumentEntities.add(documentEntity);
+    public Set<DocumentEntity> getDocumentEntities() {
+        return documentEntities;
     }
+
+    public void setDocumentEntities(Set<DocumentEntity> documentEntities) {
+        this.documentEntities = documentEntities;
+
+    }
+
+    public Set<UserGroupEntity> getUserGroups() {
+        return userGroups;
+    }
+
+    public void setUserGroups(Set<UserGroupEntity> userGroups) {
+        this.userGroups = userGroups;
+    }
+
+
+
+
+    //    public Set<UserGroupEntity> getUserGroups() {
+//        return userGroups;
+//    }
+//
+//    public void setUserGroups(Set<UserGroupEntity> userGroups) {
+//        this.userGroups = userGroups;
+//    }
+//
+//    public void addGroupToUser(UserGroupEntity userGroupEntity) {
+//        this.userGroups.add(userGroupEntity);
+//    }
+
+
 }

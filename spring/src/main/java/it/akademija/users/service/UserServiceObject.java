@@ -1,12 +1,12 @@
 package it.akademija.users.service;
 
 public class UserServiceObject {
+
     private String userIdentifier;
     private String firstname;
     private String lastname;
     private String username;
     private String password;
-
 
     public UserServiceObject() {
     }

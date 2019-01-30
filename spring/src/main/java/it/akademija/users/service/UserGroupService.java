@@ -20,6 +20,7 @@ public class UserGroupService {
         this.userGroupRepository = userGroupRepository;
     }
 
+
     public UserGroupRepository getUserGroupRepository() {
         return userGroupRepository;
     }
@@ -27,6 +28,7 @@ public class UserGroupService {
     public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
         this.userGroupRepository = userGroupRepository;
     }
+
 
     @Transactional
     public void addNewUserGroup(UserGroupServiceObject userGroupServiceObject) {
@@ -68,6 +70,13 @@ public class UserGroupService {
         savedUserGroupEntity.setTitle(title);
         UserGroupEntity updateUserGroupEntit=userGroupRepository.save(savedUserGroupEntity);
     }
+
+
+
+
+
+
 }
+
 
 

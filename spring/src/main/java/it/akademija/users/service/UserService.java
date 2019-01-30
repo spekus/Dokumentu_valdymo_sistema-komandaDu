@@ -1,8 +1,10 @@
 package it.akademija.users.service;
 
 import it.akademija.users.repository.UserEntity;
+
 import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
+
 import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
@@ -11,11 +13,14 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.util.HashSet;
 import java.util.List;
+
 import java.util.Set;
+
 import java.util.stream.Collectors;
 
 @Service
 public class UserService {
+
 
     @Autowired
     UserRepository userRepository;
@@ -29,6 +34,7 @@ public class UserService {
     public UserService(UserRepository userRepository, UserGroupRepository userGroupRepository) {
         this.userRepository = userRepository;
         this.userGroupRepository = userGroupRepository;
+
     }
 
     public UserRepository getUserRepository() {
@@ -39,6 +45,7 @@ public class UserService {
         this.userRepository = userRepository;
     }
 
+
     public UserGroupRepository getUserGroupRepository() {
         return userGroupRepository;
     }
@@ -46,6 +53,7 @@ public class UserService {
     public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
         this.userGroupRepository = userGroupRepository;
     }
+
 
     @Transactional
     public void addNewUser(UserServiceObject userServiceObject) {
@@ -81,9 +89,22 @@ public class UserService {
 
 
     @Transactional
+    public List<UserServiceObject> getAllUsersWithPasswords () {
+        return userRepository.findAll().stream().map(userEntity -> new UserServiceObject(userEntity.getUserIdentifier(),
+                userEntity.getFirstname(),
+                userEntity.getLastname(),
+                userEntity.getUsername(),
+                userEntity.getPassword()))
+                .collect(Collectors.toList());
+    }
+
+
+
+    @Transactional
     @Modifying
     public void deleteUserByIdentifier(String userIdentifier) {
         userRepository.deleteByUserIdentifier(userIdentifier);
+
 
     }
 
@@ -115,7 +136,9 @@ public class UserService {
         }
         userEntity.getUserGroups().add(userGroupEntity);
 
+
     }
+
 }
 
 

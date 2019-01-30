@@ -7,7 +7,7 @@ import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 import javax.persistence.*;
-import java.util.List;
+
 import java.util.Set;
 
 @Entity
@@ -19,12 +19,14 @@ public class UserGroupEntity {
 
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<DocumentEntity> documentToApprove;
+    private Set<DocumentTypeEntity> availableDocumentTypesToApprove;
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<DocumentEntity> documentToUpload;
+
+    private Set<DocumentTypeEntity> availableDocumentTypesToUpload;
     @OneToMany
-    Set<DocumentTypeEntity> availableDocumentTypes;
+    Set<DocumentEntity> documentsToApprove;
+
 
     protected UserGroupEntity(){}
 
@@ -48,27 +50,29 @@ public class UserGroupEntity {
         this.title = title;
     }
 
-    public List<DocumentEntity> getDocumentToApprove() {
-        return documentToApprove;
+    public Set<DocumentTypeEntity> getAvailableDocumentTypesToApprove() {
+        return availableDocumentTypesToApprove;
     }
 
-    public void setDocumentToApprove(List<DocumentEntity> documentToApprove) {
-        this.documentToApprove = documentToApprove;
+    public void setAvailableDocumentTypesToApprove(Set<DocumentTypeEntity> availableDocumentTypesToApprove) {
+        this.availableDocumentTypesToApprove = availableDocumentTypesToApprove;
     }
 
-    public List<DocumentEntity> getDocumentToUpload() {
-        return documentToUpload;
+    public Set<DocumentTypeEntity> getAvailableDocumentTypesToUpload() {
+        return availableDocumentTypesToUpload;
     }
 
-    public void setDocumentToUpload(List<DocumentEntity> documentToUpload) {
-        this.documentToUpload = documentToUpload;
+    public void setAvailableDocumentTypesToUpload(Set<DocumentTypeEntity> availableDocumentTypesToUpload) {
+        this.availableDocumentTypesToUpload = availableDocumentTypesToUpload;
     }
 
-    public Set<DocumentTypeEntity> getAvailableDocumentTypes() {
-        return availableDocumentTypes;
+    public Set<DocumentEntity> getDocumentsToApprove() {
+        return documentsToApprove;
     }
 
-    public void setAvailableDocumentTypes(Set<DocumentTypeEntity> availableDocumentTypes) {
-        this.availableDocumentTypes = availableDocumentTypes;
+    public void setDocumentsToApprove(Set<DocumentEntity> documentsToApprove) {
+        this.documentsToApprove = documentsToApprove;
     }
+
+
 }

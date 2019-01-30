@@ -4,7 +4,10 @@ public class UserGroupServiceObject {
 
     private String title;
 
-    public UserGroupServiceObject(){}
+
+    public UserGroupServiceObject(){
+
+    }
 
     public UserGroupServiceObject(String title) {
         this.title = title;
