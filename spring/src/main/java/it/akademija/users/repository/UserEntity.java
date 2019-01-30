@@ -1,49 +1,89 @@
 package it.akademija.users.repository;
 
+import it.akademija.documents.repository.DocumentEntity;
+
 import javax.persistence.*;
 import java.util.Set;
 
 @Entity
 public class UserEntity {
-    @Id
-    @GeneratedValue
-    protected Long id;
-    private String name;
-    private String surname;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private long id;
+
+    @Column(unique = true, nullable = false)
+//    @GeneratedValue(generator= MyGenerator.generatorName)
+//    @GenericGenerator(name = MyGenerator.generatorName, strategy = "a.b.c.MyGenerator")
+    private String userIdentifier;
+    private String firstname;
+    private String lastname;
+    private String username;
+    private String password;
+
+    @OneToMany
+    private Set<DocumentEntity> userDocumentEntities;
+
+    @OneToMany
     private Set<UserGroupEntity> userGroups;
 
 
-    protected UserEntity(){}
+    public UserEntity() {}
 
-    public UserEntity(String name, String surname) {
-        this.name = name;
-        this.surname = surname;
+    public UserEntity(String userIdentifier, String firstname, String lastname, String username, String password) {
+        this.userIdentifier = userIdentifier;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.password = password;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUserIdentifier() {
+        return userIdentifier;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUserIdentifier(String userIdentifier) {
+        this.userIdentifier = userIdentifier;
     }
 
-    public String getSurname() {
-        return surname;
+    public String getFirstname() {
+        return firstname;
     }
 
-    public void setSurname(String surname) {
-        this.surname = surname;
+    public void setFirstname(String firstname) {
+        this.firstname = firstname;
+    }
+
+    public String getLastname() {
+        return lastname;
+    }
+
+    public void setLastname(String lastname) {
+        this.lastname = lastname;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public Set<DocumentEntity> getUserDocumentEntities() {
+        return userDocumentEntities;
+    }
+
+    public void setUserDocumentEntities(Set<DocumentEntity> userDocumentEntities) {
+        this.userDocumentEntities = userDocumentEntities;
     }
 
     public Set<UserGroupEntity> getUserGroups() {
@@ -52,5 +92,17 @@ public class UserEntity {
 
     public void setUserGroups(Set<UserGroupEntity> userGroups) {
         this.userGroups = userGroups;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public void addDocument(DocumentEntity documentEntity) {
+        this.userDocumentEntities.add(documentEntity);
     }
 }

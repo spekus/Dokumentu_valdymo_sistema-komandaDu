@@ -1,46 +1,124 @@
 package it.akademija.users.service;
 
-import it.akademija.users.dao.UserDao;
-import it.akademija.users.dao.UserLoginDao;
 import it.akademija.users.repository.UserEntity;
-import it.akademija.users.repository.UserLoginDataEntity;
+import it.akademija.users.repository.UserGroupEntity;
+import it.akademija.users.repository.UserGroupRepository;
+import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class UserService {
-    @Autowired
-    private UserDao userDao;
 
     @Autowired
-    private UserLoginDao userLoginDao;
+    UserRepository userRepository;
+    @Autowired
+    UserGroupRepository userGroupRepository;
 
-    public UserService(UserDao userDao, UserLoginDao userLoginDao) {
-        this.userDao = userDao;
-        this.userLoginDao = userLoginDao;
+    public UserService() {
+    }
+
+
+    public UserService(UserRepository userRepository, UserGroupRepository userGroupRepository) {
+        this.userRepository = userRepository;
+        this.userGroupRepository = userGroupRepository;
+    }
+
+    public UserRepository getUserRepository() {
+        return userRepository;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    public UserGroupRepository getUserGroupRepository() {
+        return userGroupRepository;
+    }
+
+    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
+        this.userGroupRepository = userGroupRepository;
     }
 
     @Transactional
-    public UserServiceObject getUser(String login, String password) {
-        UserEntity userEntity = userDao.findUserByLogin(login, password);
-        if (userEntity!= null) {
-            UserServiceObject userServiceObject=new UserServiceObject(userEntity.getName(),userEntity.getSurname());
-            userServiceObject.setUserGroups(userEntity.getUserGroups());
+    public void addNewUser(UserServiceObject userServiceObject) {
+        UserEntity userEntity = new UserEntity(userServiceObject.getUserIdentifier(), userServiceObject.getFirstname(), userServiceObject.getLastname(),
+                userServiceObject.getUsername(), userServiceObject.getPassword());
+        UserEntity userEntityFromDataBase1 = userRepository.findUserByUserIdentifier(userServiceObject.getUserIdentifier());
+        UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(userServiceObject.getUsername());
+        if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
+            userRepository.save(userEntity);
+        }
+
+    }
+
+    @Transactional
+    public UserServiceObject getUserByUsername(String username) {
+        UserEntity userEntity = userRepository.findUserByUsername(username);
+        if (userEntity != null) {
+            UserServiceObject userServiceObject = new UserServiceObject(userEntity.getUserIdentifier(), userEntity.getFirstname(),
+                    userEntity.getLastname(), userEntity.getUsername());
             return userServiceObject;
         }
         return null;
     }
 
     @Transactional
-    public void addNewUser(UserServiceObject userServiceObject) {
-        UserEntity userEntity=new UserEntity(userServiceObject.getName(),userServiceObject.getSurname());
-        userEntity.setUserGroups(userServiceObject.getUserGroups());
-        userDao.save(userEntity);
+    public List<UserServiceObject> getAllUsers() {
+        return userRepository.findAll().stream().map(userEntity -> new UserServiceObject(userEntity.getUserIdentifier(),
+                userEntity.getFirstname(),
+                userEntity.getLastname(),
+                userEntity.getUsername()))
+                .collect(Collectors.toList());
+    }
+
+
+    @Transactional
+    @Modifying
+    public void deleteUserByIdentifier(String userIdentifier) {
+        userRepository.deleteByUserIdentifier(userIdentifier);
+
+    }
+
+    @Transactional
+    public void updateUserPassword(String userIdentifier, String password) {
+        UserEntity savedUserEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        savedUserEntity.setPassword(password);
+        UserEntity updateUserEntity = userRepository.save(savedUserEntity);
+    }
+
+    @Transactional
+    public UserServiceObject getUserForLogin(String username, String password) {
+        UserEntity userEntity = userRepository.findUserByUsernameAndPassword(username, password);
+        if (userEntity != null) {
+            UserServiceObject userServiceObject = new UserServiceObject(userEntity.getUserIdentifier(), userEntity.getFirstname(),
+                    userEntity.getLastname(), userEntity.getUsername());
+            return userServiceObject;
+        }
+        return null;
+    }
+
+    @Transactional
+    public void addGroupToUser(String userIdentifier, String title) {
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(title);
+        if (userEntity.getUserGroups() == null) {
+            Set<UserGroupEntity> userGroups = new HashSet<>();
+            userEntity.setUserGroups(userGroups);
+        }
+        userEntity.getUserGroups().add(userGroupEntity);
+
     }
 }
+
+
+
 
 
