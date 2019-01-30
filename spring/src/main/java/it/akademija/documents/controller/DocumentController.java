@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @Api(value="document")
@@ -24,13 +25,22 @@ public class DocumentController {
     }
 
     @RequestMapping(path="/{userIdentifier}/documents/{state}",method = RequestMethod.GET)
-    @ApiOperation(value="Get user's documents", notes="Returns wanted user's documents")
-    public List<DocumentServiceObject> getDocuments(@ApiParam(value="UserIdentifier", required=true)
+    @ApiOperation(value="Get user's documents by state", notes="Returns wanted user's documents by state")
+    public Set<DocumentServiceObject> getDocuments(@ApiParam(value="UserIdentifier", required=true)
                                              @Valid @PathVariable String userIdentifier,
-                                                    @ApiParam(value="State", required=true)
+                                                   @ApiParam(value="State", required=true)
     @Valid @PathVariable String state) {
-        return documentService.getDocuments(userIdentifier, state);
+        return documentService.getDocumentsByState(userIdentifier, state);
     }
+
+    @RequestMapping(path="/{userIdentifier}/documents",method = RequestMethod.GET)
+    @ApiOperation(value="Get all user's documents", notes="Returns wanted user's all documents")
+    public Set<DocumentServiceObject> getAllUserDocuments(@ApiParam(value="UserIdentifier", required=true)
+                                                    @Valid @PathVariable String userIdentifier)
+                                                     {
+        return documentService.getAllUserDocuments(userIdentifier);
+    }
+
 
     @RequestMapping(path="/{userIdentifier}/documents", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
@@ -44,10 +54,10 @@ public class DocumentController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value="Edit document",notes="Changes selected document's data")
     public void updateDocument(
-            @ApiParam(value="Document identifier",required=true)
+            @ApiParam(value="DocumentEntity identifier",required=true)
             @Valid
             @PathVariable final String documentIdentifier,
-            @ApiParam(value="Document data",required=true)
+            @ApiParam(value="DocumentEntity data",required=true)
             @Valid
             @RequestBody final CreateDocumentCommand cmd) {
 
@@ -59,13 +69,25 @@ public class DocumentController {
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value="Submit document",notes="Submits document for approval")
     public void submitDocument(
-            @ApiParam(value="Document identifier",required=true)
+            @ApiParam(value="DocumentEntity identifier",required=true)
             @Valid
             @PathVariable final String documentIdentifier) {
 
 
         documentService.submitDocument(documentIdentifier);
     }
+
+//    @RequestMapping(path="/documents/{documentIdentifier}/submit", method = RequestMethod.PUT)
+//    @ResponseStatus(HttpStatus.OK)
+//    @ApiOperation(value="Submit document",notes="Submits document for approval")
+//    public void approveDocument(
+//            @ApiParam(value="DocumentEntity identifier",required=true)
+//            @Valid
+//            @PathVariable final String documentIdentifier) {
+//
+//
+//        documentService.submitDocument(documentIdentifier);
+//    }
 
 
 

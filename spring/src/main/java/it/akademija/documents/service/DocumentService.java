@@ -1,9 +1,12 @@
 package it.akademija.documents.service;
 
 
-import it.akademija.documents.repository.Document;
+import it.akademija.documents.DocumentState;
+import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
-import it.akademija.users.repository.User;
+import it.akademija.documents.repository.DocumentTypeEntity;
+import it.akademija.users.repository.UserEntity;
+import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,7 +14,9 @@ import org.springframework.stereotype.Service;
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,59 +29,83 @@ public class DocumentService {
     private UserRepository userRepository;
 
     @Transactional
-    public List<DocumentServiceObject> getDocuments(String userIdentifier, String state) {
-        List<Document> documentsFromDatabase = userRepository.findDocumentsByUserIdentifier(userIdentifier);
-        List<Document> documentsFromDatabaseWithState = new ArrayList<>();
-        for (Document document : documentsFromDatabase) {
-            if (document.getState().equals(state)) {
-                documentsFromDatabaseWithState.add(document);
+    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, String state) {
+        Set<DocumentEntity> documentsFromDatabase = userRepository.findDocumentsByUserIdentifier(userIdentifier);
+        Set<DocumentEntity> documentsFromDatabaseWithState = new HashSet<>();
+        for (DocumentEntity documentEntity : documentsFromDatabase) {
+            if (documentEntity.getDocumentState().equals(state)) {
+                documentsFromDatabaseWithState.add(documentEntity);
 
             }
         }
 
-        if (state.equals("created")) {
-            return documentsFromDatabaseWithState.stream().map((document) ->
-                    new DocumentServiceObject(document.getTitle(), document.getType(), document.getDescription()))
-                    .collect(Collectors.toList());
+        if (state.equals(DocumentState.CREATED)) {
+            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
+                    new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription()))
+                    .collect(Collectors.toSet());
 
-        } else if (state.equals("submitted")) {
-            return documentsFromDatabaseWithState.stream().map((document) ->
-                    new DocumentServiceObject(document.getTitle(), document.getType(), document.getDescription(),
-                            document.getPostedDate())).collect(Collectors.toList());
-        } else if (state.equals("approved")) {
-            return documentsFromDatabaseWithState.stream().map((document) ->
-                    new DocumentServiceObject(document.getTitle(), document.getType(), document.getDescription(),
-                            document.getPostedDate(), document.getApprovalDate(), document.getApprover()))
-                    .collect(Collectors.toList());
+        } else if (state.equals(DocumentState.SUBMITTED)) {
+            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
+                    new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
+                            documentEntity.getPostedDate())).collect(Collectors.toSet());
+        } else if (state.equals(DocumentState.APPROVED)) {
+            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
+                    new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
+                            documentEntity.getPostedDate(), documentEntity.getApprovalDate(), documentEntity.getApprover()))
+                    .collect(Collectors.toSet());
         } else {
-            return documentsFromDatabaseWithState.stream().map((document) ->
-                    new DocumentServiceObject(document.getTitle(), document.getType(), document.getDescription(),
-                            document.getPostedDate(), document.getApprover(), document.getRejectedDate(),
-                            document.getRejectionReason())).collect(Collectors.toList());
+            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
+                    new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
+                            documentEntity.getPostedDate(), documentEntity.getApprover(), documentEntity.getRejectedDate(),
+                            documentEntity.getRejectionReason())).collect(Collectors.toSet());
         }
+    }
+
+    @Transactional
+    public Set<DocumentServiceObject> getAllUserDocuments(String userIdentifier) {
+        Set<DocumentEntity> documentsFromDatabase = userRepository.findDocumentsByUserIdentifier(userIdentifier);
+        return documentsFromDatabase.stream().map((documentEntity) ->
+                new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
+                        documentEntity.getPostedDate(), documentEntity.getApprover(), documentEntity.getRejectedDate(),
+                        documentEntity.getRejectionReason())).collect(Collectors.toSet());
+
+
     }
 
     @Transactional
     public void addDocument(String userIdentifier, String title, String type, String description) {
+        //Pasiimam useri is DB
+        UserEntity userFromDatabase = userRepository.findUserByUserIdentifier(userIdentifier);
+        //Pasiimam grupes, kurioms jis yra priskirtas
+        Set<UserGroupEntity> availableUserGroups=userFromDatabase.getUserGroups();
 
-        User userFromDatabase = userRepository.findUserByUserIdentifier(userIdentifier);
+        //Pereinam per tas grupes ir tikrinam
+        for (UserGroupEntity userGroup : availableUserGroups) {
+            //Pasiimam kiekvienos grupes galimus kurti failus
+            Set<DocumentTypeEntity> groupAvailableDocumentTypes = userGroup.getAvailableDocumentTypesToUpload();
+            //Einam per kiekviena is tu tipu ir tikrinam, ar jis atitinka norimo sukurti dokumento
+            for (DocumentTypeEntity documentTypeEntity : groupAvailableDocumentTypes) {
+                if (documentTypeEntity.getTitle().equals(type)) {
+//                    if (userFromDatabase.getUsername() != null) {
+                        DocumentEntity documentEntity = new DocumentEntity(title, description, type);
+                        documentEntity.setAuthor(userFromDatabase.getUsername());
 
-        if (userFromDatabase.getUsername() != null) {
-            Document document = new Document(title, description, type);
-            document.setAuthor(userFromDatabase.getUsername());
+                        userFromDatabase.addDocument(documentEntity);
+                        documentRepository.save(documentEntity);
 
-            documentRepository.save(document);
-            userFromDatabase.addDocument(document);
+                    } else {
+                        System.out.println("User doesn't belong to a group that can create that type's documents");
+                    }
+                }
+
+
+            }
         }
-
-        //patikriniam ar pagal userid surasto autoriaus name nera null ir kuriant nauja dokumenta, prisetinam name
-
-    }
 
     @Transactional
     public void updateDocument(String documentIdentifier, String title, String description, String type) {
         if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
-            Document documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+            DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             documentFromDatabase.setTitle(title);
             documentFromDatabase.setDescription(description);
             documentFromDatabase.setType(type);
@@ -88,24 +117,43 @@ public class DocumentService {
     @Transactional
     public void submitDocument (String documentIdentifier) {
         if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
-            Document documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-            documentFromDatabase.setState("submitted");
+            DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+            documentEntityFromDatabase.setDocumentState(DocumentState.SUBMITTED);
             LocalDateTime datePosted= LocalDateTime.now();
-            documentFromDatabase.setPostedDate(datePosted);
-            documentRepository.save(documentFromDatabase);
+            documentEntityFromDatabase.setPostedDate(datePosted);
+            documentRepository.save(documentEntityFromDatabase);
         }
     }
 
     @Transactional
     public void approveDocument (String documentIdentifier) {
         if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
-            Document documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-            documentFromDatabase.setState("approved");
+            DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+            documentEntityFromDatabase.setDocumentState(DocumentState.APPROVED);
             LocalDateTime dateApproved= LocalDateTime.now();
-            documentFromDatabase.setPostedDate(dateApproved);
+            documentEntityFromDatabase.setApprovalDate(dateApproved);
 
             }
             }
-        }
+
+
+    public DocumentRepository getDocumentRepository() {
+        return documentRepository;
+    }
+
+    public void setDocumentRepository(DocumentRepository documentRepository) {
+        this.documentRepository = documentRepository;
+    }
+
+    public UserRepository getUserRepository() {
+        return userRepository;
+    }
+
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
+}
+
+
 
 
