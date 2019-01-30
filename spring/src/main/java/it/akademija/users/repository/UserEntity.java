@@ -28,7 +28,7 @@ public class UserEntity {
     private String lastname;
     private String password;
 
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER)
     private Set<DocumentEntity> documentEntities=new HashSet<>();
 
     @OneToMany(fetch = FetchType.EAGER)

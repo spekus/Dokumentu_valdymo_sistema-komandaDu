@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="19775e63-3d96-43ec-944a-1305ba9a8c9a" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Components/UI/Menus/sideBarList.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/Components/UI/Menus/sideBarList.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../spring/src/main/java/it/akademija/users/controller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../spring/src/main/java/it/akademija/users/controller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../spring/src/main/java/it/akademija/users/repository/UserEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/../spring/src/main/java/it/akademija/users/repository/UserEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../spring/src/main/java/it/akademija/users/service/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../spring/src/main/java/it/akademija/users/service/UserService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../spring/src/main/java/it/akademija/users/service/UserServiceObject.java" beforeDir="false" afterPath="$PROJECT_DIR$/../spring/src/main/java/it/akademija/users/service/UserServiceObject.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../spring/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/../spring/src/main/resources/application.properties" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -27,7 +30,7 @@
         <entry file="file://$PROJECT_DIR$/src/Components/UI/Menus/sideBarList.js">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="129">
-              <caret line="29" column="31" lean-forward="true" selection-start-line="29" selection-start-column="31" selection-end-line="29" selection-end-column="31" />
+              <caret line="29" column="31" selection-start-line="29" selection-start-column="31" selection-end-line="29" selection-end-column="31" />
               <folding>
                 <element signature="e#0#26#0" expanded="true" />
               </folding>
@@ -244,11 +247,12 @@
       <workItem from="1548657924088" duration="1279000" />
       <workItem from="1548661798751" duration="89000" />
       <workItem from="1548662258688" duration="186000" />
+      <workItem from="1548842713216" duration="14000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="19060000" />
+    <option name="totallyTimeSpent" value="19074000" />
   </component>
   <component name="ToolWindowManager">
     <frame x="-7" y="-7" width="1295" height="695" extended-state="6" />
@@ -514,7 +518,7 @@
     <entry file="file://$PROJECT_DIR$/src/Components/UI/Menus/sideBarList.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="129">
-          <caret line="29" column="31" lean-forward="true" selection-start-line="29" selection-start-column="31" selection-end-line="29" selection-end-column="31" />
+          <caret line="29" column="31" selection-start-line="29" selection-start-column="31" selection-end-line="29" selection-end-column="31" />
           <folding>
             <element signature="e#0#26#0" expanded="true" />
           </folding>

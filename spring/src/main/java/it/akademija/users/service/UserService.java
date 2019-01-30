@@ -71,8 +71,13 @@ public class UserService {
     public UserServiceObject getUserByUsername(String username) {
         UserEntity userEntity = userRepository.findUserByUsername(username);
         if (userEntity != null) {
-            UserServiceObject userServiceObject = new UserServiceObject(userEntity.getUserIdentifier(), userEntity.getFirstname(),
-                    userEntity.getLastname(), userEntity.getUsername());
+            UserServiceObject userServiceObject = new UserServiceObject();
+            userServiceObject.setUserIdentifier(userEntity.getUserIdentifier());
+            userServiceObject.setFirstname(userEntity.getFirstname());
+            userServiceObject.setLastname(userEntity.getLastname());
+            userServiceObject.setUsername(userEntity.getUsername());
+            userServiceObject.setPassword(userEntity.getPassword());
+//            userServiceObject.setUserGroups(userEntity.getUserGroups());
             return userServiceObject;
         }
         return null;
@@ -135,8 +140,16 @@ public class UserService {
             userEntity.setUserGroups(userGroups);
         }
         userEntity.getUserGroups().add(userGroupEntity);
+        userRepository.save(userEntity);
+    }
 
-
+    @Transactional
+    public List<UserServiceObject> getAllUsersWithFullInfo() {
+        return userRepository.findAll().stream().map(userEntity -> new UserServiceObject(userEntity.getUserIdentifier(),
+                userEntity.getFirstname(),
+                userEntity.getLastname(),
+                userEntity.getUsername()))
+                .collect(Collectors.toList());
     }
 
 }
