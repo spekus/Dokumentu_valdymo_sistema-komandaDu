@@ -3,6 +3,7 @@ package it.akademija.users.repository;
 import it.akademija.documents.repository.DocumentEntity;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.Set;
 
 @Entity
@@ -19,6 +20,7 @@ public class UserEntity {
     private String firstname;
     private String lastname;
     private String username;
+    @NotBlank
     private String password;
 
     @OneToMany
