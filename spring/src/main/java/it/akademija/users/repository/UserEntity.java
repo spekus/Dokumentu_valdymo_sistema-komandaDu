@@ -4,6 +4,8 @@ package it.akademija.users.repository;
 import it.akademija.documents.MyGenerator;
 import it.akademija.documents.repository.DocumentEntity;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 
 import javax.persistence.*;
@@ -31,7 +33,8 @@ public class UserEntity {
     @OneToMany(fetch = FetchType.EAGER)
     private Set<DocumentEntity> documentEntities=new HashSet<>();
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<UserGroupEntity> userGroups=new HashSet<>();
 
     public UserEntity() {}

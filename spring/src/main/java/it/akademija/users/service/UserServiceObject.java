@@ -12,7 +12,7 @@ public class UserServiceObject {
     private String lastname;
     private String username;
     private String password;
-    //private Set<UserGroupEntity> userGroups=new HashSet<>();
+    private Set<UserGroupEntity> userGroups=new HashSet<>();
 
 
     public UserServiceObject() {
@@ -75,11 +75,11 @@ public class UserServiceObject {
         this.password = password;
     }
 
-//    public Set<UserGroupEntity> getUserGroups() {
-//        return userGroups;
-//    }
-//
-//    public void setUserGroups(Set<UserGroupEntity> userGroups) {
-//        this.userGroups = userGroups;
-//    }
+    public Set<UserGroupEntity> getUserGroups() {
+        return userGroups;
+    }
+
+    public void setUserGroups(Set<UserGroupEntity> userGroups) {
+        this.userGroups = userGroups;
+    }
 }

@@ -77,7 +77,7 @@ public class UserService {
             userServiceObject.setLastname(userEntity.getLastname());
             userServiceObject.setUsername(userEntity.getUsername());
             userServiceObject.setPassword(userEntity.getPassword());
-//            userServiceObject.setUserGroups(userEntity.getUserGroups());
+           userServiceObject.setUserGroups(userEntity.getUserGroups());
             return userServiceObject;
         }
         return null;
