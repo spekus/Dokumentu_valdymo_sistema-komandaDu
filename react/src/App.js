@@ -1,118 +1,110 @@
 import React from 'react';
-import {Route, BrowserRouter as Router, Switch} from 'react-router-dom'
-import PropTypes from 'prop-types';
-import classNames from 'classnames';
-import {withStyles} from '@material-ui/core/styles';
-import CssBaseline from '@material-ui/core/CssBaseline';
-import Drawer from '@material-ui/core/Drawer';
-import AppBar from '@material-ui/core/AppBar';
-import Toolbar from '@material-ui/core/Toolbar';
-import Typography from '@material-ui/core/Typography';
-import IconButton from '@material-ui/core/IconButton';
-import Badge from '@material-ui/core/Badge';
-import MenuIcon from '@material-ui/icons/Menu';
-import ChevronLeftIcon from '@material-ui/icons/ChevronLeft';
-import NotificationsIcon from '@material-ui/icons/Notifications';
-import {sideBarList} from './Components/UI/Menus/sideBarList';
-import {style} from './Components/UI/Style/style';
+import './App.css';
+import {Route, BrowserRouter as Router, NavLink, Switch} from 'react-router-dom'
 import Dashboard from "./Components/Dashboard/Dashboard";
-import UsersHome from "./Components/Users/UsersHome";
-import ReportsHome from "./Components/Reports/ReportsHome";
+import UsersList from "./Components/Users/UsersList";
+import UserProfile from "./Components/Users/UserProfile";
 import DocumentsHome from "./Components/Documents/DocumentsHome";
 import NotFound from "./Components/UI/ServicePages/NotFound";
 import FileUploader from "./Components/Files/FileUploader";
-
+import SideNav, {NavItem, NavIcon, NavText} from '@trendmicro/react-sidenav';
+import '@trendmicro/react-sidenav/dist/react-sidenav.css';
+import LoginLogoutLink from "./Components/UI/LoginLogoutLink";
 
 class App extends React.Component {
     state = {
-        open: true,
+        sideBarIsOpen: false,
+        appBarText: "DVS",
+        username: "",
     };
 
-    handleDrawerOpen = () => {
-        this.setState({open: true});
+    menuItems = [
+        {iconClass: 'fa fw fa-home', path: '', text: 'Pradžia'},
+        {iconClass: 'fa fw fa-id-card', path: 'profile', text: 'Profilis'},
+        {iconClass: 'fa fw fa-list', path: 'documents', text: 'Dokumentai'},
+        {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
+        {iconClass: 'fa fw fa-users', path: 'users', text: 'Naudotojai'},
+    ];
+
+    sideBarToggled = (isOpen) => {
+        this.setState({sideBarIsOpen: isOpen});
     };
 
-    handleDrawerClose = () => {
-        this.setState({open: false});
-    };
+    sideBarClicked = (selected, location, history) => {
+        const to = '/' + selected;
+        if (location.pathname !== to) {
+            history.push(to);
+        }
+    }
+
+    handleLogout = (history) => {
+        window.alert("Viso gero");
+        this.setState({username:""});
+        history.push("/");
+        return ("");
+    }
+
+    handleLogin = (history) => {
+        this.setState({username:"Neo"});
+        history.push("/profile");
+        return ("");
+    }
 
     render() {
-        const {classes} = this.props;
-
-
         return (
-            <div className={classes.root}>
+            <div>
                 <Router>
-                    <React.Fragment>
-                        <CssBaseline/>
-                        <AppBar
-                            position="absolute"
-                            className={classNames(classes.appBar, this.state.open && classes.appBarShift)}
-                        >
-                            <Toolbar disableGutters={!this.state.open} className={classes.toolbar}>
-                                <IconButton
-                                    color="inherit"
-                                    aria-label="Open drawer"
-                                    onClick={this.handleDrawerOpen}
-                                    className={classNames(
-                                        classes.menuButton,
-                                        this.state.open && classes.menuButtonHidden,
-                                    )}
-                                >
-                                    <MenuIcon/>
-                                </IconButton>
-                                <Typography
-                                    component="h1"
-                                    variant="h6"
-                                    color="inherit"
-                                    noWrap
-                                    className={classes.title}
-                                >
-                                    Dashboard
-                                </Typography>
-                                <IconButton color="inherit">
-                                    <Badge badgeContent={4} color="secondary">
-                                        <NotificationsIcon/>
-                                    </Badge>
-                                </IconButton>
-                            </Toolbar>
-                        </AppBar>
-                        <Drawer
-                            variant="permanent"
-                            classes={{
-                                paper: classNames(classes.drawerPaper, !this.state.open && classes.drawerPaperClose),
-                            }}
-                            open={this.state.open}
-                        >
-                            <div className={classes.toolbarIcon}>
-                                <IconButton onClick={this.handleDrawerClose}>
-                                    <ChevronLeftIcon/>
-                                </IconButton>
-                            </div>
+                    <Route render={({location, history}) => (
+                        <React.Fragment>
+                            <SideNav
+                                onSelect={(selected) => {
+                                    this.sideBarClicked(selected, location, history)
+                                }}
+                                onToggle={this.sideBarToggled}
+                                expanded={this.state.sideBarIsOpen}
+                            >
+                                <SideNav.Toggle/>
+                                <SideNav.Nav defaultSelected="">
+                                    {this.menuItems.map((item) =>
+                                        <NavItem eventKey={item.path} id={item.path}>
+                                            <NavIcon>
+                                                <i className={item.iconClass} style={{fontSize: '1.75em'}}/>
+                                            </NavIcon>
+                                            <NavText>
+                                                {item.text}
+                                            </NavText>
+                                        </NavItem>)}
+                                </SideNav.Nav>
+                            </SideNav>
+                            <main className={this.state.sideBarIsOpen ? 'open' : ''}>
 
-                            {sideBarList}
+                                <nav className="navbar navbar-expand-sm bg-light navbar-light justify-content-between">
+                                    <NavLink to='/' className="navbar-brand">{this.state.appBarText}</NavLink>
 
-                        </Drawer>
-                        <main className={classes.content}>
-                            <div className={this.props.classes.appBarSpacer}/>
-                            <Switch>
-                                <Route exact path="/" component={Dashboard}/>
-                                <Route path="/documents" component={DocumentsHome}/>
-                                <Route path="/users" component={UsersHome}/>
-                                <Route path="/reports" component={ReportsHome}/>
-                                <Route exact path="/upload-file" component={FileUploader}/>
-                                <Route component={NotFound}/>
-                            </Switch>
-                        </main>
-                    </React.Fragment>
+                                    <LoginLogoutLink username={this.state.username}/>
+                                </nav>
+
+                                <div id='main-content'>
+                                    <Switch>
+                                        <Route exact path="/" component={Dashboard}/>
+                                        <Route path="/documents" component={DocumentsHome}/>
+                                        <Route path="/profile" component={UserProfile}/>
+                                        <Route path="/users" component={UsersList}/>
+                                        <Route exact path="/upload-file" component={FileUploader}/>
+                                        <Route exact path="/logout" render={() => this.handleLogout(history)}/>
+                                        <Route exact path="/login" render={() => this.handleLogin(history)}/>
+                                        <Route component={NotFound}/>
+                                    </Switch>
+                                </div>
+                            </main>
+                        </React.Fragment>
+                    )}
+                    />
                 </Router>
             </div>
         );
     }
 }
 
-App.propTypes = {
-    classes: PropTypes.object.isRequired,
-};
 
-export default withStyles(style)(App);
+export default (App);

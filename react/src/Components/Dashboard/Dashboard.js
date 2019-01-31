@@ -29,26 +29,26 @@ class Dashboard extends Component {
     render() {
         return (
             <React.Fragment>
-                <Grid container spacing={40}>
-                    <Grid item xs>
-                        <Typography variant="h5" gutterBottom>Sukurti</Typography>
+                <div className="row">
+                    <div className='col-lg-6'>
+                        <h5>Sukurti</h5>
                         <DocumentsListSimple list={this.state.created}/>
-                    </Grid>
-                    <Grid item xs>
-                        <Typography variant="h5" gutterBottom>Laukiantys patvirtinimo</Typography>
+                    </div>
+                    <div className='col-lg-6'>
+                        <h5>Laukiantys patvirtinimo</h5>
                         <DocumentsListSimple list={this.state.awaiting}/>
-                    </Grid>
-                </Grid>
-                <Grid container spacing={40}>
-                    <Grid item xs>
-                        <Typography variant="h5" gutterBottom>Patvirtinti</Typography>
+                    </div>
+                </div>
+                <div className="row mt-2">
+                    <div className='col-lg-6'>
+                        <h5>Patvirtinti</h5>
                         <DocumentsListSimple list={this.state.approved}/>
-                    </Grid>
-                    <Grid item xs>
-                        <Typography variant="h5" gutterBottom>Atmesti</Typography>
+                    </div>
+                    <div className='col-lg-6'>
+                        <h5>Atmesti</h5>
                         <DocumentsListSimple list={this.state.rejected}/>
-                    </Grid>
-                </Grid>
+                    </div>
+                </div>
             </React.Fragment>
         );
     }

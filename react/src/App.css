@@ -1,0 +1,21 @@
+main {
+    margin-left: 64px;
+
+}
+
+main.open{
+    margin-left: 240px;
+}
+
+#main-content
+{
+    padding: 10px;
+}
+
+.navbar {
+    background-color: #D5D5D5 !important;
+}
+
+td.lastColumn,th.lastColumn {
+    text-align: right;
+}
