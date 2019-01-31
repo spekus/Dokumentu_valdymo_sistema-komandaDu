@@ -57,11 +57,10 @@ public class UserService {
 
 
     @Transactional
-    public void addNewUser(UserServiceObject userServiceObject) {
-        UserEntity userEntity = new UserEntity(userServiceObject.getUserIdentifier(), userServiceObject.getFirstname(), userServiceObject.getLastname(),
-                userServiceObject.getUsername(), userServiceObject.getPassword());
-        UserEntity userEntityFromDataBase1 = userRepository.findUserByUserIdentifier(userServiceObject.getUserIdentifier());
-        UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(userServiceObject.getUsername());
+    public void addNewUser(String userIdentifier, String firstname, String lastname, String username, String password) {
+        UserEntity userEntity = new UserEntity(userIdentifier, firstname,lastname,username,password);
+        UserEntity userEntityFromDataBase1 = userRepository.findUserByUserIdentifier(userIdentifier);
+        UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
         if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
             userRepository.save(userEntity);
         }
