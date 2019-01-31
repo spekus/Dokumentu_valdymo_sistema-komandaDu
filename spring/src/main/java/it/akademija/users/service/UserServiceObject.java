@@ -1,5 +1,10 @@
 package it.akademija.users.service;
 
+import it.akademija.users.repository.UserGroupEntity;
+
+import java.util.HashSet;
+import java.util.Set;
+
 public class UserServiceObject {
 
     private String userIdentifier;
@@ -7,6 +12,8 @@ public class UserServiceObject {
     private String lastname;
     private String username;
     private String password;
+    private Set<UserGroupEntity> userGroups=new HashSet<>();
+
 
     public UserServiceObject() {
     }
@@ -26,6 +33,7 @@ public class UserServiceObject {
         this.username = username;
 
     }
+
 
     public String getUserIdentifier() {
         return userIdentifier;
@@ -65,5 +73,13 @@ public class UserServiceObject {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<UserGroupEntity> getUserGroups() {
+        return userGroups;
+    }
+
+    public void setUserGroups(Set<UserGroupEntity> userGroups) {
+        this.userGroups = userGroups;
     }
 }

@@ -26,6 +26,7 @@ public class UserGroupEntity {
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<DocumentTypeEntity> availableDocumentTypesToUpload = new HashSet<>();
     @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<DocumentEntity> documentsToApprove= new HashSet<>();
 
 

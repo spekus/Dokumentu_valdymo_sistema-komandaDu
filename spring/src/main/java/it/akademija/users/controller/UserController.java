@@ -78,6 +78,7 @@ public class UserController {
                                @RequestParam("title") String title) {
         userService.addGroupToUser(userIdentifier, title);
     }
+
 // destytojo
 //    @Component("restAuthenticationEntryPoint")
 ////    Spring secuity,needed to generated 401
@@ -88,4 +89,5 @@ public class UserController {
 //            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Cia tau negalima");
 //        }
 //    }
+
 }

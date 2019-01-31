@@ -1,34 +1,28 @@
 import React from 'react';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
-
 
 const DocumentsListSimple = (props) => {
     return (
         <React.Fragment>
-            <Table>
-                <TableHead style={{backgroundColor:'#EEEEEE'}}>
-                    <TableRow>
-                        <TableCell>Dokumento tipas</TableCell>
-                        <TableCell align="right">Autorius</TableCell>
-                        <TableCell align="right">Sukurimo data</TableCell>
-                    </TableRow>
-                </TableHead>
-                <TableBody>
+            <table class="table">
+                <thead style={{backgroundColor:'#EEEEEE'}}>
+                    <tr>
+                        <th>Dokumento tipas</th>
+                        <th>Autorius</th>
+                        <th className='lastColumn'>Sukurimo data</th>
+                    </tr>
+                </thead>
+                <tbody>
                     {props.list.map(item => (
-                        <TableRow key={item.id}>
-                            <TableCell component="th" scope="row">
+                        <tr key={item.id}>
+                            <td>
                                 {item.doctype}
-                            </TableCell>
-                            <TableCell align="right">{item.author}</TableCell>
-                            <TableCell align="right">{item.date}</TableCell>
-                        </TableRow>
+                            </td>
+                            <td>{item.author}</td>
+                            <td className='lastColumn'>{item.date}</td>
+                        </tr>
                     ))}
-                </TableBody>
-            </Table>
+                </tbody>
+            </table>
         </React.Fragment>
     );
 };
