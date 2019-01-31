@@ -1,11 +1,10 @@
 package it.akademija.documents.repository;
 
 import it.akademija.documents.DocumentState;
-import it.akademija.documents.MyGenerator;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 public class DocumentEntity {
@@ -14,10 +13,9 @@ public class DocumentEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
+
     @Column(unique = true, nullable = false)
-    @GeneratedValue(generator = MyGenerator.generatorName)
-    @GenericGenerator(name = MyGenerator.generatorName, strategy = "a.b.c.MyGenerator")
-    private String documentIdentifier;
+    private String documentIdentifier = UUID.randomUUID().toString().replace("-", "");
 
     private String author;
 
