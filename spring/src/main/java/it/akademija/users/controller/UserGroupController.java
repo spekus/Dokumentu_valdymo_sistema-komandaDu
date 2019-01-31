@@ -38,6 +38,7 @@ public class UserGroupController {
     @RequestMapping(value = "/getGroup", method = RequestMethod.GET, produces = "application/json")
     public UserGroupServiceObject getUser(@RequestParam("title") String title) {
         return userGroupService.getGroupByTitle(title);
+        // ka sitas turetu daryt? Augis . manau galima trint, tipo parodo kad egzistuoja
     }
 
     @RequestMapping(value = "/showAllGroups", method = RequestMethod.GET)

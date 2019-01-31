@@ -3,9 +3,6 @@ package it.akademija.users.controller;
 import it.akademija.users.service.UserService;
 import it.akademija.users.service.UserServiceObject;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
@@ -81,14 +78,14 @@ public class UserController {
                                @RequestParam("title") String title) {
         userService.addGroupToUser(userIdentifier, title);
     }
-
-    @Component("restAuthenticationEntryPoint")
-//    Spring secuity,needed to generated 401
-    public class SecurityEntryPoint implements AuthenticationEntryPoint {
-        @Override
-        public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
-                throws IOException, ServletException {
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Cia tau negalima");
-        }
-    }
+// destytojo
+//    @Component("restAuthenticationEntryPoint")
+////    Spring secuity,needed to generated 401
+//    public class SecurityEntryPoint implements AuthenticationEntryPoint {
+//        @Override
+//        public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
+//                throws IOException, ServletException {
+//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Cia tau negalima");
+//        }
+//    }
 }

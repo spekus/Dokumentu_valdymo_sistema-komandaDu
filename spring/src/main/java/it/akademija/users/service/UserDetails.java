@@ -1,18 +1,18 @@
-package it.akademija.users.service;
-
-import it.akademija.users.repository.UserEntity;
-import it.akademija.users.repository.UserRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-
-import javax.transaction.Transactional;
-
-public class UserDetails implements UserDetailsService {
-    @Override
-    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
-        return null;
-    }
+//package it.akademija.users.service;
+//
+//import it.akademija.users.repository.UserEntity;
+//import it.akademija.users.repository.UserRepository;
+//import org.springframework.beans.factory.annotation.Autowired;
+//import org.springframework.security.core.userdetails.UserDetailsService;
+//import org.springframework.security.core.userdetails.UsernameNotFoundException;
+//
+//import javax.transaction.Transactional;
+//
+//public class UserDetails implements UserDetailsService {
+//    @Override
+//    public org.springframework.security.core.userdetails.UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+//        return null;
+//    }
 
 //    @Autowired
 //    UserRepository userRepository;
@@ -37,4 +37,4 @@ public class UserDetails implements UserDetailsService {
 //        throw new UsernameNotFoundException(username + "Not found");
 //
 //    }
-}
+//}
