@@ -46,7 +46,6 @@ public class DocumentEntity {
         this.title = title;
         this.description = description;
         this.type = type;
-        this.documentIdentifier = 1;
 
     }
 
@@ -130,15 +129,6 @@ public class DocumentEntity {
 
     public void setRejectionReason(String rejectionReason) {
         this.rejectionReason = rejectionReason;
-    }
-
-
-    public int getDocumentIdentifier() {
-        return documentIdentifier;
-    }
-
-    public void setDocumentIdentifier(Integer documentIdentifier) {
-        this.documentIdentifier = documentIdentifier;
     }
 
     public DocumentState getDocumentState() {
