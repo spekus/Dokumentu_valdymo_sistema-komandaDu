@@ -11,6 +11,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
@@ -56,11 +57,10 @@ public class UserService {
 
 
     @Transactional
-    public void addNewUser(UserServiceObject userServiceObject) {
-        UserEntity userEntity = new UserEntity(userServiceObject.getUserIdentifier(), userServiceObject.getFirstname(), userServiceObject.getLastname(),
-                userServiceObject.getUsername(), userServiceObject.getPassword());
-        UserEntity userEntityFromDataBase1 = userRepository.findUserByUserIdentifier(userServiceObject.getUserIdentifier());
-        UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(userServiceObject.getUsername());
+    public void addNewUser(String userIdentifier, String firstname, String lastname, String username, String password) {
+        UserEntity userEntity = new UserEntity(userIdentifier, firstname,lastname,username,password);
+        UserEntity userEntityFromDataBase1 = userRepository.findUserByUserIdentifier(userIdentifier);
+        UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
         if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
             userRepository.save(userEntity);
         }
@@ -77,7 +77,7 @@ public class UserService {
             userServiceObject.setLastname(userEntity.getLastname());
             userServiceObject.setUsername(userEntity.getUsername());
             userServiceObject.setPassword(userEntity.getPassword());
-           userServiceObject.setUserGroups(userEntity.getUserGroups());
+            userServiceObject.setUserGroups(userEntity.getUserGroups());
             return userServiceObject;
         }
         return null;
@@ -85,16 +85,24 @@ public class UserService {
 
     @Transactional
     public List<UserServiceObject> getAllUsers() {
-        return userRepository.findAll().stream().map(userEntity -> new UserServiceObject(userEntity.getUserIdentifier(),
-                userEntity.getFirstname(),
-                userEntity.getLastname(),
-                userEntity.getUsername()))
-                .collect(Collectors.toList());
+        List<UserEntity> users = userRepository.findAll();
+        List<UserServiceObject> userDto = new ArrayList<>();
+        for (UserEntity userEntity : users) {
+            UserServiceObject userServiceObject = new UserServiceObject();
+            userServiceObject.setUserIdentifier(userEntity.getUserIdentifier());
+            userServiceObject.setFirstname(userEntity.getFirstname());
+            userServiceObject.setLastname(userEntity.getLastname());
+            userServiceObject.setUsername(userEntity.getUsername());
+            userServiceObject.setPassword(userEntity.getPassword());
+            userServiceObject.setUserGroups(userEntity.getUserGroups());
+            userDto.add(userServiceObject);
+        }
+        return userDto;
     }
 
 
     @Transactional
-    public List<UserServiceObject> getAllUsersWithPasswords () {
+    public List<UserServiceObject> getAllUsersWithPasswords() {
         return userRepository.findAll().stream().map(userEntity -> new UserServiceObject(userEntity.getUserIdentifier(),
                 userEntity.getFirstname(),
                 userEntity.getLastname(),
@@ -102,7 +110,6 @@ public class UserService {
                 userEntity.getPassword()))
                 .collect(Collectors.toList());
     }
-
 
 
     @Transactional
@@ -145,18 +152,7 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
-    @Transactional
-    public List<UserServiceObject> getAllUsersWithFullInfo() {
-        return userRepository.findAll().stream().map(userEntity -> new UserServiceObject(userEntity.getUserIdentifier(),
-                userEntity.getFirstname(),
-                userEntity.getLastname(),
-                userEntity.getUsername()))
-                .collect(Collectors.toList());
-    }
-
 }
-
-
 
 
 

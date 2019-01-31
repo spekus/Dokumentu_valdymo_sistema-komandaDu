@@ -1,11 +1,10 @@
 package it.akademija.documents.repository;
 
 import it.akademija.documents.DocumentState;
-import it.akademija.documents.MyGenerator;
-import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 public class DocumentEntity {
@@ -16,7 +15,9 @@ public class DocumentEntity {
 
 
 
-    private Integer documentIdentifier;
+    @Column(unique = true, nullable = false)
+    private String documentIdentifier = UUID.randomUUID().toString().replace("-", "");
+
 
     private String author;
 

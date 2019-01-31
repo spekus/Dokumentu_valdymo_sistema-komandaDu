@@ -1,9 +1,7 @@
 package it.akademija.users.repository;
 
 
-import it.akademija.documents.MyGenerator;
 import it.akademija.documents.repository.DocumentEntity;
-import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -22,11 +20,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-
-
-//    @Column(unique=true, nullable=false)
-//    @GeneratedValue(generator= MyGenerator.generatorName)
-//    @GenericGenerator(name = MyGenerator.generatorName, strategy = "a.b.c.MyGenerator")
+    
     private String userIdentifier;
     private String username;
     private String firstname;
@@ -134,7 +128,7 @@ public class UserEntity {
 
 
 
-    //    public Set<UserGroupEntity> getUserGroups() {
+//        public Set<UserGroupEntity> getUserGroups() {
 //        return userGroups;
 //    }
 //

@@ -2,6 +2,7 @@ package it.akademija.users.controller;
 
 import it.akademija.users.service.UserService;
 import it.akademija.users.service.UserServiceObject;
+import org.h2.command.ddl.CreateUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
@@ -33,8 +34,9 @@ public class UserController {
 
 
     @RequestMapping(value = "/add", method = RequestMethod.POST)
-    public void addNewUser(@RequestBody UserServiceObject userServiceObject) {
-        userService.addNewUser(userServiceObject);
+    public void addNewUser(@RequestBody CreateUserCommand cuc) {
+        userService.addNewUser(cuc.getUserIdentifier(), cuc.getFirstname(), cuc.getLastname(), cuc.getUsername(),
+                cuc.getPassword());
     }
 
     @RequestMapping(value = "/get", method = RequestMethod.GET, produces = "application/json")
