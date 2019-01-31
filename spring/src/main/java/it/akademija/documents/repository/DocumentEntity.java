@@ -14,10 +14,9 @@ public class DocumentEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @Column(unique = true, nullable = false)
-    @GeneratedValue(generator = MyGenerator.generatorName)
-    @GenericGenerator(name = MyGenerator.generatorName, strategy = "a.b.c.MyGenerator")
-    private String documentIdentifier;
+
+
+    private Integer documentIdentifier;
 
     private String author;
 
@@ -46,7 +45,7 @@ public class DocumentEntity {
         this.title = title;
         this.description = description;
         this.type = type;
-
+        this.documentIdentifier = 1;
 
     }
 
@@ -133,11 +132,11 @@ public class DocumentEntity {
     }
 
 
-    public String getDocumentIdentifier() {
+    public int getDocumentIdentifier() {
         return documentIdentifier;
     }
 
-    public void setDocumentIdentifier(String documentIdentifier) {
+    public void setDocumentIdentifier(Integer documentIdentifier) {
         this.documentIdentifier = documentIdentifier;
     }
 

@@ -16,7 +16,7 @@ public class FileService {
     FileRepository fileRepository;
 
     @Transactional
-    public void addFileToDataBase(MultipartFile multipartFile) {
+    public String addFileToDataBase(MultipartFile multipartFile) {
 
         File uploadingLocation = uploadFileToLocalServer(multipartFile); //uploads file to the server
 
@@ -25,7 +25,9 @@ public class FileService {
         fileEntity.setFileLocation(uploadingLocation.getAbsolutePath());
         fileEntity.setContentType(multipartFile.getContentType());
         fileEntity.setSize(multipartFile.getSize());
+
         fileRepository.save(fileEntity);
+        return fileEntity.getIdentifier();
 
     }
 
@@ -47,12 +49,13 @@ public class FileService {
 
 
     public FileServiceObject findFile(String identifier) {
-        FileEntity fileEntity = fileRepository.getFileByFileName(identifier);
+        FileEntity fileEntity = fileRepository.getFileByIdentifier(identifier);
         FileServiceObject fileServiceObject = new FileServiceObject();
         fileServiceObject.setContentType(fileEntity.getContentType());
         fileServiceObject.setFileLocation(fileEntity.getFileLocation());
         fileServiceObject.setFileName(fileEntity.getFileName());
         fileServiceObject.setSize(fileEntity.getSize());
+        fileServiceObject.setIdentifier(fileEntity.getIdentifier());
         return fileServiceObject;
     }
 }

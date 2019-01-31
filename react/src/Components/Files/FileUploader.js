@@ -7,8 +7,11 @@ export default class FileUploader extends Component {
     state = {
         file: '',
         error: '',
-        msg: ''
+        msg: '',
+        savedFileIdentifier: ''
     }
+
+    
 
     uploadFile = (event) => {
         event.preventDefault();
@@ -34,6 +37,26 @@ export default class FileUploader extends Component {
         })
             .then(response => {
                 this.setState({error: '', msg: 'Sucessfully uploaded file'});
+                // callback(response.body);
+                console.log(response.body);
+                console.log(response)
+                console.log(response.bodyUsed)
+
+                // to read response object from controller
+                if (response.ok) {
+                    response.json().then(json => {
+                      console.log(json);
+                      var identifier = json.text;
+                      this.setState(
+                          {savedFileIdentifier: identifier});
+                      console.log("the file is saved to the state - " +
+                          this.state.savedFileIdentifier);
+
+
+                    //   console.log(identifier[0].text);
+
+                    });
+                }
             })
             .catch(err => {
                     this.setState({error: err.message})
