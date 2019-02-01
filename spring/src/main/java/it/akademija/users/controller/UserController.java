@@ -33,6 +33,7 @@ public class UserController {
                 cuc.getPassword());
     }
 
+
     @RequestMapping(value = "/get", method = RequestMethod.GET, produces = "application/json")
     public UserServiceObject getUser(@RequestParam("username") String username) {
         return userService.getUserByUsername(username);
@@ -60,7 +61,6 @@ public class UserController {
     }
 
 
-
     @RequestMapping(value = "/get/login", method = RequestMethod.GET, produces = "application/json")
     public UserServiceObject getUser(@RequestParam("username") String username,
                                      @RequestParam("password") String password) {
@@ -74,7 +74,6 @@ public class UserController {
                                @RequestParam("title") String title) {
         userService.addGroupToUser(userIdentifier, title);
     }
-
 
 
 }
