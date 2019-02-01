@@ -24,7 +24,8 @@ public class UserEntity {
     private String lastname;
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<DocumentEntity> documentEntities=new HashSet<>();
 
     @OneToMany
@@ -123,7 +124,7 @@ public class UserEntity {
 
 
 
-    //    public Set<UserGroupEntity> getUserGroups() {
+//        public Set<UserGroupEntity> getUserGroups() {
 //        return userGroups;
 //    }
 //

@@ -9,11 +9,13 @@ import java.util.Set;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-    UserEntity findUserByUserIdentifier(String userIdentifier);
-    Set<DocumentEntity> findDocumentsByUserIdentifier(String userIdentifier);
-    void deleteByUserIdentifier(String userIdentifier);
-    UserEntity findUserByUsername(String username);
-    UserEntity findUserByUsernameAndPassword(String username, String password);
+    public UserEntity findUserByUserIdentifier(String userIdentifier);
+
+
+    public Set<DocumentEntity> findDocumentsByUserIdentifier(String userIdentifier);
+    public void deleteByUserIdentifier(String userIdentifier);
+    public UserEntity findUserByUsername(String username);
+    public UserEntity findUserByUsernameAndPassword(String username, String password);
 
 
 }

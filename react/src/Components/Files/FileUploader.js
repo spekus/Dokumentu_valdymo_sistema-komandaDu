@@ -77,24 +77,61 @@ export default class FileUploader extends Component {
             <React.Fragment>
 
                 {/* Main content */}
-                <div className="row">
-                    <div className='col-lg-6'>
-                        <h6>
-                            Upload a file
-                        </h6>
+                <div>
+                    <div>
+                        <h4 className="my-4" align="center">
+                            Naujo dokumento sukūrimas
+                        </h4>
 
-                        <h4 style={{color: 'red'}}>{this.state.error}</h4>
-                        <h4 style={{color: 'green'}}>{this.state.msg}</h4>
-                        <input onChange={this.onFileChange} type="file"></input><br/>
 
-                        <button onClick={this.uploadFile}>Upload</button>
-                    </div>
-                    <div className='col-lg-6'>
-                            <div>
-                                <h6>Download</h6>
-                                <button onClick={this.downloadFile}>Download a random file</button>
+                        <form classname="form1 col-md-9">
+                            <div className="row">
+                                <div className="col-md-2"></div>
+                                <div className="col-md-9">
+                                <div className="form-group col-md-10">
+                                    <label htmlFor="exampleFormControlInput1">Pavadinimas</label>
+                                    <input type="text" className="form-control" id="exampleFormControlInput1"
+                                           placeholder="Įveskite dokumento pavadinimą"/>
+                                </div>
+                                <div className="form-group col-md-10">
+                                    <label htmlFor="exampleFormControlSelect1">Dokumento tipas</label>
+                                    <select className="form-control" id="exampleFormControlSelect1">
+                                        <option>1. Bendri</option>
+                                        <option>2. Darbuotojų prašymai</option>
+                                        <option>3. Projektų dokumentacija</option>
+                                        <option>4. Buhalteriniai dokumentai</option>
+                                        <option>5. Kita</option>
+                                    </select>
+                                </div>
+                                <div className="form-group col-md-10">
+                                    <label htmlFor="exampleFormControlTextarea1">Aprašymas</label>
+                                    <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"
+                                              placeholder="Įveskite trumpą dokumento aprašymą"></textarea>
+                                </div>
+
+                                <div className="form-group col-md-9 mt-4">
+                                    <input onChange={this.onFileChange} type="file"></input><br/>
+                                    <h4 style={{color: 'red'}}>{this.state.error}</h4>
+                                    <h4 style={{color: 'green'}}>{this.state.msg}</h4>
+
+                                </div>
+                                </div>
                             </div>
+                        </form>
+
+                        <React.Fragment>
+
+                            <div className="text-center">
+                                <button type="submit" className="btn btn-danger my-4"
+                                        onClick={this.uploadFile}>Išsaugoti
+                                </button>
+                            </div>
+
+                        </React.Fragment>
+
+
                     </div>
+
                 </div>
             </React.Fragment>
         );

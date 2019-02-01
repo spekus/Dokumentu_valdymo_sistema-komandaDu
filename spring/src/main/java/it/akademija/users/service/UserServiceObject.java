@@ -34,6 +34,14 @@ public class UserServiceObject {
 
     }
 
+    public UserServiceObject(String userIdentifier, String firstname, String lastname, String username, String password, Set<UserGroupEntity> userGroups) {
+        this.userIdentifier = userIdentifier;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.password = password;
+        this.userGroups = userGroups;
+    }
 
     public String getUserIdentifier() {
         return userIdentifier;
