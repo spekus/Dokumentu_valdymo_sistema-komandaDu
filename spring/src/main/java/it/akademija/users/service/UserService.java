@@ -58,7 +58,7 @@ public class UserService {
 
     @Transactional
     public void addNewUser(String userIdentifier, String firstname, String lastname, String username, String password) {
-        UserEntity userEntity = new UserEntity(userIdentifier, firstname,lastname,username,password);
+        UserEntity userEntity = new UserEntity(userIdentifier, firstname, lastname, username, password);
         UserEntity userEntityFromDataBase1 = userRepository.findUserByUserIdentifier(userIdentifier);
         UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
         if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
@@ -131,11 +131,13 @@ public class UserService {
     public UserServiceObject getUserForLogin(String username, String password) {
         UserEntity userEntity = userRepository.findUserByUsernameAndPassword(username, password);
         if (userEntity != null) {
+
             UserServiceObject userServiceObject = new UserServiceObject(userEntity.getUserIdentifier(), userEntity.getFirstname(),
                     userEntity.getLastname(), userEntity.getUsername());
             return userServiceObject;
         }
         return null;
+
     }
 
     @Transactional

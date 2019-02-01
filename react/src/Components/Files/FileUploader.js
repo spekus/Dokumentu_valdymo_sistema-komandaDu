@@ -5,46 +5,13 @@ import axios from 'axios';
 // run npm install file-saver --save
 
 export default class FileUploader extends Component {
-    constructor(props) {
-        super(props);
 
-        this.state = ({
-            file: '',
-            error: '',
-            msg: ''
-        },
-            {title: ""},
-            {description: ""},
-            {type: ""})
+     state = {
+        file: '',
+        error: '',
+        msg: '',
+        savedFileIdentifier: ''
     }
-
-
-    handleChangeTitle = (event) => this.setState({title: event.target.value});
-    handleChangeDescription = (event) => this.setState({description: event.target.value});
-    handleChangeType = (event) => this.setState({type: event.target.value});
-
-
-    handleSubmit = (event) => {
-        this.setState({value: 'reset after submit'});
-        event.preventDefault();
-        console.log(this.state);
-        const newDocument = {...this.state};
-
-        console.log(newDocument);
-
-        axios.post('/api/users/{userIdentifier}/documents', newDocument)
-            .then(response => {
-                console.log(response);
-                this.setState({});
-
-            })
-            .catch(error => {
-                window.alert("Nepavyko. Klaida: " + error);
-            });
-
-
-        // this.props.history.push(/ProductDisplay) - 2 komponentu.
-    };
 
 
     uploadFile = (event) => {
@@ -71,6 +38,26 @@ export default class FileUploader extends Component {
         })
             .then(response => {
                 this.setState({error: '', msg: 'Sucessfully uploaded file'});
+                // callback(response.body);
+                console.log(response.body);
+                console.log(response)
+                console.log(response.bodyUsed)
+
+                // to read response object from controller
+                if (response.ok) {
+                    response.json().then(json => {
+                      console.log(json);
+                      var identifier = json.text;
+                      this.setState(
+                          {savedFileIdentifier: identifier});
+                      console.log("the file is saved to the state - " +
+                          this.state.savedFileIdentifier);
+
+
+                    //   console.log(identifier[0].text);
+
+                    });
+                }
             })
             .catch(err => {
                     this.setState({error: err.message})

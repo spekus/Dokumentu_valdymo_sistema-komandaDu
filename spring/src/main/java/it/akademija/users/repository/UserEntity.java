@@ -7,6 +7,9 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 
 import javax.persistence.*;
+
+import javax.validation.constraints.NotBlank;
+
 import java.util.HashSet;
 
 import java.util.Set;
@@ -22,9 +25,12 @@ public class UserEntity {
     private String username;
     private String firstname;
     private String lastname;
+
+
     private String password;
 
-    @OneToMany(fetch = FetchType.EAGER)
+    @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<DocumentEntity> documentEntities=new HashSet<>();
 
     @OneToMany

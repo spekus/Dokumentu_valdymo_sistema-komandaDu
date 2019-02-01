@@ -3,8 +3,11 @@ package it.akademija.documents.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
+import it.akademija.files.ResponseTransfer;
+import it.akademija.files.service.FileServiceObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +18,7 @@ import java.util.Set;
 
 @RestController
 @Api(value="document")
-@RequestMapping(value = "/api/users")
+@RequestMapping(value = "/api/documents")
 public class DocumentController {
     private final DocumentService documentService;
 
@@ -42,30 +45,35 @@ public class DocumentController {
     }
 
 
-    @RequestMapping(path="/{userIdentifier}/documents", method = RequestMethod.POST)
+    @RequestMapping(path="/{userIdentifier}/documentAddToGroups", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value="Add user's document", notes="Adds new document to user's account")
-    public void addDocument(@ApiParam(value="UniqueIdentifier", required=true) @PathVariable String userIdentifier,
+    public ResponseTransfer addDocument(@ApiParam(value="UniqueIdentifier", required=true) @PathVariable String userIdentifier,
                                @ApiParam(value="New document data", required=true) @Valid @RequestBody final CreateDocumentCommand p) {
+        //creates document
+        DocumentEntity documentEntity =
         documentService.addDocument(userIdentifier, p.getTitle(), p.getType(), p.getDescription());
+        //this added so that somehow we can get document identifier to merge document and file.
+        return new ResponseTransfer(documentEntity.getDocumentIdentifier());
+
     }
 
-    @RequestMapping(path="/documents/{documentIdentifier}", method = RequestMethod.PUT)
-    @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value="Edit document",notes="Changes selected document's data")
-    public void updateDocument(
-            @ApiParam(value="DocumentEntity identifier",required=true)
-            @Valid
-            @PathVariable final String documentIdentifier,
-            @ApiParam(value="DocumentEntity data",required=true)
-            @Valid
-            @RequestBody final CreateDocumentCommand cmd) {
+//    @RequestMapping(path="/documents/{documentIdentifier}", method = RequestMethod.PUT)
+//    @ResponseStatus(HttpStatus.OK)
+//    @ApiOperation(value="Edit document",notes="Changes selected document's data")
+//    public void updateDocument(
+//            @ApiParam(value="DocumentEntity identifier",required=true)
+//            @Valid
+//            @PathVariable final String documentIdentifier,
+//            @ApiParam(value="DocumentEntity data",required=true)
+//            @Valid
+//            @RequestBody final CreateDocumentCommand cmd) {
+//
+//        documentService.updateDocument(documentIdentifier,cmd.getTitle(),cmd.getDescription(),
+//                cmd.getType());
+//    }
 
-        documentService.updateDocument(documentIdentifier,cmd.getTitle(),cmd.getDescription(),
-                cmd.getType());
-    }
-
-    @RequestMapping(path="/documents/{documentIdentifier}/submit", method = RequestMethod.PUT)
+    @RequestMapping(path="/documents/{documentIdentifier}/submitForApproval", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value="Submit document",notes="Submits document for approval")
     public void submitDocument(

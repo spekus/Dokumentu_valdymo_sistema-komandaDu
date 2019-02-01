@@ -4,8 +4,14 @@ import it.akademija.users.service.UserService;
 import it.akademija.users.service.UserServiceObject;
 import org.h2.command.ddl.CreateUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.ServletException;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.util.Collection;
 
 @RestController
@@ -32,6 +38,7 @@ public class UserController {
         userService.addNewUser(cuc.getUserIdentifier(), cuc.getFirstname(), cuc.getLastname(), cuc.getUsername(),
                 cuc.getPassword());
     }
+
 
     @RequestMapping(value = "/get", method = RequestMethod.GET, produces = "application/json")
     public UserServiceObject getUser(@RequestParam("username") String username) {
@@ -60,7 +67,6 @@ public class UserController {
     }
 
 
-
     @RequestMapping(value = "/get/login", method = RequestMethod.GET, produces = "application/json")
     public UserServiceObject getUser(@RequestParam("username") String username,
                                      @RequestParam("password") String password) {
@@ -74,7 +80,6 @@ public class UserController {
                                @RequestParam("title") String title) {
         userService.addGroupToUser(userIdentifier, title);
     }
-
 
 
 }
