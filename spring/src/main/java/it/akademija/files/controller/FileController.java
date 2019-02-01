@@ -1,6 +1,7 @@
 package it.akademija.files.controller;
 
 
+import it.akademija.documents.service.DocumentService;
 import it.akademija.files.ResponseTransfer;
 import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileService;
@@ -36,6 +37,9 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private DocumentService documentService;
 
     //    private final FileRepository fileRepository;
 //
@@ -170,10 +174,15 @@ public class FileController {
         return new ResponseTransfer(fileServiceObject.getIdentifier());
     }
 
+    // this is used to add file to document, can beused for multiple file
     @RequestMapping(path = "/addFileToDocument}", method = RequestMethod.POST)
-    public void addFileToDocument(@NotNull @RequestParam("FileIdentifier") String fileIdentifier,
+    public ResponseEntity < String >  addFileToDocument(@NotNull @RequestParam("FileIdentifier") String fileIdentifier,
                                   @NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
+
         fileService.addFileToDocument(fileIdentifier, documentIdentifier);
+        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+
     }
 
 

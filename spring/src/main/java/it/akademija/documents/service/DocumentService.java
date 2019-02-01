@@ -34,40 +34,6 @@ public class DocumentService {
     private UserRepository userRepository;
 
 
-    public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier){
-        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
-            //converting from database object to normal one
-            DocumentServiceObject documentServiceObject = convertDocumentEntityToObject
-                    (documentRepository.findDocumentByDocumentIdentifier(documentIdentifier));
-           return documentServiceObject;
-        }
-        else{
-            throw new IllegalArgumentException("no valid document identifier provided");
-        }
-    }
-
-    public DocumentEntity getDocumentEntityByDocumentIdentifier(String documentIdentifier){
-        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
-            //converting from database object to normal one
-            DocumentEntity documentEntity =
-                    documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-            return documentEntity;
-        }
-        else{
-            throw new IllegalArgumentException("no valid document identifier provided");
-        }
-    }
-
-    // you can delete or move this. I was just thinking it might be cool to have one method for conversion
-    // less code to maintain
-    private DocumentServiceObject convertDocumentEntityToObject(DocumentEntity documentFromDatabase){
-        DocumentServiceObject documentServiceObject= new DocumentServiceObject();
-        documentServiceObject.setTitle(documentFromDatabase.getTitle());
-        documentServiceObject.setDescription(documentFromDatabase.getDescription());
-        documentServiceObject.setType(documentFromDatabase.getType());
-        return  documentServiceObject;
-    }
-
 
 
     @Autowired
@@ -233,6 +199,43 @@ public class DocumentService {
         // adds file to document. the search was done by unique identifiers
         getDocumentEntityByDocumentIdentifier(documentIdentifier).addFileToDocument(fileEntity);
     }
+
+
+
+    public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier){
+        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
+            //converting from database object to normal one
+            DocumentServiceObject documentServiceObject = convertDocumentEntityToObject
+                    (documentRepository.findDocumentByDocumentIdentifier(documentIdentifier));
+            return documentServiceObject;
+        }
+        else{
+            throw new IllegalArgumentException("no valid document identifier provided");
+        }
+    }
+
+    public DocumentEntity getDocumentEntityByDocumentIdentifier(String documentIdentifier){
+        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
+            //converting from database object to normal one
+            DocumentEntity documentEntity =
+                    documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+            return documentEntity;
+        }
+        else{
+            throw new IllegalArgumentException("no valid document identifier provided");
+        }
+    }
+
+    // you can delete or move this. I was just thinking it might be cool to have one method for conversion
+    // less code to maintain
+    private DocumentServiceObject convertDocumentEntityToObject(DocumentEntity documentFromDatabase){
+        DocumentServiceObject documentServiceObject= new DocumentServiceObject();
+        documentServiceObject.setTitle(documentFromDatabase.getTitle());
+        documentServiceObject.setDescription(documentFromDatabase.getDescription());
+        documentServiceObject.setType(documentFromDatabase.getType());
+        return  documentServiceObject;
+    }
+
 }
 
 

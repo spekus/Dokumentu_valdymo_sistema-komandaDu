@@ -50,10 +50,10 @@ public class DocumentController {
     @ApiOperation(value="Add user's document", notes="Adds new document to user's account")
     public ResponseTransfer addDocument(@ApiParam(value="UniqueIdentifier", required=true) @PathVariable String userIdentifier,
                                @ApiParam(value="New document data", required=true) @Valid @RequestBody final CreateDocumentCommand p) {
-        //this added so that somehow we can get document identifier to merge document and file.
-        documentService.addDocument(userIdentifier, p.getTitle(), p.getType(), p.getDescription());
+        //creates document
         DocumentEntity documentEntity =
-                documentService.addDocument(userIdentifier, p.getTitle(), p.getType(), p.getDescription());
+        documentService.addDocument(userIdentifier, p.getTitle(), p.getType(), p.getDescription());
+        //this added so that somehow we can get document identifier to merge document and file.
         return new ResponseTransfer(documentEntity.getDocumentIdentifier());
 
     }

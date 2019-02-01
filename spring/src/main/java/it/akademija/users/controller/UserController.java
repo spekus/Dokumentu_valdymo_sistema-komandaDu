@@ -81,18 +81,5 @@ public class UserController {
         userService.addGroupToUser(userIdentifier, title);
     }
 
-<<<<<<< HEAD
-// destytojo
-//    @Component("restAuthenticationEntryPoint")
-////    Spring secuity,needed to generated 401
-//    public class SecurityEntryPoint implements AuthenticationEntryPoint {
-//        @Override
-//        public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException)
-//                throws IOException, ServletException {
-//            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Cia tau negalima");
-//        }
-//    }
-=======
->>>>>>> master
 
 }
