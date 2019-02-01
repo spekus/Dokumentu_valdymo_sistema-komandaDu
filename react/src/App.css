@@ -19,3 +19,14 @@ main.open{
 td.lastColumn,th.lastColumn {
     text-align: right;
 }
+
+.form1{
+  border-color: cornflowerblue;
+}
+
+.buttonXL{
+
+    font-size: 16px;
+
+    width:400%;
+}

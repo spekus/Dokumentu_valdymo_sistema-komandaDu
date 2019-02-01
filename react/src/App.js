@@ -10,6 +10,9 @@ import FileUploader from "./Components/Files/FileUploader";
 import SideNav, {NavItem, NavIcon, NavText} from '@trendmicro/react-sidenav';
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 import LoginLogoutLink from "./Components/UI/LoginLogoutLink";
+import FileDownloader from "./Components/Files/FileDownloader";
+import UserAdministration from "./Components/Users/UserAdministration";
+import NewUserForm from "./Components/Users/NewUserForm";
 
 class App extends React.Component {
     state = {
@@ -23,7 +26,7 @@ class App extends React.Component {
         {iconClass: 'fa fw fa-id-card', path: 'profile', text: 'Profilis'},
         {iconClass: 'fa fw fa-list', path: 'documents', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
-        {iconClass: 'fa fw fa-users', path: 'users', text: 'Naudotojai'},
+        {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
     ];
 
     sideBarToggled = (isOpen) => {
@@ -56,6 +59,7 @@ class App extends React.Component {
                 <Router>
                     <Route render={({location, history}) => (
                         <React.Fragment>
+
                             <SideNav
                                 onSelect={(selected) => {
                                     this.sideBarClicked(selected, location, history)
@@ -64,6 +68,7 @@ class App extends React.Component {
                                 expanded={this.state.sideBarIsOpen}
                             >
                                 <SideNav.Toggle/>
+
                                 <SideNav.Nav defaultSelected="">
                                     {this.menuItems.map((item) =>
                                         <NavItem eventKey={item.path} id={item.path}>
@@ -76,6 +81,8 @@ class App extends React.Component {
                                         </NavItem>)}
                                 </SideNav.Nav>
                             </SideNav>
+
+
                             <main className={this.state.sideBarIsOpen ? 'open' : ''}>
 
                                 <nav className="navbar navbar-expand-sm bg-light navbar-light justify-content-between">
@@ -91,12 +98,18 @@ class App extends React.Component {
                                         <Route path="/profile" component={UserProfile}/>
                                         <Route path="/users" component={UsersList}/>
                                         <Route exact path="/upload-file" component={FileUploader}/>
+                                        <Route exact path="/download-file" component={FileDownloader}/>
+                                        {/*<Route exact path="/user-administration" component={UserAdministration}/>*/}
+                                        <Route exact path="/user-administration" render={(props) => <UserAdministration {...props}  />}/>
+                                        <Route exact path="/user-registration" component={NewUserForm}/>
                                         <Route exact path="/logout" render={() => this.handleLogout(history)}/>
                                         <Route exact path="/login" render={() => this.handleLogin(history)}/>
                                         <Route component={NotFound}/>
                                     </Switch>
                                 </div>
                             </main>
+
+
                         </React.Fragment>
                     )}
                     />

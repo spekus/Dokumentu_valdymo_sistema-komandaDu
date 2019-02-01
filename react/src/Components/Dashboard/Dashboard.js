@@ -29,7 +29,9 @@ class Dashboard extends Component {
     render() {
         return (
             <React.Fragment>
+
                 <div className="row">
+
                     <div className='col-lg-6'>
                         <h5>Sukurti</h5>
                         <DocumentsListSimple list={this.state.created}/>

@@ -1,7 +1,6 @@
 package it.akademija.documents.service;
 
 
-
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
@@ -11,6 +10,7 @@ import it.akademija.files.service.FileServiceObject;
 import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 
+import it.akademija.users.repository.UserGroupRepository;
 import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,7 @@ import java.time.LocalDateTime;
 
 import java.util.HashSet;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -69,6 +70,9 @@ public class DocumentService {
 
 
 
+    @Autowired
+    private UserGroupRepository userGroupRepository;
+
 
     @Transactional
 
@@ -109,14 +113,20 @@ public class DocumentService {
 
     @Transactional
     public Set<DocumentServiceObject> getAllUserDocuments(String userIdentifier) {
-        Set<DocumentEntity> documentsFromDatabase = userRepository.findDocumentsByUserIdentifier(userIdentifier);
+        UserEntity userEntity=userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<DocumentEntity>documentsFromDatabase=userEntity.getDocumentEntities();
         return documentsFromDatabase.stream().map((documentEntity) ->
-                new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
-                        documentEntity.getPostedDate(), documentEntity.getApprover(), documentEntity.getRejectedDate(),
-                        documentEntity.getRejectionReason())).collect(Collectors.toSet());
-
-
-
+                new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
+                        documentEntity.getAuthor(),
+                        documentEntity.getTitle(),
+                        documentEntity.getType(),
+                        documentEntity.getDocumentState(),
+                        documentEntity.getDescription(),
+                        documentEntity.getPostedDate(),
+                        documentEntity.getApprovalDate(),
+                        documentEntity.getRejectedDate(),
+                        documentEntity.getRejectionReason(),
+                        documentEntity.getApprover())).collect(Collectors.toSet());
     }
 
     @Transactional
@@ -124,7 +134,7 @@ public class DocumentService {
         //Pasiimam useri is DB
         UserEntity userFromDatabase = userRepository.findUserByUserIdentifier(userIdentifier);
         //Pasiimam grupes, kurioms jis yra priskirtas
-        Set<UserGroupEntity> availableUserGroups=userFromDatabase.getUserGroups();
+        Set<UserGroupEntity> availableUserGroups = userFromDatabase.getUserGroups();
 
         //Pereinam per tas grupes ir tikrinam
         for (UserGroupEntity userGroup : availableUserGroups) {
@@ -134,9 +144,8 @@ public class DocumentService {
             for (DocumentTypeEntity documentTypeEntity : groupAvailableDocumentTypes) {
                 if (documentTypeEntity.getTitle().equals(type)) {
 //                    if (userFromDatabase.getUsername() != null) {
-                        DocumentEntity documentEntity = new DocumentEntity(title, description, type);
-                        documentEntity.setAuthor(userFromDatabase.getUsername());
-
+                    DocumentEntity documentEntity = new DocumentEntity(title, description, type);
+                    documentEntity.setAuthor(userFromDatabase.getUsername());
                         userFromDatabase.addDocument(documentEntity);
                         documentRepository.save(documentEntity);
                         return documentEntity;
@@ -151,11 +160,12 @@ public class DocumentService {
 
             }
         return null;
-        }
+
+    }
 
     @Transactional
     public void updateDocument(String documentIdentifier, String title, String description, String type) {
-        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
+        if (!documentIdentifier.isEmpty() && documentIdentifier != null) {
 
             DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             documentFromDatabase.setTitle(title);
@@ -166,30 +176,41 @@ public class DocumentService {
     }
 
     @Transactional
-    public void submitDocument (String documentIdentifier) {
-        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
+    public void submitDocument(String documentIdentifier) {
+        if (!documentIdentifier.isEmpty() && documentIdentifier != null) {
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-
+            sendSubmittedDocumentToApprove(documentEntityFromDatabase);
             documentEntityFromDatabase.setDocumentState(DocumentState.SUBMITTED);
-
-            LocalDateTime datePosted= LocalDateTime.now();
+            LocalDateTime datePosted = LocalDateTime.now();
             documentEntityFromDatabase.setPostedDate(datePosted);
             documentRepository.save(documentEntityFromDatabase);
         }
     }
 
     @Transactional
-    public void approveDocument (String documentIdentifier) {
-        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
+    public void sendSubmittedDocumentToApprove(DocumentEntity documentEntity){
+        List<UserGroupEntity> availableUserGroupsToGetSubmittedDoc=userGroupRepository.findAll();
+        for(UserGroupEntity userGroupEntity:availableUserGroupsToGetSubmittedDoc){
+            for(DocumentTypeEntity documentTypeEntity:userGroupEntity.getAvailableDocumentTypesToApprove()){
+                if(documentEntity.getType().equals(documentTypeEntity.getTitle())){
+                    userGroupEntity.getDocumentsToApprove().add(documentEntity);
+                }
+            }
+        }
+    }
+
+    @Transactional
+    public void approveDocument(String documentIdentifier) {
+        if (!documentIdentifier.isEmpty() && documentIdentifier != null) {
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
 
             documentEntityFromDatabase.setDocumentState(DocumentState.APPROVED);
-            LocalDateTime dateApproved= LocalDateTime.now();
+            LocalDateTime dateApproved = LocalDateTime.now();
             documentEntityFromDatabase.setApprovalDate(dateApproved);
 
 
-            }
-            }
+        }
+    }
 
 
     public DocumentRepository getDocumentRepository() {
