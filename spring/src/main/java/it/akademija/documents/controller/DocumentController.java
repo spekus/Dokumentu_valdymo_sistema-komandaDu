@@ -3,8 +3,11 @@ package it.akademija.documents.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
+import it.akademija.files.ResponseTransfer;
+import it.akademija.files.service.FileServiceObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -45,9 +48,14 @@ public class DocumentController {
     @RequestMapping(path="/{userIdentifier}/documentAddToGroups", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value="Add user's document", notes="Adds new document to user's account")
-    public void addDocument(@ApiParam(value="UniqueIdentifier", required=true) @PathVariable String userIdentifier,
+    public ResponseTransfer addDocument(@ApiParam(value="UniqueIdentifier", required=true) @PathVariable String userIdentifier,
                                @ApiParam(value="New document data", required=true) @Valid @RequestBody final CreateDocumentCommand p) {
+        //this added so that somehow we can get document identifier to merge document and file.
         documentService.addDocument(userIdentifier, p.getTitle(), p.getType(), p.getDescription());
+        DocumentEntity documentEntity =
+                documentService.addDocument(userIdentifier, p.getTitle(), p.getType(), p.getDescription());
+        return new ResponseTransfer(documentEntity.getDocumentIdentifier());
+
     }
 
 //    @RequestMapping(path="/documents/{documentIdentifier}", method = RequestMethod.PUT)

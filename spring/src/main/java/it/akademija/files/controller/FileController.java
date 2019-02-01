@@ -77,7 +77,7 @@ public class FileController {
 //            }
 //        }
 
-
+    // downloads a file, need unique document identifier
     @RequestMapping(path = "/download/{id ResponseEntity<InputStreamResource> entifier}", method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable final String identifier)
             throws IOException {
@@ -162,11 +162,18 @@ public class FileController {
 
     @PostMapping
     @ResponseBody
+    // create a file and upload it. return unique identifier.
     public ResponseTransfer uploadNewFile(@NotNull @RequestParam("file") MultipartFile multipartFile) {
         String uniqueIdentifier = fileService.addFileToDataBase(multipartFile);
-        //just sends identifier for a file .
+        //just sends identifier for a file as a JSON fi private Set<FileEntity> filesAttachedToDocument=le, visible on swager and react.
         FileServiceObject fileServiceObject = fileService.findFile(uniqueIdentifier);
         return new ResponseTransfer(fileServiceObject.getIdentifier());
+    }
+
+    @RequestMapping(path = "/addFileToDocument}", method = RequestMethod.POST)
+    public void addFileToDocument(@NotNull @RequestParam("FileIdentifier") String fileIdentifier,
+                                  @NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
+        fileService.addFileToDocument(fileIdentifier, documentIdentifier);
     }
 
 

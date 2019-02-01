@@ -1,6 +1,8 @@
 package it.akademija.files.service;
 
 
+import it.akademija.documents.service.DocumentService;
+import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.files.repository.FileEntity;
 import it.akademija.files.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,9 @@ import java.io.File;
 public class FileService {
     @Autowired
     FileRepository fileRepository;
+
+    @Autowired
+    DocumentService documentService;
 
     @Transactional
     public String addFileToDataBase(MultipartFile multipartFile) {
@@ -30,7 +35,7 @@ public class FileService {
         return fileEntity.getIdentifier();
 
     }
-
+    @Transactional
     public File uploadFileToLocalServer(MultipartFile file) {
 
         try {
@@ -47,17 +52,51 @@ public class FileService {
         }
     }
 
-
+    @Transactional
+    //Finds file in database and converts it to object
     public FileServiceObject findFile(String identifier) {
-        FileEntity fileEntity = fileRepository.getFileByIdentifier(identifier);
-        FileServiceObject fileServiceObject = new FileServiceObject();
-        fileServiceObject.setContentType(fileEntity.getContentType());
-        fileServiceObject.setFileLocation(fileEntity.getFileLocation());
-        fileServiceObject.setFileName(fileEntity.getFileName());
-        fileServiceObject.setSize(fileEntity.getSize());
-        fileServiceObject.setIdentifier(fileEntity.getIdentifier());
-        return fileServiceObject;
+        if (!identifier.isEmpty() && identifier!=null) {
+            FileEntity fileEntity = fileRepository.getFileByIdentifier(identifier);
+            FileServiceObject fileServiceObject = new FileServiceObject();
+            fileServiceObject.setContentType(fileEntity.getContentType());
+            fileServiceObject.setFileLocation(fileEntity.getFileLocation());
+            fileServiceObject.setFileName(fileEntity.getFileName());
+            fileServiceObject.setSize(fileEntity.getSize());
+            fileServiceObject.setIdentifier(fileEntity.getIdentifier());
+            return fileServiceObject;
+        }
+        else{
+            throw new IllegalArgumentException("ERROR no valid File identifier provided");
+        }
     }
+
+    @Transactional
+    //Finds file in database and converts it to object
+    public FileEntity findFileEntity(String identifier) {
+        if (!identifier.isEmpty() && identifier!=null) {
+            FileEntity fileEntity = fileRepository.getFileByIdentifier(identifier);
+            return fileEntity;
+        }
+        else{
+            throw new IllegalArgumentException("ERROR no valid File identifier provided");
+        }
+    }
+
+    @Transactional
+    public void addFileToDocument(String fileIdentifier, String documentIdentifier) {
+        DocumentServiceObject documentServiceObject =
+                documentService.getDocumentByDocumentIdentifier(documentIdentifier);
+        if(documentServiceObject.equals(null)){
+            throw new IllegalArgumentException("ERROR , identifier for file does not exist");
+        }
+        FileEntity fileEntity =
+                findFileEntity(fileIdentifier);
+        documentService.addFileToDocument(documentIdentifier, fileEntity);
+    }
+
+
+
+
 }
 
 
