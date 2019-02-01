@@ -15,7 +15,11 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
+<<<<<<< HEAD
 //@EnableWebMvc  // this one is for spring security https://www.baeldung.com/spring-mvc-tutorial
+=======
+@EnableWebMvc  // this one is for spring security https://www.baeldung.com/spring-mvc-tutorial
+>>>>>>> da92aed... some stuff which does not work
 @ImportResource({"classpath*:application-context.xml"}) // iesko sitam faile beans aprasymo
 public class App extends SpringBootServletInitializer {@Bean
 public Docket swaggerDocket() {
