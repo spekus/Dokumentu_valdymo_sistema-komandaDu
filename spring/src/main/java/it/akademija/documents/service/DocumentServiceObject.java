@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 
 public class DocumentServiceObject {
 
+    private String documentIdentifier;
     private String author;
     private String title;
     private String type;
@@ -154,4 +155,11 @@ public class DocumentServiceObject {
         this.approver = approver;
     }
 
+    public String getDocumentIdentifier() {
+        return documentIdentifier;
+    }
+
+    public void setDocumentIdentifier(String documentIdentifier) {
+        this.documentIdentifier = documentIdentifier;
+    }
 }

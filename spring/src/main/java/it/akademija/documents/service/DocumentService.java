@@ -33,7 +33,9 @@ public class DocumentService {
     @Transactional
 
     public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, String state) {
-        Set<DocumentEntity> documentsFromDatabase = userRepository.findDocumentsByUserIdentifier(userIdentifier);
+
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
         Set<DocumentEntity> documentsFromDatabaseWithState = new HashSet<>();
         for (DocumentEntity documentEntity : documentsFromDatabase) {
             if (documentEntity.getDocumentState().equals(state)) {
@@ -69,7 +71,8 @@ public class DocumentService {
 
     @Transactional
     public Set<DocumentServiceObject> getAllUserDocuments(String userIdentifier) {
-        Set<DocumentEntity> documentsFromDatabase = userRepository.findDocumentsByUserIdentifier(userIdentifier);
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
         return documentsFromDatabase.stream().map((documentEntity) ->
                 new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
                         documentEntity.getPostedDate(), documentEntity.getApprover(), documentEntity.getRejectedDate(),
