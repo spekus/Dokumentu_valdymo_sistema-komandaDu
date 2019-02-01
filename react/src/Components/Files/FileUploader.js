@@ -1,14 +1,51 @@
 import React, {Component} from 'react';
 import FileSaver from 'file-saver';
+import axios from 'axios';
+
 // run npm install file-saver --save
 
 export default class FileUploader extends Component {
+    constructor(props) {
+        super(props);
 
-    state = {
-        file: '',
-        error: '',
-        msg: ''
+        this.state = ({
+            file: '',
+            error: '',
+            msg: ''
+        },
+            {title: ""},
+            {description: ""},
+            {type: ""})
     }
+
+
+    handleChangeTitle = (event) => this.setState({title: event.target.value});
+    handleChangeDescription = (event) => this.setState({description: event.target.value});
+    handleChangeType = (event) => this.setState({type: event.target.value});
+
+
+    handleSubmit = (event) => {
+        this.setState({value: 'reset after submit'});
+        event.preventDefault();
+        console.log(this.state);
+        const newDocument = {...this.state};
+
+        console.log(newDocument);
+
+        axios.post('/api/users/{userIdentifier}/documents', newDocument)
+            .then(response => {
+                console.log(response);
+                this.setState({});
+
+            })
+            .catch(error => {
+                window.alert("Nepavyko. Klaida: " + error);
+            });
+
+
+        // this.props.history.push(/ProductDisplay) - 2 komponentu.
+    };
+
 
     uploadFile = (event) => {
         event.preventDefault();
@@ -50,27 +87,6 @@ export default class FileUploader extends Component {
         });
     }
 
-    downloadFile = () => {
-        fetch("http://localhost:8181/api/files/download/" + "4-uzduoties-egzamine-pvz.pdf")
-            .then(response => {
-                console.log(response);
-                console.log("downloadRandomStuff");
-                // Log somewhat to show that the browser actually exposes the custom HTTP header
-                const fileNameHeader = "x-suggested-filename";
-                const suggestedFileName = response.headers[fileNameHeader];
-                const effectiveFileName = (suggestedFileName === undefined
-                    ? "document.txt"
-                    : suggestedFileName);
-                console.log("Received header [" + fileNameHeader + "]: " + suggestedFileName
-                    + ", effective fileName: " + effectiveFileName);
-
-                // Let the user save the file.
-                FileSaver.saveAs(response.url, effectiveFileName);
-
-            }).catch((response) => {
-            console.error("Could not Download the Excel report from the backend.", response);
-        });
-    }
 
     render() {
         return (
@@ -84,37 +100,40 @@ export default class FileUploader extends Component {
                         </h4>
 
 
-                        <form classname="form1 col-md-9">
+                        <form classname="form1 col-md-9" onSubmit={this.handleSubmit}>
                             <div className="row">
                                 <div className="col-md-2"></div>
                                 <div className="col-md-9">
-                                <div className="form-group col-md-10">
-                                    <label htmlFor="exampleFormControlInput1">Pavadinimas</label>
-                                    <input type="text" className="form-control" id="exampleFormControlInput1"
-                                           placeholder="Įveskite dokumento pavadinimą"/>
-                                </div>
-                                <div className="form-group col-md-10">
-                                    <label htmlFor="exampleFormControlSelect1">Dokumento tipas</label>
-                                    <select className="form-control" id="exampleFormControlSelect1">
-                                        <option>1. Bendri</option>
-                                        <option>2. Darbuotojų prašymai</option>
-                                        <option>3. Projektų dokumentacija</option>
-                                        <option>4. Buhalteriniai dokumentai</option>
-                                        <option>5. Kita</option>
-                                    </select>
-                                </div>
-                                <div className="form-group col-md-10">
-                                    <label htmlFor="exampleFormControlTextarea1">Aprašymas</label>
-                                    <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"
-                                              placeholder="Įveskite trumpą dokumento aprašymą"></textarea>
-                                </div>
+                                    <div className="form-group col-md-10">
+                                        <label htmlFor="exampleFormControlInput1">Pavadinimas</label>
+                                        <input type="text" className="form-control" id="exampleFormControlInput1"
+                                               placeholder="Įveskite dokumento pavadinimą" value={this.state.title}
+                                               onChange={this.handleChangeTitle}/>
+                                    </div>
+                                    <div className="form-group col-md-10">
+                                        <label htmlFor="exampleFormControlSelect1">Dokumento tipas</label>
+                                        <select className="form-control" id="exampleFormControlSelect1">
+                                            <option value="Bendri">1.Bendri</option>
+                                            <option value="Darbuotojų prašymai">2.Darbuotojų prašymai</option>
+                                            <option value="Projektų dokumentacija">3.Projektų dokumentacija</option>
+                                            <option value="Buhalteriniai dokumentai">4.Buhalteriniai dokumentai</option>
+                                            <option value="Kita">5.Kita</option>
+                                        </select>
+                                    </div>
+                                    <div className="form-group col-md-10">
+                                        <label htmlFor="exampleFormControlTextarea1">Aprašymas</label>
+                                        <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"
+                                                  placeholder="Įveskite trumpą dokumento aprašymą"
+                                                  value={this.state.description}
+                                                  onChange={this.handleChangeDescription}></textarea>
+                                    </div>
 
-                                <div className="form-group col-md-9 mt-4">
-                                    <input onChange={this.onFileChange} type="file"></input><br/>
-                                    <h4 style={{color: 'red'}}>{this.state.error}</h4>
-                                    <h4 style={{color: 'green'}}>{this.state.msg}</h4>
+                                    <div className="form-group col-md-9 mt-4">
+                                        <input onChange={this.onFileChange} type="file"></input><br/>
+                                        <h4 style={{color: 'red'}}>{this.state.error}</h4>
+                                        <h4 style={{color: 'green'}}>{this.state.msg}</h4>
 
-                                </div>
+                                    </div>
                                 </div>
                             </div>
                         </form>
