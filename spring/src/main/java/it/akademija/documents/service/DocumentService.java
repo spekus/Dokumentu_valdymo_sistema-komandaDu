@@ -104,9 +104,6 @@ public class DocumentService {
                         System.out.println("User doesn't belong to a group that can create that type's documents");
                     }
                 }
-
-
-
             }
         }
 
