@@ -1,18 +1,22 @@
 package it.akademija.documents.service;
 
+import it.akademija.documents.DocumentState;
+
 import java.time.LocalDateTime;
 
 public class DocumentServiceObject {
-
+    private String documentIdentifier;
     private String author;
     private String title;
     private String type;
+    private DocumentState documentState;
     private String description;
     private LocalDateTime postedDate;
     private LocalDateTime approvalDate;
     private LocalDateTime rejectedDate;
     private String rejectedReason;
     private String approver;
+
 
 
     //What information document creator gets from API when the document is only created but not submitted
@@ -70,7 +74,21 @@ public class DocumentServiceObject {
 
     }
 
-//    //What information document approver gets from database when he already approved/rejected the document. ??
+    public DocumentServiceObject(String documentIdentifier, String author, String title, String type, DocumentState documentState, String description, LocalDateTime postedDate, LocalDateTime approvalDate, LocalDateTime rejectedDate, String rejectedReason, String approver) {
+        this.documentIdentifier = documentIdentifier;
+        this.author = author;
+        this.title = title;
+        this.type = type;
+        this.documentState = documentState;
+        this.description = description;
+        this.postedDate = postedDate;
+        this.approvalDate = approvalDate;
+        this.rejectedDate = rejectedDate;
+        this.rejectedReason = rejectedReason;
+        this.approver = approver;
+    }
+
+    //    //What information document approver gets from database when he already approved/rejected the document. ??
 //    public DocumentServiceObject(String author, String title, String type, String description, LocalDateTime postedDate
 //    ) {
 //        this.author=author;
@@ -154,4 +172,19 @@ public class DocumentServiceObject {
         this.approver = approver;
     }
 
+    public String getDocumentIdentifier() {
+        return documentIdentifier;
+    }
+
+    public void setDocumentIdentifier(String documentIdentifier) {
+        this.documentIdentifier = documentIdentifier;
+    }
+
+    public DocumentState getDocumentState() {
+        return documentState;
+    }
+
+    public void setDocumentState(DocumentState documentState) {
+        this.documentState = documentState;
+    }
 }
