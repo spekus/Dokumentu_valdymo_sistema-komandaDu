@@ -1,9 +1,11 @@
 package it.akademija.files.controller;
 
 
+import io.swagger.annotations.ApiParam;
 import it.akademija.documents.service.DocumentService;
 import it.akademija.files.ResponseTransfer;
 import it.akademija.files.repository.FileEntity;
+import it.akademija.files.service.FileDocumentCommand;
 import it.akademija.files.service.FileService;
 import it.akademija.files.service.FileServiceObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import java.io.File;
@@ -175,11 +178,11 @@ public class FileController {
     }
 
     // this is used to add file to document, can beused for multiple file
-    @RequestMapping(path = "/addFileToDocument}", method = RequestMethod.POST)
-    public ResponseEntity < String >  addFileToDocument(@NotNull @RequestParam("FileIdentifier") String fileIdentifier,
-                                  @NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
+    @RequestMapping(path = "/addFileToDocument", method = RequestMethod.POST)
+    public ResponseEntity<String>  addFileToDocument(
+            @ApiParam(value="Document and file identifiers", required=true) @Valid @RequestBody final FileDocumentCommand p){
 
-        fileService.addFileToDocument(fileIdentifier, documentIdentifier);
+        fileService.addFileToDocument(p.getFileIdentifier(), p.getDocumentIdentifier());
         return ResponseEntity.status(HttpStatus.CREATED).build();
 
 

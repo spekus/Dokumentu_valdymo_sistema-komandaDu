@@ -6,11 +6,41 @@ import axios from 'axios';
 
 export default class FileUploader extends Component {
 
-     state = {
+    state = {
+
         file: '',
         error: '',
         msg: '',
-        savedFileIdentifier: ''
+        // savedFileIdentifier: '',
+        // savedDocumentIdentifier: '',
+        type: 'Pirmas',
+        title: '',
+        description: '',
+        availableTypes: []
+    }
+
+
+    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
+    handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
+
+
+    componentWillMount(userId){
+        this.getTypesFromServer();
+    }
+
+    getTypesFromServer = (userId) => {
+        axios.get('/api/documentTypes')
+            .then(result => {
+                if (result.data.length > 0) {
+                    this.setState({availableTypes: result.data});
+                    this.setState({type: result.data[0]});
+                    console.log("Atsakymas is getTypesFromServer -" + result.data);
+                }
+            })
+            .catch(error => {
+                console.log("Atsakymas is getTypesFromServer - " + error)
+            })
+
     }
 
 
@@ -32,41 +62,70 @@ export default class FileUploader extends Component {
         data.append('file', this.state.file);
         data.append('name', this.state.file.name);
 
-        fetch('http://localhost:8181/api/files', {
-            method: 'POST',
-            body: data
-        })
+
+        axios.post('/api/files', data)
             .then(response => {
                 this.setState({error: '', msg: 'Sucessfully uploaded file'});
-                // callback(response.body);
-                console.log(response.body);
-                console.log(response)
-                console.log(response.bodyUsed)
+                if (response.data.text) {
+                    var fileId = response.data.text;
 
-                // to read response object from controller
-                if (response.ok) {
-                    response.json().then(json => {
-                      console.log(json);
-                      var identifier = json.text;
-                      this.setState(
-                          {savedFileIdentifier: identifier});
-                      console.log("the file is saved to the state - " +
-                          this.state.savedFileIdentifier);
+                    let documentDetails = {
+                        title: this.state.title,
+                        type: this.state.type,
+                        description: this.state.description
+                    };
 
+                    // Jeigu pavyko sukelti faila, mes bandome vartotojo vardu
+                    // sukurti dokumento specifikacija
+                    // ir suristi sukelta faila su juo
+                    this.addDocument("id123", documentDetails, fileId);
 
-                    //   console.log(identifier[0].text);
-
-                    });
                 }
             })
             .catch(err => {
-                    this.setState({error: err.message})
-                }
-            );
+                this.setState({error: err.message})
+                console.log("Error from /api/files - " + err)
+            });
 
 
     }
 
+    // Metodas prideda naudotojui dokumento specifikacija (DocumentDetails) ir susieja su failu,
+    // kuris jau buvo ikeltas anksciau.
+    addDocument(userId, documentDetails, fileId) {
+        axios.post('/api/documents/' + userId + '/documentAddToGroups', documentDetails)
+            .then(response => {
+                this.setState({'type': '', 'title': '', 'description': ''});
+
+                if (response.data.text) {
+                    var docId = response.data.text;
+                    this.addFileToDocument(docId, fileId);
+                }
+            })
+            .catch(err => {
+                this.setState({error: err.message})
+                console.log("Error from /api/documents/ - " + err)
+            });
+    }
+
+    // Sis metodas kvieciamas, kai turime dokumento ID ir failo ID
+    // Jis surisa backende esanti faila su naudotojo dokumento specifikacija
+    addFileToDocument(docId, fileID) {
+        let fileDocumentCommand = {
+            documentIdentifier: docId,
+            fileIdentifier: fileID
+        }
+
+        axios.post('/api/files/addFileToDocument', fileDocumentCommand)
+            .then(response => {
+                this.setState({[this.state.name]: ''});
+                console.log("Response from addFileToDocument - " + response)
+            })
+            .catch(err => {
+                console.log("Error from /api/files/addFileToDocument - " + err)
+
+            });
+    }
 
     onFileChange = (event) => {
         this.setState({
@@ -94,25 +153,31 @@ export default class FileUploader extends Component {
                                     <div className="form-group col-md-10">
                                         <label htmlFor="exampleFormControlInput1">Pavadinimas</label>
                                         <input type="text" className="form-control" id="exampleFormControlInput1"
-                                               placeholder="Įveskite dokumento pavadinimą" value={this.state.title}
-                                               onChange={this.handleChangeTitle}/>
+                                               placeholder="Įveskite dokumento pavadinimą" name="title"
+                                               value={this.state.title}
+                                               onChange={this.handleChangeInput}/>
                                     </div>
                                     <div className="form-group col-md-10">
                                         <label htmlFor="exampleFormControlSelect1">Dokumento tipas</label>
-                                        <select className="form-control" id="exampleFormControlSelect1">
-                                            <option value="Bendri">1.Bendri</option>
-                                            <option value="Darbuotojų prašymai">2.Darbuotojų prašymai</option>
-                                            <option value="Projektų dokumentacija">3.Projektų dokumentacija</option>
-                                            <option value="Buhalteriniai dokumentai">4.Buhalteriniai dokumentai</option>
-                                            <option value="Kita">5.Kita</option>
+                                        <select className="form-control" id="exampleFormControlSelect1"
+                                                value={this.state.type} onChange={this.handleChangeSelect} name="type">
+                                            {this.state.availableTypes.map(item =>(
+                                            <option value={item.title}>{item.title}</option>
+                                            ))}
+                                            {/*<option value="Pirmas">1.Bendri</option>*/}
+                                            {/*<option value="Antras">2.Darbuotojų prašymai</option>*/}
+                                            {/*<option value="3" value="1">3.Projektų dokumentacija</option>*/}
+                                            {/*<option value="4">4.Buhalteriniai dokumentai</option>*/}
+                                            {/*<option value="5">5.Kita</option>*/}
                                         </select>
                                     </div>
                                     <div className="form-group col-md-10">
                                         <label htmlFor="exampleFormControlTextarea1">Aprašymas</label>
                                         <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"
                                                   placeholder="Įveskite trumpą dokumento aprašymą"
+                                                  name="description"
                                                   value={this.state.description}
-                                                  onChange={this.handleChangeDescription}></textarea>
+                                                  onChange={this.handleChangeInput}></textarea>
                                     </div>
 
                                     <div className="form-group col-md-9 mt-4">
