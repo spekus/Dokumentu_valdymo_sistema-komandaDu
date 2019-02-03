@@ -14,6 +14,7 @@ import FileDownloader from "./Components/Files/FileDownloader";
 import UserAdministration from "./Components/Users/UserAdministration";
 import NewUserForm from "./Components/Users/NewUserForm";
 import LoginComponent from "./Components/Users/LoginComponent";
+import Settings from "./Components/Settings/Settings";
 
 class App extends React.Component {
     state = {
@@ -28,6 +29,7 @@ class App extends React.Component {
         {iconClass: 'fa fw fa-list', path: 'documents', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
         {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
+        {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai'},
     ];
 
     sideBarToggled = (isOpen) => {
@@ -111,6 +113,7 @@ class App extends React.Component {
                                             <Route exact path="/upload-file" component={FileUploader}/>
                                             <Route exact path="/download-file" component={FileDownloader}/>
                                             <Route exact path="/user-administration" component={UserAdministration}/>
+                                            <Route path="/settings" component={Settings}/>
                                             {/*<Route exact path="/user-administration"*/}
                                                    {/*render={(props) => <UserAdministration {...props}  />}/>*/}
                                             <Route exact path="/user-registration" component={NewUserForm}/>
