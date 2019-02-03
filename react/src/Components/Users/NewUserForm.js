@@ -40,11 +40,11 @@ class NewUserForm extends Component {
                                 <div className="form-group">
                                     <label htmlFor="exampleFormControlSelect2">Darbuotojų grupės</label>
                                     <select multiple className="form-control" id="exampleFormControlSelect2">
-                                        <option>1. Administracija</option>
-                                        <option>2. Buhalterija</option>
-                                        <option>3. Darbuotojai</option>
-                                        <option>4. Projektų vadovai</option>
-                                        <option>5. Praktikantai</option>
+                                        <option>1.Administracija</option>
+                                        <option>2.Buhalterija</option>
+                                        <option>3.Darbuotojai</option>
+                                        <option>4.Projektų vadovai</option>
+                                        <option>5.Praktikantai</option>
                                     </select>
                                     <small id="passwordHelpBlock" className="form-text text-muted">
                                         Galima pasirinkti daugiau nei vieną grupę.

@@ -18,6 +18,10 @@ public class DocumentServiceObject {
     private String rejectedReason;
     private String approver;
 
+    public DocumentServiceObject(){
+
+    }
+
 
 
     //What information document creator gets from API when the document is only created but not submitted

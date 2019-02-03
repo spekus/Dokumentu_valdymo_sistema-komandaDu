@@ -10,14 +10,32 @@ public class FileServiceObject {
 
     private Long size;
 
+    private String identifier;
 
-    public FileServiceObject() {}
+
+    public FileServiceObject() {
+        generateUniqueIdentifier();
+    }
 
     public FileServiceObject(String fileName, String contentType, String fileLocation, Long size) {
         this.fileName = fileName;
         this.contentType = contentType;
         this.fileLocation = fileLocation;
         this.size = size;
+        generateUniqueIdentifier();
+    }
+
+    private void generateUniqueIdentifier (){
+        this.identifier = this.fileName + (Math.random() * ((1000000000 - 0) + 1)) + 0;
+        //(Math.random() * ((max - min) + 1)) + min
+    }
+
+    public String getIdentifier() {
+        return identifier;
+    }
+
+    public void setIdentifier(String identifier) {
+        this.identifier = identifier;
     }
 
     public String getFileName() {

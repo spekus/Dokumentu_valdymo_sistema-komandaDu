@@ -87,9 +87,9 @@ public class UserGroupService {
     }
 
     @Transactional
-    public void updateGroupByTitle(String title) {
+    public void updateGroupByTitle(String title, String newTitle) {
         UserGroupEntity savedUserGroupEntity=userGroupRepository.findGroupByTitle(title);
-        savedUserGroupEntity.setTitle(title);
+        savedUserGroupEntity.setTitle(newTitle);
         UserGroupEntity updateUserGroupEntit=userGroupRepository.save(savedUserGroupEntity);
     }
 

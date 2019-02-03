@@ -5,6 +5,8 @@ import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
+import it.akademija.files.repository.FileEntity;
+import it.akademija.files.service.FileServiceObject;
 import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 
@@ -33,6 +35,7 @@ public class DocumentService {
 
     @Autowired
     private UserGroupRepository userGroupRepository;
+
 
     @Transactional
 
@@ -92,7 +95,7 @@ public class DocumentService {
     }
 
     @Transactional
-    public void addDocument(String userIdentifier, String title, String type, String description) {
+    public DocumentEntity addDocument(String userIdentifier, String title, String type, String description) {
         //Pasiimam useri is DB
         UserEntity userFromDatabase = userRepository.findUserByUserIdentifier(userIdentifier);
         //Pasiimam grupes, kurioms jis yra priskirtas
@@ -108,17 +111,21 @@ public class DocumentService {
 //                    if (userFromDatabase.getUsername() != null) {
                     DocumentEntity documentEntity = new DocumentEntity(title, description, type);
                     documentEntity.setAuthor(userFromDatabase.getUsername());
+                        userFromDatabase.addDocument(documentEntity);
+                        documentRepository.save(documentEntity);
+                        return documentEntity;
 
-                    userFromDatabase.addDocument(documentEntity);
-                    documentRepository.save(documentEntity);
 
-                } else {
-                    System.out.println("User doesn't belong to a group that can create that type's documents");
+
+                    } else {
+                        System.out.println("User doesn't belong to a group that can create that type's documents");
+                    }
+
                 }
+
             }
+        return null;
 
-
-        }
     }
 
     @Transactional
@@ -187,6 +194,48 @@ public class DocumentService {
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
+
+    public void addFileToDocument(String documentIdentifier, FileEntity fileEntity) {
+        // adds file to document. the search was done by unique identifiers
+        getDocumentEntityByDocumentIdentifier(documentIdentifier).addFileToDocument(fileEntity);
+    }
+
+
+
+    public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier){
+        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
+            //converting from database object to normal one
+            DocumentServiceObject documentServiceObject = convertDocumentEntityToObject
+                    (documentRepository.findDocumentByDocumentIdentifier(documentIdentifier));
+            return documentServiceObject;
+        }
+        else{
+            throw new IllegalArgumentException("no valid document identifier provided");
+        }
+    }
+
+    public DocumentEntity getDocumentEntityByDocumentIdentifier(String documentIdentifier){
+        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
+            //converting from database object to normal one
+            DocumentEntity documentEntity =
+                    documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+            return documentEntity;
+        }
+        else{
+            throw new IllegalArgumentException("no valid document identifier provided");
+        }
+    }
+
+    // you can delete or move this. I was just thinking it might be cool to have one method for conversion
+    // less code to maintain
+    private DocumentServiceObject convertDocumentEntityToObject(DocumentEntity documentFromDatabase){
+        DocumentServiceObject documentServiceObject= new DocumentServiceObject();
+        documentServiceObject.setTitle(documentFromDatabase.getTitle());
+        documentServiceObject.setDescription(documentFromDatabase.getDescription());
+        documentServiceObject.setType(documentFromDatabase.getType());
+        return  documentServiceObject;
+    }
+
 }
 
 

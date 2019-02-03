@@ -131,11 +131,13 @@ public class UserService {
     public UserServiceObject getUserForLogin(String username, String password) {
         UserEntity userEntity = userRepository.findUserByUsernameAndPassword(username, password);
         if (userEntity != null) {
+
             UserServiceObject userServiceObject = new UserServiceObject(userEntity.getUserIdentifier(), userEntity.getFirstname(),
                     userEntity.getLastname(), userEntity.getUsername());
             return userServiceObject;
         }
         return null;
+
     }
 
     @Transactional
