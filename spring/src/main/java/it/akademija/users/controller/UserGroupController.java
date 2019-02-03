@@ -1,5 +1,7 @@
 package it.akademija.users.controller;
 
+import it.akademija.documents.repository.DocumentEntity;
+import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.users.service.UserGroupService;
 import it.akademija.users.service.UserGroupServiceObject;
 
@@ -7,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
+import java.util.Set;
 
 @RestController
 
@@ -72,6 +75,12 @@ public class UserGroupController {
     public void addDocumentsToApprove(@RequestParam("userGroupTitle") String userGroupTitle,
                                          @RequestParam("documentIdentifier") String documentIdentifier) {
         userGroupService.addDocumentsToApprove(userGroupTitle,documentIdentifier);
+    }
+
+    @RequestMapping(value = "/getDocumentsToApprove", method = RequestMethod.GET)
+    public Set<DocumentServiceObject> getDocumentsToApprove(@RequestParam("userIdentifier") String userIdentifier
+                                      ) {
+        return userGroupService.getDocumentsToApprove(userIdentifier);
     }
 
 

@@ -36,17 +36,16 @@ public class DocumentService {
 
     @Transactional
 
-    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, String state) {
+    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, DocumentState state) {
 
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
         Set<DocumentEntity> documentsFromDatabaseWithState = new HashSet<>();
         for (DocumentEntity documentEntity : documentsFromDatabase) {
-            if (documentEntity.getDocumentState().equals(state)) {
+            if (documentEntity.getDocumentState()==state) {
                 documentsFromDatabaseWithState.add(documentEntity);
             }
         }
-
 
         if (state.equals(DocumentState.CREATED)) {
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
@@ -67,7 +66,6 @@ public class DocumentService {
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
                     new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
                             documentEntity.getPostedDate(), documentEntity.getApprover(), documentEntity.getRejectedDate(),
-
                             documentEntity.getRejectionReason())).collect(Collectors.toSet());
 
         }
@@ -167,6 +165,7 @@ public class DocumentService {
             documentEntityFromDatabase.setDocumentState(DocumentState.APPROVED);
             LocalDateTime dateApproved = LocalDateTime.now();
             documentEntityFromDatabase.setApprovalDate(dateApproved);
+            documentRepository.save(documentEntityFromDatabase);
 
 
         }

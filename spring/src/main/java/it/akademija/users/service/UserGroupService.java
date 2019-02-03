@@ -4,14 +4,20 @@ import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.repository.DocumentTypeRepository;
+import it.akademija.documents.service.DocumentServiceObject;
+import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
+import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.Document;
 import javax.transaction.Transactional;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,6 +31,9 @@ public class UserGroupService {
 
     @Autowired
     private DocumentRepository documentRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public UserGroupService(UserGroupRepository userGroupRepository, DocumentTypeRepository documentTypeRepository,
                             DocumentRepository documentRepository) {
@@ -115,7 +124,36 @@ public class UserGroupService {
         }
 
 
+
+
     }
+
+    //Get all documents from all groups which user can approve
+    @Transactional
+    public Set<DocumentServiceObject> getDocumentsToApprove(String userIdentifier) {
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
+        Set<DocumentEntity> allDocumentsToApprove = new HashSet<>();
+
+        for (UserGroupEntity userGroupEntity : groupsFromUser) {
+            allDocumentsToApprove.addAll(userGroupEntity.getDocumentsToApprove());
+        }
+
+        return allDocumentsToApprove.stream().map((documentEntity) ->
+                new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
+                        documentEntity.getAuthor(),
+                        documentEntity.getTitle(),
+                        documentEntity.getType(),
+                        documentEntity.getDocumentState(),
+                        documentEntity.getDescription(),
+                        documentEntity.getPostedDate(),
+                        documentEntity.getApprovalDate(),
+                        documentEntity.getRejectedDate(),
+                        documentEntity.getRejectionReason(),
+                        documentEntity.getApprover())).collect(Collectors.toSet());
+    }
+
+
 
 
 

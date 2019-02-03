@@ -3,6 +3,7 @@ package it.akademija.documents.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.akademija.documents.DocumentState;
 import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,7 +30,7 @@ public class DocumentController {
     public Set<DocumentServiceObject> getDocuments(@ApiParam(value="UserIdentifier", required=true)
                                              @Valid @PathVariable String userIdentifier,
                                                    @ApiParam(value="State", required=true)
-    @Valid @PathVariable String state) {
+    @Valid @PathVariable DocumentState state) {
         return documentService.getDocumentsByState(userIdentifier, state);
     }
 
