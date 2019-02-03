@@ -1,6 +1,7 @@
 package it.akademija.users.controller;
 
 import io.swagger.annotations.ApiOperation;
+import it.akademija.users.service.UserGroupServiceObject;
 import it.akademija.users.service.UserService;
 import it.akademija.users.service.UserServiceObject;
 import org.h2.command.ddl.CreateUser;
@@ -15,6 +16,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/users")
@@ -42,12 +44,20 @@ public class UserController {
                 cuc.getPassword());
     }
 
-
+    // berods neveikia. Ir ar kazkur naudojame username kaip path variable
     @RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Get info on user", notes = "")
     public UserServiceObject getUser(@PathVariable("username") @Length(min = 1) String username) {
         return userService.getUserByUsername(username);
     }
+
+    @RequestMapping(value = "/{userIdentifier}/usergroups", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "Get user's groups", notes = "")
+    public Set<UserGroupServiceObject> getUserGroups(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
+        return userService.getUserGroups(userIdentifier);
+    }
+
+
 
     // GET /api/users - returns all users
     @RequestMapping(value = "/", method = RequestMethod.GET)

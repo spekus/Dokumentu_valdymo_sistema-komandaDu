@@ -152,6 +152,13 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
+    public Set<UserGroupServiceObject> getUserGroups(String userIdentifier) {
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<UserGroupEntity> groupsUserBelongsTo= userEntity.getUserGroups();
+
+        return groupsUserBelongsTo.stream().map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle()))
+                .collect(Collectors.toSet());
+    }
 }
 
 
