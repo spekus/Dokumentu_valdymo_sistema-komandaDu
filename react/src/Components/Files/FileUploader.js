@@ -164,11 +164,7 @@ export default class FileUploader extends Component {
                                             {this.state.availableTypes.map(item =>(
                                             <option value={item.title}>{item.title}</option>
                                             ))}
-                                            {/*<option value="Pirmas">1.Bendri</option>*/}
-                                            {/*<option value="Antras">2.Darbuotojų prašymai</option>*/}
-                                            {/*<option value="3" value="1">3.Projektų dokumentacija</option>*/}
-                                            {/*<option value="4">4.Buhalteriniai dokumentai</option>*/}
-                                            {/*<option value="5">5.Kita</option>*/}
+
                                         </select>
                                     </div>
                                     <div className="form-group col-md-10">

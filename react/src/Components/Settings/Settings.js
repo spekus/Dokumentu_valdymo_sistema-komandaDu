@@ -6,8 +6,8 @@ class Settings extends Component {
     render() {
         return (
             <div>
-                {/*<h1>Dokumentai</h1>*/}
-                {/*<SettingsDocumentTypes/>*/}
+                <h1>Dokumentai</h1>
+                <SettingsDocumentTypes/>
                 <h1>Naudotojai</h1>
                 <SettingsUserGroups/>
             </div>
