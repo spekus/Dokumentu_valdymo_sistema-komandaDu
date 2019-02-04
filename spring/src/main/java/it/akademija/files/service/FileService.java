@@ -59,7 +59,7 @@ public class FileService {
         if (identifier.isEmpty() || identifier==null || fileRepository.getFileByIdentifier(identifier).equals(null)) {
             throw new IllegalArgumentException("ERROR no valid File identifier provided!!");
         }
-        if (!identifier.isEmpty() && identifier!=null) {
+        if (identifier!=null && !identifier.isEmpty()) {
             FileEntity fileEntity = fileRepository.getFileByIdentifier(identifier);
             FileServiceObject fileServiceObject = new FileServiceObject();
             fileServiceObject.setContentType(fileEntity.getContentType());
@@ -77,7 +77,7 @@ public class FileService {
     @Transactional
     //Finds file in database and converts it to object
     public FileEntity findFileEntity(String identifier) {
-        if (!identifier.isEmpty() && identifier!=null) {
+        if (identifier!=null && !identifier.isEmpty()) {
             FileEntity fileEntity = fileRepository.getFileByIdentifier(identifier);
             return fileEntity;
         }

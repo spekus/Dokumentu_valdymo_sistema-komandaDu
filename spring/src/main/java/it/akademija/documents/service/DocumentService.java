@@ -131,7 +131,7 @@ public class DocumentService {
 
     @Transactional
     public void updateDocument(String documentIdentifier, String title, String description, String type) {
-        if (!documentIdentifier.isEmpty() && documentIdentifier != null) {
+        if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
 
             DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             documentFromDatabase.setTitle(title);
@@ -143,7 +143,7 @@ public class DocumentService {
 
     @Transactional
     public void submitDocument(String documentIdentifier) {
-        if (!documentIdentifier.isEmpty() && documentIdentifier != null) {
+        if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             sendSubmittedDocumentToApprove(documentEntityFromDatabase);
             documentEntityFromDatabase.setDocumentState(DocumentState.SUBMITTED);
@@ -221,7 +221,7 @@ specialisto Dokumento saraso*/
 
 
     public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier){
-        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
+        if (documentIdentifier!=null && !documentIdentifier.isEmpty()) {
             //converting from database object to normal one
             DocumentServiceObject documentServiceObject = convertDocumentEntityToObject
                     (documentRepository.findDocumentByDocumentIdentifier(documentIdentifier));
@@ -233,7 +233,7 @@ specialisto Dokumento saraso*/
     }
 
     public DocumentEntity getDocumentEntityByDocumentIdentifier(String documentIdentifier){
-        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
+        if (documentIdentifier !=null && !documentIdentifier.isEmpty()) {
             //converting from database object to normal one
             DocumentEntity documentEntity =
                     documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
