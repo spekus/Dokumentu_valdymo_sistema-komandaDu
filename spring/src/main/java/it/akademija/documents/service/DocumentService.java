@@ -236,6 +236,26 @@ public class DocumentService {
         return  documentServiceObject;
     }
 
+    public DocumentServiceObject getDocument(String documentIdentifier) {
+        DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+        if (documentFromDatabase.getDocumentState().equals(DocumentState.CREATED)) {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription());
+
+        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.SUBMITTED)) {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+                    documentFromDatabase.getPostedDate());
+        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.APPROVED)) {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprovalDate(), documentFromDatabase.getApprover());
+
+        } else {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprover(), documentFromDatabase.getRejectedDate(),
+                    documentFromDatabase.getRejectionReason());
+
+        }
+
+    }
 }
 
 

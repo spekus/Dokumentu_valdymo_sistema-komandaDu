@@ -12,11 +12,13 @@ import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.files.ResponseTransfer;
 import it.akademija.files.service.FileServiceObject;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 import java.util.Set;
 
@@ -100,6 +102,16 @@ public class DocumentController {
 //
 //        documentService.submitDocument(documentIdentifier);
 //    }
+
+    @RequestMapping(path="/{documentIdentifier}",method = RequestMethod.GET)
+    @ApiOperation(value="Get document", notes="Returns one document")
+    public DocumentServiceObject getDocument(@ApiParam(value="DocumentIdentifier", required=true)
+                                                          @Valid @PathVariable @NotNull @Length(min=1) String documentIdentifier)
+    {
+        return documentService.getDocument(documentIdentifier);
+    }
+
+
 
 
 
