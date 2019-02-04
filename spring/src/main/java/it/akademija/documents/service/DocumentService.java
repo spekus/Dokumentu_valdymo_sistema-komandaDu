@@ -233,6 +233,7 @@ public class DocumentService {
         documentServiceObject.setTitle(documentFromDatabase.getTitle());
         documentServiceObject.setDescription(documentFromDatabase.getDescription());
         documentServiceObject.setType(documentFromDatabase.getType());
+        documentServiceObject.setFilesAttachedToDocument(documentFromDatabase.getFileSet());
         return  documentServiceObject;
     }
 
