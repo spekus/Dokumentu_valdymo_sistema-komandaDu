@@ -1,5 +1,7 @@
 package it.akademija.users.service;
 
+import it.akademija.documents.repository.DocumentTypeEntity;
+import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.users.repository.UserEntity;
 
 import it.akademija.users.repository.UserGroupEntity;
@@ -132,11 +134,13 @@ public class UserService {
     public UserServiceObject getUserForLogin(String username, String password) {
         UserEntity userEntity = userRepository.findUserByUsernameAndPassword(username, password);
         if (userEntity != null) {
+
             UserServiceObject userServiceObject = new UserServiceObject(userEntity.getUserIdentifier(), userEntity.getFirstname(),
                     userEntity.getLastname(), userEntity.getUsername());
             return userServiceObject;
         }
         return null;
+
     }
 
     @Transactional
@@ -151,6 +155,29 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
+
+    public Set<UserGroupServiceObject> getUserGroups(String userIdentifier) {
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<UserGroupEntity> groupsUserBelongsTo= userEntity.getUserGroups();
+
+        return groupsUserBelongsTo.stream().map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle()))
+                .collect(Collectors.toSet());
+    }
+
+    //Gets all user's document types that he can create documents
+    public Set<DocumentTypeServiceObject> getUserDocumentTypesHeCanCreate(String userIdentifier) {
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<UserGroupEntity> groupsUserBelongsTo= userEntity.getUserGroups();
+        Set<DocumentTypeEntity> allDocTypesUserCanCreate = new HashSet<>();
+
+        for (UserGroupEntity userGroupEntity : groupsUserBelongsTo) {
+            allDocTypesUserCanCreate.addAll(userGroupEntity.getAvailableDocumentTypesToUpload());
+        }
+
+        return allDocTypesUserCanCreate.stream().map((documentTypeEntity) ->
+                new DocumentTypeServiceObject(documentTypeEntity.getTitle())).collect(Collectors.toSet());
+
+    }
 
 }
 
