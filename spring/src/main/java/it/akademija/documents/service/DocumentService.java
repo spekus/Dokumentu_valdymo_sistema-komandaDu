@@ -5,6 +5,8 @@ import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
+import it.akademija.files.repository.FileEntity;
+import it.akademija.files.service.FileServiceObject;
 import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 
@@ -34,17 +36,19 @@ public class DocumentService {
     @Autowired
     private UserGroupRepository userGroupRepository;
 
+
     @Transactional
 
-    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, String state) {
-        Set<DocumentEntity> documentsFromDatabase = userRepository.findDocumentsByUserIdentifier(userIdentifier);
+    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, DocumentState state) {
+
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
         Set<DocumentEntity> documentsFromDatabaseWithState = new HashSet<>();
         for (DocumentEntity documentEntity : documentsFromDatabase) {
-            if (documentEntity.getDocumentState().equals(state)) {
+            if (documentEntity.getDocumentState()==state) {
                 documentsFromDatabaseWithState.add(documentEntity);
             }
         }
-
 
         if (state.equals(DocumentState.CREATED)) {
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
@@ -65,7 +69,6 @@ public class DocumentService {
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
                     new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
                             documentEntity.getPostedDate(), documentEntity.getApprover(), documentEntity.getRejectedDate(),
-
                             documentEntity.getRejectionReason())).collect(Collectors.toSet());
 
         }
@@ -73,8 +76,10 @@ public class DocumentService {
 
     @Transactional
     public Set<DocumentServiceObject> getAllUserDocuments(String userIdentifier) {
-        UserEntity userEntity=userRepository.findUserByUserIdentifier(userIdentifier);
-        Set<DocumentEntity>documentsFromDatabase=userEntity.getDocumentEntities();
+
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
+
         return documentsFromDatabase.stream().map((documentEntity) ->
                 new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
                         documentEntity.getAuthor(),
@@ -90,7 +95,7 @@ public class DocumentService {
     }
 
     @Transactional
-    public void addDocument(String userIdentifier, String title, String type, String description) {
+    public DocumentEntity addDocument(String userIdentifier, String title, String type, String description) {
         //Pasiimam useri is DB
         UserEntity userFromDatabase = userRepository.findUserByUserIdentifier(userIdentifier);
         //Pasiimam grupes, kurioms jis yra priskirtas
@@ -106,17 +111,21 @@ public class DocumentService {
 //                    if (userFromDatabase.getUsername() != null) {
                     DocumentEntity documentEntity = new DocumentEntity(title, description, type);
                     documentEntity.setAuthor(userFromDatabase.getUsername());
+                        userFromDatabase.addDocument(documentEntity);
+                        documentRepository.save(documentEntity);
+                        return documentEntity;
 
-                    userFromDatabase.addDocument(documentEntity);
-                    documentRepository.save(documentEntity);
 
-                } else {
-                    System.out.println("User doesn't belong to a group that can create that type's documents");
+
+                    } else {
+                        System.out.println("User doesn't belong to a group that can create that type's documents");
+                    }
+
                 }
+
             }
+        return null;
 
-
-        }
     }
 
     @Transactional
@@ -163,6 +172,7 @@ public class DocumentService {
             documentEntityFromDatabase.setDocumentState(DocumentState.APPROVED);
             LocalDateTime dateApproved = LocalDateTime.now();
             documentEntityFromDatabase.setApprovalDate(dateApproved);
+            documentRepository.save(documentEntityFromDatabase);
 
 
         }
@@ -183,6 +193,68 @@ public class DocumentService {
 
     public void setUserRepository(UserRepository userRepository) {
         this.userRepository = userRepository;
+    }
+
+    public void addFileToDocument(String documentIdentifier, FileEntity fileEntity) {
+        // adds file to document. the search was done by unique identifiers
+        getDocumentEntityByDocumentIdentifier(documentIdentifier).addFileToDocument(fileEntity);
+    }
+
+
+
+    public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier){
+        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
+            //converting from database object to normal one
+            DocumentServiceObject documentServiceObject = convertDocumentEntityToObject
+                    (documentRepository.findDocumentByDocumentIdentifier(documentIdentifier));
+            return documentServiceObject;
+        }
+        else{
+            throw new IllegalArgumentException("no valid document identifier provided");
+        }
+    }
+
+    public DocumentEntity getDocumentEntityByDocumentIdentifier(String documentIdentifier){
+        if (!documentIdentifier.isEmpty() && documentIdentifier!=null) {
+            //converting from database object to normal one
+            DocumentEntity documentEntity =
+                    documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+            return documentEntity;
+        }
+        else{
+            throw new IllegalArgumentException("no valid document identifier provided");
+        }
+    }
+
+    // you can delete or move this. I was just thinking it might be cool to have one method for conversion
+    // less code to maintain
+    private DocumentServiceObject convertDocumentEntityToObject(DocumentEntity documentFromDatabase){
+        DocumentServiceObject documentServiceObject= new DocumentServiceObject();
+        documentServiceObject.setTitle(documentFromDatabase.getTitle());
+        documentServiceObject.setDescription(documentFromDatabase.getDescription());
+        documentServiceObject.setType(documentFromDatabase.getType());
+        return  documentServiceObject;
+    }
+
+    public DocumentServiceObject getDocument(String documentIdentifier) {
+        DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+        if (documentFromDatabase.getDocumentState().equals(DocumentState.CREATED)) {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription());
+
+        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.SUBMITTED)) {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+                    documentFromDatabase.getPostedDate());
+        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.APPROVED)) {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprovalDate(), documentFromDatabase.getApprover());
+
+        } else {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprover(), documentFromDatabase.getRejectedDate(),
+                    documentFromDatabase.getRejectionReason());
+
+        }
+
     }
 }
 

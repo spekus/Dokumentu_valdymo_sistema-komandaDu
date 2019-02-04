@@ -13,12 +13,14 @@ import LoginLogoutLink from "./Components/UI/LoginLogoutLink";
 import FileDownloader from "./Components/Files/FileDownloader";
 import UserAdministration from "./Components/Users/UserAdministration";
 import NewUserForm from "./Components/Users/NewUserForm";
+import LoginComponent from "./Components/Users/LoginComponent";
+import Settings from "./Components/Settings/Settings";
 
 class App extends React.Component {
     state = {
         sideBarIsOpen: false,
         appBarText: "DVS",
-        username: "",
+        username: "user1",
     };
 
     menuItems = [
@@ -27,6 +29,7 @@ class App extends React.Component {
         {iconClass: 'fa fw fa-list', path: 'documents', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
         {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
+        {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai'},
     ];
 
     sideBarToggled = (isOpen) => {
@@ -42,16 +45,23 @@ class App extends React.Component {
 
     handleLogout = (history) => {
         window.alert("Viso gero");
-        this.setState({username:""});
+        this.setState({username: ""});
         history.push("/");
         return ("");
     }
 
     handleLogin = (history) => {
-        this.setState({username:"Neo"});
+        this.setState({username: "Neo"});
         history.push("/profile");
         return ("");
     }
+
+    handleLoginComponent = (data) => {
+        console.log("Handle login component. Wee need data, so we can set username from it.");
+        console.log(data);
+        this.setState({username: data.username})
+    }
+
 
     render() {
         return (
@@ -92,20 +102,26 @@ class App extends React.Component {
                                 </nav>
 
                                 <div id='main-content'>
-                                    <Switch>
-                                        <Route exact path="/" component={Dashboard}/>
-                                        <Route path="/documents" component={DocumentsHome}/>
-                                        <Route path="/profile" component={UserProfile}/>
-                                        <Route path="/users" component={UsersList}/>
-                                        <Route exact path="/upload-file" component={FileUploader}/>
-                                        <Route exact path="/download-file" component={FileDownloader}/>
-                                        {/*<Route exact path="/user-administration" component={UserAdministration}/>*/}
-                                        <Route exact path="/user-administration" render={(props) => <UserAdministration {...props}  />}/>
-                                        <Route exact path="/user-registration" component={NewUserForm}/>
-                                        <Route exact path="/logout" render={() => this.handleLogout(history)}/>
-                                        <Route exact path="/login" render={() => this.handleLogin(history)}/>
-                                        <Route component={NotFound}/>
-                                    </Switch>
+                                    {this.state.username == "" ?
+                                        <LoginComponent onLogin={this.handleLoginComponent}/>
+                                        :
+                                        <Switch>
+                                            <Route exact path="/" component={Dashboard}/>
+                                            <Route path="/documents" component={DocumentsHome}/>
+                                            <Route path="/profile" component={UserProfile}/>
+                                            <Route path="/users" component={UsersList}/>
+                                            <Route exact path="/upload-file" component={FileUploader}/>
+                                            <Route exact path="/download-file" component={FileDownloader}/>
+                                            <Route exact path="/user-administration" component={UserAdministration}/>
+                                            <Route path="/settings" component={Settings}/>
+                                            {/*<Route exact path="/user-administration"*/}
+                                                   {/*render={(props) => <UserAdministration {...props}  />}/>*/}
+                                            <Route exact path="/user-registration" component={NewUserForm}/>
+                                            <Route exact path="/logout" render={() => this.handleLogout(history)}/>
+                                            <Route exact path="/login" render={() => this.handleLogin(history)}/>
+                                            <Route component={NotFound}/>
+                                        </Switch>
+                                    }
                                 </div>
                             </main>
 

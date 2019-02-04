@@ -18,6 +18,8 @@ public class CreateDocumentCommand {
     @Length(min=1, max=50)
     private String type;
 
+
+
     public String getTitle() {
         return title;
     }

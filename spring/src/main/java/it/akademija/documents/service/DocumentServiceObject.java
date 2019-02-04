@@ -5,6 +5,7 @@ import it.akademija.documents.DocumentState;
 import java.time.LocalDateTime;
 
 public class DocumentServiceObject {
+
     private String documentIdentifier;
     private String author;
     private String title;
@@ -16,6 +17,10 @@ public class DocumentServiceObject {
     private LocalDateTime rejectedDate;
     private String rejectedReason;
     private String approver;
+
+    public DocumentServiceObject(){
+
+    }
 
 
 
@@ -180,6 +185,7 @@ public class DocumentServiceObject {
         this.documentIdentifier = documentIdentifier;
     }
 
+
     public DocumentState getDocumentState() {
         return documentState;
     }
@@ -187,4 +193,5 @@ public class DocumentServiceObject {
     public void setDocumentState(DocumentState documentState) {
         this.documentState = documentState;
     }
+
 }
