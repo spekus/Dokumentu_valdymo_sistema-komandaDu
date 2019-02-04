@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DocumentServiceObject {
+
     private String documentIdentifier;
     private String author;
     private String title;
@@ -191,6 +192,7 @@ public class DocumentServiceObject {
         this.documentIdentifier = documentIdentifier;
     }
 
+
     public DocumentState getDocumentState() {
         return documentState;
     }
@@ -199,6 +201,7 @@ public class DocumentServiceObject {
         this.documentState = documentState;
     }
 
+<<<<<<< HEAD
     public Set<FileEntity> getFilesAttachedToDocument() {
         return filesAttachedToDocument;
     }
@@ -206,4 +209,6 @@ public class DocumentServiceObject {
     public void setFilesAttachedToDocument(Set<FileEntity> filesAttachedToDocument) {
         this.filesAttachedToDocument = filesAttachedToDocument;
     }
+=======
+>>>>>>> master
 }

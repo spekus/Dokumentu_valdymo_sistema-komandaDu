@@ -33,24 +33,22 @@ public class DocumentService {
     @Autowired
     private UserRepository userRepository;
 
-
-
-
     @Autowired
     private UserGroupRepository userGroupRepository;
 
 
     @Transactional
 
-    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, String state) {
-        Set<DocumentEntity> documentsFromDatabase = userRepository.findDocumentsByUserIdentifier(userIdentifier);
+    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, DocumentState state) {
+
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
         Set<DocumentEntity> documentsFromDatabaseWithState = new HashSet<>();
         for (DocumentEntity documentEntity : documentsFromDatabase) {
-            if (documentEntity.getDocumentState().equals(state)) {
+            if (documentEntity.getDocumentState()==state) {
                 documentsFromDatabaseWithState.add(documentEntity);
             }
         }
-
 
         if (state.equals(DocumentState.CREATED)) {
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
@@ -71,7 +69,6 @@ public class DocumentService {
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
                     new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
                             documentEntity.getPostedDate(), documentEntity.getApprover(), documentEntity.getRejectedDate(),
-
                             documentEntity.getRejectionReason())).collect(Collectors.toSet());
 
         }
@@ -79,8 +76,10 @@ public class DocumentService {
 
     @Transactional
     public Set<DocumentServiceObject> getAllUserDocuments(String userIdentifier) {
-        UserEntity userEntity=userRepository.findUserByUserIdentifier(userIdentifier);
-        Set<DocumentEntity>documentsFromDatabase=userEntity.getDocumentEntities();
+
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
+
         return documentsFromDatabase.stream().map((documentEntity) ->
                 new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
                         documentEntity.getAuthor(),
@@ -173,6 +172,7 @@ public class DocumentService {
             documentEntityFromDatabase.setDocumentState(DocumentState.APPROVED);
             LocalDateTime dateApproved = LocalDateTime.now();
             documentEntityFromDatabase.setApprovalDate(dateApproved);
+            documentRepository.save(documentEntityFromDatabase);
 
 
         }
@@ -237,6 +237,26 @@ public class DocumentService {
         return  documentServiceObject;
     }
 
+    public DocumentServiceObject getDocument(String documentIdentifier) {
+        DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+        if (documentFromDatabase.getDocumentState().equals(DocumentState.CREATED)) {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription());
+
+        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.SUBMITTED)) {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+                    documentFromDatabase.getPostedDate());
+        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.APPROVED)) {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprovalDate(), documentFromDatabase.getApprover());
+
+        } else {
+            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprover(), documentFromDatabase.getRejectedDate(),
+                    documentFromDatabase.getRejectionReason());
+
+        }
+
+    }
 }
 
 

@@ -1,5 +1,7 @@
 package it.akademija.users.service;
 
+import it.akademija.documents.repository.DocumentTypeEntity;
+import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.users.repository.UserEntity;
 
 import it.akademija.users.repository.UserGroupEntity;
@@ -9,6 +11,7 @@ import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.DocumentType;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -152,6 +155,28 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
+    public Set<UserGroupServiceObject> getUserGroups(String userIdentifier) {
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<UserGroupEntity> groupsUserBelongsTo= userEntity.getUserGroups();
+
+        return groupsUserBelongsTo.stream().map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle()))
+                .collect(Collectors.toSet());
+    }
+
+    //Gets all user's document types that he can create documents
+    public Set<DocumentTypeServiceObject> getUserDocumentTypesHeCanCreate(String userIdentifier) {
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        Set<UserGroupEntity> groupsUserBelongsTo= userEntity.getUserGroups();
+        Set<DocumentTypeEntity> allDocTypesUserCanCreate = new HashSet<>();
+
+        for (UserGroupEntity userGroupEntity : groupsUserBelongsTo) {
+            allDocTypesUserCanCreate.addAll(userGroupEntity.getAvailableDocumentTypesToUpload());
+        }
+
+        return allDocTypesUserCanCreate.stream().map((documentTypeEntity) ->
+                new DocumentTypeServiceObject(documentTypeEntity.getTitle())).collect(Collectors.toSet());
+
+    }
 }
 
 

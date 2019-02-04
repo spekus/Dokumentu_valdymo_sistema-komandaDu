@@ -15,7 +15,7 @@
     <packaging>war</packaging>
 
 
-    <name>ExamByAugustasDirzys</name>
+    <name>Document management system</name>
 
 
     <parent>
