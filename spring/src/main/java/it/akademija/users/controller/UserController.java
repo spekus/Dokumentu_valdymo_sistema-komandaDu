@@ -38,10 +38,11 @@ public class UserController {
     }
 
     // berods neveikia. Ir ar kazkur naudojame username kaip path variable
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = "application/json")
+    //patikrinau-lyg ir veikia, pakeiciau i identifier vietoje username
+    @RequestMapping(value = "/{userIdentifier}", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Get info on user", notes = "")
-    public UserServiceObject getUser(@PathVariable("username") @Length(min = 1) String username) {
-        return userService.getUserByUsername(username);
+    public UserServiceObject getUser(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
+        return userService.getUserByUsername(userIdentifier);
     }
 
     @RequestMapping(value = "/{userIdentifier}/usergroups", method = RequestMethod.GET, produces = "application/json")

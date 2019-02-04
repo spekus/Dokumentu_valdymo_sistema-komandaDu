@@ -164,33 +164,20 @@ public class DocumentService {
             }
         }
     }
-
+//Turi buti prisilogines useris, pilnai veiks per Reacta.
     @Transactional
-    public void approveDocument(String documentIdentifier) {
+    public void approveDocument(String documentIdentifier, String userIdentifier) {
         if (!documentIdentifier.isEmpty() && documentIdentifier != null) {
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-
+            UserEntity userEntityFromDataBase=userRepository.findUserByUserIdentifier(userIdentifier);
             documentEntityFromDatabase.setDocumentState(DocumentState.APPROVED);
             LocalDateTime dateApproved = LocalDateTime.now();
             documentEntityFromDatabase.setApprovalDate(dateApproved);
+            documentEntityFromDatabase.setAuthor(userEntityFromDataBase.getFirstname()+" "+ userEntityFromDataBase.getLastname());
             documentRepository.save(documentEntityFromDatabase);
-
-
-
-        }
+      }
     }
 
-
-//    @Transactional
-//    public UserServiceObject getUserForLogin(String username, String password) {
-//        UserEntity userEntity = userRepository.findUserByUsernameAndPassword(username, password);
-//        if (userEntity != null) {
-//            UserServiceObject userServiceObject = new UserServiceObject(userEntity.getUserIdentifier(), userEntity.getFirstname(),
-//                    userEntity.getLastname(), userEntity.getUsername());
-//            return userServiceObject;
-//        }
-//        return null;
-//    }
 
 
     public DocumentRepository getDocumentRepository() {

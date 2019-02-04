@@ -71,8 +71,8 @@ public class UserService {
     }
 
     @Transactional
-    public UserServiceObject getUserByUsername(String username) {
-        UserEntity userEntity = userRepository.findUserByUsername(username);
+    public UserServiceObject getUserByUsername(String userIdentifier) {
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         if (userEntity != null) {
             UserServiceObject userServiceObject = new UserServiceObject();
             userServiceObject.setUserIdentifier(userEntity.getUserIdentifier());
