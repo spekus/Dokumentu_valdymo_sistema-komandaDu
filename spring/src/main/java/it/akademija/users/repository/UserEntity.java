@@ -2,11 +2,14 @@ package it.akademija.users.repository;
 
 
 import it.akademija.documents.repository.DocumentEntity;
+import org.h2.engine.Role;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 
+
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.HashSet;
 
 import java.util.Set;
@@ -23,6 +26,7 @@ public class UserEntity {
     private String firstname;
     private String lastname;
     private String password;
+
 
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)

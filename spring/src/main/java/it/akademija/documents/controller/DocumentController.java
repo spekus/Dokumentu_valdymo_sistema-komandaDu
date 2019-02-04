@@ -77,6 +77,21 @@ public class DocumentController {
         documentService.submitDocument(documentIdentifier);
     }
 
+    @RequestMapping(path="/documents/{documentIdentifier}/approve", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value="Approve document",notes="Approve's document")
+    public void approveDocument(
+            @ApiParam(value="DocumentEntity identifier",required=true)
+            @Valid
+            @PathVariable final String documentIdentifier) {
+        documentService.approveDocument(documentIdentifier);
+    }
+
+
+
+
+
+
 //    @RequestMapping(path="/documents/{documentIdentifier}/submit", method = RequestMethod.PUT)
 //    @ResponseStatus(HttpStatus.OK)
 //    @ApiOperation(value="Submit document",notes="Submits document for approval")

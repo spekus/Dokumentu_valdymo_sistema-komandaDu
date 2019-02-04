@@ -1,9 +1,11 @@
 package it.akademija.users.controller;
 
+import io.swagger.annotations.ApiOperation;
 import it.akademija.users.service.UserService;
 import it.akademija.users.service.UserServiceObject;
 import org.h2.command.ddl.CreateUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -70,6 +72,7 @@ public class UserController {
 
 
     @RequestMapping(value = "/addGroup", method = RequestMethod.PUT)
+    @ApiOperation(value="AddGroupToUser",notes="Adds group to user")
     public void addGroupToUser(@RequestParam("userIdentifier") String userIdentifier,
                                @RequestParam("title") String title) {
         userService.addGroupToUser(userIdentifier, title);

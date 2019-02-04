@@ -4,6 +4,7 @@ import it.akademija.users.service.UserGroupService;
 import it.akademija.users.service.UserGroupServiceObject;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
@@ -31,6 +32,7 @@ public class UserGroupController {
 
 
     @RequestMapping(value = "/addNewGroup", method = RequestMethod.POST)
+    @ResponseStatus(HttpStatus.OK)
     public void addNewUserGroup(@RequestBody UserGroupServiceObject userGroupServiceObject) {
         userGroupService.addNewUserGroup(userGroupServiceObject);
     }

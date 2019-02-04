@@ -10,6 +10,7 @@ import it.akademija.users.repository.UserGroupEntity;
 
 import it.akademija.users.repository.UserGroupRepository;
 import it.akademija.users.repository.UserRepository;
+import it.akademija.users.service.UserServiceObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -164,9 +165,22 @@ public class DocumentService {
             LocalDateTime dateApproved = LocalDateTime.now();
             documentEntityFromDatabase.setApprovalDate(dateApproved);
 
+//
 
         }
     }
+
+
+//    @Transactional
+//    public UserServiceObject getUserForLogin(String username, String password) {
+//        UserEntity userEntity = userRepository.findUserByUsernameAndPassword(username, password);
+//        if (userEntity != null) {
+//            UserServiceObject userServiceObject = new UserServiceObject(userEntity.getUserIdentifier(), userEntity.getFirstname(),
+//                    userEntity.getLastname(), userEntity.getUsername());
+//            return userServiceObject;
+//        }
+//        return null;
+//    }
 
 
     public DocumentRepository getDocumentRepository() {
