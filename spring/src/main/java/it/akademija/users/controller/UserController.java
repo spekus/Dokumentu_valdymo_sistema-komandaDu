@@ -1,6 +1,7 @@
 package it.akademija.users.controller;
 
 import io.swagger.annotations.ApiOperation;
+import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.users.service.UserGroupServiceObject;
 import it.akademija.users.service.UserService;
 import it.akademija.users.service.UserServiceObject;
@@ -56,6 +57,14 @@ public class UserController {
     public Set<UserGroupServiceObject> getUserGroups(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
         return userService.getUserGroups(userIdentifier);
     }
+
+    @RequestMapping(value = "/{userIdentifier}/documentTypes", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "Get user's document types that he can create", notes = "")
+    public Set<DocumentTypeServiceObject> getUserDocumentTypes(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
+        return userService.getUserDocumentTypesHeCanCreate(userIdentifier);
+    }
+
+
 
 
 
