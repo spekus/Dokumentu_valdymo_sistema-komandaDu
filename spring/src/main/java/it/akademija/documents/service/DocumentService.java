@@ -154,7 +154,7 @@ public class DocumentService {
     }
 
     @Transactional
-    public void sendSubmittedDocumentToApprove(DocumentEntity documentEntity){
+    private void sendSubmittedDocumentToApprove(DocumentEntity documentEntity){
         List<UserGroupEntity> availableUserGroupsToGetSubmittedDoc=userGroupRepository.findAll();
         for(UserGroupEntity userGroupEntity:availableUserGroupsToGetSubmittedDoc){
             for(DocumentTypeEntity documentTypeEntity:userGroupEntity.getAvailableDocumentTypesToApprove()){
@@ -164,21 +164,38 @@ public class DocumentService {
             }
         }
     }
-//Turi buti prisilogines useris, pilnai veiks per Reacta.
+
     @Transactional
     public void approveDocument(String documentIdentifier, String userIdentifier) {
-        if (!documentIdentifier.isEmpty() && documentIdentifier != null) {
+        if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
+            //surandamas dokumentas
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-            UserEntity userEntityFromDataBase=userRepository.findUserByUserIdentifier(userIdentifier);
-            documentEntityFromDatabase.setDocumentState(DocumentState.APPROVED);
+            //surandame prisiloginusi useri
+            UserEntity userEntityFromDataBase = userRepository.findUserByUserIdentifier(userIdentifier);
             LocalDateTime dateApproved = LocalDateTime.now();
+            documentEntityFromDatabase.setDocumentState(DocumentState.APPROVED);
             documentEntityFromDatabase.setApprovalDate(dateApproved);
-            documentEntityFromDatabase.setAuthor(userEntityFromDataBase.getFirstname()+" "+ userEntityFromDataBase.getLastname());
+            documentEntityFromDatabase.setApprover(userEntityFromDataBase.getFirstname() + " " + userEntityFromDataBase.getLastname());
             documentRepository.save(documentEntityFromDatabase);
-      }
+            removeDocFromApproverList(documentIdentifier);
+        }
     }
 
+/*dokumentas su jo pasirasusiu specialistu issaugotas, dabar patvirtinta dokumenta reiktu pasalinti is
+specialisto Dokumento saraso*/
 
+        @Transactional
+        private void removeDocFromApproverList(String documentIdentifier) {
+            List<UserGroupEntity> availableUserGroups = userGroupRepository.findAll();
+            for (UserGroupEntity userGroupEntity : availableUserGroups) {
+                Set<DocumentEntity> allDocsToApproveFromGroup = userGroupEntity.getDocumentsToApprove();
+                for (DocumentEntity documentEntity : allDocsToApproveFromGroup) {
+                    if (documentEntity.getDocumentIdentifier().equals(documentIdentifier)) {
+                        allDocsToApproveFromGroup.remove(documentEntity);
+                    }
+                }
+            }
+        }
 
     public DocumentRepository getDocumentRepository() {
         return documentRepository;

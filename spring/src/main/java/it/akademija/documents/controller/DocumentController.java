@@ -90,14 +90,14 @@ public class DocumentController {
         documentService.submitDocument(documentIdentifier);
     }
 
-    @RequestMapping(path = "/documents/{documentIdentifier}/approve/{userIdentifier}", method = RequestMethod.PUT)
+    @RequestMapping(path = "/documents/{documentIdentifier}/approve/", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Approve document", notes = "Approve's document")
     public void approveDocument(
             @ApiParam(value = "DocumentEntity identifier", required = true)
             @Valid
-            @PathVariable final @Length(min = 1) String documentIdentifier,
-            @PathVariable final @Length(min = 1) String userIdentifier) {
+            @PathVariable @Length(min = 1) String documentIdentifier,
+            @RequestParam @Length(min = 1) String userIdentifier) {
         documentService.approveDocument(documentIdentifier, userIdentifier);
     }
 

@@ -1,6 +1,4 @@
 import React, {Component} from 'react';
-import Typography from "@material-ui/core/Typography/Typography";
-import Grid from "@material-ui/core/Grid/Grid";
 import DocumentsListSimple from "../Documents/DocumentsListSimple";
 
 class Dashboard extends Component {
