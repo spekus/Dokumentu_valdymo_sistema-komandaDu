@@ -8,6 +8,7 @@ import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.files.ResponseTransfer;
 import it.akademija.files.repository.FileEntity;
+import it.akademija.files.service.FileDocumentCommand;
 import it.akademija.files.service.FileService;
 import it.akademija.files.service.FileServiceObject;
 import org.hibernate.Hibernate;
@@ -185,17 +186,22 @@ public class FileController {
     }
 
     // this is used to add file to document, can beused for multiple file
-    @RequestMapping(path = "/addFileToDocument}", method = RequestMethod.POST)
-    public ResponseEntity < String >  addFileToDocument(@NotNull @RequestParam("FileIdentifier") String fileIdentifier,
-                                  @NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
+    @RequestMapping(path = "/addFileToDocument", method = RequestMethod.POST)
+    public ResponseEntity < String >  addFileToDocument(@NotNull @RequestBody FileDocumentCommand fileDocumentComand){
 
-        fileService.addFileToDocument(fileIdentifier, documentIdentifier);
+//            @NotNull @RequestParam("FileIdentifier") String fileIdentifier,
+//                                  @NotNull @RequestParam("DocumentIdentifier") String documentIdentifier)
+//    {        fileService.addFileToDocument(fileIdentifier, documentIdentifier);
+//        return ResponseEntity.status(HttpStatus.CREATED).build();}
+
+        fileService.addFileToDocument(fileDocumentComand.getFileIdentifier()
+                , fileDocumentComand.getDocumentIdentifier());
         return ResponseEntity.status(HttpStatus.CREATED).build();
 
 
     }
     //not working yet
-    @RequestMapping(path = "/findAllFilesByDocument}", method = RequestMethod.GET)
+    @RequestMapping(path = "/findAllFilesByDocument", method = RequestMethod.GET)
     public Set<FileEntity> giveMEALllFileSSS(@NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
         DocumentServiceObject documentServiceObject = null;
         documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);

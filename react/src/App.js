@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 import {Route, BrowserRouter as Router, NavLink, Switch} from 'react-router-dom'
 import Dashboard from "./Components/Dashboard/Dashboard";
+import AugisDokumentas from "./Components/Dashboard/AugisDokumentas";
 import UsersList from "./Components/Users/UsersList";
 import UserProfile from "./Components/Users/UserProfile";
 import DocumentsHome from "./Components/Documents/DocumentsHome";
@@ -15,6 +16,7 @@ import UserAdministration from "./Components/Users/UserAdministration";
 import NewUserForm from "./Components/Users/NewUserForm";
 import LoginComponent from "./Components/Users/LoginComponent";
 import Settings from "./Components/Settings/Settings";
+
 
 class App extends React.Component {
     state = {
@@ -107,6 +109,7 @@ class App extends React.Component {
                                         :
                                         <Switch>
                                             <Route exact path="/" component={Dashboard}/>
+                                            <Route exact path="/documents/:id" component={AugisDokumentas}/>
                                             <Route path="/documents" component={DocumentsHome}/>
                                             <Route path="/profile" component={UserProfile}/>
                                             <Route path="/users" component={UsersList}/>

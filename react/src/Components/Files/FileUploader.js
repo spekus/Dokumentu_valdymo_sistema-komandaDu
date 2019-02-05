@@ -68,6 +68,7 @@ export default class FileUploader extends Component {
                 this.setState({error: '', msg: 'Sucessfully uploaded file'});
                 if (response.data.text) {
                     var fileId = response.data.text;
+                    
 
                     let documentDetails = {
                         title: this.state.title,
@@ -92,6 +93,7 @@ export default class FileUploader extends Component {
 
     // Metodas prideda naudotojui dokumento specifikacija (DocumentDetails) ir susieja su failu,
     // kuris jau buvo ikeltas anksciau.
+    //Kol kas lyk neveikia?? 
     addDocument(userId, documentDetails, fileId) {
         axios.post('/api/documents/' + userId + '/documentAddToGroups', documentDetails)
             .then(response => {
@@ -100,6 +102,8 @@ export default class FileUploader extends Component {
                 if (response.data.text) {
                     var docId = response.data.text;
                     this.addFileToDocument(docId, fileId);
+                    console.log("Document has been created with identifier - " 
+                    + docId);
                 }
             })
             .catch(err => {
@@ -115,11 +119,19 @@ export default class FileUploader extends Component {
             documentIdentifier: docId,
             fileIdentifier: fileID
         }
+        console.log("docId"  + docId);
+        console.log("fileID"  + fileID);
 
-        axios.post('/api/files/addFileToDocument', fileDocumentCommand)
+        axios.post('/api/files/addFileToDocument'
+        , fileDocumentCommand)
             .then(response => {
                 this.setState({[this.state.name]: ''});
                 console.log("Response from addFileToDocument - " + response)
+                console.log(" " + response.status)
+                console.log(" " + response.statusText)
+
+
+
             })
             .catch(err => {
                 console.log("Error from /api/files/addFileToDocument - " + err)

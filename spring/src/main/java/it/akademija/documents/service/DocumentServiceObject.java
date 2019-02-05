@@ -201,7 +201,6 @@ public class DocumentServiceObject {
         this.documentState = documentState;
     }
 
-<<<<<<< HEAD
     public Set<FileEntity> getFilesAttachedToDocument() {
         return filesAttachedToDocument;
     }
@@ -209,6 +208,5 @@ public class DocumentServiceObject {
     public void setFilesAttachedToDocument(Set<FileEntity> filesAttachedToDocument) {
         this.filesAttachedToDocument = filesAttachedToDocument;
     }
-=======
->>>>>>> master
+
 }
