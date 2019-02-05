@@ -29,7 +29,7 @@ export default class FileUploader extends Component {
     }
 
     getTypesFromServer = (userId) => {
-        axios.get('/api/documentTypes')
+        axios.get('/api/documentTypes/')
             .then(result => {
                 if (result.data.length > 0) {
                     this.setState({availableTypes: result.data});
