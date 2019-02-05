@@ -1,7 +1,6 @@
 package it.akademija.users.controller;
 
 
-import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.service.DocumentServiceObject;
 
 import io.swagger.annotations.ApiOperation;
@@ -26,6 +25,18 @@ public class UserGroupController {
     public UserGroupController(UserGroupService userGroupService) {
         this.userGroupService = userGroupService;
     }
+
+
+
+    public UserGroupService getUserGroupService() {
+        return userGroupService;
+    }
+
+    public void setUserGroupService(UserGroupService userGroupService) {
+        this.userGroupService = userGroupService;
+    }
+
+
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ApiOperation(value = "Create usergroup", notes = "")
@@ -79,8 +90,5 @@ public class UserGroupController {
                                       ) {
         return userGroupService.getDocumentsToApprove(userIdentifier);
     }
-
-
-
 
 }

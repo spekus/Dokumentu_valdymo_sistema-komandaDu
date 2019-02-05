@@ -32,7 +32,7 @@ public class DocumentTypeService {
     @Transactional
     public void updateDocumentType(String currentTitle, String wantedTitle) {
         DocumentTypeEntity documentType=documentTypeRepository.findDocumentTypeByTitle(currentTitle);
-        if (!wantedTitle.isEmpty() && wantedTitle!=null) {
+        if (wantedTitle!=null && !wantedTitle.isEmpty()) {
             documentType.setTitle(wantedTitle);
             documentTypeRepository.save(documentType);
         }

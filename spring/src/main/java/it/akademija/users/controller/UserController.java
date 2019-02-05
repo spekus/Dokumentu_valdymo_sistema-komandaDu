@@ -5,17 +5,9 @@ import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.users.service.UserGroupServiceObject;
 import it.akademija.users.service.UserService;
 import it.akademija.users.service.UserServiceObject;
-import org.h2.command.ddl.CreateUser;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.springframework.web.bind.annotation.*;
-
-import javax.servlet.ServletException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.Collection;
 import java.util.Set;
 
@@ -46,10 +38,11 @@ public class UserController {
     }
 
     // berods neveikia. Ir ar kazkur naudojame username kaip path variable
-    @RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = "application/json")
+    //patikrinau-lyg ir veikia, pakeiciau i identifier vietoje username
+    @RequestMapping(value = "/{userIdentifier}", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Get info on user", notes = "")
-    public UserServiceObject getUser(@PathVariable("username") @Length(min = 1) String username) {
-        return userService.getUserByUsername(username);
+    public UserServiceObject getUser(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
+        return userService.getUserByUsername(userIdentifier);
     }
 
     @RequestMapping(value = "/{userIdentifier}/usergroups", method = RequestMethod.GET, produces = "application/json")
@@ -63,10 +56,6 @@ public class UserController {
     public Set<DocumentTypeServiceObject> getUserDocumentTypes(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
         return userService.getUserDocumentTypesHeCanCreate(userIdentifier);
     }
-
-
-
-
 
     // GET /api/users - returns all users
     @RequestMapping(value = "/", method = RequestMethod.GET)
@@ -105,12 +94,13 @@ public class UserController {
     }
 
 
+
     @RequestMapping(value = "/{userIdentifier}/group", method = RequestMethod.PUT)
     @ApiOperation(value = "Add group to user", notes = "")
     public void addGroupToUser(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier,
                                @RequestParam("title") @Length(min = 1) String title) {
+
         userService.addGroupToUser(userIdentifier, title);
     }
-
 
 }

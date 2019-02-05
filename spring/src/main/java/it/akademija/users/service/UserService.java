@@ -10,8 +10,8 @@ import it.akademija.users.repository.UserGroupRepository;
 import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
+
 import org.springframework.stereotype.Service;
-import org.w3c.dom.DocumentType;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -71,8 +71,8 @@ public class UserService {
     }
 
     @Transactional
-    public UserServiceObject getUserByUsername(String username) {
-        UserEntity userEntity = userRepository.findUserByUsername(username);
+    public UserServiceObject getUserByUsername(String userIdentifier) {
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         if (userEntity != null) {
             UserServiceObject userServiceObject = new UserServiceObject();
             userServiceObject.setUserIdentifier(userEntity.getUserIdentifier());
@@ -155,6 +155,7 @@ public class UserService {
         userRepository.save(userEntity);
     }
 
+
     public Set<UserGroupServiceObject> getUserGroups(String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         Set<UserGroupEntity> groupsUserBelongsTo= userEntity.getUserGroups();
@@ -177,7 +178,9 @@ public class UserService {
                 new DocumentTypeServiceObject(documentTypeEntity.getTitle())).collect(Collectors.toSet());
 
     }
+
 }
+
 
 
 

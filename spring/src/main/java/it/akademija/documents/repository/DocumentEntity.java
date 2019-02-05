@@ -98,7 +98,6 @@ public class DocumentEntity {
 
     }
 
-
     public void setType(String type) {
         this.type = type;
     }

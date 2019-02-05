@@ -2,14 +2,12 @@ package it.akademija.users.repository;
 
 
 import it.akademija.documents.repository.DocumentEntity;
+import org.h2.engine.Role;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 
 import javax.persistence.*;
-
-import javax.validation.constraints.NotBlank;
-
 import java.util.HashSet;
 
 import java.util.Set;
@@ -20,7 +18,7 @@ public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
-    
+
     private String userIdentifier;
     private String username;
     private String firstname;
@@ -28,15 +26,17 @@ public class UserEntity {
 
     private String password;
 
-    @OneToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private Set<DocumentEntity> documentEntities=new HashSet<>();
 
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
-    private Set<UserGroupEntity> userGroups=new HashSet<>();
+    private Set<DocumentEntity> documentEntities = new HashSet<>();
 
-    public UserEntity() {}
+    @OneToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set<UserGroupEntity> userGroups = new HashSet<>();
+
+    public UserEntity() {
+    }
 
     public UserEntity(String userIdentifier, String firstname, String lastname, String username, String password) {
         this.userIdentifier = userIdentifier;
@@ -124,21 +124,6 @@ public class UserEntity {
     public void setUserGroups(Set<UserGroupEntity> userGroups) {
         this.userGroups = userGroups;
     }
-
-
-
-
-//        public Set<UserGroupEntity> getUserGroups() {
-//        return userGroups;
-//    }
-//
-//    public void setUserGroups(Set<UserGroupEntity> userGroups) {
-//        this.userGroups = userGroups;
-//    }
-//
-//    public void addGroupToUser(UserGroupEntity userGroupEntity) {
-//        this.userGroups.add(userGroupEntity);
-//    }
 
 
 }

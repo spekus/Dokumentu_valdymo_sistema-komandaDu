@@ -55,7 +55,7 @@ export default class Login extends Component{
 
     renderRedirect = () => {
         if (this.state.redirect) {
-            return (<Redirect to={{ pathname:'/user', state: { client: this.state.client}}} />)
+            return (<Redirect to={{ pathname:'/', state: { client: this.state.client}}} />)
         }
     }
 
