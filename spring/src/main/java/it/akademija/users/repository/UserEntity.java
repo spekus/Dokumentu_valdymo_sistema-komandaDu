@@ -3,6 +3,7 @@ package it.akademija.users.repository;
 
 import it.akademija.documents.repository.DocumentEntity;
 import org.h2.engine.Role;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 

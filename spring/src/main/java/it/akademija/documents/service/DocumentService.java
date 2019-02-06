@@ -235,7 +235,7 @@ specialisto Dokumento saraso*/
     }
 
 
-
+    @Transactional
     public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier){
         if (documentIdentifier!=null && !documentIdentifier.isEmpty()) {
             //converting from database object to normal one
@@ -248,6 +248,7 @@ specialisto Dokumento saraso*/
         }
     }
 
+    @Transactional
     public DocumentEntity getDocumentEntityByDocumentIdentifier(String documentIdentifier){
         if (documentIdentifier !=null && !documentIdentifier.isEmpty()) {
             //converting from database object to normal one
@@ -262,6 +263,7 @@ specialisto Dokumento saraso*/
 
     // you can delete or move this. I was just thinking it might be cool to have one method for conversion
     // less code to maintain
+    @Transactional
     private DocumentServiceObject convertDocumentEntityToObject(DocumentEntity documentFromDatabase){
         DocumentServiceObject documentServiceObject= new DocumentServiceObject();
         documentServiceObject.setTitle(documentFromDatabase.getTitle());
@@ -271,6 +273,7 @@ specialisto Dokumento saraso*/
         return  documentServiceObject;
     }
 
+    @Transactional
     public DocumentServiceObject getDocument(String documentIdentifier) {
         DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
         if (documentFromDatabase.getDocumentState().equals(DocumentState.CREATED)) {
@@ -291,6 +294,11 @@ specialisto Dokumento saraso*/
         }
 
     }
+
+//    @Transactional
+//    public void deleteDocument(String documentIdentifier) {
+//            documentRepository.deleteDocumentByDocumentIdentifier(documentIdentifier);
+//    }
 }
 
 

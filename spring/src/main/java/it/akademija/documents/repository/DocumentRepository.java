@@ -9,4 +9,5 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
 
     public DocumentEntity findDocumentByDocumentIdentifier(String documentIdentifier);
 //    public Set<DocumentEntity> findDocumentsByUserIdentifier(String userIdentifier);
+    void deleteDocumentByDocumentIdentifier(String documentIdentifier);
 }
