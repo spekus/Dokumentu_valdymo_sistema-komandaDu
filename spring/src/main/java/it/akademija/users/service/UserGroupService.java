@@ -38,8 +38,8 @@ public class UserGroupService {
     public UserGroupService(UserGroupRepository userGroupRepository, DocumentTypeRepository documentTypeRepository,
                             DocumentRepository documentRepository) {
         this.userGroupRepository = userGroupRepository;
-        this.documentTypeRepository=documentTypeRepository;
-        this.documentRepository=documentRepository;
+        this.documentTypeRepository = documentTypeRepository;
+        this.documentRepository = documentRepository;
     }
 
 
@@ -88,16 +88,16 @@ public class UserGroupService {
 
     @Transactional
     public void updateGroupByTitle(String title, String newTitle) {
-        UserGroupEntity savedUserGroupEntity=userGroupRepository.findGroupByTitle(title);
+        UserGroupEntity savedUserGroupEntity = userGroupRepository.findGroupByTitle(title);
         savedUserGroupEntity.setTitle(newTitle);
-        UserGroupEntity updateUserGroupEntit=userGroupRepository.save(savedUserGroupEntity);
+        UserGroupEntity updateUserGroupEntit = userGroupRepository.save(savedUserGroupEntity);
     }
 
     @Transactional
     public void addDocumentTypeToUpload(String userGroupTitle, String documentTypeTitle) {
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
-        if (userGroupEntity!=null && documentTypeEntity!=null) {
+        if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.addAvailableDocumentTypeToUpload(documentTypeEntity);
         }
 
@@ -108,7 +108,7 @@ public class UserGroupService {
     public void addDocumentTypeToApprove(String userGroupTitle, String documentTypeTitle) {
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
-        if (userGroupEntity!=null && documentTypeEntity!=null) {
+        if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.addAvailableDocumentTypeToApprove(documentTypeEntity);
         }
 
@@ -119,11 +119,9 @@ public class UserGroupService {
     public void addDocumentsToApprove(String userGroupTitle, String documentIdentifier) {
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         DocumentEntity documentEntity = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-        if (userGroupEntity!=null && documentEntity!=null) {
+        if (userGroupEntity != null && documentEntity != null) {
             userGroupEntity.addDocumentsToApprove(documentEntity);
         }
-
-
 
 
     }
@@ -154,11 +152,17 @@ public class UserGroupService {
     }
 
 
-
-
-
-
-
+    @Transactional
+    public void addGroupToUser(String userGroupTitle,String userIdentifier) {
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
+        if (userEntity.getUserGroups() == null) {
+            Set<UserGroupEntity> userGroups = new HashSet<>();
+            userEntity.setUserGroups(userGroups);
+        }
+        userEntity.getUserGroups().add(userGroupEntity);
+        userRepository.save(userEntity);
+    }
 
 
 }

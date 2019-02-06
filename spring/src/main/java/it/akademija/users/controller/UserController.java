@@ -8,6 +8,7 @@ import it.akademija.users.service.UserServiceObject;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Collection;
 import java.util.Set;
 
@@ -41,8 +42,8 @@ public class UserController {
     //patikrinau-lyg ir veikia, pakeiciau i identifier vietoje username
     @RequestMapping(value = "/{userIdentifier}", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Get info on user", notes = "")
-    public UserServiceObject getUser(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
-        return userService.getUserByUsername(userIdentifier);
+    public UserServiceObject getUserByUserId(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
+        return userService.getUserByUserId(userIdentifier);
     }
 
     @RequestMapping(value = "/{userIdentifier}/usergroups", method = RequestMethod.GET, produces = "application/json")
@@ -85,22 +86,27 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/{userIdentifier}/login", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Login user", notes = "Returns user info")
-    public UserServiceObject getUser(@PathVariable("username") @Length(min = 1) String username,
+    public UserServiceObject getUser(@RequestParam("username") @Length(min = 1) String username,
                                      @RequestParam("password") @Length(min = 1) String password) {
-        return userService.getUserForLogin(username, password);
+        return userService.userLogin(username, password);
 
     }
 
 
+    @RequestMapping(value = "/username", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "username", notes = "Returns user by username")
+    public UserServiceObject getUserByUsername(@RequestParam("username") @Length(min = 1) String username) {
+        return userService.getUserByUsername(username);
 
-    @RequestMapping(value = "/{userIdentifier}/group", method = RequestMethod.PUT)
-    @ApiOperation(value = "Add group to user", notes = "")
-    public void addGroupToUser(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier,
-                               @RequestParam("title") @Length(min = 1) String title) {
+    }
 
-        userService.addGroupToUser(userIdentifier, title);
+    @RequestMapping(value = "/lastname", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "lastname", notes = "Returns user by lastname")
+    public UserServiceObject getUserByLastname(@RequestParam("lastname") @Length(min = 1) String lastname) {
+        return userService.getUserByLastname(lastname);
+
     }
 
 }
