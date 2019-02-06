@@ -21,7 +21,6 @@ class SettingsDocumentTypes extends Component {
 
 
     createDocumentType = (event) => {
-        // var newType = this.state.newDocumentTypeInputField;
         event.preventDefault();
         axios.post('/api/documentTypes/', {title: this.state.newDocumentTypeInputField})
             .then(response =>{
