@@ -125,7 +125,7 @@ class App extends React.Component {
                                             <Route exact path="/user-registration" component={NewUserForm}/>
                                             {/*<Route exact path="/logout" render={() => this.handleLogout(history)}/>*/}
                                             <Route exact path="/logout" component={LoginComponent}/>
-                                            {/*<Route exact path="/login" render={() => this.handleLogin(history)}/>*/}
+                                            <Route exact path="/login" component={LoginComponent}/>
                                             <Route component={NotFound}/>
                                         </Switch>
                                     {/*}*/}

@@ -11,12 +11,6 @@ class AugisDashBoard extends Component {
     componentWillMount(){
         this.getAllDocuments();
     }
-    doStuff2(event) {
-        console.log('this is identifier:' + event.name);
-    }
-    doStuff(parametras) {
-        console.log('this is :' + parametras);
-    }
 
     getAllDocuments() {
         console.log("runing getAllDocuments");
@@ -54,9 +48,7 @@ class AugisDashBoard extends Component {
                 <div className="row mt-2">
                     <div className='col-lg-12'>
                         {/* <h5>Atmesti</h5> */}
-                        <DocumentsListSimple list={this.state.userDocuments}
-                        press={this.doStuff}
-                        press2={this.doStuff2}/>
+                        <DocumentsListSimple list={this.state.userDocuments}/>
                     </div>
                 </div>
             </React.Fragment>
