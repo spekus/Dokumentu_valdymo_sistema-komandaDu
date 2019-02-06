@@ -8,6 +8,7 @@ import it.akademija.users.service.UserServiceObject;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+
 import java.util.Collection;
 import java.util.Set;
 
@@ -91,16 +92,6 @@ public class UserController {
                                      @RequestParam("password") @Length(min = 1) String password) {
         return userService.userLogin(username, password);
 
-    }
-
-
-
-    @RequestMapping(value = "/{userIdentifier}/group", method = RequestMethod.PUT)
-    @ApiOperation(value = "Add group to user", notes = "")
-    public void addGroupToUser(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier,
-                               @RequestParam("title") @Length(min = 1) String title) {
-
-        userService.addGroupToUser(userIdentifier, title);
     }
 
 
