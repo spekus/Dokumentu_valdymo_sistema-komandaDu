@@ -23,7 +23,7 @@ class App extends React.Component {
         sideBarIsOpen: false,
         appBarText: "DVS",
         username: "user1",
-        user:
+        
     };
 
     menuItems = [
