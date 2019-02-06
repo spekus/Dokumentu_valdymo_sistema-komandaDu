@@ -71,7 +71,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserServiceObject getUserByUsername(String userIdentifier) {
+    public UserServiceObject getUserByUserId(String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         if (userEntity != null) {
             UserServiceObject userServiceObject = new UserServiceObject();
@@ -178,6 +178,41 @@ public class UserService {
                 new DocumentTypeServiceObject(documentTypeEntity.getTitle())).collect(Collectors.toSet());
 
     }
+
+    @Transactional
+    public UserServiceObject getUserByUsername(String username) {
+        UserEntity userEntity = userRepository.findUserByUsername(username);
+        if (userEntity != null) {
+            UserServiceObject userServiceObject = new UserServiceObject();
+            userServiceObject.setUserIdentifier(userEntity.getUserIdentifier());
+            userServiceObject.setFirstname(userEntity.getFirstname());
+            userServiceObject.setLastname(userEntity.getLastname());
+            userServiceObject.setUsername(userEntity.getUsername());
+            userServiceObject.setUserGroups(userEntity.getUserGroups());
+            return userServiceObject;
+        }
+        return null;
+    }
+
+
+    @Transactional
+    public UserServiceObject getUserByLastname(String lastname) {
+        UserEntity userEntity = userRepository.findUserByLastname(lastname);
+        if (userEntity != null) {
+            UserServiceObject userServiceObject = new UserServiceObject();
+            userServiceObject.setUserIdentifier(userEntity.getUserIdentifier());
+            userServiceObject.setFirstname(userEntity.getFirstname());
+            userServiceObject.setLastname(userEntity.getLastname());
+            userServiceObject.setUsername(userEntity.getUsername());
+            userServiceObject.setUserGroups(userEntity.getUserGroups());
+            return userServiceObject;
+        }
+        return null;
+    }
+
+
+
+
 
 }
 
