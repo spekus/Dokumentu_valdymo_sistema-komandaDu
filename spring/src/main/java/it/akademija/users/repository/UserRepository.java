@@ -15,6 +15,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     public Set<DocumentEntity> findDocumentsByUserIdentifier(String userIdentifier);
     public void deleteByUserIdentifier(String userIdentifier);
     public UserEntity findUserByUsername(String username);
+    public UserEntity findUserByLastname(String lastname);
     public UserEntity findUserByUsernameAndPassword(String username, String password);
 
 

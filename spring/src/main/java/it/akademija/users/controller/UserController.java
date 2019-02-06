@@ -41,8 +41,8 @@ public class UserController {
     //patikrinau-lyg ir veikia, pakeiciau i identifier vietoje username
     @RequestMapping(value = "/{userIdentifier}", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Get info on user", notes = "")
-    public UserServiceObject getUser(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
-        return userService.getUserByUsername(userIdentifier);
+    public UserServiceObject getUserByUserId(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
+        return userService.getUserByUserId(userIdentifier);
     }
 
     @RequestMapping(value = "/{userIdentifier}/usergroups", method = RequestMethod.GET, produces = "application/json")
@@ -101,6 +101,21 @@ public class UserController {
                                @RequestParam("title") @Length(min = 1) String title) {
 
         userService.addGroupToUser(userIdentifier, title);
+    }
+
+
+    @RequestMapping(value = "/username", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "username", notes = "Returns user by username")
+    public UserServiceObject getUserByUsername(@RequestParam("username") @Length(min = 1) String username) {
+        return userService.getUserByUsername(username);
+
+    }
+
+    @RequestMapping(value = "/lastname", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "lastname", notes = "Returns user by lastname")
+    public UserServiceObject getUserByLastname(@RequestParam("lastname") @Length(min = 1) String lastname) {
+        return userService.getUserByLastname(lastname);
+
     }
 
 }
