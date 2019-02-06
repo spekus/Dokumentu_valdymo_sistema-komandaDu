@@ -143,22 +143,10 @@ public class UserService {
 
     }
 
-    @Transactional
-    public void addGroupToUser(String userIdentifier, String title) {
-        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(title);
-        if (userEntity.getUserGroups() == null) {
-            Set<UserGroupEntity> userGroups = new HashSet<>();
-            userEntity.setUserGroups(userGroups);
-        }
-        userEntity.getUserGroups().add(userGroupEntity);
-        userRepository.save(userEntity);
-    }
-
 
     public Set<UserGroupServiceObject> getUserGroups(String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-        Set<UserGroupEntity> groupsUserBelongsTo= userEntity.getUserGroups();
+        Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
 
         return groupsUserBelongsTo.stream().map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle()))
                 .collect(Collectors.toSet());
@@ -167,7 +155,7 @@ public class UserService {
     //Gets all user's document types that he can create documents
     public Set<DocumentTypeServiceObject> getUserDocumentTypesHeCanCreate(String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-        Set<UserGroupEntity> groupsUserBelongsTo= userEntity.getUserGroups();
+        Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
         Set<DocumentTypeEntity> allDocTypesUserCanCreate = new HashSet<>();
 
         for (UserGroupEntity userGroupEntity : groupsUserBelongsTo) {
@@ -209,9 +197,6 @@ public class UserService {
         }
         return null;
     }
-
-
-
 
 
 }
