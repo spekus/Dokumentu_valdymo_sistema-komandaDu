@@ -1,4 +1,4 @@
-//package it.akademija;
+//package it.akademija.security;
 //
 //
 //import org.springframework.context.annotation.Bean;
@@ -11,6 +11,7 @@
 //import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 //import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 //import org.springframework.security.crypto.password.PasswordEncoder;
+//import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 //
 //@Configuration
 //@EnableWebSecurity
@@ -40,13 +41,14 @@
 //                .loginPage("/login.html")
 //                .loginProcessingUrl("/perform_login")
 //                .defaultSuccessUrl("/homepage.html", true)
-//                //.failureUrl("/login.html?error=true")
-////                .failureHandler(authenticationFailureHandler())
+//                .failureUrl("/login.html?error=true")
+//                .failureHandler(new AuthenticationFailureHandler() {
+//                }uthenticationFailureHandler())
 //                .and()
 //                .logout()
 //                .logoutUrl("/perform_logout")
 //                .deleteCookies("JSESSIONID")
-////                .logoutSuccessHandler(logoutSuccessHandler());
+//               .logoutSuccessHandler(logoutSuccessHandler());
 //    }
 //
 //    @Bean

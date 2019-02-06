@@ -131,7 +131,7 @@ public class UserService {
     }
 
     @Transactional
-    public UserServiceObject getUserForLogin(String username, String password) {
+    public UserServiceObject userLogin(String username, String password) {
         UserEntity userEntity = userRepository.findUserByUsernameAndPassword(username, password);
         if (userEntity != null) {
 

@@ -85,11 +85,11 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/{userIdentifier}/login", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/login", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "Login user", notes = "Returns user info")
-    public UserServiceObject getUser(@PathVariable("username") @Length(min = 1) String username,
+    public UserServiceObject getUser(@RequestParam("username") @Length(min = 1) String username,
                                      @RequestParam("password") @Length(min = 1) String password) {
-        return userService.getUserForLogin(username, password);
+        return userService.userLogin(username, password);
 
     }
 

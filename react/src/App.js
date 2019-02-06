@@ -21,6 +21,7 @@ class App extends React.Component {
         sideBarIsOpen: false,
         appBarText: "DVS",
         username: "user1",
+        user:
     };
 
     menuItems = [
@@ -43,24 +44,24 @@ class App extends React.Component {
         }
     }
 
-    handleLogout = (history) => {
-        window.alert("Viso gero");
-        this.setState({username: ""});
-        history.push("/");
-        return ("");
-    }
+    // handleLogout = (history) => {
+    //     window.alert("Viso gero");
+    //     this.setState({username: ""});
+    //     history.push("/");
+    //     return ("");
+    // }
 
-    handleLogin = (history) => {
-        this.setState({username: "Neo"});
-        history.push("/profile");
-        return ("");
-    }
-
-    handleLoginComponent = (data) => {
-        console.log("Handle login component. Wee need data, so we can set username from it.");
-        console.log(data);
-        this.setState({username: data.username})
-    }
+    // handleLogin = (history) => {
+    //     this.setState({username: "Neo"});
+    //     history.push("/profile");
+    //     return ("");
+    // }
+    //
+    // handleLoginComponent = (data) => {
+    //     console.log("Handle login component. Wee need data, so we can set username from it.");
+    //     console.log(data);
+    //     this.setState({username: data.username})
+    // }
 
 
     render() {
@@ -102,10 +103,11 @@ class App extends React.Component {
                                 </nav>
 
                                 <div id='main-content'>
-                                    {this.state.username == "" ?
-                                        <LoginComponent onLogin={this.handleLoginComponent}/>
-                                        :
+                                    {/*{this.state.username == "" ?*/}
+                                        {/*<LoginComponent onLogin={this.handleLoginComponent}/>*/}
+                                        {/*:*/}
                                         <Switch>
+                                            <Route exact path="/login" component={LoginComponent}/>
                                             <Route exact path="/" component={Dashboard}/>
                                             <Route path="/documents" component={DocumentsHome}/>
                                             <Route path="/profile" component={UserProfile}/>
@@ -117,11 +119,12 @@ class App extends React.Component {
                                             {/*<Route exact path="/user-administration"*/}
                                                    {/*render={(props) => <UserAdministration {...props}  />}/>*/}
                                             <Route exact path="/user-registration" component={NewUserForm}/>
-                                            <Route exact path="/logout" render={() => this.handleLogout(history)}/>
-                                            <Route exact path="/login" render={() => this.handleLogin(history)}/>
+                                            {/*<Route exact path="/logout" render={() => this.handleLogout(history)}/>*/}
+                                            <Route exact path="/logout" component={LoginComponent}/>
+                                            {/*<Route exact path="/login" render={() => this.handleLogin(history)}/>*/}
                                             <Route component={NotFound}/>
                                         </Switch>
-                                    }
+                                    {/*}*/}
                                 </div>
                             </main>
 
