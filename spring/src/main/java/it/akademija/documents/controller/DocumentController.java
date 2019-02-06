@@ -78,7 +78,7 @@ public class DocumentController {
 //                cmd.getType());
 //    }
 
-    @RequestMapping(path = "/documents/{documentIdentifier}/submitForApproval", method = RequestMethod.PUT)
+    @RequestMapping(path = "/documents/{documentIdentifier}/submit", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Submit document", notes = "Submits document for approval")
     public void submitDocument(
@@ -92,13 +92,25 @@ public class DocumentController {
 
     @RequestMapping(path = "/documents/{documentIdentifier}/approve/", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
-    @ApiOperation(value = "Approve document", notes = "Approve's document")
+    @ApiOperation(value = "Approve document", notes = "Approves document")
     public void approveDocument(
             @ApiParam(value = "DocumentEntity identifier", required = true)
             @Valid
             @PathVariable @Length(min = 1) String documentIdentifier,
             @RequestParam @Length(min = 1) String userIdentifier) {
         documentService.approveDocument(documentIdentifier, userIdentifier);
+    }
+
+    @RequestMapping(path = "/documents/{documentIdentifier}/reject/", method = RequestMethod.PUT)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Reject document", notes = "Rejects document")
+    public void rejectDocument(
+            @ApiParam(value = "DocumentEntity identifier", required = true)
+            @Valid
+            @PathVariable @Length(min = 1) String documentIdentifier,
+            @RequestParam @Length(min = 1) String userIdentifier,
+            @RequestParam @Length(min=1) String rejectedReason) {
+        documentService.rejectDocument(documentIdentifier, userIdentifier, rejectedReason);
     }
 
 

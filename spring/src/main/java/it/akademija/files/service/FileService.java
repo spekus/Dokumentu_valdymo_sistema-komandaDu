@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
+import java.util.ArrayList;
 
 @Service
 public class FileService {
@@ -94,8 +95,9 @@ public class FileService {
     }
 
 
-
-
+    public ArrayList<String> getAllFileIdentifiers(String documentIdentifier) {
+        return null;
+    }
 }
 
 

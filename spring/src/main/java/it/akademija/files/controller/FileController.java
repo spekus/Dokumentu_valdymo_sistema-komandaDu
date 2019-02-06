@@ -1,13 +1,17 @@
 package it.akademija.files.controller;
 
 
+import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
+import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.service.DocumentService;
+import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.files.ResponseTransfer;
 import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileDocumentCommand;
 import it.akademija.files.service.FileService;
 import it.akademija.files.service.FileServiceObject;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.InputStreamResource;
@@ -32,6 +36,10 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/files")
@@ -85,7 +93,7 @@ public class FileController {
 //        }
 
     // downloads a file, need unique document identifier
-    @RequestMapping(path = "/download/{id ResponseEntity<InputStreamResource> entifier}", method = RequestMethod.GET)
+    @RequestMapping(path = "/download/{identifier}", method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable final String identifier)
             throws IOException {
         FileServiceObject fileObject = fileService.findFile(identifier);
@@ -179,11 +187,51 @@ public class FileController {
 
     // this is used to add file to document, can beused for multiple file
     @RequestMapping(path = "/addFileToDocument", method = RequestMethod.POST)
-    public ResponseEntity<String>  addFileToDocument(
-            @ApiParam(value="Document and file identifiers", required=true) @Valid @RequestBody final FileDocumentCommand p){
+    public ResponseEntity < String >  addFileToDocument(@NotNull @RequestBody FileDocumentCommand fileDocumentComand){
 
-        fileService.addFileToDocument(p.getFileIdentifier(), p.getDocumentIdentifier());
+//            @NotNull @RequestParam("FileIdentifier") String fileIdentifier,
+//                                  @NotNull @RequestParam("DocumentIdentifier") String documentIdentifier)
+//    {        fileService.addFileToDocument(fileIdentifier, documentIdentifier);
+//        return ResponseEntity.status(HttpStatus.CREATED).build();}
+
+        fileService.addFileToDocument(fileDocumentComand.getFileIdentifier()
+                , fileDocumentComand.getDocumentIdentifier());
         return ResponseEntity.status(HttpStatus.CREATED).build();
+
+
+    }
+    //not working yet
+    @RequestMapping(path = "/findAllFilesByDocument", method = RequestMethod.GET)
+    public Set<FileEntity> giveMEALllFileSSS(@NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
+        DocumentServiceObject documentServiceObject = null;
+        documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);
+        return documentServiceObject.getFilesAttachedToDocument();
+//        return ResponseEntity.status(HttpStatus.CREATED).build();
+
+
+    }
+
+    //not working yet
+    @RequestMapping(path = "/findAllFilesByDocumentIdentifier", method = RequestMethod.GET)
+    public List<String> getAllFileIdentifiers(@NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
+        ArrayList <String> identifierList = new ArrayList<>();
+//        identifierList = fileService.getAllFileIdentifiers(documentIdentifier);
+        DocumentServiceObject documentServiceObject = null;
+//        Hibernate.initialize(documentService.getDocumentByDocumentIdentifier(documentIdentifier).getFilesAttachedToDocument());
+        documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);
+
+        Set<FileEntity> fileList =  documentServiceObject.getFilesAttachedToDocument();
+
+
+        for (FileEntity file: fileList
+             ) {
+            System.out.println("identifier " + file.getIdentifier());
+            identifierList.add(file.getIdentifier());
+
+
+        }
+        return identifierList;
+
 
 
     }

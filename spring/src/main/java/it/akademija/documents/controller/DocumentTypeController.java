@@ -6,10 +6,7 @@ import io.swagger.annotations.ApiOperation;
 import it.akademija.documents.service.DocumentTypeService;
 import it.akademija.documents.service.DocumentTypeServiceObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Set;
@@ -25,15 +22,17 @@ public class DocumentTypeController {
         this.documentTypeService=documentTypeService;
     }
 
-    @RequestMapping(method = RequestMethod.GET)
+
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     @ApiOperation(value="Get all document types", notes="Returns all created document types")
     public Set<DocumentTypeServiceObject> getDocumentTypes() {
         return documentTypeService.getAllDocumentTypes();
     }
 
-    @RequestMapping(method = RequestMethod.POST)
+
+    @RequestMapping(value = "/", method = RequestMethod.POST)
     @ApiOperation(value="Create new document type", notes="Creates new document type")
-    public void createDocumentType (CreateDocumentTypeCommand p) {
+    public void createDocumentType (@RequestBody CreateDocumentTypeCommand p) {
         documentTypeService.createNewDocumentType(p.getTitle());
     }
 
@@ -43,13 +42,13 @@ public class DocumentTypeController {
         documentTypeService.updateDocumentType(currentTitle, p.getTitle());
     }
 
-    @RequestMapping(method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{title}", method = RequestMethod.DELETE)
+//    @RequestMapping( method = RequestMethod.DELETE)
     @ApiOperation(value="Delete document type", notes="Deletes document type")
-    public void deleteDocumentType (String title) {
+    public void deleteDocumentType (@PathVariable("title") String title) {
+//    public void deleteDocumentType ( String title) {
         documentTypeService.deleteDocumentType(title);
     }
-
-
 
 
 }

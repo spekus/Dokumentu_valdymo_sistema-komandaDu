@@ -39,7 +39,7 @@ public class DocumentEntity {
 
 
     @OneToMany
-//    @LazyCollection(LazyCollectionOption.TRUE) not sure which to use,
+    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<FileEntity> filesAttachedToDocument=new HashSet<>();
 
     private LocalDateTime postedDate;
@@ -97,7 +97,6 @@ public class DocumentEntity {
         return type;
 
     }
-
 
     public void setType(String type) {
         this.type = type;

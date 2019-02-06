@@ -1,8 +1,11 @@
 package it.akademija.documents.service;
 
 import it.akademija.documents.DocumentState;
+import it.akademija.files.repository.FileEntity;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 public class DocumentServiceObject {
 
@@ -17,6 +20,10 @@ public class DocumentServiceObject {
     private LocalDateTime rejectedDate;
     private String rejectedReason;
     private String approver;
+
+
+
+    private Set<FileEntity> filesAttachedToDocument=new HashSet<>();
 
     public DocumentServiceObject(){
 
@@ -192,6 +199,14 @@ public class DocumentServiceObject {
 
     public void setDocumentState(DocumentState documentState) {
         this.documentState = documentState;
+    }
+
+    public Set<FileEntity> getFilesAttachedToDocument() {
+        return filesAttachedToDocument;
+    }
+
+    public void setFilesAttachedToDocument(Set<FileEntity> filesAttachedToDocument) {
+        this.filesAttachedToDocument = filesAttachedToDocument;
     }
 
 }

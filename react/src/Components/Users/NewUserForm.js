@@ -54,7 +54,7 @@ class NewUserForm extends Component {
                         <div className="col-md-10">
 
                             <form className="col-md-11" onSubmit={this.handleSubmit}>
-
+                            ••••••
                                 <div className="form-group">
                                     <label htmlFor="exampleFormControlInput1">Vardas</label>
                                     <input type="text" className="form-control" id="exampleFormName"

@@ -181,6 +181,22 @@ public class DocumentService {
         }
     }
 
+    @Transactional
+    public void rejectDocument (String documentIdentifier, String userIdentifier, String rejectedReason) {
+        if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
+            DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+            UserEntity userEntityFromDataBase = userRepository.findUserByUserIdentifier(userIdentifier);
+            LocalDateTime dateRejected=LocalDateTime.now();
+            documentEntityFromDatabase.setDocumentState(DocumentState.REJECTED);
+            documentEntityFromDatabase.setRejectedDate(dateRejected);
+            documentEntityFromDatabase.setApprover(userEntityFromDataBase.getFirstname() + " " + userEntityFromDataBase.getLastname());
+            documentEntityFromDatabase.setRejectionReason(rejectedReason);
+            documentRepository.save(documentEntityFromDatabase);
+            removeDocFromApproverList(documentIdentifier);
+        }
+
+    }
+
 /*dokumentas su jo pasirasusiu specialistu issaugotas, dabar patvirtinta dokumenta reiktu pasalinti is
 specialisto Dokumento saraso*/
 
@@ -251,6 +267,7 @@ specialisto Dokumento saraso*/
         documentServiceObject.setTitle(documentFromDatabase.getTitle());
         documentServiceObject.setDescription(documentFromDatabase.getDescription());
         documentServiceObject.setType(documentFromDatabase.getType());
+        documentServiceObject.setFilesAttachedToDocument(documentFromDatabase.getFileSet());
         return  documentServiceObject;
     }
 
