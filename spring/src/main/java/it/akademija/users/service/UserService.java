@@ -199,16 +199,13 @@ public class UserService {
     }
 
     @Transactional
-    public UserServiceObject getUserByCriteria(String criteria) {
-        UserEntity userEntity = userRepository.findByUsernameOrLastnameOrId(criteria);
-        if (userEntity != null) {
-            UserServiceObject userServiceObject = new UserServiceObject();
-            userServiceObject.setUserIdentifier(userEntity.getUserIdentifier());
-            userServiceObject.setFirstname(userEntity.getFirstname());
-            userServiceObject.setLastname(userEntity.getLastname());
-            userServiceObject.setUsername(userEntity.getUsername());
-            userServiceObject.setUserGroups(userEntity.getUserGroups());
-            return userServiceObject;
+    public List<UserServiceObject> getUserByCriteria(String criteria) {
+        if (userRepository.findByUsernameOrLastnameOrId(criteria) != null) {
+            return userRepository.findByUsernameOrLastnameOrId(criteria).stream().map(userEntity -> new UserServiceObject(userEntity.getUserIdentifier(),
+                    userEntity.getFirstname(),
+                    userEntity.getLastname(),
+                    userEntity.getUsername()))
+                    .collect(Collectors.toList());
         }
         return null;
     }

@@ -111,8 +111,8 @@ public class UserController {
     }
 
     @RequestMapping(value = "/criteria", method = RequestMethod.GET, produces = "application/json")
-    @ApiOperation(value = "criteria", notes = "Returns user by criteria")
-    public UserServiceObject getUserByCriteria(@RequestParam("criteria") @Length(min = 1) String criteria) {
+    @ApiOperation(value = "criteria", notes = "Returns users by criteria")
+    public Collection<UserServiceObject> getUserByCriteria(@RequestParam("criteria") @Length(min = 1) String criteria) {
         return userService.getUserByCriteria(criteria);
 
     }

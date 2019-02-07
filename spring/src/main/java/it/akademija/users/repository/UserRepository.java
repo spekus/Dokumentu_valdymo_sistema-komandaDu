@@ -27,7 +27,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     public UserEntity findByUsername(String username);
 
     @Query("select u from UserEntity u where u.firstname=:criteria OR u.lastname=:criteria OR u.userIdentifier=:criteria")
-    public UserEntity findByUsernameOrLastnameOrId(@Param("criteria")String criteria);
+    public List<UserEntity> findByUsernameOrLastnameOrId(@Param("criteria")String criteria);
 }
 
 
