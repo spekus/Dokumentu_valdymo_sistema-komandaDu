@@ -16,6 +16,7 @@ import UserAdministration from "./Components/Users/UserAdministration";
 import NewUserForm from "./Components/Users/NewUserForm";
 import LoginComponent from "./Components/Users/LoginComponent";
 import Settings from "./Components/Settings/Settings";
+import AugisDashBoard from "./Components/Dashboard/AugisDashBoard";
 
 
 class App extends React.Component {
@@ -109,8 +110,8 @@ class App extends React.Component {
                                         {/*<LoginComponent onLogin={this.handleLoginComponent}/>*/}
                                         {/*:*/}
                                         <Switch>
-                                            <Route exact path="/login" component={LoginComponent}/>
-                                            <Route exact path="/" component={Dashboard}/>
+                                            {/* <Route exact path="/" component={AugisDashBoard}/> */}
+                                            <Route exact path="/" component={AugisDashBoard}/>
                                             <Route exact path="/documents/:id" component={AugisDokumentas}/>
                                             <Route path="/documents" component={DocumentsHome}/>
                                             <Route path="/profile" component={UserProfile}/>
@@ -124,7 +125,7 @@ class App extends React.Component {
                                             <Route exact path="/user-registration" component={NewUserForm}/>
                                             {/*<Route exact path="/logout" render={() => this.handleLogout(history)}/>*/}
                                             <Route exact path="/logout" component={LoginComponent}/>
-                                            {/*<Route exact path="/login" render={() => this.handleLogin(history)}/>*/}
+                                            <Route exact path="/login" component={LoginComponent}/>
                                             <Route component={NotFound}/>
                                         </Switch>
                                     {/*}*/}
