@@ -121,5 +121,12 @@ public class DocumentController {
         return documentService.getDocument(documentIdentifier);
     }
 
+    @RequestMapping(path = "/{documentIdentifier}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete document", notes = "Deletes one document")
+    public void deleteDocument(@ApiParam(value = "DocumentIdentifier", required = true)
+                                             @Valid @PathVariable @NotNull @Length(min = 1) String documentIdentifier) {
+       documentService.deleteDocument(documentIdentifier);
+    }
+
 
 }

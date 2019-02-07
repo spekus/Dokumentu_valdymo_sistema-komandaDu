@@ -77,12 +77,21 @@ public class UserGroupController {
         userGroupService.addDocumentTypeToApprove(userGroupTitle, documentTypeTitle);
     }
 
+
+//    @RequestMapping(value = "/{userGroupTitle}/addDocumentsToApprove", method = RequestMethod.PUT)
+//    @ApiOperation(value = "Add documents to approve", notes = "")
+//    public void addDocumentsToApprove(@PathVariable("userGroupTitle") String userGroupTitle,
+//                                         @RequestParam("documentIdentifier") String documentIdentifier) {
+//        userGroupService.addDocumentsToApprove(userGroupTitle,documentIdentifier);
+//    }
+
     @RequestMapping(value = "/{userGroupTitle}/addDocumentsToApprove", method = RequestMethod.PUT)
     @ApiOperation(value = "Add documents to approve", notes = "")
     public void addDocumentsToApprove(@PathVariable("userGroupTitle") String userGroupTitle,
                                       @RequestParam("documentIdentifier") String documentIdentifier) {
         userGroupService.addDocumentsToApprove(userGroupTitle, documentIdentifier);
     }
+
 
     @RequestMapping(value = "/getDocumentsToApprove", method = RequestMethod.GET)
     public Set<DocumentServiceObject> getDocumentsToApprove(@RequestParam("userIdentifier") String userIdentifier

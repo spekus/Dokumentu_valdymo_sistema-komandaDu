@@ -131,7 +131,7 @@ public class UserGroupService {
     @Transactional
     public Set<DocumentServiceObject> getDocumentsToApprove(String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-        List<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
+        Set<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
         Set<DocumentEntity> allDocumentsToApprove = new HashSet<>();
 
         for (UserGroupEntity userGroupEntity : groupsFromUser) {
@@ -157,11 +157,12 @@ public class UserGroupService {
     public void addGroupToUser(String userGroupTitle,String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
-        userEntity.getUserGroups().add(userGroupEntity);
-        userRepository.save(userEntity);
+        Set<UserGroupEntity> allUserGroups = userEntity.getUserGroups();
+        if (!allUserGroups.contains(userGroupEntity)) {
+            allUserGroups.add(userGroupEntity);
+            userRepository.save(userEntity);
+        }
     }
-
-
 }
 
 

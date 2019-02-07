@@ -3,6 +3,7 @@ package it.akademija.users.repository;
 
 import it.akademija.documents.repository.DocumentEntity;
 import org.h2.engine.Role;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
@@ -29,13 +30,18 @@ public class UserEntity {
     private String password;
 
 
-    @OneToMany
+    @OneToMany(cascade={CascadeType.DETACH, CascadeType.MERGE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<DocumentEntity> documentEntities = new HashSet<>();
 
-    @OneToMany
+    @ManyToMany
     @LazyCollection(LazyCollectionOption.FALSE)
-    private List<UserGroupEntity> userGroups = new ArrayList<>();
+    @JoinTable(
+            name = "user_usergroup",
+            joinColumns = @JoinColumn(name = "userEntity_id"),
+            inverseJoinColumns = @JoinColumn(name = "userGroupEntity_id"))
+    private Set<UserGroupEntity> userGroups = new HashSet<>();
+
 
     public UserEntity() {
     }
@@ -102,6 +108,7 @@ public class UserEntity {
         this.documentEntities.add(documentEntity);
     }
 
+
     public String getPassword() {
         return password;
     }
@@ -119,12 +126,11 @@ public class UserEntity {
 
     }
 
-
-    public List<UserGroupEntity> getUserGroups() {
+    public Set<UserGroupEntity> getUserGroups() {
         return userGroups;
     }
 
-    public void setUserGroups(List<UserGroupEntity> userGroups) {
+    public void setUserGroups(Set<UserGroupEntity> userGroups) {
         this.userGroups = userGroups;
     }
 }

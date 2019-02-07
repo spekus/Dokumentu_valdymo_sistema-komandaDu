@@ -60,7 +60,7 @@ public class UserController {
     }
 
     // GET /api/users - returns all users
-    @RequestMapping(value = "/", method = RequestMethod.GET)
+    @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "List all users and all related info", notes = "")
     public Collection<UserServiceObject> getAllUsers() {
         return userService.getAllUsers();

@@ -14,7 +14,7 @@ public class UserServiceObject {
     private String lastname;
     private String username;
     private String password;
-    private List<UserGroupEntity> userGroups=new ArrayList<>();
+    private Set<UserGroupEntity> userGroups=new HashSet<>();
 
 
     public UserServiceObject() {
@@ -36,7 +36,7 @@ public class UserServiceObject {
 
     }
 
-    public UserServiceObject(String userIdentifier, String firstname, String lastname, String username, String password, List<UserGroupEntity> userGroups) {
+    public UserServiceObject(String userIdentifier, String firstname, String lastname, String username, String password, Set<UserGroupEntity> userGroups) {
         this.userIdentifier = userIdentifier;
         this.firstname = firstname;
         this.lastname = lastname;
@@ -85,11 +85,11 @@ public class UserServiceObject {
         this.password = password;
     }
 
-    public List<UserGroupEntity> getUserGroups() {
+    public Set<UserGroupEntity> getUserGroups() {
         return userGroups;
     }
 
-    public void setUserGroups(List<UserGroupEntity> userGroups) {
+    public void setUserGroups(Set<UserGroupEntity> userGroups) {
         this.userGroups = userGroups;
     }
 }
