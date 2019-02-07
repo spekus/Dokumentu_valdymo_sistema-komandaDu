@@ -295,10 +295,10 @@ specialisto Dokumento saraso*/
 
     }
 
-//    @Transactional
-//    public void deleteDocument(String documentIdentifier) {
-//            documentRepository.deleteDocumentByDocumentIdentifier(documentIdentifier);
-//    }
+    @Transactional
+    public void deleteDocument(String documentIdentifier) {
+            documentRepository.deleteDocumentByDocumentIdentifier(documentIdentifier);
+    }
 }
 
 

@@ -28,12 +28,16 @@ public class UserEntity {
     private String password;
 
 
-    @OneToMany
+    @OneToMany(cascade={CascadeType.DETACH, CascadeType.MERGE})
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<DocumentEntity> documentEntities = new HashSet<>();
 
-    @OneToMany
+    @ManyToMany
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinTable(
+            name = "user_usergroup",
+            joinColumns = @JoinColumn(name = "userEntity_id"),
+            inverseJoinColumns = @JoinColumn(name = "userGroupEntity_id"))
     private Set<UserGroupEntity> userGroups = new HashSet<>();
 
     public UserEntity() {
@@ -100,6 +104,7 @@ public class UserEntity {
     public void addDocument(DocumentEntity documentEntity) {
         this.documentEntities.add(documentEntity);
     }
+
 
     public String getPassword() {
         return password;
