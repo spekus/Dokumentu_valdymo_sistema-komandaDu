@@ -38,7 +38,7 @@ public class DocumentController {
     public Set<DocumentServiceObject> getDocuments(@ApiParam(value = "UserIdentifier", required = true)
                                                    @Valid @PathVariable String userIdentifier,
                                                    @ApiParam(value = "State", required = true)
-                                                   @Valid @PathVariable DocumentState state) throws Exception {
+                                                   @Valid @PathVariable DocumentState state) throws IllegalArgumentException {
         return documentService.getDocumentsByState(userIdentifier, state);
     }
 

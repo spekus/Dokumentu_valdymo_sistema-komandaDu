@@ -40,7 +40,7 @@ public class DocumentService {
 
     @Transactional
 
-    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, DocumentState state) {
+    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, DocumentState state) throws IllegalArgumentException{
         try
         {
             UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
