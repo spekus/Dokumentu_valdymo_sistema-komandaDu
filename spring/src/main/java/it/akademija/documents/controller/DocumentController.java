@@ -38,7 +38,7 @@ public class DocumentController {
     public Set<DocumentServiceObject> getDocuments(@ApiParam(value = "UserIdentifier", required = true)
                                                    @Valid @PathVariable String userIdentifier,
                                                    @ApiParam(value = "State", required = true)
-                                                   @Valid @PathVariable DocumentState state) {
+                                                   @Valid @PathVariable DocumentState state) throws Exception {
         return documentService.getDocumentsByState(userIdentifier, state);
     }
 
@@ -93,7 +93,7 @@ public class DocumentController {
     @RequestMapping(path = "/documents/{documentIdentifier}/approve/", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Approve document", notes = "Approves document")
-    public void approveDocument(
+    public void approveDocument (
             @ApiParam(value = "DocumentEntity identifier", required = true)
             @Valid
             @PathVariable @Length(min = 1) String documentIdentifier,

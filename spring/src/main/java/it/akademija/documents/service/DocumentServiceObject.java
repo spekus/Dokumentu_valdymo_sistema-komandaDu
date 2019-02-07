@@ -32,26 +32,28 @@ public class DocumentServiceObject {
 
 
     //What information document creator gets from API when the document is only created but not submitted
-    public DocumentServiceObject(String title, String type, String description) {
+    public DocumentServiceObject(String documentIdentifier, String title, String type, String description) {
         this.title = title;
         this.type = type;
         this.description = description;
+        this.documentIdentifier =  documentIdentifier;
 
     }
 
 
     //What information document creator gets from database when the document is submitted
-    public DocumentServiceObject(String title, String type, String description, LocalDateTime postedDate) {
+    public DocumentServiceObject(String documentIdentifier, String title, String type, String description, LocalDateTime postedDate) {
         this.title = title;
         this.type = type;
         this.description = description;
         this.postedDate = postedDate;
+        this.documentIdentifier =  documentIdentifier;
 
 
     }
 
     //What information document creator gets from database when the document is approved
-    public DocumentServiceObject(String title, String type, String description, LocalDateTime postedDate,
+    public DocumentServiceObject(String documentIdentifier, String title, String type, String description, LocalDateTime postedDate,
                                  LocalDateTime approvalDate, String approver) {
         this.title = title;
         this.type = type;
@@ -59,11 +61,12 @@ public class DocumentServiceObject {
         this.postedDate = postedDate;
         this.approvalDate = approvalDate;
         this.approver = approver;
+        this.documentIdentifier =  documentIdentifier;
 
     }
 
     //What information document creator gets from database when the document is rejected
-    public DocumentServiceObject(String title, String type, String description, LocalDateTime postedDate,
+    public DocumentServiceObject(String documentIdentifier, String title, String type, String description, LocalDateTime postedDate,
                                  String approver, LocalDateTime rejectedDate, String rejectedReason) {
         this.title = title;
         this.type = type;
@@ -72,17 +75,19 @@ public class DocumentServiceObject {
         this.rejectedDate = rejectedDate;
         this.rejectedReason = rejectedReason;
         this.approver = approver;
+        this.documentIdentifier =  documentIdentifier;
 
     }
 
     //What information document approver gets from database when the document is submitted from user
-    public DocumentServiceObject(String author, String title, String type, String description, LocalDateTime postedDate
+    public DocumentServiceObject(String documentIdentifier, String author, String title, String type, String description, LocalDateTime postedDate
     ) {
         this.author = author;
         this.title = title;
         this.type = type;
         this.description = description;
         this.postedDate = postedDate;
+        this.documentIdentifier =  documentIdentifier;
 
     }
 

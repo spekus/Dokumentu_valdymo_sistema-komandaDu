@@ -41,7 +41,21 @@ public class DocumentService {
     @Transactional
 
     public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, DocumentState state) {
+        try
+        {
+            UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+            //kai ekspermentavau, nemeta exceptiono tol kol user ententyje nepabandai kazko ieskot, net
+            // jei tokio userio nera, jokio crasho/error nebus tol kol su useriu kazko nepadarai
+            userEntity.getDocumentEntities();
+        }
+        catch(NullPointerException e)
+        {
+            e.printStackTrace();
+            throw new IllegalArgumentException("When trying to get document using" +
+                    "UserIdentifier  database returns null," +
+                    "either user identifier is not recognised or user has no documents attached");
 
+        }
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
         Set<DocumentEntity> documentsFromDatabaseWithState = new HashSet<>();
@@ -53,26 +67,29 @@ public class DocumentService {
 
         if (state.equals(DocumentState.CREATED)) {
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription()))
+                    new DocumentServiceObject(documentEntity.getDocumentIdentifier() ,documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription()))
                     .collect(Collectors.toSet());
 
         } else if (state.equals(DocumentState.SUBMITTED)) {
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
+                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
                             documentEntity.getPostedDate())).collect(Collectors.toSet());
         } else if (state.equals(DocumentState.APPROVED)) {
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
+                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
                             documentEntity.getPostedDate(), documentEntity.getApprovalDate(), documentEntity.getApprover()))
                     .collect(Collectors.toSet());
 
-        } else {
+        } else if(state.equals(DocumentState.REJECTED)){
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
+                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
                             documentEntity.getPostedDate(), documentEntity.getApprover(), documentEntity.getRejectedDate(),
                             documentEntity.getRejectionReason())).collect(Collectors.toSet());
 
         }
+        // does not actually work, as it crashes on controller if wrong state is used
+        throw new IllegalArgumentException("Most likely you used wrong document state is used" +
+                ", we can only handle CREATED, SUBMITTED, APPROVED and REJECTED");
     }
 
     @Transactional
@@ -274,17 +291,17 @@ specialisto Dokumento saraso*/
     public DocumentServiceObject getDocument(String documentIdentifier) {
         DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
         if (documentFromDatabase.getDocumentState().equals(DocumentState.CREATED)) {
-            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription());
+            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription());
 
         } else if (documentFromDatabase.getDocumentState().equals(DocumentState.SUBMITTED)) {
-            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
                     documentFromDatabase.getPostedDate());
         } else if (documentFromDatabase.getDocumentState().equals(DocumentState.APPROVED)) {
-            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
                     documentFromDatabase.getPostedDate(), documentFromDatabase.getApprovalDate(), documentFromDatabase.getApprover());
 
         } else {
-            return new DocumentServiceObject(documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(),documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
                     documentFromDatabase.getPostedDate(), documentFromDatabase.getApprover(), documentFromDatabase.getRejectedDate(),
                     documentFromDatabase.getRejectionReason());
 
