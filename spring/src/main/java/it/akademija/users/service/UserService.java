@@ -80,7 +80,7 @@ public class UserService {
             userServiceObject.setLastname(userEntity.getLastname());
             userServiceObject.setUsername(userEntity.getUsername());
             userServiceObject.setPassword(userEntity.getPassword());
-            userServiceObject.setUserGroups(userEntity.getUserGroups());
+//            userServiceObject.setUserGroups(userEntity.getUserGroups());
             return userServiceObject;
         }
         return null;
@@ -97,7 +97,7 @@ public class UserService {
             userServiceObject.setLastname(userEntity.getLastname());
             userServiceObject.setUsername(userEntity.getUsername());
             userServiceObject.setPassword(userEntity.getPassword());
-            userServiceObject.setUserGroups(userEntity.getUserGroups());
+//            userServiceObject.setUserGroups(userEntity.getUserGroups());
             userDto.add(userServiceObject);
         }
         return userDto;
@@ -146,7 +146,7 @@ public class UserService {
 
     public List<UserGroupServiceObject> getUserGroups(String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-       Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
+        Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
 
         return groupsUserBelongsTo.stream().map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle()))
                 .collect(Collectors.toList());
@@ -176,7 +176,7 @@ public class UserService {
             userServiceObject.setFirstname(userEntity.getFirstname());
             userServiceObject.setLastname(userEntity.getLastname());
             userServiceObject.setUsername(userEntity.getUsername());
-            userServiceObject.setUserGroups(userEntity.getUserGroups());
+//            userServiceObject.setUserGroups(userEntity.getUserGroups());
             return userServiceObject;
         }
         return null;
@@ -192,7 +192,7 @@ public class UserService {
             userServiceObject.setFirstname(userEntity.getFirstname());
             userServiceObject.setLastname(userEntity.getLastname());
             userServiceObject.setUsername(userEntity.getUsername());
-            userServiceObject.setUserGroups(userEntity.getUserGroups());
+//            userServiceObject.setUserGroups(userEntity.getUserGroups());
             return userServiceObject;
         }
         return null;
