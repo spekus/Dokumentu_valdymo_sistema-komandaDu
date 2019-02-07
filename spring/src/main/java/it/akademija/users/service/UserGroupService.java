@@ -17,6 +17,7 @@ import javax.swing.text.Document;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -156,15 +157,12 @@ public class UserGroupService {
     public void addGroupToUser(String userGroupTitle,String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
-        if (userEntity.getUserGroups() == null) {
-            Set<UserGroupEntity> userGroups = new HashSet<>();
-            userEntity.setUserGroups(userGroups);
+        Set<UserGroupEntity> allUserGroups = userEntity.getUserGroups();
+        if (!allUserGroups.contains(userGroupEntity)) {
+            allUserGroups.add(userGroupEntity);
+            userRepository.save(userEntity);
         }
-        userEntity.getUserGroups().add(userGroupEntity);
-        userRepository.save(userEntity);
     }
-
-
 }
 
 

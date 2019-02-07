@@ -144,12 +144,12 @@ public class UserService {
     }
 
 
-    public Set<UserGroupServiceObject> getUserGroups(String userIdentifier) {
+    public List<UserGroupServiceObject> getUserGroups(String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-        Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
+       Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
 
         return groupsUserBelongsTo.stream().map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     //Gets all user's document types that he can create documents
@@ -198,6 +198,20 @@ public class UserService {
         return null;
     }
 
+    @Transactional
+    public UserServiceObject getUserByCriteria(String criteria) {
+        UserEntity userEntity = userRepository.findByUsernameOrLastnameOrId(criteria);
+        if (userEntity != null) {
+            UserServiceObject userServiceObject = new UserServiceObject();
+            userServiceObject.setUserIdentifier(userEntity.getUserIdentifier());
+            userServiceObject.setFirstname(userEntity.getFirstname());
+            userServiceObject.setLastname(userEntity.getLastname());
+            userServiceObject.setUsername(userEntity.getUsername());
+            userServiceObject.setUserGroups(userEntity.getUserGroups());
+            return userServiceObject;
+        }
+        return null;
+    }
 
 }
 

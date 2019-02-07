@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 public class UserGroupEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
     private String title;
 
@@ -26,8 +26,11 @@ public class UserGroupEntity {
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<DocumentTypeEntity> availableDocumentTypesToUpload = new HashSet<>();
     @OneToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @LazyCollection(LazyCollectionOption.TRUE)
     private Set<DocumentEntity> documentsToApprove= new HashSet<>();
+
+    @ManyToMany(mappedBy = "userGroups")
+    private Set<UserEntity> groupUsers=new HashSet<>();
 
 
     protected UserGroupEntity(){}
@@ -88,5 +91,11 @@ public class UserGroupEntity {
         this.documentsToApprove.add(documentEntity);
     }
 
+    public Set<UserEntity> getGroupUsers() {
+        return groupUsers;
+    }
 
+    public void setGroupUsers(Set<UserEntity> groupUsers) {
+        this.groupUsers = groupUsers;
+    }
 }

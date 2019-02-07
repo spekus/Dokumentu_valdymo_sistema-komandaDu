@@ -3,20 +3,23 @@ package it.akademija.users.repository;
 
 import it.akademija.documents.repository.DocumentEntity;
 import org.h2.engine.Role;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 
     private String userIdentifier;
@@ -31,9 +34,14 @@ public class UserEntity {
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<DocumentEntity> documentEntities = new HashSet<>();
 
-    @OneToMany
+    @ManyToMany
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinTable(
+            name = "user_usergroup",
+            joinColumns = @JoinColumn(name = "userEntity_id"),
+            inverseJoinColumns = @JoinColumn(name = "userGroupEntity_id"))
     private Set<UserGroupEntity> userGroups = new HashSet<>();
+
 
     public UserEntity() {
     }
@@ -100,6 +108,7 @@ public class UserEntity {
         this.documentEntities.add(documentEntity);
     }
 
+
     public String getPassword() {
         return password;
     }
@@ -124,6 +133,4 @@ public class UserEntity {
     public void setUserGroups(Set<UserGroupEntity> userGroups) {
         this.userGroups = userGroups;
     }
-
-
 }
