@@ -5,24 +5,49 @@ import {Link} from 'react-router-dom';
 import DashboardNavigation from './DashBoardElements/DashboardNavigation';
 
 
-class AugisDashBoard extends Component {
+class GenericDashBoard extends Component {
     state = { 
+        nameOfWindow : 'default',
         userId : 'id123',
         userDocuments : [],
     }
+    componentWillUnmount(){
+    
+    }
+
     componentWillMount(){
+        
+
+    }
+    componentDidMount(){
         this.getAllDocuments();
+    }
+
+    componentDidUpdate(){
+        console.log("window did update");
+        if(!(this.state.nameOfWindow == this.props.match.params.id)){
+        this.setState({nameOfWindow : this.props.match.params.id})
+        console.log("state of name of the window was set to - " +
+        this.state.nameOfWindow);
+        this.getAllDocuments();
+        }
+        
     }
 
     getAllDocuments() {
         console.log("runing getAllDocuments");
-        axios.get('/api/documents/' + this.state.userId + '/documents')
+        console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
+        
+        
+        
+        axios.get('/api/documents/' + this.state.userId + '/documents/' + this.props.match.params.id.toUpperCase())
             .then(response => {
+               
                 console.log("response - " + response);
                 console.log("response - " + response.data);
                 console.log("response title - " + response.data[1].title);
-                console.log("response author - " 
-                            + response.data[1].author);
+                // console.log("response author - " 
+                //             + response.data[1].author);
                 // const dataList =
                 // response.data.map((p) => {
                 //     return (
@@ -47,8 +72,9 @@ class AugisDashBoard extends Component {
     render() {
         return (
             <React.Fragment>
+                Dokumentu {this.state.nameOfWindow}
                 <div className="row mt-2">
-                   <DashboardNavigation/>
+                    <DashboardNavigation/>
                     
                     <div className='col-lg-12 mt-3'>
                         <DocumentsListSimple list={this.state.userDocuments}/>
@@ -60,4 +86,4 @@ class AugisDashBoard extends Component {
     }
 }
 
-export default AugisDashBoard;
+export default GenericDashBoard;
