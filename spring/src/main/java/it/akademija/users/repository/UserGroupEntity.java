@@ -26,10 +26,10 @@ public class UserGroupEntity {
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<DocumentTypeEntity> availableDocumentTypesToUpload = new HashSet<>();
     @OneToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @LazyCollection(LazyCollectionOption.TRUE)
     private Set<DocumentEntity> documentsToApprove= new HashSet<>();
-    @ManyToMany(mappedBy = "userGroups")
 
+    @ManyToMany(mappedBy = "userGroups")
     private Set<UserEntity> groupUsers=new HashSet<>();
 
 

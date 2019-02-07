@@ -14,4 +14,6 @@ public interface UserGroupRepository extends JpaRepository<UserGroupEntity, Long
     void deleteGroupByTitle(String title);
 
     public List<UserGroupEntity> findAll();
+
+
 }

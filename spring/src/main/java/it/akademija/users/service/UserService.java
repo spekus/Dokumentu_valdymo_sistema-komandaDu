@@ -198,6 +198,20 @@ public class UserService {
         return null;
     }
 
+    @Transactional
+    public UserServiceObject getUserByCriteria(String criteria) {
+        UserEntity userEntity = userRepository.findByUsernameOrLastnameOrId(criteria);
+        if (userEntity != null) {
+            UserServiceObject userServiceObject = new UserServiceObject();
+            userServiceObject.setUserIdentifier(userEntity.getUserIdentifier());
+            userServiceObject.setFirstname(userEntity.getFirstname());
+            userServiceObject.setLastname(userEntity.getLastname());
+            userServiceObject.setUsername(userEntity.getUsername());
+            userServiceObject.setUserGroups(userEntity.getUserGroups());
+            return userServiceObject;
+        }
+        return null;
+    }
 
 }
 

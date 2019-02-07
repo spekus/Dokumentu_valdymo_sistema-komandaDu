@@ -60,7 +60,7 @@ public class UserController {
     }
 
     // GET /api/users - returns all users
-    @RequestMapping(value = "/", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/", method = RequestMethod.GET)
     @ApiOperation(value = "List all users and all related info", notes = "")
     public Collection<UserServiceObject> getAllUsers() {
         return userService.getAllUsers();
@@ -107,6 +107,13 @@ public class UserController {
     @ApiOperation(value = "lastname", notes = "Returns user by lastname")
     public UserServiceObject getUserByLastname(@RequestParam("lastname") @Length(min = 1) String lastname) {
         return userService.getUserByLastname(lastname);
+
+    }
+
+    @RequestMapping(value = "/criteria", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "criteria", notes = "Returns user by criteria")
+    public UserServiceObject getUserByCriteria(@RequestParam("criteria") @Length(min = 1) String criteria) {
+        return userService.getUserByCriteria(criteria);
 
     }
 

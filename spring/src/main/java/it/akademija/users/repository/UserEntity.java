@@ -30,7 +30,7 @@ public class UserEntity {
     private String password;
 
 
-    @OneToMany(cascade={CascadeType.DETACH, CascadeType.MERGE})
+    @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<DocumentEntity> documentEntities = new HashSet<>();
 
