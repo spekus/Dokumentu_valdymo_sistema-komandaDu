@@ -5,7 +5,7 @@ import {Link} from 'react-router-dom';
 import DashboardNavigation from './DashBoardElements/DashboardNavigation';
 
 
-class SubmitedDashBoard extends Component {
+class ToAprooveDashboard extends Component {
     state = { 
         nameOfWindow : 'default',
         userId : 'id123',
@@ -36,34 +36,29 @@ class SubmitedDashBoard extends Component {
 
     getAllDocuments() {
         console.log("runing getAllDocuments");
-        console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
-        
-        
-        
-        axios.get('/api/documents/' + this.state.userId + '/documents/' + this.props.match.params.id.toUpperCase())
-            .then(response => {
+        axios({
+            method: 'GET',
+            url: '/api/usergroup/getDocumentsToApprove',
+            params: {
+                userIdentifier: (this.state.userId)
+            },
+            
+            // headers: {'Content-Type': 'application/json;charset=utf-8'}
+        }).then(response => {
+        this.setState({userDocuments : response.data})
+        })
+        // axios.get('/api/usergroup/' + 'getDocumentsToApprove/', "id123")
+        //     .then(response => {
                
-                console.log("response - " + response);
-                console.log("response - " + response.data);
-                console.log("response title - " + response.data[1].title);
-                // console.log("response author - " 
-                //             + response.data[1].author);
-                // const dataList =
-                // response.data.map((p) => {
-                //     return (
-                //         <div>
-                //     <h3>titile {p.title}</h3>
-                //     <h3>author {p.author}</h3>
-                //         </div>
-                //     );
-                // });
-                // this.setState({masyvas : dataList})
-                // console.log("masyvas - " + dataList[0].author);
-                this.setState({userDocuments : response.data})
-            })
+        //         console.log("response - " + response);
+        //         console.log("response - " + response.data);
+        //         console.log("response title - " + response.data[1].title);
+
+        //         this.setState({userDocuments : response.data})
+        //     })
             .catch(err => {
                 this.setState({error: err.message})
-                console.log("Error from /api/documents/{userIdentifier}/documents - " 
+                console.log("Error from /api/usergroup/' + 'getDocumentsToApprove/' - " 
                 + err)
             });
     }
@@ -86,4 +81,4 @@ class SubmitedDashBoard extends Component {
     }
 }
 
-export default SubmitedDashBoard;
+export default ToAprooveDashboard;

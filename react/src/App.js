@@ -18,7 +18,7 @@ import LoginComponent from "./Components/Users/LoginComponent";
 import Settings from "./Components/Settings/Settings";
 import AugisDashBoard from "./Components/Dashboard/Dashboards/AugisDashBoard";
 import SubmitedDashBoard from "./Components/Dashboard/Dashboards/SubmitedDashBoard";
-
+import ToAprooveDashboard from "./Components/Dashboard/Dashboards/ToAprooveDashboard";
 
 class App extends React.Component {
     state = {
@@ -113,6 +113,7 @@ class App extends React.Component {
                                         <Switch>
                                             {/* <Route exact path="/" component={AugisDashBoard}/> */}
                                             <Route exact path="/" component={AugisDashBoard}/>
+                                            <Route path="/dashboard/documents/to_aproove" component={ToAprooveDashboard}/>
                                             <Route path="/dashboard/documents/:id" component={SubmitedDashBoard}/>
                                             <Route exact path="/documents/:id" component={AugisDokumentas}/>
                                             <Route path="/documents" component={DocumentsHome}/>
