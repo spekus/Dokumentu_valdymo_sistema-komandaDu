@@ -17,6 +17,7 @@ import javax.swing.text.Document;
 import javax.transaction.Transactional;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -130,7 +131,7 @@ public class UserGroupService {
     @Transactional
     public Set<DocumentServiceObject> getDocumentsToApprove(String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-        Set<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
+        List<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
         Set<DocumentEntity> allDocumentsToApprove = new HashSet<>();
 
         for (UserGroupEntity userGroupEntity : groupsFromUser) {
@@ -156,10 +157,6 @@ public class UserGroupService {
     public void addGroupToUser(String userGroupTitle,String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
-        if (userEntity.getUserGroups() == null) {
-            Set<UserGroupEntity> userGroups = new HashSet<>();
-            userEntity.setUserGroups(userGroups);
-        }
         userEntity.getUserGroups().add(userGroupEntity);
         userRepository.save(userEntity);
     }

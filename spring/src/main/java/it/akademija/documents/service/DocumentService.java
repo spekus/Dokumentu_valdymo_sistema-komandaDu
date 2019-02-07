@@ -100,7 +100,7 @@ public class DocumentService {
         //Pasiimam useri is DB
         UserEntity userFromDatabase = userRepository.findUserByUserIdentifier(userIdentifier);
         //Pasiimam grupes, kurioms jis yra priskirtas
-        Set<UserGroupEntity> availableUserGroups = userFromDatabase.getUserGroups();
+        List<UserGroupEntity> availableUserGroups = userFromDatabase.getUserGroups();
 
         //Pereinam per tas grupes ir tikrinam
         for (UserGroupEntity userGroup : availableUserGroups) {

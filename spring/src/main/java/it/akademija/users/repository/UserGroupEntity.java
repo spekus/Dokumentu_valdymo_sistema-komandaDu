@@ -14,7 +14,7 @@ import java.util.Set;
 @Entity
 public class UserGroupEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.TABLE)
     protected Long id;
     private String title;
 

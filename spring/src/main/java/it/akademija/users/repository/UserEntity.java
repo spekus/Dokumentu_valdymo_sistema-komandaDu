@@ -8,15 +8,17 @@ import org.hibernate.annotations.LazyCollectionOption;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 
     private String userIdentifier;
@@ -33,7 +35,7 @@ public class UserEntity {
 
     @OneToMany
     @LazyCollection(LazyCollectionOption.FALSE)
-    private Set<UserGroupEntity> userGroups = new HashSet<>();
+    private List<UserGroupEntity> userGroups = new ArrayList<>();
 
     public UserEntity() {
     }
@@ -117,13 +119,12 @@ public class UserEntity {
 
     }
 
-    public Set<UserGroupEntity> getUserGroups() {
+
+    public List<UserGroupEntity> getUserGroups() {
         return userGroups;
     }
 
-    public void setUserGroups(Set<UserGroupEntity> userGroups) {
+    public void setUserGroups(List<UserGroupEntity> userGroups) {
         this.userGroups = userGroups;
     }
-
-
 }
