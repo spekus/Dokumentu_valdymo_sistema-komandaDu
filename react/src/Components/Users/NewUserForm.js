@@ -64,7 +64,7 @@ class NewUserForm extends Component {
             <React.Fragment>
                 <div>
                     <h4 className="my-4" align="center">
-                        {this.props.editmode ? "Naudotojo redagavimas" : "Naujo vartotojo registravimas"}
+                        {this.props.editmode ? "Naudotojo redagavimas" : "Naujo naudotojo registravimas"}
                     </h4>
                     <div className="row">
                         <div className="col-md-1"></div>
@@ -127,7 +127,7 @@ class NewUserForm extends Component {
                                 </small>
 
                                 <div className="text-center">
-                                    <button type="submit" className="btn btn-danger my-4">Išsaugoti</button>
+                                    <button type="submit" className="btn btn-info my-4">Išsaugoti</button>
                                 </div>
 
 

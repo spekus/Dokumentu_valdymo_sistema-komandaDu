@@ -58,8 +58,8 @@ class UserAdministration extends Component {
                 if (response.data.length > 0) {
                     this.setState({usergroups: response.data});
                 } else {
-                    (window.alert("Vartotojas nepriskirtas grupėms"));
-                    this.setState({usergroups: ["Vartotojas nepriskirtas grupėms"]})
+                    (window.alert("Naudotojas nepriskirtas grupėms"));
+                    this.setState({usergroups: ["Naudotojas nepriskirtas grupėms"]})
                 }
             })
             .catch(error => {
@@ -76,7 +76,7 @@ class UserAdministration extends Component {
                 if (response.data != 0) {
                     this.setState({...this.state, ...response.data});
                     this.setState({identifierInputField: ''});
-                } else (window.alert("Tokio userio nėra"))
+                } else (window.alert("Tokio naudotojo nėra"))
             })
             .catch(error => {
                 console.log("Atsakymas is getUserByUserIdentifier: " + error)
@@ -142,33 +142,33 @@ class UserAdministration extends Component {
             <React.Fragment>
                 <div>
                     <h4 className="my-4" align="center">
-                        Vartotojų administravimas
+                        Naudotojų administravimas
                     </h4>
 
                     <div className="form-group col-md-8 my-5">
-                        <label htmlFor="exampleFormControlInput1">Vartotojo paieška</label>
+                        <label htmlFor="exampleFormControlInput1">Naudotojo paieška</label>
                         <div className="row">
                             <div className="col-md-8 input-group">
                                 <div className="input-group-prepend">
                                     <span className="input-group-text" id="basic-addon1">🔎</span>
                                 </div>
                                 <input className="form-control mr-sm-2" type="search"
-                                       placeholder="Įveskite vartotojo identifikatorių"
+                                       placeholder="Įveskite naudotojo identifikatorių"
                                        aria-label="Search" aria-describedby="basic-addon1"
                                        value={this.state.identifierInputField}
                                        name="identifierInputField"
                                        onChange={this.handleChangeInput}/>
                             </div>
                             <div className="col-md-2">
-                                <button className="btn btn-danger my-2 my-sm-0" type="submit"
+                                <button className="btn btn-info my-2 my-sm-0" type="submit"
                                         onClick={this.getUserByUserIdentifier}>Ieškoti
                                 </button>
                             </div>
                             <div className="col-md-2">
-                                <button className="btn btn-outline-danger my-2 my-sm-0 buttonXL" type="submit"
+                                <button className="btn btn-outline-info my-2 my-sm-0 buttonXL" type="submit"
                                         onClick={() => {
                                             this.props.history.push("/user-registration")
-                                        }}>Registruoti naują vartotoją
+                                        }}>Registruoti naują naudotoją
                                 </button>
                             </div>
                         </div>
@@ -179,7 +179,7 @@ class UserAdministration extends Component {
                     {/*/!*NavLink - tai yra kaip Link, bet moka prideti active klase, priklausomai nuo kelio*!/*/}
                     {/*<NavLink to="/profile">Jusu profilis</NavLink><br/>*/}
 
-                    {/*/!*reikia naudoti Link*!/*/}
+                    {/*reikia naudoti Link*/}
                     {/*<Link to="/profile">Jusu profilis</Link>*/}
 
                 </div>
@@ -189,69 +189,46 @@ class UserAdministration extends Component {
 
                         <tbody>
                         <tr>
-                            <th style={{"width": "20%"}}>Vartotojo identifikatorius</th>
+                            <th style={{"width": "20%"}}>Naudotojo identifikatorius</th>
                             <td style={{"width": "50%"}}
                                 name="userIdentifier"
                                 value="userIdentifier"
                             >{this.state.userIdentifier}</td>
-                            <td style={{"width": "10%"}}>
-                                <button className="btn" onClick={this.handleChangeUser}><i className="fas fa-edit"></i>
-                                </button>
-                            </td>
                         </tr>
                         <tr>
-                            <th style={{"width": "20%"}}>Username</th>
+                            <th style={{"width": "20%"}}>Prisijungimo vardas (username)</th>
                             <td style={{"width": "50%"}}
                                 name="username"
                                 value="username">{this.state.username}</td>
-                            <td style={{"width": "10%"}}>
-                                <button className="btn" onClick={this.handleChangeUser}><i className="fas fa-edit"></i>
-                                </button>
-                            </td>
                         </tr>
                         <tr>
                             <th style={{"width": "20%"}}>Vardas</th>
                             <td style={{"width": "50%"}}
                                 name="firstname"
                                 value="firstname">{this.state.firstname}</td>
-                            <td style={{"width": "10%"}}>
-                                <button className="btn" onClick={this.handleChangeUser}><i className="fas fa-edit"></i>
-                                </button>
-                            </td>
                         </tr>
                         <tr>
                             <th style={{"width": "20%"}}>Pavardė</th>
                             <td style={{"width": "50%"}}
                                 name="lastname"
                                 value="lastname">{this.state.lastname}</td>
-                            <td style={{"width": "10%"}}>
-                                <button className="btn" onClick={this.handleChangeUser}><i className="fas fa-edit"></i>
-                                </button>
-                            </td>
                         </tr>
                         <tr>
                             <th style={{"width": "20%"}}>Slaptažodis</th>
                             <td style={{"width": "50%"}}
                                 name="password"
                                 value="password">{this.state.password}</td>
-                            <td style={{"width": "10%"}}>
-                                <button className="btn" onClick={this.handleChangeUser}><i className="fas fa-edit"></i>
-                                </button>
-                            </td>
                         </tr>
                         <tr>
-                            <th style={{"width": "20%"}}>Vartotojo grupės</th>
+                            <th style={{"width": "20%"}}>Naudotojo grupės</th>
                             <td style={{"width": "50%"}}
-                                name="password"
-                                value="password">
+                                name="usergroups"
+                                value="usergroups">
 
                                 {this.state.usergroups.map(item => (
                                     <span>{item.title} |  </span>
                                 ))}
-                            </td>
-                            <td style={{"width": "10%"}}>
-                                <button className="btn" onClick={this.handleChangeUser}><i className="fas fa-edit"></i>
-                                </button>
+
                             </td>
                         </tr>
 
@@ -276,7 +253,7 @@ class UserAdministration extends Component {
                     </div>
 
                     <div>
-                        <button type="submit" className="btn btn-danger my-1 mx-3"
+                        <button type="submit" className="btn btn-info my-1 mx-3"
                                 onClick={this.addGroup}>Pridėti
                         </button>
                     </div>
@@ -290,7 +267,7 @@ class UserAdministration extends Component {
 
 
                         <button type="submit" className="btn btn-secondary mb-2" onClick={this.deleteUser}>Ištrinti
-                            vartotoją
+                            naudotoją
                         </button>
                     </form>
 
