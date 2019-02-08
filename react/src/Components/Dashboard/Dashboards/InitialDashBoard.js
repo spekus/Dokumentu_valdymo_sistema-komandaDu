@@ -1,9 +1,11 @@
 import React, {Component} from 'react';
-import DocumentsListSimple from "../Documents/ReactFragments/AugustasDocumentsList";
+import DocumentsListSimple from "../../Documents/ReactFragments/AugustasDocumentsList";
 import axios from 'axios';
+import {Link} from 'react-router-dom';
+import DashboardNavigation from './DashBoardElements/DashboardNavigation';
 
 
-class AugisDashBoard extends Component {
+class InitialDashBoard extends Component {
     state = { 
         userId : 'id123',
         userDocuments : [],
@@ -46,14 +48,16 @@ class AugisDashBoard extends Component {
         return (
             <React.Fragment>
                 <div className="row mt-2">
-                    <div className='col-lg-12'>
-                        {/* <h5>Atmesti</h5> */}
+                   <DashboardNavigation/>
+                    
+                    <div className='col-lg-12 mt-3'>
                         <DocumentsListSimple list={this.state.userDocuments}/>
                     </div>
                 </div>
+
             </React.Fragment>
         );
     }
 }
 
-export default AugisDashBoard;
+export default InitialDashBoard;

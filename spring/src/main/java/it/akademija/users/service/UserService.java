@@ -80,7 +80,7 @@ public class UserService {
             userServiceObject.setLastname(userEntity.getLastname());
             userServiceObject.setUsername(userEntity.getUsername());
             userServiceObject.setPassword(userEntity.getPassword());
-            userServiceObject.setUserGroups(userEntity.getUserGroups());
+//            userServiceObject.setUserGroups(userEntity.getUserGroups());
             return userServiceObject;
         }
         return null;
@@ -97,7 +97,7 @@ public class UserService {
             userServiceObject.setLastname(userEntity.getLastname());
             userServiceObject.setUsername(userEntity.getUsername());
             userServiceObject.setPassword(userEntity.getPassword());
-            userServiceObject.setUserGroups(userEntity.getUserGroups());
+//            userServiceObject.setUserGroups(userEntity.getUserGroups());
             userDto.add(userServiceObject);
         }
         return userDto;
@@ -144,12 +144,12 @@ public class UserService {
     }
 
 
-    public Set<UserGroupServiceObject> getUserGroups(String userIdentifier) {
+    public List<UserGroupServiceObject> getUserGroups(String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
 
         return groupsUserBelongsTo.stream().map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle()))
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 
     //Gets all user's document types that he can create documents
@@ -176,7 +176,7 @@ public class UserService {
             userServiceObject.setFirstname(userEntity.getFirstname());
             userServiceObject.setLastname(userEntity.getLastname());
             userServiceObject.setUsername(userEntity.getUsername());
-            userServiceObject.setUserGroups(userEntity.getUserGroups());
+//            userServiceObject.setUserGroups(userEntity.getUserGroups());
             return userServiceObject;
         }
         return null;
@@ -192,12 +192,23 @@ public class UserService {
             userServiceObject.setFirstname(userEntity.getFirstname());
             userServiceObject.setLastname(userEntity.getLastname());
             userServiceObject.setUsername(userEntity.getUsername());
-            userServiceObject.setUserGroups(userEntity.getUserGroups());
+//            userServiceObject.setUserGroups(userEntity.getUserGroups());
             return userServiceObject;
         }
         return null;
     }
 
+    @Transactional
+    public List<UserServiceObject> getUserByCriteria(String criteria) {
+        if (userRepository.findByUsernameOrLastnameOrId(criteria) != null) {
+            return userRepository.findByUsernameOrLastnameOrId(criteria).stream().map(userEntity -> new UserServiceObject(userEntity.getUserIdentifier(),
+                    userEntity.getFirstname(),
+                    userEntity.getLastname(),
+                    userEntity.getUsername()))
+                    .collect(Collectors.toList());
+        }
+        return null;
+    }
 
 }
 

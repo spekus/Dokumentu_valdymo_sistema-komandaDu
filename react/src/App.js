@@ -16,8 +16,10 @@ import UserAdministration from "./Components/Users/UserAdministration";
 import NewUserForm from "./Components/Users/NewUserForm";
 import LoginComponent from "./Components/Users/LoginComponent";
 import Settings from "./Components/Settings/Settings";
-import AugisDashBoard from "./Components/Dashboard/AugisDashBoard";
 import UserAdminisrationList from "./Components/Users/UserAdminisrationList";
+import InitialDashBoard from "./Components/Dashboard/Dashboards/InitialDashBoard";
+import GenericDashBoard from "./Components/Dashboard/Dashboards/GenericDashBoard";
+import ToAprooveDashboard from "./Components/Dashboard/Dashboards/ToAprooveDashboard";
 
 
 class App extends React.Component {
@@ -113,7 +115,9 @@ class App extends React.Component {
                                         {/*:*/}
                                         <Switch>
                                             {/* <Route exact path="/" component={AugisDashBoard}/> */}
-                                            <Route exact path="/" component={AugisDashBoard}/>
+                                            <Route exact path="/" component={InitialDashBoard}/>
+                                            <Route path="/dashboard/documents/to_aproove" component={ToAprooveDashboard}/>
+                                            <Route path="/dashboard/documents/:id" component={GenericDashBoard}/>
                                             <Route exact path="/documents/:id" component={AugisDokumentas}/>
                                             <Route path="/documents" component={DocumentsHome}/>
                                             <Route path="/profile" component={UserProfile}/>

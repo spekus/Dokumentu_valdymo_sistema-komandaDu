@@ -1,7 +1,5 @@
 import React, {Component} from 'react';
-import Typography from "@material-ui/core/Typography/Typography";
-import Grid from "@material-ui/core/Grid/Grid";
-import DocumentsListSimple from "../Documents/DocumentsListSimple";
+
 import FileSaver from "file-saver";
 import axios from 'axios';
 
