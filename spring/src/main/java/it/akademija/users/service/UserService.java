@@ -1,24 +1,21 @@
 package it.akademija.users.service;
 
+import com.google.common.hash.Hashing;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.users.repository.UserEntity;
-
 import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
-
 import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
-
 import org.springframework.stereotype.Service;
-
 import javax.transaction.Transactional;
 import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -29,6 +26,8 @@ public class UserService {
     UserRepository userRepository;
     @Autowired
     UserGroupRepository userGroupRepository;
+
+    private static int workload = 12;
 
     public UserService() {
     }
@@ -61,15 +60,15 @@ public class UserService {
     @Transactional
     public void addNewUser(String userIdentifier, String firstname, String lastname, String username, String password) {
         UserEntity userEntity = new UserEntity(userIdentifier, firstname, lastname, username, password);
-
+        userEntity.setPassword(Hashing.sha256()
+                .hashString(userEntity.getPassword(), StandardCharsets.UTF_8)
+                .toString());
         UserEntity userEntityFromDataBase1 = userRepository.findUserByUserIdentifier(userIdentifier);
         UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
         if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
             userRepository.save(userEntity);
         }
     }
-
-
 
 
     @Transactional
@@ -134,22 +133,23 @@ public class UserService {
 
     @Transactional
     public UserServiceObject userLogin(String username, String password) {
-        UserEntity userEntity = userRepository.findUserByUsernameAndPassword(username, password);
-        if (userEntity != null) {
-
+        String sha256hex = Hashing.sha256()
+                .hashString(password, StandardCharsets.UTF_8)
+                .toString();
+        UserEntity userEntity = userRepository.findUserByUsername(username);
+        String passwordFromDataBaseUser=userEntity.getPassword();
+        if (userEntity != null && sha256hex.equals(passwordFromDataBaseUser)) {
             UserServiceObject userServiceObject = new UserServiceObject(userEntity.getUserIdentifier(), userEntity.getFirstname(),
                     userEntity.getLastname(), userEntity.getUsername());
             return userServiceObject;
         }
         return null;
-
     }
 
 
     public List<UserGroupServiceObject> getUserGroups(String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
-
         return groupsUserBelongsTo.stream().map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle()))
                 .collect(Collectors.toList());
     }
@@ -159,11 +159,9 @@ public class UserService {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
         Set<DocumentTypeEntity> allDocTypesUserCanCreate = new HashSet<>();
-
         for (UserGroupEntity userGroupEntity : groupsUserBelongsTo) {
             allDocTypesUserCanCreate.addAll(userGroupEntity.getAvailableDocumentTypesToUpload());
         }
-
         return allDocTypesUserCanCreate.stream().map((documentTypeEntity) ->
                 new DocumentTypeServiceObject(documentTypeEntity.getTitle())).collect(Collectors.toSet());
 
