@@ -15,6 +15,7 @@ import it.akademija.files.service.FileServiceObject;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -33,8 +34,9 @@ public class DocumentController {
         this.documentService = documentService;
     }
 
-    @RequestMapping(path = "/{userIdentifier}/documents/{state}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userIdentifier}/documents/{state}", method = RequestMethod.GET)
     @ApiOperation(value = "Get user's documents by state", notes = "Returns wanted user's documents by state")
+    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
     public Set<DocumentServiceObject> getDocuments(@ApiParam(value = "UserIdentifier", required = true)
                                                    @Valid @PathVariable String userIdentifier,
                                                    @ApiParam(value = "State", required = true)
@@ -42,17 +44,19 @@ public class DocumentController {
         return documentService.getDocumentsByState(userIdentifier, state);
     }
 
-    @RequestMapping(path = "/{userIdentifier}/documents", method = RequestMethod.GET)
+    @RequestMapping(value = "/{userIdentifier}/documents", method = RequestMethod.GET)
     @ApiOperation(value = "Get all user's documents", notes = "Returns wanted user's all documents")
+    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
     public Set<DocumentServiceObject> getAllUserDocuments(@ApiParam(value = "UserIdentifier", required = true)
                                                           @Valid @PathVariable String userIdentifier) {
         return documentService.getAllUserDocuments(userIdentifier);
     }
 
 
-    @RequestMapping(path = "/{userIdentifier}/documentAddToGroups", method = RequestMethod.POST)
+    @RequestMapping(value = "/{userIdentifier}/documentAddToGroups", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Add user's document", notes = "Adds new document to user's account")
+    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
     public ResponseTransfer addDocument(@ApiParam(value = "UniqueIdentifier", required = true) @PathVariable String userIdentifier,
                                         @ApiParam(value = "New document data", required = true) @Valid @RequestBody final CreateDocumentCommand p) {
         //creates document
@@ -78,9 +82,10 @@ public class DocumentController {
 //                cmd.getType());
 //    }
 
-    @RequestMapping(path = "/documents/{documentIdentifier}/submit", method = RequestMethod.PUT)
+    @RequestMapping(value = "/documents/{documentIdentifier}/submit", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Submit document", notes = "Submits document for approval")
+    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
     public void submitDocument(
             @ApiParam(value = "DocumentEntity identifier", required = true)
             @Valid
@@ -90,9 +95,10 @@ public class DocumentController {
         documentService.submitDocument(documentIdentifier);
     }
 
-    @RequestMapping(path = "/documents/{documentIdentifier}/approve/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/documents/{documentIdentifier}/approve/", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Approve document", notes = "Approves document")
+    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
     public void approveDocument (
             @ApiParam(value = "DocumentEntity identifier", required = true)
             @Valid
@@ -101,9 +107,10 @@ public class DocumentController {
         documentService.approveDocument(documentIdentifier, userIdentifier);
     }
 
-    @RequestMapping(path = "/documents/{documentIdentifier}/reject/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/documents/{documentIdentifier}/reject/", method = RequestMethod.PUT)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Reject document", notes = "Rejects document")
+    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
     public void rejectDocument(
             @ApiParam(value = "DocumentEntity identifier", required = true)
             @Valid
@@ -114,15 +121,17 @@ public class DocumentController {
     }
 
 
-    @RequestMapping(path = "/{documentIdentifier}", method = RequestMethod.GET)
+    @RequestMapping(value = "/{documentIdentifier}", method = RequestMethod.GET)
     @ApiOperation(value = "Get document", notes = "Returns one document")
+    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
     public DocumentServiceObject getDocument(@ApiParam(value = "DocumentIdentifier", required = true)
                                              @Valid @PathVariable @NotNull @Length(min = 1) String documentIdentifier) {
         return documentService.getDocument(documentIdentifier);
     }
 
-    @RequestMapping(path = "/{documentIdentifier}", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/{documentIdentifier}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete document", notes = "Deletes one document")
+    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
     public void deleteDocument(@ApiParam(value = "DocumentIdentifier", required = true)
                                              @Valid @PathVariable @NotNull @Length(min = 1) String documentIdentifier) {
        documentService.deleteDocument(documentIdentifier);

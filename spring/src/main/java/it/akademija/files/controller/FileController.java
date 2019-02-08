@@ -20,6 +20,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -93,7 +94,7 @@ public class FileController {
 //        }
 
     // downloads a file, need unique document identifier
-    @RequestMapping(path = "/download/{identifier}", method = RequestMethod.GET)
+    @RequestMapping(value = "/download/{identifier}", method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable final String identifier)
             throws IOException {
         FileServiceObject fileObject = fileService.findFile(identifier);
@@ -186,7 +187,7 @@ public class FileController {
     }
 
     // this is used to add file to document, can beused for multiple file
-    @RequestMapping(path = "/addFileToDocument", method = RequestMethod.POST)
+    @RequestMapping(value = "/addFileToDocument", method = RequestMethod.POST)
     public ResponseEntity < String >  addFileToDocument(@NotNull @RequestBody FileDocumentCommand fileDocumentComand){
 
 //            @NotNull @RequestParam("FileIdentifier") String fileIdentifier,
@@ -201,7 +202,7 @@ public class FileController {
 
     }
     //not working yet
-    @RequestMapping(path = "/findAllFilesByDocument", method = RequestMethod.GET)
+    @RequestMapping(value = "/findAllFilesByDocument", method = RequestMethod.GET)
     public Set<FileEntity> giveMEALllFileSSS(@NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
         DocumentServiceObject documentServiceObject = null;
         documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);
@@ -212,7 +213,7 @@ public class FileController {
     }
 
     //not working yet
-    @RequestMapping(path = "/findAllFilesByDocumentIdentifier", method = RequestMethod.GET)
+    @RequestMapping(value = "/findAllFilesByDocumentIdentifier", method = RequestMethod.GET)
     public List<String> getAllFileIdentifiers(@NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
         ArrayList <String> identifierList = new ArrayList<>();
 //        identifierList = fileService.getAllFileIdentifiers(documentIdentifier);
