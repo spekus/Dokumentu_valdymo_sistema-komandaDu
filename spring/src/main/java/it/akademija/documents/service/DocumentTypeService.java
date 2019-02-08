@@ -17,7 +17,8 @@ public class DocumentTypeService {
 
     @Transactional
     public Set<DocumentTypeServiceObject> getAllDocumentTypes () {
-        return documentTypeRepository.findAll().stream().map((docType) ->
+        return documentTypeRepository.findAll().stream().map(
+                (docType) ->
                 new DocumentTypeServiceObject(docType.getTitle()))
                 .collect(Collectors.toSet());
 

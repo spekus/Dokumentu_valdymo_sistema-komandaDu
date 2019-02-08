@@ -16,11 +16,13 @@ import UserAdministration from "./Components/Users/UserAdministration";
 import NewUserForm from "./Components/Users/NewUserForm";
 import LoginComponent from "./Components/Users/LoginComponent";
 import Settings from "./Components/Settings/Settings";
+import UserAdminisrationList from "./Components/Users/UserAdminisrationList";
 import InitialDashBoard from "./Components/Dashboard/Dashboards/InitialDashBoard";
 import GenericDashBoard from "./Components/Dashboard/Dashboards/GenericDashBoard";
 import ToAprooveDashboard from "./Components/Dashboard/Dashboards/ToAprooveDashboard";
 import axios from "axios";
 import {Redirect} from "react-router";
+
 
 
 class App extends React.Component {
@@ -36,6 +38,7 @@ class App extends React.Component {
         {iconClass: 'fa fw fa-list', path: 'documents', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
         {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
+        {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai 2'},
         {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai'},
     ];
 
@@ -99,7 +102,7 @@ class App extends React.Component {
                     <Route render={({location, history}) => (
                         <React.Fragment>
 
-                            <SideNav
+                            <SideNav id="mysidenav"
                                 onSelect={(selected) => {
                                     this.sideBarClicked(selected, location, history)
                                 }}
@@ -147,6 +150,7 @@ class App extends React.Component {
                                             <Route exact path="/upload-file" component={FileUploader}/>
                                             <Route exact path="/download-file" component={FileDownloader}/>
                                             <Route exact path="/user-administration" component={UserAdministration}/>
+                                            <Route exact path="/user-administration-list" component={UserAdminisrationList}/>
                                             <Route path="/settings" component={Settings}/>
                                             {/*<Route exact path="/user-administration"*/}
                                             {/*render={(props) => <UserAdministration {...props}  />}/>*/}
