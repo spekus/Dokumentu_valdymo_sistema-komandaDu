@@ -2,20 +2,71 @@ import React, {Component} from 'react';
 import NavLink from "react-router-dom/es/NavLink";
 import {Link} from "react-router-dom";
 import axios from 'axios';
+import NewUserForm from "./NewUserForm";
 
 class UserAdministration extends Component {
-    state = {
+    constructor() {
+        super();
+        this.state = this.emptyState;
+    }
+
+    // state = {
+    //     userIdentifier: '',
+    //     username: '',
+    //     firstname: '',
+    //     lastname: '',
+    //     password: '',
+    //     usergroups: [],
+    //     identifierInputField: '',
+    //     group: '',
+    //     availableGroups: []
+    // }
+    emptyState = {
         userIdentifier: '',
         username: '',
         firstname: '',
         lastname: '',
         password: '',
         usergroups: [],
-        identifierInputField: ''
+        identifierInputField: '',
+        group: '',
+        availableGroups: [],
+        //userlist:[],
     }
 
-    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
 
+    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
+    handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
+
+
+    getAllGroupsfromServer = (userID) => {
+        axios.get("/api/usergroup/")
+            .then(response => {
+                    if (response.data.length > 0) {
+                        this.setState({availableGroups: response.data});
+                    } else {
+                        (window.alert("Nėra sukurta jokių grupių"));
+                        this.setState({availableGroups: ["Nėra sukurta jokių grupių", ""]})
+                    }
+                }
+            )
+    }
+
+    getAllUserGroups = (userID) => {
+        axios.get('/api/users/' + userID + '/usergroups')
+            .then(response => {
+                if (response.data.length > 0) {
+                    this.setState({usergroups: response.data});
+                } else {
+                    (window.alert("Vartotojas nepriskirtas grupėms"));
+                    this.setState({usergroups: ["Vartotojas nepriskirtas grupėms"]})
+                }
+            })
+            .catch(error => {
+                    console.log("Atsakymas is getUserByUserIdentifier getUserGroup: " + error)
+                }
+            )
+    }
 
     getUserByUserIdentifier = (event) => {
         var userID = this.state.identifierInputField;
@@ -23,20 +74,68 @@ class UserAdministration extends Component {
         axios.get('/api/users/' + userID)
             .then(response => {
                 if (response.data != 0) {
-                this.setState({...this.state, ...response.data});
-                this.setState({identifierInputField: ''});
+                    this.setState({...this.state, ...response.data});
+                    this.setState({identifierInputField: ''});
                 } else (window.alert("Tokio userio nėra"))
             })
             .catch(error => {
                 console.log("Atsakymas is getUserByUserIdentifier: " + error)
+            });
+
+        this.getAllUserGroups(userID);
+
+        this.getAllGroupsfromServer(userID);
+
+    }
+
+
+    addGroup = (event) => {
+        var userID = this.state.userIdentifier;
+        var newGroup = this.state.group;
+        axios({
+                method: 'put',
+                url: '/api/usergroup/' + newGroup + '/add-person',
+                params: {
+                    userIdentifier: this.state.userIdentifier
+                },
+                headers: {'Content-Type': 'application/json;charset=utf-8'}
+            }
+        )
+
+        // axios.put('/api/usergroup/' + newGroup + '/add-person', {userIdentifier:this.state.userIdentifier})
+            .then(response => {
+                this.getAllGroupsfromServer(userID);
+                this.getAllUserGroups(userID);
+            })
+            .catch(error => {
+                console.log("Error from addGroup - " + error)
+            })
+    }
+
+
+    deleteUser = (userID) => {
+        var userID = this.state.userIdentifier;
+        var usernameToDelete = this.state.username;
+
+        axios.delete('/api/users/' + userID)
+            .then(response => {
+                this.setState(this.emptyState);
+                window.alert("Vartotojas" + usernameToDelete + "(vartotojo identifikatorius " + userID + " ) ištrintas")
+            })
+            .catch(error => {
+                console.log("Error from deleteUser - " + error)
             })
 
     }
 
     handleChangeUser = (event) => {
-        event.preventDefault();
-        window.alert("TO DO: user edit")
+        document.getElementById('editUserForm').style.visibility = 'visible';
+        //window.alert("TO DO: user edit")
     }
+    handleChangeUserHide = (event) => {
+        document.getElementById('editUserForm').style.visibility = 'hidden';
+    }
+
 
     render() {
         return (
@@ -56,7 +155,7 @@ class UserAdministration extends Component {
                                 <input className="form-control mr-sm-2" type="search"
                                        placeholder="Įveskite vartotojo identifikatorių"
                                        aria-label="Search" aria-describedby="basic-addon1"
-                                    value={this.state.identifierInputField}
+                                       value={this.state.identifierInputField}
                                        name="identifierInputField"
                                        onChange={this.handleChangeInput}/>
                             </div>
@@ -144,7 +243,12 @@ class UserAdministration extends Component {
                             <th style={{"width": "20%"}}>Vartotojo grupės</th>
                             <td style={{"width": "50%"}}
                                 name="password"
-                                value="password">{this.state.usergroups}</td>
+                                value="password">
+
+                                {this.state.usergroups.map(item => (
+                                    <span>{item.title} |  </span>
+                                ))}
+                            </td>
                             <td style={{"width": "10%"}}>
                                 <button className="btn" onClick={this.handleChangeUser}><i className="fas fa-edit"></i>
                                 </button>
@@ -155,10 +259,53 @@ class UserAdministration extends Component {
 
                     </table>
 
-                    <h5>TO DO: get user's group</h5>
-                    <h5>TO DO: add user to group</h5>
-                    <h5>TO DO: delete user</h5>
 
+                    <div>
+                        <form>
+                            <div className="form-group col-md-10">
+                                <label htmlFor="exampleFormControlSelect1">Turimos grupės</label>
+
+                                <select className="form-control" id="exampleFormControlSelect1"
+                                        value={this.state.group} onChange={this.handleChangeSelect} name="group">
+                                    {this.state.availableGroups.map(item => (
+                                        <option value={item.title}>{item.title}</option>
+                                    ))}
+                                </select>
+                            </div>
+                        </form>
+                    </div>
+
+                    <div>
+                        <button type="submit" className="btn btn-danger my-1 mx-3"
+                                onClick={this.addGroup}>Pridėti
+                        </button>
+                    </div>
+                    <br/>
+                    <br/>
+
+                    <form className="form-inline mx-3 my-4">
+                        <label className="sr-only" htmlFor="inlineFormInputName2">Name</label>
+                        <input type="text" className="form-control mb-2 mr-sm-2" id="inlineFormInputName2"
+                               value={this.state.userIdentifier} name="userIdentifier"/>
+
+
+                        <button type="submit" className="btn btn-secondary mb-2" onClick={this.deleteUser}>Ištrinti
+                            vartotoją
+                        </button>
+                    </form>
+
+                </div>
+                <button onClick={this.handleChangeUser}>Redaguoti</button>
+                <button onClick={this.handleChangeUserHide}>Paslepti redagavimo forma</button>
+
+                <div id="editUserForm" style={{'visibility': 'hidden'}}>
+                    <NewUserForm editmode={true}
+                                 userIdentifier={this.state.userIdentifier}
+                                 firstname={this.state.firstname}
+                                 lastname={this.state.lastname}
+                                 username={this.state.username}
+
+                    />
                 </div>
             </React.Fragment>
 

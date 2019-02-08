@@ -22,10 +22,8 @@ const AugustasDocumentsList = (props) => {
                     <td>{item.title}</td>
                     <td>{item.author}</td>
                     <td>{item.postedDate}</td>
-                    <td><Link className="btn btn-primary btn-lg btn-block" to=
-                    {"/documents/" + item.documentIdentifier}>Details 
-                    
-                    </Link></td>
+                    <td><Link className="btn btn-outline-info btn-block" to=
+                    {"/documents/" + item.documentIdentifier}>Details</Link></td>
 
                     <td className='lastColumn'>{item.date}</td>
                     </tr>
