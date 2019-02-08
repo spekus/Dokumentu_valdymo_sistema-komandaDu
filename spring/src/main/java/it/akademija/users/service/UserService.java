@@ -1,5 +1,6 @@
 package it.akademija.users.service;
 
+import com.google.common.hash.Hashing;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.users.repository.UserEntity;
@@ -8,12 +9,15 @@ import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
 
 import it.akademija.users.repository.UserRepository;
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 
 import org.springframework.stereotype.Service;
+import org.springframework.util.DigestUtils;
 
 import javax.transaction.Transactional;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.NoSuchProviderException;
@@ -34,6 +38,8 @@ public class UserService {
     UserRepository userRepository;
     @Autowired
     UserGroupRepository userGroupRepository;
+
+    private static int workload = 12;
 
     public UserService() {
     }
@@ -66,48 +72,16 @@ public class UserService {
     @Transactional
     public void addNewUser(String userIdentifier, String firstname, String lastname, String username, String password) {
         UserEntity userEntity = new UserEntity(userIdentifier, firstname, lastname, username, password);
-
-        get_SHA_1_SecurePassword(userEntity.getPassword());
+        userEntity.setPassword(Hashing.sha256()
+                .hashString(userEntity.getPassword(), StandardCharsets.UTF_8)
+                .toString());
         UserEntity userEntityFromDataBase1 = userRepository.findUserByUserIdentifier(userIdentifier);
         UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
         if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
             userRepository.save(userEntity);
         }
-
     }
 
-    private static String get_SHA_1_SecurePassword(String passwordToHash)
-    {
-        String generatedPassword = null;
-        try {
-            MessageDigest md = MessageDigest.getInstance("SHA-1");
-            //md.update(salt);
-            byte[] bytes = md.digest(passwordToHash.getBytes());
-            StringBuilder sb = new StringBuilder();
-            for(int i=0; i< bytes.length ;i++)
-            {
-                sb.append(Integer.toString((bytes[i] & 0xff) + 0x100, 16).substring(1));
-            }
-            generatedPassword = sb.toString();
-        }
-        catch (NoSuchAlgorithmException e)
-        {
-            e.printStackTrace();
-        }
-        return generatedPassword;
-    }
-
-    private static byte[] getSalt() throws NoSuchAlgorithmException, NoSuchProviderException
-    {
-        //Always use a SecureRandom generator
-        SecureRandom sr = SecureRandom.getInstance("SHA1PRNG", "SUN");
-        //Create array for salt
-        byte[] salt = new byte[16];
-        //Get a random salt
-        sr.nextBytes(salt);
-        //return salt
-        return salt;
-    }
 
     @Transactional
     public UserServiceObject getUserByUserId(String userIdentifier) {
@@ -171,15 +145,17 @@ public class UserService {
 
     @Transactional
     public UserServiceObject userLogin(String username, String password) {
-        UserEntity userEntity = userRepository.findUserByUsernameAndPassword(username, password);
-        if (userEntity != null) {
-
+        String sha256hex = Hashing.sha256()
+                .hashString(password, StandardCharsets.UTF_8)
+                .toString();
+        UserEntity userEntity = userRepository.findUserByUsername(username);
+        String passwordFromDataBaseUser=userEntity.getPassword();
+        if (userEntity != null && sha256hex.equals(passwordFromDataBaseUser)) {
             UserServiceObject userServiceObject = new UserServiceObject(userEntity.getUserIdentifier(), userEntity.getFirstname(),
                     userEntity.getLastname(), userEntity.getUsername());
             return userServiceObject;
         }
         return null;
-
     }
 
 
