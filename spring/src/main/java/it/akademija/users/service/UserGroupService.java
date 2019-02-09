@@ -55,9 +55,9 @@ public class UserGroupService {
 
     @Transactional
     public void addNewUserGroup(UserGroupServiceObject userGroupServiceObject) {
-        UserGroupEntity userGroupEntity = new UserGroupEntity(userGroupServiceObject.getTitle());
         UserGroupEntity userGroupEntityFromDataBase = userGroupRepository.findGroupByTitle(userGroupServiceObject.getTitle());
         if (userGroupEntityFromDataBase == null) {
+            UserGroupEntity userGroupEntity = new UserGroupEntity(userGroupServiceObject.getTitle(),userGroupServiceObject.getRole());
             userGroupRepository.save(userGroupEntity);
         }
     }
@@ -66,7 +66,7 @@ public class UserGroupService {
     public UserGroupServiceObject getGroupByTitle(String title) {
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(title);
         if (userGroupEntity != null) {
-            UserGroupServiceObject userGroupServiceObject = new UserGroupServiceObject(userGroupEntity.getTitle());
+            UserGroupServiceObject userGroupServiceObject = new UserGroupServiceObject(userGroupEntity.getTitle(), userGroupEntity.getRole());
             return userGroupServiceObject;
         }
         return null;
@@ -77,7 +77,7 @@ public class UserGroupService {
         return userGroupRepository.
                 findAll()
                 .stream()
-                .map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle()))
+                .map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle(),userGroupEntity.getRole()))
                 .collect(Collectors.toList());
     }
 

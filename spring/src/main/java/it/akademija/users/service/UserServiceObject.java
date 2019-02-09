@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class UserServiceObject {
 
@@ -14,7 +15,7 @@ public class UserServiceObject {
     private String lastname;
     private String username;
     private String password;
-//    private Set<UserGroupEntity> userGroups=new HashSet<>();
+    private Set<UserGroupServiceObject> userGroups=new HashSet<>();
 
 
     public UserServiceObject() {
@@ -36,6 +37,14 @@ public class UserServiceObject {
 
     }
 
+    public UserServiceObject(String userIdentifier, String firstname, String lastname, String username, String password, Set<UserGroupEntity> userGroups) {
+        this.userIdentifier = userIdentifier;
+        this.firstname = firstname;
+        this.lastname = lastname;
+        this.username = username;
+        this.password = password;
+        this.userGroups = userGroups.stream().map(ug -> new UserGroupServiceObject(ug.getTitle(),ug.getRole())).collect(Collectors.toSet());
+    }
 
     public String getUserIdentifier() {
         return userIdentifier;
@@ -77,11 +86,11 @@ public class UserServiceObject {
         this.password = password;
     }
 
-//    public Set<UserGroupEntity> getUserGroups() {
-//        return userGroups;
-//    }
-//
-//    public void setUserGroups(Set<UserGroupEntity> userGroups) {
-//        this.userGroups = userGroups;
-//    }
+    public Set<UserGroupServiceObject> getUserGroups() {
+        return userGroups;
+    }
+
+    public void setUserGroups(Set<UserGroupServiceObject> userGroups) {
+        this.userGroups = userGroups;
+    }
 }

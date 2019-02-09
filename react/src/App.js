@@ -20,14 +20,16 @@ import UserAdminisrationList from "./Components/Users/UserAdminisrationList";
 import InitialDashBoard from "./Components/Dashboard/Dashboards/InitialDashBoard";
 import GenericDashBoard from "./Components/Dashboard/Dashboards/GenericDashBoard";
 import ToAprooveDashboard from "./Components/Dashboard/Dashboards/ToAprooveDashboard";
+import axios from "axios";
+import {Redirect} from "react-router";
+
 
 
 class App extends React.Component {
     state = {
         sideBarIsOpen: false,
         appBarText: "DVS",
-        username: "user1",
-        
+        user: "",
     };
 
     menuItems = [
@@ -51,25 +53,47 @@ class App extends React.Component {
         }
     }
 
-    // handleLogout = (history) => {
-    //     window.alert("Viso gero");
-    //     this.setState({username: ""});
-    //     history.push("/");
-    //     return ("");
-    // }
+    // si funkcija kreipiasi o browseris panaudota cookie. tokiu budu naudojant salutini efekta mes
+    // suzinosime ar esame prisijunge
+    getWhoAmI = () => {
+        axios.get('/api/users/whoami')
+            .then(response => {
+                if (response.data.username != null) {
+                    this.setState({user: response.data});
+                }
+            })
+            .catch(error => {
+                console.log("Error getting user info from server");
+                console.log(error);
+            })
+    }
 
-    // handleLogin = (history) => {
-    //     this.setState({username: "Neo"});
-    //     history.push("/profile");
-    //     return ("");
-    // }
-    //
-    // handleLoginComponent = (data) => {
-    //     console.log("Handle login component. Wee need data, so we can set username from it.");
-    //     console.log(data);
-    //     this.setState({username: data.username})
-    // }
+    handleLogIn = () => {
+        this.getWhoAmI();
+        return (
+            <Redirect to='/'/>
+        )
+    }
 
+    handleLogOut = () => {
+        axios.get('/logout')
+            .then(response => {
+                console.log("Logout success");
+                console.log(response.data);
+                this.setState({user: ""})
+            })
+            .catch(error => {
+                console.log("Logout error: ");
+                console.log(error.data);
+                this.setState({user: ""})
+            })
+
+        return (<Redirect to='/login'/>);
+    }
+
+    componentDidMount() {
+        this.getWhoAmI();
+    }
 
     render() {
         return (
@@ -89,7 +113,7 @@ class App extends React.Component {
 
                                 <SideNav.Nav defaultSelected="">
                                     {this.menuItems.map((item) =>
-                                        <NavItem eventKey={item.path} id={item.path}>
+                                        <NavItem key={item.path} eventKey={item.path} id={item.path}>
                                             <NavIcon>
                                                 <i className={item.iconClass} style={{fontSize: '1.75em'}}/>
                                             </NavIcon>
@@ -106,21 +130,22 @@ class App extends React.Component {
                                 <nav className="navbar navbar-expand-sm bg-light navbar-light justify-content-between">
                                     <NavLink to='/' className="navbar-brand">{this.state.appBarText}</NavLink>
 
-                                    <LoginLogoutLink username={this.state.username}/>
+                                    <LoginLogoutLink user={this.state.user}/>
                                 </nav>
 
                                 <div id='main-content'>
-                                    {/*{this.state.username == "" ?*/}
-                                        {/*<LoginComponent onLogin={this.handleLoginComponent}/>*/}
-                                        {/*:*/}
+                                    {this.state.user === "" ?
+                                        <LoginComponent onLogin={this.handleLogIn}/>
+                                        :
                                         <Switch>
                                             {/* <Route exact path="/" component={AugisDashBoard}/> */}
                                             <Route exact path="/" component={InitialDashBoard}/>
-                                            <Route path="/dashboard/documents/to_aproove" component={ToAprooveDashboard}/>
+                                            <Route path="/dashboard/documents/to_aproove"
+                                                   component={ToAprooveDashboard}/>
                                             <Route path="/dashboard/documents/:id" component={GenericDashBoard}/>
                                             <Route exact path="/documents/:id" component={AugisDokumentas}/>
                                             <Route path="/documents" component={DocumentsHome}/>
-                                            <Route path="/profile" component={UserProfile}/>
+                                            <Route path="/profile" render={() => <UserProfile user={this.state.user} />}/>
                                             <Route path="/users" component={UsersList}/>
                                             <Route exact path="/upload-file" component={FileUploader}/>
                                             <Route exact path="/download-file" component={FileDownloader}/>
@@ -128,14 +153,14 @@ class App extends React.Component {
                                             <Route exact path="/user-administration-list" component={UserAdminisrationList}/>
                                             <Route path="/settings" component={Settings}/>
                                             {/*<Route exact path="/user-administration"*/}
-                                                   {/*render={(props) => <UserAdministration {...props}  />}/>*/}
+                                            {/*render={(props) => <UserAdministration {...props}  />}/>*/}
                                             <Route exact path="/user-registration" component={NewUserForm}/>
-                                            {/*<Route exact path="/logout" render={() => this.handleLogout(history)}/>*/}
-                                            <Route exact path="/logout" component={LoginComponent}/>
+                                            <Route exact path="/logout" render={() => this.handleLogOut()}/>
+                                            {/*<Route exact path="/logout" component={LoginComponent}/>*/}
                                             <Route exact path="/login" component={LoginComponent}/>
                                             <Route component={NotFound}/>
                                         </Switch>
-                                    {/*}*/}
+                                    }
                                 </div>
                             </main>
 
