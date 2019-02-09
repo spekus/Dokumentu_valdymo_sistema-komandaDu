@@ -68,7 +68,7 @@ class App extends React.Component {
             })
     }
 
-    hanleLogIn = () => {
+    handleLogIn = () => {
         this.getWhoAmI();
         return (
             <Redirect to='/'/>
@@ -135,7 +135,7 @@ class App extends React.Component {
 
                                 <div id='main-content'>
                                     {this.state.user === "" ?
-                                        <LoginComponent onLogin={this.hanleLogIn}/>
+                                        <LoginComponent onLogin={this.handleLogIn}/>
                                         :
                                         <Switch>
                                             {/* <Route exact path="/" component={AugisDashBoard}/> */}

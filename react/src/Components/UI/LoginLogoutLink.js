@@ -3,7 +3,7 @@ import {NavLink} from "react-router-dom";
 
 const LoginLogoutLink = (props) => {
 
-    if (props.user === {}) {
+    if (props.user === "") {
         return (
             <NavLink to='/login' className='navbar-brand'>
                 Prisijungti
