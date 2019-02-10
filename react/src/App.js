@@ -68,13 +68,6 @@ class App extends React.Component {
             })
     }
 
-    handleLogIn = () => {
-        this.getWhoAmI();
-        return (
-            <Redirect to='/'/>
-        )
-    }
-
     handleLogOut = () => {
         axios.get('/logout')
             .then(response => {
@@ -88,7 +81,7 @@ class App extends React.Component {
                 this.setState({user: ""})
             })
 
-        return (<Redirect to='/login'/>);
+        return (<Redirect to='/'/>);
     }
 
     componentDidMount() {
@@ -135,7 +128,7 @@ class App extends React.Component {
 
                                 <div id='main-content'>
                                     {this.state.user === "" ?
-                                        <LoginComponent onLogin={this.handleLogIn}/>
+                                        <LoginComponent onLogin={this.getWhoAmI}/>
                                         :
                                         <Switch>
                                             {/* <Route exact path="/" component={AugisDashBoard}/> */}
@@ -156,8 +149,6 @@ class App extends React.Component {
                                             {/*render={(props) => <UserAdministration {...props}  />}/>*/}
                                             <Route exact path="/user-registration" component={NewUserForm}/>
                                             <Route exact path="/logout" render={() => this.handleLogOut()}/>
-                                            {/*<Route exact path="/logout" component={LoginComponent}/>*/}
-                                            <Route exact path="/login" component={LoginComponent}/>
                                             <Route component={NotFound}/>
                                         </Switch>
                                     }

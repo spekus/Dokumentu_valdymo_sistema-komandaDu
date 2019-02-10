@@ -19,7 +19,7 @@ export default class Login extends Component {
         axios.post('/login', params)
             .then(response => {
                 // mes prisijungeme, todel dabar galime suzinoti naudotojo informacija
-                this.props.onLogin();
+                this.props.onLogin(this.props.history);
             })
             .catch(error => {
                 console.log("Error trying to log in. Dumping error: ");
