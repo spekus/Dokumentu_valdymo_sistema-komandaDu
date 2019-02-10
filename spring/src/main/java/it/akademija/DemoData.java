@@ -59,10 +59,12 @@ public class DemoData implements ApplicationRunner {
         createDocumentTypeIfNotExists("Registruotas laiškas");
 
         createUserIfNotExists("admin", "Administrator", "IT", "admin", "admin");
-        createUserIfNotExists("annpai", "Anna", "Paidem", "annpai", "annpai");
+        createUserIfNotExists("user1", "User", "Vienas", "user1", "user1");
+        createUserIfNotExists("user2", "User", "Du", "user2", "user2");
 
         userGroupService.addGroupToUser("Administratoriai","admin");
-        userGroupService.addGroupToUser("Vadybininkai","annpai");
+        userGroupService.addGroupToUser("Vadybininkai","user1");
+        userGroupService.addGroupToUser("Vadybininkai","user2");
 
         userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška");
         userGroupService.addDocumentTypeToUpload("Administratoriai","Darbo sutartis");
