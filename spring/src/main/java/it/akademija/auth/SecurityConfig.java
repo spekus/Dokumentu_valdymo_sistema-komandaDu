@@ -77,7 +77,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authenticationEntryPoint(restAuthenticationEntryPoint)
                     .and()
                 .authorizeRequests()
-                    .antMatchers("/api/documents/**")
+                    .antMatchers("/api/**")
                     .authenticated();
     }
 
