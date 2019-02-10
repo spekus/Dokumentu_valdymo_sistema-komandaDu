@@ -49,10 +49,10 @@ public class DemoData implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        createUserGroupIfNotExists("Administratoriai",AppRoleEnum.ADMIN_USER);
-        createUserGroupIfNotExists("Buhalteriai",AppRoleEnum.STANDARD_USER);
-        createUserGroupIfNotExists("Vadybininkai",AppRoleEnum.STANDARD_USER);
-        createUserGroupIfNotExists("Vadovai",AppRoleEnum.STANDARD_USER);
+        createUserGroupIfNotExists("Administratoriai",AppRoleEnum.ROLE_ADMIN);
+        createUserGroupIfNotExists("Buhalteriai",AppRoleEnum.ROLE_USER);
+        createUserGroupIfNotExists("Vadybininkai",AppRoleEnum.ROLE_USER);
+        createUserGroupIfNotExists("Vadovai",AppRoleEnum.ROLE_USER);
 
         createDocumentTypeIfNotExists("Paraiška");
         createDocumentTypeIfNotExists("Darbo sutartis");

@@ -26,7 +26,7 @@ public class DocumentTypeController {
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ApiOperation(value="Get all document types", notes="Returns all created document types")
-    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public Set<DocumentTypeServiceObject> getDocumentTypes() {
         return documentTypeService.getAllDocumentTypes();
     }
@@ -34,14 +34,14 @@ public class DocumentTypeController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ApiOperation(value="Create new document type", notes="Creates new document type")
-    @PreAuthorize("hasAuthority('ADMIN_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void createDocumentType (@RequestBody CreateDocumentTypeCommand p) {
         documentTypeService.createNewDocumentType(p.getTitle());
     }
 
     @RequestMapping(method = RequestMethod.PUT)
     @ApiOperation(value="Update document type", notes="Updates document type")
-    @PreAuthorize("hasAuthority('ADMIN_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void updateDocumentType (String currentTitle, CreateDocumentTypeCommand p) {
         documentTypeService.updateDocumentType(currentTitle, p.getTitle());
     }
@@ -49,7 +49,7 @@ public class DocumentTypeController {
     @RequestMapping(value = "/{title}", method = RequestMethod.DELETE)
 //    @RequestMapping( method = RequestMethod.DELETE)
     @ApiOperation(value="Delete document type", notes="Deletes document type")
-    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void deleteDocumentType (@PathVariable("title") String title) {
 //    public void deleteDocumentType ( String title) {
         documentTypeService.deleteDocumentType(title);
