@@ -2,6 +2,7 @@ package it.akademija.documents.service;
 
 import it.akademija.documents.DocumentState;
 import it.akademija.files.repository.FileEntity;
+import it.akademija.files.service.FileServiceObject;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -23,7 +24,7 @@ public class DocumentServiceObject {
 
 
 
-    private Set<FileEntity> filesAttachedToDocument=new HashSet<>();
+    private Set<FileServiceObject> filesAttachedToDocument=new HashSet<>();
 
     public DocumentServiceObject(){
 
@@ -206,11 +207,11 @@ public class DocumentServiceObject {
         this.documentState = documentState;
     }
 
-    public Set<FileEntity> getFilesAttachedToDocument() {
+    public Set<FileServiceObject> getFilesAttachedToDocument() {
         return filesAttachedToDocument;
     }
 
-    public void setFilesAttachedToDocument(Set<FileEntity> filesAttachedToDocument) {
+    public void setFilesAttachedToDocument(Set<FileServiceObject> filesAttachedToDocument) {
         this.filesAttachedToDocument = filesAttachedToDocument;
     }
 

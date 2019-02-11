@@ -95,18 +95,8 @@ public class DocumentService {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
 
-        return documentsFromDatabase.stream().map((documentEntity) ->
-                new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
-                        documentEntity.getAuthor(),
-                        documentEntity.getTitle(),
-                        documentEntity.getType(),
-                        documentEntity.getDocumentState(),
-                        documentEntity.getDescription(),
-                        documentEntity.getPostedDate(),
-                        documentEntity.getApprovalDate(),
-                        documentEntity.getRejectedDate(),
-                        documentEntity.getRejectionReason(),
-                        documentEntity.getApprover())).collect(Collectors.toSet());
+        return documentsFromDatabase.stream().map(documentEntity ->
+                SOfromEntity(documentEntity)).collect(Collectors.toSet());
     }
 
     @Transactional
@@ -263,7 +253,7 @@ specialisto Dokumento saraso*/
     public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier) {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
             //converting from database object to normal one
-            DocumentServiceObject documentServiceObject = convertDocumentEntityToObject
+            DocumentServiceObject documentServiceObject = SOfromEntity
                     (documentRepository.findDocumentByDocumentIdentifier(documentIdentifier));
             return documentServiceObject;
         } else {
@@ -281,18 +271,6 @@ specialisto Dokumento saraso*/
         } else {
             throw new IllegalArgumentException("no valid document identifier provided");
         }
-    }
-
-    // you can delete or move this. I was just thinking it might be cool to have one method for conversion
-    // less code to maintain
-    @Transactional
-    private DocumentServiceObject convertDocumentEntityToObject(DocumentEntity documentFromDatabase) {
-        DocumentServiceObject documentServiceObject = new DocumentServiceObject();
-        documentServiceObject.setTitle(documentFromDatabase.getTitle());
-        documentServiceObject.setDescription(documentFromDatabase.getDescription());
-        documentServiceObject.setType(documentFromDatabase.getType());
-        documentServiceObject.setFilesAttachedToDocument(documentFromDatabase.getFileSet());
-        return documentServiceObject;
     }
 
     @Transactional
@@ -324,6 +302,29 @@ specialisto Dokumento saraso*/
                 documentEntity.getDocumentState().equals(DocumentState.REJECTED)) {
             documentRepository.deleteDocumentByDocumentIdentifier(documentIdentifier);
         }
+    }
+
+    private DocumentServiceObject SOfromEntity(DocumentEntity entity) {
+        DocumentServiceObject so = new DocumentServiceObject();
+
+        so.setApprovalDate(entity.getApprovalDate());
+        so.setApprover(entity.getApprover());
+        so.setAuthor(entity.getAuthor());
+        so.setDescription(entity.getDescription());
+        so.setDocumentIdentifier(entity.getDocumentIdentifier());
+        so.setDocumentState(entity.getDocumentState());
+        so.setPostedDate(entity.getPostedDate());
+        so.setRejectedDate(entity.getRejectedDate());
+        so.setRejectedReason(entity.getRejectionReason());
+        so.setTitle(entity.getTitle());
+        so.setType(entity.getType());
+
+
+        so.setFilesAttachedToDocument(entity.getFileSet()
+                .stream()
+                .map(file -> new FileServiceObject(file.getFileName(), file.getContentType(), file.getSize(), file.getIdentifier()))
+                .collect(Collectors.toSet()));
+        return so;
     }
 }
 
