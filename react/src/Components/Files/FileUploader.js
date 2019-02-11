@@ -201,7 +201,7 @@ export default class FileUploader extends Component {
                         <React.Fragment>
 
                             <div className="text-center">
-                                <button type="submit" className="btn btn-danger my-4"
+                                <button type="submit" className="btn btn-info my-4"
                                         onClick={this.uploadFile}>Išsaugoti
                                 </button>
                             </div>
