@@ -49,10 +49,10 @@ public class DemoData implements ApplicationRunner {
     @Override
     public void run(ApplicationArguments args) throws Exception {
 
-        createUserGroupIfNotExists("Administratoriai",AppRoleEnum.ADMIN_USER);
-        createUserGroupIfNotExists("Buhalteriai",AppRoleEnum.STANDARD_USER);
-        createUserGroupIfNotExists("Vadybininkai",AppRoleEnum.STANDARD_USER);
-        createUserGroupIfNotExists("Vadovai",AppRoleEnum.STANDARD_USER);
+        createUserGroupIfNotExists("Administratoriai",AppRoleEnum.ROLE_ADMIN);
+        createUserGroupIfNotExists("Buhalteriai",AppRoleEnum.ROLE_USER);
+        createUserGroupIfNotExists("Vadybininkai",AppRoleEnum.ROLE_USER);
+        createUserGroupIfNotExists("Vadovai",AppRoleEnum.ROLE_USER);
 
         createDocumentTypeIfNotExists("Paraiška");
         createDocumentTypeIfNotExists("Darbo sutartis");
@@ -61,10 +61,15 @@ public class DemoData implements ApplicationRunner {
         createUserIfNotExists("admin", "Administrator", "IT", "admin", "admin");
         createUserIfNotExists("id123", "Augustas", "Dirzys", "id123", "id123");
         createUserIfNotExists("annpai", "Anna", "Paidem", "annpai", "annpai");
+        createUserIfNotExists("user1", "User", "Vienas", "user1", "user1");
+        createUserIfNotExists("user2", "User", "Du", "user2", "user2");
 
         userGroupService.addGroupToUser("Administratoriai","admin");
         userGroupService.addGroupToUser("Administratoriai","id123");
         userGroupService.addGroupToUser("Vadybininkai","annpai");
+        userGroupService.addGroupToUser("Vadybininkai","user1");
+        userGroupService.addGroupToUser("Vadybininkai","user2");
+
 
         userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška");
         userGroupService.addDocumentTypeToUpload("Administratoriai","Darbo sutartis");

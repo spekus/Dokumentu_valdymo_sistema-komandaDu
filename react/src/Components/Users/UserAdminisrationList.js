@@ -38,22 +38,6 @@ class UserAdminisrationList extends Component {
     }
 
 
-    getAllUserGroups = (user) => {
-        axios.get('/api/users/' + user.userIdentifier + '/usergroups')
-            .then(response => {
-                if (response.data.length > 0) {
-                    this.setState({usergroups: response.data});
-                } else {
-                    (window.alert("Naudotojas nepriskirtas grupėms"));
-                    this.setState({usergroups: ["Naudotojas nepriskirtas grupėms"]})
-                }
-            })
-            .catch(error => {
-                    console.log("Atsakymas is getUserByUserIdentifier getUserGroup: " + error)
-                }
-            )
-    }
-
 
     addGroup = (event) => {
         var userID = this.state.userIdentifier;
@@ -77,7 +61,6 @@ class UserAdminisrationList extends Component {
                 console.log("Error from addGroup - " + error)
             })
     }
-
 
 
     deleteUser = (user) => {
@@ -143,33 +126,26 @@ class UserAdminisrationList extends Component {
                     <table className="table table-bordered table-hover table-sm" id="userListTable"
                            style={{'visibility': 'hidden'}}>
                         <thead>
-                        <th className="col-md-2">Username</th>
-                        <th className="col-md-2">Vardas</th>
-                        <th className="col-md-2">Pavardė</th>
-                        <th className="col-md-2">Naudotojo grupės</th>
-                        <th className="col-md-2">Redaguoti</th>
-                        <th className="col-md-2">Ištrinti</th>
+                        <th>Username</th>
+                        <th>Vardas</th>
+                        <th>Pavardė</th>
+                        <th>Naudotojo&nbsp;grupės</th>
+                        <th>Veiksmai</th>
                         </thead>
                         <tbody>
                         {this.state.userlist.map(user => (
                             <tr key={user.userIdentifier}>
-                                <td className="col-md-2">{user.username}</td>
-                                <td className="col-md-2">{user.firstname}</td>
-                                <td className="col-md-2">{user.lastname}</td>
-                                <td className="col-md-2">
-                                    <button className="btn btn-info btn-sm"
-                                            onClick={() => this.getAllUserGroups(user)}>Groups
-                                    </button>
+                                <td>{user.username}</td>
+                                <td>{user.firstname}</td>
+                                <td>{user.lastname}</td>
+                                <td>
+                                    {user.userGroups.map((group,index) => <span>{group.title} {index<user.userGroups.length-1?'|':''} </span>)}
                                 </td>
-
-                                <td className="col-md-2">
+                                <td>
                                     <button className="btn btn-info btn-sm"
                                             onClick={() => this.handleChangeUser(user)}>Edit
                                     </button>
-                                </td>
-
-                                <td className="col-md-2">
-                                    <button className="btn btn-secondary btn-sm"
+                                    <button className="btn btn-secondary btn-sm ml-2"
                                             onClick={() => this.deleteUser(user)}>Delete
                                     </button>
                                 </td>
@@ -178,20 +154,6 @@ class UserAdminisrationList extends Component {
                             </tr>
                         ))}
                         <tr>
-                        </tr>
-                        <br/>
-                        <tr>
-                            <th style={{"width": "20%"}}>Naudotojo grupės</th>
-                            <td style={{"width": "50%"}}
-                                name="usergroups"
-                                value="usergroups"
-                            >
-
-                                {this.state.usergroups.map(item => (
-                                    <span key={item.userIdentifier}>{item.title} |  </span>
-                                ))}
-
-                            </td>
                         </tr>
 
                         </tbody>

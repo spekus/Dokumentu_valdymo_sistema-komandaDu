@@ -163,10 +163,9 @@ public class UserService implements UserDetailsService {
     @Transactional
     public List<UserServiceObject> getUserByCriteria(String criteria) {
         if (userRepository.findByUsernameOrLastnameOrId(criteria) != null) {
-            return userRepository.findByUsernameOrLastnameOrId(criteria).stream().map(userEntity -> new UserServiceObject(userEntity.getUserIdentifier(),
-                    userEntity.getFirstname(),
-                    userEntity.getLastname(),
-                    userEntity.getUsername()))
+            return userRepository.findByUsernameOrLastnameOrId(criteria)
+                    .stream()
+                    .map(userEntity -> SOfromEntity(userEntity))
                     .collect(Collectors.toList());
         }
         return null;

@@ -40,14 +40,14 @@ public class UserGroupController {
 
     @RequestMapping(value = "/", method = RequestMethod.POST)
     @ApiOperation(value = "Create usergroup", notes = "")
-    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void addNewUserGroup(@RequestBody UserGroupServiceObject userGroupServiceObject) {
         userGroupService.addNewUserGroup(userGroupServiceObject);
     }
 
     @RequestMapping(value = "/", method = RequestMethod.GET)
     @ApiOperation(value = "Lists all usergroups", notes = "")
-    @PreAuthorize("hasAuthority('ADMIN_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Collection<UserGroupServiceObject> getAllGroups() {
         return userGroupService.getAllGroups();
     }
@@ -55,14 +55,14 @@ public class UserGroupController {
 
     @RequestMapping(value = "/{userGroupTitle}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete usergroup", notes = "")
-    @PreAuthorize("hasAuthority('ADMIN_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void deleteGroup(@PathVariable("userGroupTitle") String userGroupTitle) {
         userGroupService.deleteGroupByTitle(userGroupTitle);
     }
 
     @RequestMapping(value = "/{userGroupTitle}", method = RequestMethod.POST)
     @ApiOperation(value = "Renames usergroup", notes = "")
-    @PreAuthorize("hasAuthority('ADMIN_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void updateUserPassword(@PathVariable("userGroupTitle") String userGroupTitle,
                                    @RequestParam("newTitle") String newTitle) {
         userGroupService.updateGroupByTitle(userGroupTitle, newTitle);
@@ -70,7 +70,7 @@ public class UserGroupController {
 
     @RequestMapping(value = "/{userGroupTitle}/addDocumentTypeToUpload", method = RequestMethod.PUT)
     @ApiOperation(value = "Add document types allowed to upload", notes = "")
-    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void addDocumentTypeToUpload(@PathVariable("userGroupTitle") String userGroupTitle,
                                         @RequestParam("documentTypeTitle") String documentTypeTitle) {
         userGroupService.addDocumentTypeToUpload(userGroupTitle, documentTypeTitle);
@@ -78,7 +78,7 @@ public class UserGroupController {
 
     @RequestMapping(value = "/{userGroupTitle}/addDocumentTypeToApprove", method = RequestMethod.PUT)
     @ApiOperation(value = "Add document types allowed to approve", notes = "")
-    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void addDocumentTypeToApprove(@PathVariable("userGroupTitle") String userGroupTitle,
                                          @RequestParam("documentTypeTitle") String documentTypeTitle) {
         userGroupService.addDocumentTypeToApprove(userGroupTitle, documentTypeTitle);
@@ -94,7 +94,7 @@ public class UserGroupController {
 
     @RequestMapping(value = "/{userGroupTitle}/addDocumentsToApprove", method = RequestMethod.PUT)
     @ApiOperation(value = "Add documents to approve", notes = "")
-    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void addDocumentsToApprove(@PathVariable("userGroupTitle") String userGroupTitle,
                                       @RequestParam("documentIdentifier") String documentIdentifier) {
         userGroupService.addDocumentsToApprove(userGroupTitle, documentIdentifier);
@@ -102,7 +102,7 @@ public class UserGroupController {
 
 
     @RequestMapping(value = "/getDocumentsToApprove", method = RequestMethod.GET)
-    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public Set<DocumentServiceObject> getDocumentsToApprove(@RequestParam("userIdentifier") String userIdentifier
     ) {
         return userGroupService.getDocumentsToApprove(userIdentifier);
@@ -110,7 +110,7 @@ public class UserGroupController {
 
     @RequestMapping(value = "/{userGroupTitle}/add-person", method = RequestMethod.PUT)
     @ApiOperation(value = "Add group to user", notes = "")
-    @PreAuthorize("hasAuthority('ADMIN_USER') or hasAuthority('STANDARD_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void addGroupToUser(@PathVariable("userGroupTitle") @Length(min = 1) String userGroupTitle,
                                @RequestParam("userIdentifier") @Length(min = 1) String userIdentifier) {
 
