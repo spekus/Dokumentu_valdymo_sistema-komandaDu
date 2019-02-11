@@ -41,52 +41,25 @@ public class DocumentService {
     @Transactional
 
     public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, DocumentState state) throws IllegalArgumentException {
-        try {
-            UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-            //kai ekspermentavau, nemeta exceptiono tol kol user ententyje nepabandai kazko ieskot, net
-            // jei tokio userio nera, jokio crasho/error nebus tol kol su useriu kazko nepadarai
-            userEntity.getDocumentEntities();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException("When trying to get document using" +
-                    "UserIdentifier  database returns null," +
-                    "either user identifier is not recognised or user has no documents attached");
-
-        }
+        // pasitikrinam ar yra toks naudotojas
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
-        Set<DocumentEntity> documentsFromDatabaseWithState = new HashSet<>();
-        for (DocumentEntity documentEntity : documentsFromDatabase) {
-            if (documentEntity.getDocumentState() == state) {
-                documentsFromDatabaseWithState.add(documentEntity);
-            }
+
+        if (userEntity == null){
+            throw new IllegalArgumentException("User with identifier '" + userIdentifier + "' does not exits.");
         }
 
-        if (state.equals(DocumentState.CREATED)) {
-            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription()))
-                    .collect(Collectors.toSet());
+        return documentRepository.findByDocumentStateAndAuthor(state, userIdentifier)
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toSet());
+    }
 
-        } else if (state.equals(DocumentState.SUBMITTED)) {
-            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
-                            documentEntity.getPostedDate())).collect(Collectors.toSet());
-        } else if (state.equals(DocumentState.APPROVED)) {
-            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
-                            documentEntity.getPostedDate(), documentEntity.getApprovalDate(), documentEntity.getApprover()))
-                    .collect(Collectors.toSet());
-
-        } else if (state.equals(DocumentState.REJECTED)) {
-            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
-                            documentEntity.getPostedDate(), documentEntity.getApprover(), documentEntity.getRejectedDate(),
-                            documentEntity.getRejectionReason())).collect(Collectors.toSet());
-
-        }
-        // does not actually work, as it crashes on controller if wrong state is used
-        throw new IllegalArgumentException("Most likely you used wrong document state is used" +
-                ", we can only handle CREATED, SUBMITTED, APPROVED and REJECTED");
+    public Set<DocumentServiceObject> getDocumentsByState(DocumentState state)
+    {
+        return  documentRepository.findByDocumentState(state)
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toSet());
     }
 
     @Transactional
