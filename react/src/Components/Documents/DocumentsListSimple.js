@@ -1,8 +1,13 @@
 import React from 'react';
 
 const DocumentsListSimple = (props) => {
+    
+    
+
+
     return (
         <React.Fragment>
+      
             <table class="table">
                 <thead style={{backgroundColor: '#EEEEEE'}}>
                 <tr>
@@ -23,6 +28,6 @@ const DocumentsListSimple = (props) => {
             </table>
         </React.Fragment>
     );
-};
+}
 
 export default DocumentsListSimple;

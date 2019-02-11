@@ -18,22 +18,9 @@ class InitialDashBoard extends Component {
         console.log("runing getAllDocuments");
         axios.get('/api/documents/' + this.state.userId + '/documents')
             .then(response => {
-                console.log("response - " + response);
-                console.log("response - " + response.data);
-                console.log("response title - " + response.data[1].title);
-                console.log("response author - " 
-                            + response.data[1].author);
-                // const dataList =
-                // response.data.map((p) => {
-                //     return (
-                //         <div>
-                //     <h3>titile {p.title}</h3>
-                //     <h3>author {p.author}</h3>
-                //         </div>
-                //     );
-                // });
-                // this.setState({masyvas : dataList})
-                // console.log("masyvas - " + dataList[0].author);
+
+                console.log("response from /api/documents/ - " + response.data);
+                // console.log("response title - " + response.data[1].title);
                 this.setState({userDocuments : response.data})
             })
             .catch(err => {

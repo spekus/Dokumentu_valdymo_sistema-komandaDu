@@ -1,12 +1,14 @@
 import React from 'react';
 
 const AllDocuments = (props) => {
+
+
     return (
         <React.Fragment>
             <table class="table">
                 <thead style={{backgroundColor: '#EEEEEE'}}>
                 <tr>
-                    <th>Dokumento tipas</th>
+                    <th>Dokumento tipassss</th>
                     <th>Autorius</th>
                     <th className='lastColumn'>Sukurimo data</th>
                 </tr>

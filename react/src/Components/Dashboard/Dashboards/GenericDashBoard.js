@@ -25,11 +25,18 @@ class GenericDashBoard extends Component {
 
     componentDidUpdate(){
         console.log("window did update");
-        if(!(this.state.nameOfWindow == this.props.match.params.id)){
+        if(!(this.state.nameOfWindow == this.props.match.params.id))
+        {
         this.setState({nameOfWindow : this.props.match.params.id})
         console.log("state of name of the window was set to - " +
         this.state.nameOfWindow);
         this.getAllDocuments();
+        }
+        if (this.state.nameOfWindow == '') {
+            this.setState({nameOfWindow : this.props.match.params.id})
+            console.log("state of name of the window was set to - " +
+            this.state.nameOfWindow);
+            this.getAllDocuments();
         }
         
     }
@@ -43,22 +50,7 @@ class GenericDashBoard extends Component {
         axios.get('/api/documents/' + this.state.userId + '/documents/' + this.props.match.params.id.toUpperCase())
             .then(response => {
                
-                console.log("response - " + response);
-                console.log("response - " + response.data);
-                console.log("response title - " + response.data[1].title);
-                // console.log("response author - " 
-                //             + response.data[1].author);
-                // const dataList =
-                // response.data.map((p) => {
-                //     return (
-                //         <div>
-                //     <h3>titile {p.title}</h3>
-                //     <h3>author {p.author}</h3>
-                //         </div>
-                //     );
-                // });
-                // this.setState({masyvas : dataList})
-                // console.log("masyvas - " + dataList[0].author);
+                console.log("response from /api/documents/' - " + response);
                 this.setState({userDocuments : response.data})
             })
             .catch(err => {
@@ -70,9 +62,21 @@ class GenericDashBoard extends Component {
 
 
     render() {
+        const person = (props) => {
+            if(this.state.nameOfWindow == "submitted"){
+                return (
+                    <div>
+                <h1>"Hi my name is augustas and this 
+                    window is submitted"</h1>
+                <DashboardNavigation/>
+                </div>)
+            }
+
+        }
         return (
             <React.Fragment>
-                Dokumentu {this.state.nameOfWindow}
+                {/* Dokumentu {this.state.nameOfWindow} */}
+                {person()}
                 <div className="row mt-2">
                     <DashboardNavigation/>
                     
