@@ -3,11 +3,9 @@ package it.akademija.files.controller;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.files.ResponseTransfer;
-import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileDocumentCommand;
 import it.akademija.files.service.FileService;
 import it.akademija.files.service.FileServiceObject;
@@ -206,16 +204,16 @@ public class FileController {
 
 
     }
-    //not working yet
-    @RequestMapping(value = "/findAllFilesByDocument", method = RequestMethod.GET)
-    public Set<FileEntity> giveMEALllFileSSS(@NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
-        DocumentServiceObject documentServiceObject = null;
-        documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);
-        return documentServiceObject.getFilesAttachedToDocument();
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-
-
-    }
+//    //not working yet
+//    @RequestMapping(value = "/findAllFilesByDocument", method = RequestMethod.GET)
+//    public Set<FileEntity> giveMEALllFileSSS(@NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
+//        DocumentServiceObject documentServiceObject = null;
+//        documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);
+//        return documentServiceObject.getFilesAttachedToDocument();
+////        return ResponseEntity.status(HttpStatus.CREATED).build();
+//
+//
+//    }
 
     //not working yet
     @RequestMapping(value = "/findAllFilesByDocumentIdentifier", method = RequestMethod.GET)
@@ -226,10 +224,10 @@ public class FileController {
 //        Hibernate.initialize(documentService.getDocumentByDocumentIdentifier(documentIdentifier).getFilesAttachedToDocument());
         documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);
 
-        Set<FileEntity> fileList =  documentServiceObject.getFilesAttachedToDocument();
+        Set<FileServiceObject> fileList =  documentServiceObject.getFilesAttachedToDocument();
 
 
-        for (FileEntity file: fileList
+        for (FileServiceObject file: fileList
              ) {
             System.out.println("identifier " + file.getIdentifier());
             identifierList.add(file.getIdentifier());
