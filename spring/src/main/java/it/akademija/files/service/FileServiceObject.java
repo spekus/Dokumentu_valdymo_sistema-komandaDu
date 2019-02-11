@@ -17,12 +17,24 @@ public class FileServiceObject {
         generateUniqueIdentifier();
     }
 
+    // this constructor is used when we create a new File. As it is new, we generate unique identifier for it
     public FileServiceObject(String fileName, String contentType, String fileLocation, Long size) {
         this.fileName = fileName;
         this.contentType = contentType;
         this.fileLocation = fileLocation;
         this.size = size;
         generateUniqueIdentifier();
+    }
+
+    // this constructor is used when we create FileServiceObject from existing files, to show in document details
+    // we intentionally do not set fileLocation, becaus we don't want our API users to know where in the file system
+    // files are stored. This would disclose if we have Winodws or Linux on server and it is not needed
+    // in frontend anyway
+    public FileServiceObject(String fileName, String contentType, Long size, String identifier) {
+        this.fileName = fileName;
+        this.contentType = contentType;
+        this.size = size;
+        this.identifier = identifier;
     }
 
     private void generateUniqueIdentifier (){

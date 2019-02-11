@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -41,8 +42,24 @@ public class DocumentController {
                                                    @Valid @PathVariable String userIdentifier,
                                                    @ApiParam(value = "State", required = true)
                                                    @Valid @PathVariable DocumentState state) throws IllegalArgumentException {
-        return documentService.getDocumentsByState(userIdentifier, state);
+        try {
+            return documentService.getDocumentsByState(userIdentifier, state);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
+
+
+    @RequestMapping(value = "/bystate/{state}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get all documents by state", notes = "Returns all documents in a given state")
+    public Set<DocumentServiceObject> getDocumentsByState(
+                                                   @ApiParam(value = "State", required = true)
+                                                   @Valid @PathVariable DocumentState state) throws IllegalArgumentException {
+        return documentService.getDocumentsByState(state);
+    }
+
 
     @RequestMapping(value = "/{userIdentifier}/documents", method = RequestMethod.GET)
     @ApiOperation(value = "Get all user's documents", notes = "Returns wanted user's all documents")

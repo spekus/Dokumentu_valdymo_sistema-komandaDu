@@ -47,15 +47,6 @@ class ToAprooveDashboard extends Component {
         }).then(response => {
         this.setState({userDocuments : response.data})
         })
-        // axios.get('/api/usergroup/' + 'getDocumentsToApprove/', "id123")
-        //     .then(response => {
-               
-        //         console.log("response - " + response);
-        //         console.log("response - " + response.data);
-        //         console.log("response title - " + response.data[1].title);
-
-        //         this.setState({userDocuments : response.data})
-        //     })
             .catch(err => {
                 this.setState({error: err.message})
                 console.log("Error from /api/usergroup/' + 'getDocumentsToApprove/' - " 
@@ -65,9 +56,16 @@ class ToAprooveDashboard extends Component {
 
 
     render() {
+        // var objectsToDisplay =
+        //     return (
+        //     <DocumentsListSimple list={this.state.userDocuments}/>
+        //     )
+
+        
+
         return (
             <React.Fragment>
-                Dokumentu {this.state.nameOfWindow}
+                {/* Dokumentu {this.state.nameOfWindow} */}
                 <div className="row mt-2">
                     <DashboardNavigation/>
                     

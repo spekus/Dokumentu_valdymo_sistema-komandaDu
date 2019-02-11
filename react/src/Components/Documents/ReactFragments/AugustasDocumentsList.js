@@ -1,12 +1,21 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
+// import {Button} from 'react-native';
 
 const AugustasDocumentsList = (props) => {
+    // const doStufff = () => {
+    //     console.log("HEEEELP")
+    //     return (
+    //     <div>
+    // <h1>labas!!</h1>
+    //     </div>
+    //     )
+    // }
+
     return (
 
 
         <React.Fragment>
-            
             <table class="table">
                 <thead style={{backgroundColor: '#EEEEEE'}}>
                 <tr>
@@ -30,6 +39,8 @@ const AugustasDocumentsList = (props) => {
                     </tr>
                 ))}
                 </tbody>
+                {/* <Button variant="primary" onClick= {doStufff}>
+                    Primary</Button> */}
 
 
             </table>

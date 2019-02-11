@@ -80,6 +80,7 @@ class AugisDokumentas extends Component {
         //speju cia kazkas susije su security,
         fetch("http://localhost:8181/api/files/download/" + this.state.attachedFileIdentifier)
             .then(response => {
+                
                 console.log(response);
                 console.log("download " + this.state.attachedFileIdentifier);
                 // Log somewhat to show that the browser actually exposes the custom HTTP header
@@ -90,10 +91,11 @@ class AugisDokumentas extends Component {
                     : suggestedFileName);
                 console.log("Received header [" + fileNameHeader + "]: " + suggestedFileName
                     + ", effective fileName: " + effectiveFileName);
-
+               
                 // Let the user save the file.
                 FileSaver.saveAs(response.url, suggestedFileName);
-
+                
+                
             }).catch((response) => {
             console.error("Could not Download the Excel report from the backend.", response);
         });
@@ -130,7 +132,7 @@ class AugisDokumentas extends Component {
 
                         {/* <h5>Laukiantys patvirtinimo</h5> */}
                         <h6>Download</h6>
-                        <button onClick={this.downloadFile}>Download {this.state.attachedFileName} file</button>
+                        <button className = "btn btn-dark" onClick={this.downloadFile}>Download {this.state.attachedFileName} file</button>
 
 
                     <button className="btn btn-info btn-sm ml-5">Patvirtinti</button>

@@ -3,11 +3,9 @@ package it.akademija.files.controller;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.files.ResponseTransfer;
-import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileDocumentCommand;
 import it.akademija.files.service.FileService;
 import it.akademija.files.service.FileServiceObject;
@@ -97,8 +95,12 @@ public class FileController {
     @RequestMapping(value = "/download/{identifier}", method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable final String identifier)
             throws IOException {
+//        FileServiceObject  = fileService.downloadFileFromLocalServer(identifier);
+//        return data;
         FileServiceObject fileObject = fileService.findFile(identifier);
-        File file = new File(fileObject.getFileLocation());
+        File file = new File(
+                fileObject.getFileLocation());
+        System.out.println("FILE LOCATION" + file.getAbsolutePath());
         InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
 
         //        HttpHeaders header = new HttpHeaders();
@@ -179,7 +181,8 @@ public class FileController {
     @PostMapping
     @ResponseBody
     // create a file and upload it. return unique identifier.
-    public ResponseTransfer uploadNewFile(@NotNull @RequestParam("file") MultipartFile multipartFile) {
+    public ResponseTransfer uploadNewFile(@NotNull @RequestParam("file") MultipartFile multipartFile)
+            throws Exception{
         String uniqueIdentifier = fileService.addFileToDataBase(multipartFile);
         //just sends identifier for a file as a JSON fi private Set<FileEntity> filesAttachedToDocument=le, visible on swager and react.
         FileServiceObject fileServiceObject = fileService.findFile(uniqueIdentifier);
@@ -201,16 +204,16 @@ public class FileController {
 
 
     }
-    //not working yet
-    @RequestMapping(value = "/findAllFilesByDocument", method = RequestMethod.GET)
-    public Set<FileEntity> giveMEALllFileSSS(@NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
-        DocumentServiceObject documentServiceObject = null;
-        documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);
-        return documentServiceObject.getFilesAttachedToDocument();
-//        return ResponseEntity.status(HttpStatus.CREATED).build();
-
-
-    }
+//    //not working yet
+//    @RequestMapping(value = "/findAllFilesByDocument", method = RequestMethod.GET)
+//    public Set<FileEntity> giveMEALllFileSSS(@NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
+//        DocumentServiceObject documentServiceObject = null;
+//        documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);
+//        return documentServiceObject.getFilesAttachedToDocument();
+////        return ResponseEntity.status(HttpStatus.CREATED).build();
+//
+//
+//    }
 
     //not working yet
     @RequestMapping(value = "/findAllFilesByDocumentIdentifier", method = RequestMethod.GET)
@@ -221,10 +224,10 @@ public class FileController {
 //        Hibernate.initialize(documentService.getDocumentByDocumentIdentifier(documentIdentifier).getFilesAttachedToDocument());
         documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);
 
-        Set<FileEntity> fileList =  documentServiceObject.getFilesAttachedToDocument();
+        Set<FileServiceObject> fileList =  documentServiceObject.getFilesAttachedToDocument();
 
 
-        for (FileEntity file: fileList
+        for (FileServiceObject file: fileList
              ) {
             System.out.println("identifier " + file.getIdentifier());
             identifierList.add(file.getIdentifier());
