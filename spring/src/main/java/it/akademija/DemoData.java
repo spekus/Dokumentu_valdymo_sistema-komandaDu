@@ -79,9 +79,6 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Darbo sutartis");
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Registruotas laiškas");
 
-        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška");
-        userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis");
-        userGroupService.addDocumentTypeToApprove("Administratoriai","Registruotas laiškas");
     }
 
     private void createUserIfNotExists(String id, String fn, String ln, String un, String pswd) {
