@@ -53,7 +53,7 @@ public class DocumentController {
 
 
     @RequestMapping(value = "/bystate/{state}", method = RequestMethod.GET)
-    @ApiOperation(value = "Get user's documents by state", notes = "Returns all documents in a given state")
+    @ApiOperation(value = "Get all documents by state", notes = "Returns all documents in a given state")
     public Set<DocumentServiceObject> getDocumentsByState(
                                                    @ApiParam(value = "State", required = true)
                                                    @Valid @PathVariable DocumentState state) throws IllegalArgumentException {
