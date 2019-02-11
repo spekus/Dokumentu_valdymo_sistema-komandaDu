@@ -40,16 +40,13 @@ public class DocumentService {
 
     @Transactional
 
-    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, DocumentState state) throws IllegalArgumentException{
-        try
-        {
+    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, DocumentState state) throws IllegalArgumentException {
+        try {
             UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
             //kai ekspermentavau, nemeta exceptiono tol kol user ententyje nepabandai kazko ieskot, net
             // jei tokio userio nera, jokio crasho/error nebus tol kol su useriu kazko nepadarai
             userEntity.getDocumentEntities();
-        }
-        catch(NullPointerException e)
-        {
+        } catch (NullPointerException e) {
             e.printStackTrace();
             throw new IllegalArgumentException("When trying to get document using" +
                     "UserIdentifier  database returns null," +
@@ -60,14 +57,14 @@ public class DocumentService {
         Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
         Set<DocumentEntity> documentsFromDatabaseWithState = new HashSet<>();
         for (DocumentEntity documentEntity : documentsFromDatabase) {
-            if (documentEntity.getDocumentState()==state) {
+            if (documentEntity.getDocumentState() == state) {
                 documentsFromDatabaseWithState.add(documentEntity);
             }
         }
 
         if (state.equals(DocumentState.CREATED)) {
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getDocumentIdentifier() ,documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription()))
+                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription()))
                     .collect(Collectors.toSet());
 
         } else if (state.equals(DocumentState.SUBMITTED)) {
@@ -80,7 +77,7 @@ public class DocumentService {
                             documentEntity.getPostedDate(), documentEntity.getApprovalDate(), documentEntity.getApprover()))
                     .collect(Collectors.toSet());
 
-        } else if(state.equals(DocumentState.REJECTED)){
+        } else if (state.equals(DocumentState.REJECTED)) {
             return documentsFromDatabaseWithState.stream().map((documentEntity) ->
                     new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
                             documentEntity.getPostedDate(), documentEntity.getApprover(), documentEntity.getRejectedDate(),
@@ -129,19 +126,18 @@ public class DocumentService {
 //                    if (userFromDatabase.getUsername() != null) {
                     DocumentEntity documentEntity = new DocumentEntity(title, description, type);
                     documentEntity.setAuthor(userFromDatabase.getUsername());
-                        userFromDatabase.addDocument(documentEntity);
-                        documentRepository.save(documentEntity);
-                        return documentEntity;
+                    userFromDatabase.addDocument(documentEntity);
+                    documentRepository.save(documentEntity);
+                    return documentEntity;
 
 
-
-                    } else {
-                        System.out.println("User doesn't belong to a group that can create that type's documents");
-                    }
-
+                } else {
+                    System.out.println("User doesn't belong to a group that can create that type's documents");
                 }
 
             }
+
+        }
         return null;
 
     }
@@ -171,11 +167,11 @@ public class DocumentService {
     }
 
     @Transactional
-    private void sendSubmittedDocumentToApprove(DocumentEntity documentEntity){
-        List<UserGroupEntity> availableUserGroupsToGetSubmittedDoc=userGroupRepository.findAll();
-        for(UserGroupEntity userGroupEntity:availableUserGroupsToGetSubmittedDoc){
-            for(DocumentTypeEntity documentTypeEntity:userGroupEntity.getAvailableDocumentTypesToApprove()){
-                if(documentEntity.getType().equals(documentTypeEntity.getTitle())){
+    private void sendSubmittedDocumentToApprove(DocumentEntity documentEntity) {
+        List<UserGroupEntity> availableUserGroupsToGetSubmittedDoc = userGroupRepository.findAll();
+        for (UserGroupEntity userGroupEntity : availableUserGroupsToGetSubmittedDoc) {
+            for (DocumentTypeEntity documentTypeEntity : userGroupEntity.getAvailableDocumentTypesToApprove()) {
+                if (documentEntity.getType().equals(documentTypeEntity.getTitle())) {
                     userGroupEntity.getDocumentsToApprove().add(documentEntity);
                 }
             }
@@ -189,46 +185,57 @@ public class DocumentService {
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             //surandame prisiloginusi useri
             UserEntity userEntityFromDataBase = userRepository.findUserByUserIdentifier(userIdentifier);
-            LocalDateTime dateApproved = LocalDateTime.now();
-            documentEntityFromDatabase.setDocumentState(DocumentState.APPROVED);
-            documentEntityFromDatabase.setApprovalDate(dateApproved);
-            documentEntityFromDatabase.setApprover(userEntityFromDataBase.getFirstname() + " " + userEntityFromDataBase.getLastname());
-            documentRepository.save(documentEntityFromDatabase);
-            removeDocFromApproverList(documentIdentifier);
+
+            for (UserGroupEntity userGroupEntity : userEntityFromDataBase.getUserGroups()) {
+                if (userGroupEntity.getDocumentsToApprove().contains(documentEntityFromDatabase)) {
+                    LocalDateTime dateApproved = LocalDateTime.now();
+                    documentEntityFromDatabase.setDocumentState(DocumentState.APPROVED);
+                    documentEntityFromDatabase.setApprovalDate(dateApproved);
+                    documentEntityFromDatabase.setApprover(userEntityFromDataBase.getFirstname() + " " + userEntityFromDataBase.getLastname());
+                    documentRepository.save(documentEntityFromDatabase);
+                    removeDocFromApproverList(documentIdentifier);
+
+                }
+            }
         }
     }
 
     @Transactional
-    public void rejectDocument (String documentIdentifier, String userIdentifier, String rejectedReason) {
+    public void rejectDocument(String documentIdentifier, String userIdentifier, String rejectedReason) {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             UserEntity userEntityFromDataBase = userRepository.findUserByUserIdentifier(userIdentifier);
-            LocalDateTime dateRejected=LocalDateTime.now();
-            documentEntityFromDatabase.setDocumentState(DocumentState.REJECTED);
-            documentEntityFromDatabase.setRejectedDate(dateRejected);
-            documentEntityFromDatabase.setApprover(userEntityFromDataBase.getFirstname() + " " + userEntityFromDataBase.getLastname());
-            documentEntityFromDatabase.setRejectionReason(rejectedReason);
-            documentRepository.save(documentEntityFromDatabase);
-            removeDocFromApproverList(documentIdentifier);
+
+            for (UserGroupEntity userGroupEntity : userEntityFromDataBase.getUserGroups()) {
+                if (userGroupEntity.getDocumentsToApprove().contains(documentEntityFromDatabase)) {
+
+                    LocalDateTime dateRejected = LocalDateTime.now();
+                    documentEntityFromDatabase.setDocumentState(DocumentState.REJECTED);
+                    documentEntityFromDatabase.setRejectedDate(dateRejected);
+                    documentEntityFromDatabase.setApprover(userEntityFromDataBase.getFirstname() + " " + userEntityFromDataBase.getLastname());
+                    documentEntityFromDatabase.setRejectionReason(rejectedReason);
+                    documentRepository.save(documentEntityFromDatabase);
+                    removeDocFromApproverList(documentIdentifier);
+                }
+            }
+
         }
-
     }
-
 /*dokumentas su jo pasirasusiu specialistu issaugotas, dabar patvirtinta dokumenta reiktu pasalinti is
 specialisto Dokumento saraso*/
 
-        @Transactional
-        private void removeDocFromApproverList(String documentIdentifier) {
-            List<UserGroupEntity> availableUserGroups = userGroupRepository.findAll();
-            for (UserGroupEntity userGroupEntity : availableUserGroups) {
-                Set<DocumentEntity> allDocsToApproveFromGroup = userGroupEntity.getDocumentsToApprove();
-                for (DocumentEntity documentEntity : allDocsToApproveFromGroup) {
-                    if (documentEntity.getDocumentIdentifier().equals(documentIdentifier)) {
-                        allDocsToApproveFromGroup.remove(documentEntity);
-                    }
+    @Transactional
+    private void removeDocFromApproverList(String documentIdentifier) {
+        List<UserGroupEntity> availableUserGroups = userGroupRepository.findAll();
+        for (UserGroupEntity userGroupEntity : availableUserGroups) {
+            Set<DocumentEntity> allDocsToApproveFromGroup = userGroupEntity.getDocumentsToApprove();
+            for (DocumentEntity documentEntity : allDocsToApproveFromGroup) {
+                if (documentEntity.getDocumentIdentifier().equals(documentIdentifier)) {
+                    allDocsToApproveFromGroup.remove(documentEntity);
                 }
             }
         }
+    }
 
     public DocumentRepository getDocumentRepository() {
         return documentRepository;
@@ -253,27 +260,25 @@ specialisto Dokumento saraso*/
 
 
     @Transactional
-    public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier){
-        if (documentIdentifier!=null && !documentIdentifier.isEmpty()) {
+    public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier) {
+        if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
             //converting from database object to normal one
             DocumentServiceObject documentServiceObject = convertDocumentEntityToObject
                     (documentRepository.findDocumentByDocumentIdentifier(documentIdentifier));
             return documentServiceObject;
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("no valid document identifier provided");
         }
     }
 
     @Transactional
-    public DocumentEntity getDocumentEntityByDocumentIdentifier(String documentIdentifier){
-        if (documentIdentifier !=null && !documentIdentifier.isEmpty()) {
+    public DocumentEntity getDocumentEntityByDocumentIdentifier(String documentIdentifier) {
+        if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
             //converting from database object to normal one
             DocumentEntity documentEntity =
                     documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             return documentEntity;
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("no valid document identifier provided");
         }
     }
@@ -281,13 +286,13 @@ specialisto Dokumento saraso*/
     // you can delete or move this. I was just thinking it might be cool to have one method for conversion
     // less code to maintain
     @Transactional
-    private DocumentServiceObject convertDocumentEntityToObject(DocumentEntity documentFromDatabase){
-        DocumentServiceObject documentServiceObject= new DocumentServiceObject();
+    private DocumentServiceObject convertDocumentEntityToObject(DocumentEntity documentFromDatabase) {
+        DocumentServiceObject documentServiceObject = new DocumentServiceObject();
         documentServiceObject.setTitle(documentFromDatabase.getTitle());
         documentServiceObject.setDescription(documentFromDatabase.getDescription());
         documentServiceObject.setType(documentFromDatabase.getType());
         documentServiceObject.setFilesAttachedToDocument(documentFromDatabase.getFileSet());
-        return  documentServiceObject;
+        return documentServiceObject;
     }
 
     @Transactional
@@ -304,7 +309,7 @@ specialisto Dokumento saraso*/
                     documentFromDatabase.getPostedDate(), documentFromDatabase.getApprovalDate(), documentFromDatabase.getApprover());
 
         } else {
-            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(),documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
                     documentFromDatabase.getPostedDate(), documentFromDatabase.getApprover(), documentFromDatabase.getRejectedDate(),
                     documentFromDatabase.getRejectionReason());
 
@@ -314,7 +319,11 @@ specialisto Dokumento saraso*/
 
     @Transactional
     public void deleteDocument(String documentIdentifier) {
+        DocumentEntity documentEntity = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+        if (documentEntity.getDocumentState().equals(DocumentState.CREATED) ||
+                documentEntity.getDocumentState().equals(DocumentState.REJECTED)) {
             documentRepository.deleteDocumentByDocumentIdentifier(documentIdentifier);
+        }
     }
 }
 
