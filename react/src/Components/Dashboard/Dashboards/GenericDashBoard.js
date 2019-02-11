@@ -62,21 +62,19 @@ class GenericDashBoard extends Component {
 
 
     render() {
-        const person = (props) => {
-            if(this.state.nameOfWindow == "submitted"){
-                return (
-                    <div>
-                <h1>"Hi my name is augustas and this 
-                    window is submitted"</h1>
-                <DashboardNavigation/>
-                </div>)
-            }
-
-        }
+        // const person = (props) => {
+        //     if(this.state.nameOfWindow == "submitted"){
+        //         return (
+        //             <div>
+        //         <h1>"Hi my name is augustas and this 
+        //             window is submitted"</h1>
+        //         <DashboardNavigation/>
+        //         </div>)
+        //     }
+        // }
         return (
             <React.Fragment>
                 {/* Dokumentu {this.state.nameOfWindow} */}
-                {person()}
                 <div className="row mt-2">
                     <DashboardNavigation/>
                     

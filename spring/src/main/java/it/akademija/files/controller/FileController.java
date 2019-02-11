@@ -97,29 +97,28 @@ public class FileController {
     @RequestMapping(value = "/download/{identifier}", method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable final String identifier)
             throws IOException {
-        ResponseEntity a = fileService.downloadFileFromLocalServer(identifier);
-        return a;
-//        FileServiceObject fileObject = fileService.findFile(identifier);
-//        File file = new File(".." + File.separator + ".." + File.separator +".." + File.separator
-//                + ".." + File.separator +".." + File.separator  +
-//                fileObject.getFileLocation());
-//        System.out.println("FILE LOCATION" + file.getAbsolutePath());
-//        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+//        FileServiceObject  = fileService.downloadFileFromLocalServer(identifier);
+//        return data;
+        FileServiceObject fileObject = fileService.findFile(identifier);
+        File file = new File(
+                fileObject.getFileLocation());
+        System.out.println("FILE LOCATION" + file.getAbsolutePath());
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+        //        HttpHeaders header = new HttpHeaders();
 //
-//        //        HttpHeaders header = new HttpHeaders();
-////
-////        header.setContentType(MediaType.valueOf(fileEntity.getContentType()));
-////        header.setContentLength(fileEntity.getData().length);
-////        header.set("Content-Disposition", "attachment; filename=" + fileEntity.getFileName());
-//        System.out.println("File name = " + fileObject.getFileName());
-//        System.out.println("File location = " + fileObject.getFileLocation());
-//        System.out.println("File type = " + fileObject.getContentType());
-//        System.out.println("File size = " + fileObject.getSize());
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION,
-//                        "attachment;filename=" + fileObject.getFileName())
-//                .contentType(MediaType.valueOf(fileObject.getContentType())).contentLength(fileObject.getSize())
-//                .body(resource);
+//        header.setContentType(MediaType.valueOf(fileEntity.getContentType()));
+//        header.setContentLength(fileEntity.getData().length);
+//        header.set("Content-Disposition", "attachment; filename=" + fileEntity.getFileName());
+        System.out.println("File name = " + fileObject.getFileName());
+        System.out.println("File location = " + fileObject.getFileLocation());
+        System.out.println("File type = " + fileObject.getContentType());
+        System.out.println("File size = " + fileObject.getSize());
+        return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment;filename=" + fileObject.getFileName())
+                .contentType(MediaType.valueOf(fileObject.getContentType())).contentLength(fileObject.getSize())
+                .body(resource);
     }
 //
 //    // Using ResponseEntity<ByteArrayResource>
