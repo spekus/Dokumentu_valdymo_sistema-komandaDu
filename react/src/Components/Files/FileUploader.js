@@ -13,7 +13,7 @@ export default class FileUploader extends Component {
         msg: '',
         // savedFileIdentifier: '',
         // savedDocumentIdentifier: '',
-        type: 'Pirmas',
+        type: '',
         title: '',
         description: '',
         availableTypes: []

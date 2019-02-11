@@ -132,6 +132,10 @@ class AugisDokumentas extends Component {
                         <h6>Download</h6>
                         <button onClick={this.downloadFile}>Download {this.state.attachedFileName} file</button>
 
+
+                    <button className="btn btn-info btn-sm ml-5">Patvirtinti</button>
+                    <button className="btn btn-danger btn-sm ml-5">Atmesti</button>
+
                 </div>
 
 
