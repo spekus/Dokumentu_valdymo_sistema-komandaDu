@@ -99,7 +99,7 @@ public class DocumentController {
 //                cmd.getType());
 //    }
 
-    @RequestMapping(value = "/documents/{documentIdentifier}/submit", method = RequestMethod.PUT)
+    @RequestMapping(value = "/documents/{documentIdentifier}/submit", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Submit document", notes = "Submits document for approval")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
@@ -112,7 +112,7 @@ public class DocumentController {
         documentService.submitDocument(documentIdentifier);
     }
 
-    @RequestMapping(value = "/documents/{documentIdentifier}/approve/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/documents/{documentIdentifier}/approve", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Approve document", notes = "Approves document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
@@ -124,7 +124,7 @@ public class DocumentController {
         documentService.approveDocument(documentIdentifier, userIdentifier);
     }
 
-    @RequestMapping(value = "/documents/{documentIdentifier}/reject/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/documents/{documentIdentifier}/reject", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Reject document", notes = "Rejects document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
