@@ -13,6 +13,7 @@ import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
 import it.akademija.users.repository.UserRepository;
 import it.akademija.users.service.UserServiceObject;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -249,22 +250,26 @@ specialisto Dokumento saraso*/
     @Transactional
     public DocumentServiceObject getDocument(String documentIdentifier) {
         DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-        if (documentFromDatabase.getDocumentState().equals(DocumentState.CREATED)) {
-            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription());
-
-        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.SUBMITTED)) {
-            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
-                    documentFromDatabase.getPostedDate());
-        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.APPROVED)) {
-            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
-                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprovalDate(), documentFromDatabase.getApprover());
-
-        } else {
-            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
-                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprover(), documentFromDatabase.getRejectedDate(),
-                    documentFromDatabase.getRejectionReason());
-
+        if (documentFromDatabase == null){
+            throw new IllegalArgumentException("Dokuments su id '" + documentIdentifier + "'nerastas");
         }
+        return SOfromEntity(documentFromDatabase);
+//        if (documentFromDatabase.getDocumentState().equals(DocumentState.CREATED)) {
+//            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription());
+//
+//        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.SUBMITTED)) {
+//            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+//                    documentFromDatabase.getPostedDate());
+//        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.APPROVED)) {
+//            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+//                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprovalDate(), documentFromDatabase.getApprover());
+//
+//        } else {
+//            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+//                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprover(), documentFromDatabase.getRejectedDate(),
+//                    documentFromDatabase.getRejectionReason());
+//
+//        }
 
     }
 

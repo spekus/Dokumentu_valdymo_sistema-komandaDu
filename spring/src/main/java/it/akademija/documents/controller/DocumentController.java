@@ -143,7 +143,12 @@ public class DocumentController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public DocumentServiceObject getDocument(@ApiParam(value = "DocumentIdentifier", required = true)
                                              @Valid @PathVariable @NotNull @Length(min = 1) String documentIdentifier) {
-        return documentService.getDocument(documentIdentifier);
+       try{
+           return documentService.getDocument(documentIdentifier);
+       }catch (IllegalArgumentException e)
+       {
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+       }
     }
 
     @RequestMapping(value = "/{documentIdentifier}", method = RequestMethod.DELETE)
