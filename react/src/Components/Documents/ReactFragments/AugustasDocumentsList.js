@@ -19,7 +19,7 @@ const AugustasDocumentsList = (props) => {
             <table class="table">
                 <thead style={{backgroundColor: '#EEEEEE'}}>
                 <tr>
-                    <th>Dokumento tipas</th>
+                    <th>Dokumento pavadinimas</th>
                     <th>Autorius</th>
                     <th>Pateikimo data</th>
                     <th className="text-center">Detaliau</th>

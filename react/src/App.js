@@ -140,7 +140,7 @@ class App extends React.Component {
                                             <Route path="/documents" component={DocumentsHome}/>
                                             <Route path="/profile" render={(props) => <UserProfile user={this.state.user} {...props}/>}/>
                                             <Route path="/users" component={UsersList}/>
-                                            <Route exact path="/upload-file" component={FileUploader}/>
+                                            <Route exact path="/upload-file" render={(props) => <FileUploader user={this.state.user} {...props}/>}/>
                                             <Route exact path="/download-file" component={FileDownloader}/>
                                             <Route exact path="/user-administration" component={UserAdministration}/>
                                             <Route exact path="/user-administration-list" component={UserAdminisrationList}/>
