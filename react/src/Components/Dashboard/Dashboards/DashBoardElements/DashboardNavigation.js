@@ -16,7 +16,7 @@ const DashboardNavigation = (props) => {
                         <Link className="btn btn-dark btn-lg btn-block" to=
                         {"/dashboard/documents/created/"}>
                         {/* Submitted documents */}
-                        Kuriami dokumentai
+                        Sukurti dokumentai
                         </Link>
                     </div>
                     <div className='col-lg-2'> 
@@ -44,7 +44,7 @@ const DashboardNavigation = (props) => {
                         <Link className="btn btn-dark btn-lg btn-block" to=
                         {"/dashboard/documents/to_aproove/"}>
                         {/* Rejected documents */}
-                        Tvirtini dokumentus
+                        Dokumentai tvirtinimui
                         </Link>
                     </div>
 

@@ -120,7 +120,7 @@ class UserAdminisrationList extends Component {
             <React.Fragment>
                 <div className="container-fluid">
                     <h4 className="my-4" align="center">
-                        Naudotojų administravimas 2.
+                        Naudotojų administravimas
                     </h4>
 
 
@@ -157,7 +157,7 @@ class UserAdminisrationList extends Component {
                     <table className="table table-bordered table-hover table-sm" id="userListTable"
                            style={{'visibility': 'hidden'}}>
                         <thead>
-                        <th>Username</th>
+                        <th>Naudotojo vardas</th>
                         <th>Vardas</th>
                         <th>Pavardė</th>
                         <th>Naudotojo&nbsp;grupės</th>
@@ -175,10 +175,10 @@ class UserAdminisrationList extends Component {
                                 </td>
                                 <td>
                                     <button className="btn btn-info btn-sm"
-                                            onClick={() => this.handleChangeUser(user)}>Edit
+                                            onClick={() => this.handleChangeUser(user)}>Redaguoti
                                     </button>
                                     <button className="btn btn-secondary btn-sm ml-2"
-                                            onClick={() => this.deleteUser(user)}>Delete
+                                            onClick={() => this.deleteUser(user)}>Trinti
                                     </button>
                                 </td>
 
@@ -208,7 +208,7 @@ class UserAdminisrationList extends Component {
                         <div>
                             <form>
                                 <div className="form-group col-md-10">
-                                    <label htmlFor="exampleFormControlSelect1">Turimos grupės</label>
+                                    <label htmlFor="exampleFormControlSelect1">Grupės</label>
 
                                     <select className="form-control" id="exampleFormControlSelect1"
                                             value={this.state.group} onChange={this.handleChangeSelect} name="group">

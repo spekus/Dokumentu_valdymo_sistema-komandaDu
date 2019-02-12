@@ -22,7 +22,7 @@ const AugustasDocumentsList = (props) => {
                     <th>Dokumento pavadinimas</th>
                     <th>Autorius</th>
                     <th>Pateikimo data</th>
-                    <th className="text-center">Detaliau</th>
+                    <th className="text-center">Veiksmas</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -33,7 +33,7 @@ const AugustasDocumentsList = (props) => {
                     <td>{item.postedDate}</td>
 
                     <td><Link className="btn btn-outline-info btn-block" to=
-                    {"/documents/" + item.documentIdentifier}>Details</Link></td>
+                    {"/documents/" + item.documentIdentifier}>Detaliau</Link></td>
 
                     <td className='lastColumn'>{item.date}</td>
                     </tr>

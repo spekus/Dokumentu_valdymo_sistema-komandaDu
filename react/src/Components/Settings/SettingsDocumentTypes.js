@@ -96,7 +96,7 @@ class SettingsDocumentTypes extends Component {
                                        value={this.state.newDocumentTypeInputField}
                                        name="newDocumentTypeInputField"
                                        onChange={this.handleChangeInput}/>
-                                <button type="submit" className="btn btn-primary mt-2">Sukurti</button>
+                                <button type="submit" className="btn btn-info mt-2">Sukurti</button>
                             </div>
 
                         </form>
