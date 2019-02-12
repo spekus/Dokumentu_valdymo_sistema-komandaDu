@@ -17,6 +17,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -41,8 +42,24 @@ public class DocumentController {
                                                    @Valid @PathVariable String userIdentifier,
                                                    @ApiParam(value = "State", required = true)
                                                    @Valid @PathVariable DocumentState state) throws IllegalArgumentException {
-        return documentService.getDocumentsByState(userIdentifier, state);
+        try {
+            return documentService.getDocumentsByState(userIdentifier, state);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
+
+
+    @RequestMapping(value = "/bystate/{state}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get all documents by state", notes = "Returns all documents in a given state")
+    public Set<DocumentServiceObject> getDocumentsByState(
+                                                   @ApiParam(value = "State", required = true)
+                                                   @Valid @PathVariable DocumentState state) throws IllegalArgumentException {
+        return documentService.getDocumentsByState(state);
+    }
+
 
     @RequestMapping(value = "/{userIdentifier}/documents", method = RequestMethod.GET)
     @ApiOperation(value = "Get all user's documents", notes = "Returns wanted user's all documents")
@@ -82,7 +99,7 @@ public class DocumentController {
 //                cmd.getType());
 //    }
 
-    @RequestMapping(value = "/documents/{documentIdentifier}/submit", method = RequestMethod.PUT)
+    @RequestMapping(value = "/documents/{documentIdentifier}/submit", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Submit document", notes = "Submits document for approval")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
@@ -95,7 +112,7 @@ public class DocumentController {
         documentService.submitDocument(documentIdentifier);
     }
 
-    @RequestMapping(value = "/documents/{documentIdentifier}/approve/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/documents/{documentIdentifier}/approve", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Approve document", notes = "Approves document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
@@ -107,7 +124,7 @@ public class DocumentController {
         documentService.approveDocument(documentIdentifier, userIdentifier);
     }
 
-    @RequestMapping(value = "/documents/{documentIdentifier}/reject/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/documents/{documentIdentifier}/reject", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Reject document", notes = "Rejects document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
@@ -126,7 +143,12 @@ public class DocumentController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public DocumentServiceObject getDocument(@ApiParam(value = "DocumentIdentifier", required = true)
                                              @Valid @PathVariable @NotNull @Length(min = 1) String documentIdentifier) {
-        return documentService.getDocument(documentIdentifier);
+       try{
+           return documentService.getDocument(documentIdentifier);
+       }catch (IllegalArgumentException e)
+       {
+           throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+       }
     }
 
     @RequestMapping(value = "/{documentIdentifier}", method = RequestMethod.DELETE)

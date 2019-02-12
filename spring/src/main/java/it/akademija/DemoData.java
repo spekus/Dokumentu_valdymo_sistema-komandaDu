@@ -59,12 +59,17 @@ public class DemoData implements ApplicationRunner {
         createDocumentTypeIfNotExists("Registruotas laiškas");
 
         createUserIfNotExists("admin", "Administrator", "IT", "admin", "admin");
+        createUserIfNotExists("id123", "Augustas", "Dirzys", "id123", "id123");
+        createUserIfNotExists("annpai", "Anna", "Paidem", "annpai", "annpai");
         createUserIfNotExists("user1", "User", "Vienas", "user1", "user1");
         createUserIfNotExists("user2", "User", "Du", "user2", "user2");
 
         userGroupService.addGroupToUser("Administratoriai","admin");
+        userGroupService.addGroupToUser("Administratoriai","id123");
+        userGroupService.addGroupToUser("Vadybininkai","annpai");
         userGroupService.addGroupToUser("Vadybininkai","user1");
         userGroupService.addGroupToUser("Vadybininkai","user2");
+
 
         userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška");
         userGroupService.addDocumentTypeToUpload("Administratoriai","Darbo sutartis");
@@ -74,9 +79,6 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Darbo sutartis");
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Registruotas laiškas");
 
-        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška");
-        userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis");
-        userGroupService.addDocumentTypeToApprove("Administratoriai","Registruotas laiškas");
     }
 
     private void createUserIfNotExists(String id, String fn, String ln, String un, String pswd) {

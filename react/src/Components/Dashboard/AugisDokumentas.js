@@ -10,6 +10,10 @@ class AugisDokumentas extends Component {
         title: '',
         attachedFileIdentifier: '',
         attachedFileName: '',
+        userIdentifier: '',
+        documentState: "Laukiama patvirtinimo",
+        rejectedReason: '',
+        documentInfo: {}
     };
 
     componentWillMount() {
@@ -22,6 +26,7 @@ class AugisDokumentas extends Component {
 
     }
 
+    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
 
     getDocumentInformation = () => {
         axios.get('/api/documents/' + this.props.match.params.id)
@@ -34,11 +39,12 @@ class AugisDokumentas extends Component {
                 console.log("Description -" + result.data.description);
                 console.log("title -" + result.data.title);
                 console.log("type -" + result.data.type);
-                this.setState({
-                    title: result.data.title
-                    , type: result.data.type
-                    , description: result.data.description
-                });
+                // this.setState({
+                //     title: result.data.title
+                //     , type: result.data.type
+                //     , description: result.data.description
+                // });
+                this.setState({documentInfo:result.data});
                 this.getFileList();
             })
             .catch(error => {
@@ -75,11 +81,33 @@ class AugisDokumentas extends Component {
             })
     }
 
+    downloadOneFile = (fileIdentifier) => {
+        // cia reiketu susitvarkyti su downloaderiu/filesaveriu
+        // atsakymas kuris grizta yra dvejetainis, ir jame yra pats failas kuri norime atsisiusti
+        // reikia gauti ji kaip BLOB'a (Binary Large OBject) ir issaugoti
+        console.log("downloadOneFile start")
+        axios.get('/api/files/download/'+fileIdentifier)
+            .then(response => {
+                // console.log(response);
+                // const fileNameHeader = "x-suggested-filename";
+                // let suggestedFileName = response.headers[fileNameHeader];
+                // let effectiveFileName = (suggestedFileName === undefined
+                //     ? "document.txt"
+                //     : suggestedFileName);
+               // FileSaver.saveAs(response.url, suggestedFileName);
+                FileSaver.SaveAs(response.data);
+            })
+            .catch(error => {
+                console.log(error)
+            })
+    }
+
     downloadFile = () => {
         // neparasius pilno adreso su localhostu programa atsiuncia nesamone.
         //speju cia kazkas susije su security,
         fetch("http://localhost:8181/api/files/download/" + this.state.attachedFileIdentifier)
             .then(response => {
+
                 console.log(response);
                 console.log("download " + this.state.attachedFileIdentifier);
                 // Log somewhat to show that the browser actually exposes the custom HTTP header
@@ -94,10 +122,42 @@ class AugisDokumentas extends Component {
                 // Let the user save the file.
                 FileSaver.saveAs(response.url, suggestedFileName);
 
+
             }).catch((response) => {
             console.error("Could not Download the Excel report from the backend.", response);
         });
     }
+
+    approveDocument = (props) => {
+        var docID = this.props.match.params.id;
+        var params = new URLSearchParams();
+        params.append('userIdentifier', this.props.user.userIdentifier);
+        axios.post("/api/documents/documents/" + docID + "/approve", params)
+            .then(response => {
+                this.setState({documentState: 'Patvirtinta'});
+            })
+            .catch(error => {
+                window.alert("Klaida is approveDocument - " + error.data.message)
+                // console.log("Klaida is approveDocument - " + error.message);
+            })
+    }
+
+    rejectDocument = (props) => {
+        // document.getElementById('rejectReason').style.visibility = 'visible';
+        var reason = window.prompt("Iveskite atmetimo priezasti");
+        var docID = this.state.documentInfo.documentIdentifier;
+        var params = new URLSearchParams();
+        params.append('userIdentifier', this.props.user.userIdentifier);
+        params.append('rejectedReason', reason);
+        axios.post("/api/documents/documents/" + docID + "/reject", params)
+            .then(response => {
+                this.setState({documentState: 'Atmesta'});
+            })
+            .catch(error => {
+                console.log("Klaida is rejectDocument - " + error.message);
+            })
+    }
+
 
     render() {
         return (
@@ -105,32 +165,53 @@ class AugisDokumentas extends Component {
                 <div>
 
 
-                        {/* <h5>Sukurti</h5> */}
-                        <table className='table table-bordered col-md-7'>
-                            <thead>
-                            <th colspan='2' className="text-center table-secondary">DOKUMENTO DETALĖS</th>
-                            </thead>
-                            <tbody>
-                            <tr>
-                                <th >Dokumento pavadinimas</th>
-                                <td>{this.state.title}</td>
-                            </tr>
-                            <tr>
-                                <th>Aprašymas:</th>
-                                <td>{this.state.description}</td>
-                            </tr>
-                            <tr>
-                                <th>Failo pavadinimas:</th>
-                                <td>{this.state.attachedFileName}</td>
-                            </tr>
+                    {/* <h5>Sukurti</h5> */}
+                    <table className='table table-bordered col-md-7'>
+                        <thead>
+                        <th colspan='2' className="text-center table-secondary">DOKUMENTO DETALĖS</th>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th>Dokumento pavadinimas</th>
+                            <td>{this.state.documentInfo.title}</td>
+                        </tr>
+                        <tr>
+                            <th>Aprašymas</th>
+                            <td>{this.state.documentInfo.description}</td>
+                        </tr>
+                        <tr>
+                            <th>Failo pavadinimas</th>
+                            <td><ul>
+                                {this.state.documentInfo.filesAttachedToDocument ?
+                                this.state.documentInfo.filesAttachedToDocument.map(file => <li>
+                                    <a href={'http://localhost:8181/api/files/download/'+file.identifier} target='_blank'>{file.fileName}</a>
+                                    {/* mes naudojame localhost:8181/api  todel, kad react-server proxy nesuveikia kai content tipas yra nustatytas
+                                    */}
+                                    {/*<a href='#' onClick={() => this.downloadOneFile(file.identifier)} >{file.fileName}</a>*/}
+                                    </li>)
+                                : ''
+                                }
+                        </ul></td>
+                        </tr>
+                        <tr>
+                            <th>Dokumento statusas</th>
+                            <td>{this.state.documentInfo.documentState}</td>
+                        </tr>
 
-                            </tbody>
-                        </table>
+                        </tbody>
+                    </table>
 
 
-                        {/* <h5>Laukiantys patvirtinimo</h5> */}
-                        <h6>Download</h6>
-                        <button onClick={this.downloadFile}>Download {this.state.attachedFileName} file</button>
+                    {/* <h5>Laukiantys patvirtinimo</h5> */}
+                    {/*<h6>Download</h6>*/}
+                    {/*<button className="btn btn-dark"*/}
+                            {/*onClick={this.downloadFile}>Download {this.state.attachedFileName} file*/}
+                    {/*</button>*/}
+
+
+                    <button className="btn btn-info btn-sm ml-5" onClick={this.approveDocument}>Patvirtinti</button>
+                    <button className="btn btn-danger btn-sm ml-5" onClick={this.rejectDocument}>Atmesti</button>
+
 
                 </div>
 

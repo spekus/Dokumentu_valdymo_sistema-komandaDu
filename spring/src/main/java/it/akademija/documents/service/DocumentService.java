@@ -13,6 +13,7 @@ import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
 import it.akademija.users.repository.UserRepository;
 import it.akademija.users.service.UserServiceObject;
+import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,52 +42,25 @@ public class DocumentService {
     @Transactional
 
     public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, DocumentState state) throws IllegalArgumentException {
-        try {
-            UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-            //kai ekspermentavau, nemeta exceptiono tol kol user ententyje nepabandai kazko ieskot, net
-            // jei tokio userio nera, jokio crasho/error nebus tol kol su useriu kazko nepadarai
-            userEntity.getDocumentEntities();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-            throw new IllegalArgumentException("When trying to get document using" +
-                    "UserIdentifier  database returns null," +
-                    "either user identifier is not recognised or user has no documents attached");
-
-        }
+        // pasitikrinam ar yra toks naudotojas
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
-        Set<DocumentEntity> documentsFromDatabaseWithState = new HashSet<>();
-        for (DocumentEntity documentEntity : documentsFromDatabase) {
-            if (documentEntity.getDocumentState() == state) {
-                documentsFromDatabaseWithState.add(documentEntity);
-            }
+
+        if (userEntity == null){
+            throw new IllegalArgumentException("User with identifier '" + userIdentifier + "' does not exits.");
         }
 
-        if (state.equals(DocumentState.CREATED)) {
-            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription()))
-                    .collect(Collectors.toSet());
+        return documentRepository.findByDocumentStateAndAuthor(state, userIdentifier)
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toSet());
+    }
 
-        } else if (state.equals(DocumentState.SUBMITTED)) {
-            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
-                            documentEntity.getPostedDate())).collect(Collectors.toSet());
-        } else if (state.equals(DocumentState.APPROVED)) {
-            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
-                            documentEntity.getPostedDate(), documentEntity.getApprovalDate(), documentEntity.getApprover()))
-                    .collect(Collectors.toSet());
-
-        } else if (state.equals(DocumentState.REJECTED)) {
-            return documentsFromDatabaseWithState.stream().map((documentEntity) ->
-                    new DocumentServiceObject(documentEntity.getDocumentIdentifier(), documentEntity.getTitle(), documentEntity.getType(), documentEntity.getDescription(),
-                            documentEntity.getPostedDate(), documentEntity.getApprover(), documentEntity.getRejectedDate(),
-                            documentEntity.getRejectionReason())).collect(Collectors.toSet());
-
-        }
-        // does not actually work, as it crashes on controller if wrong state is used
-        throw new IllegalArgumentException("Most likely you used wrong document state is used" +
-                ", we can only handle CREATED, SUBMITTED, APPROVED and REJECTED");
+    public Set<DocumentServiceObject> getDocumentsByState(DocumentState state)
+    {
+        return  documentRepository.findByDocumentState(state)
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toSet());
     }
 
     @Transactional
@@ -95,18 +69,8 @@ public class DocumentService {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
 
-        return documentsFromDatabase.stream().map((documentEntity) ->
-                new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
-                        documentEntity.getAuthor(),
-                        documentEntity.getTitle(),
-                        documentEntity.getType(),
-                        documentEntity.getDocumentState(),
-                        documentEntity.getDescription(),
-                        documentEntity.getPostedDate(),
-                        documentEntity.getApprovalDate(),
-                        documentEntity.getRejectedDate(),
-                        documentEntity.getRejectionReason(),
-                        documentEntity.getApprover())).collect(Collectors.toSet());
+        return documentsFromDatabase.stream().map(documentEntity ->
+                SOfromEntity(documentEntity)).collect(Collectors.toSet());
     }
 
     @Transactional
@@ -263,7 +227,7 @@ specialisto Dokumento saraso*/
     public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier) {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
             //converting from database object to normal one
-            DocumentServiceObject documentServiceObject = convertDocumentEntityToObject
+            DocumentServiceObject documentServiceObject = SOfromEntity
                     (documentRepository.findDocumentByDocumentIdentifier(documentIdentifier));
             return documentServiceObject;
         } else {
@@ -283,37 +247,29 @@ specialisto Dokumento saraso*/
         }
     }
 
-    // you can delete or move this. I was just thinking it might be cool to have one method for conversion
-    // less code to maintain
-    @Transactional
-    private DocumentServiceObject convertDocumentEntityToObject(DocumentEntity documentFromDatabase) {
-        DocumentServiceObject documentServiceObject = new DocumentServiceObject();
-        documentServiceObject.setTitle(documentFromDatabase.getTitle());
-        documentServiceObject.setDescription(documentFromDatabase.getDescription());
-        documentServiceObject.setType(documentFromDatabase.getType());
-        documentServiceObject.setFilesAttachedToDocument(documentFromDatabase.getFileSet());
-        return documentServiceObject;
-    }
-
     @Transactional
     public DocumentServiceObject getDocument(String documentIdentifier) {
         DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-        if (documentFromDatabase.getDocumentState().equals(DocumentState.CREATED)) {
-            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription());
-
-        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.SUBMITTED)) {
-            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
-                    documentFromDatabase.getPostedDate());
-        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.APPROVED)) {
-            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
-                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprovalDate(), documentFromDatabase.getApprover());
-
-        } else {
-            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
-                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprover(), documentFromDatabase.getRejectedDate(),
-                    documentFromDatabase.getRejectionReason());
-
+        if (documentFromDatabase == null){
+            throw new IllegalArgumentException("Dokuments su id '" + documentIdentifier + "'nerastas");
         }
+        return SOfromEntity(documentFromDatabase);
+//        if (documentFromDatabase.getDocumentState().equals(DocumentState.CREATED)) {
+//            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription());
+//
+//        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.SUBMITTED)) {
+//            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+//                    documentFromDatabase.getPostedDate());
+//        } else if (documentFromDatabase.getDocumentState().equals(DocumentState.APPROVED)) {
+//            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+//                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprovalDate(), documentFromDatabase.getApprover());
+//
+//        } else {
+//            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription(),
+//                    documentFromDatabase.getPostedDate(), documentFromDatabase.getApprover(), documentFromDatabase.getRejectedDate(),
+//                    documentFromDatabase.getRejectionReason());
+//
+//        }
 
     }
 
@@ -325,6 +281,29 @@ specialisto Dokumento saraso*/
             documentRepository.deleteDocumentByDocumentIdentifier(documentIdentifier);
 
         }
+    }
+
+    private DocumentServiceObject SOfromEntity(DocumentEntity entity) {
+        DocumentServiceObject so = new DocumentServiceObject();
+
+        so.setApprovalDate(entity.getApprovalDate());
+        so.setApprover(entity.getApprover());
+        so.setAuthor(entity.getAuthor());
+        so.setDescription(entity.getDescription());
+        so.setDocumentIdentifier(entity.getDocumentIdentifier());
+        so.setDocumentState(entity.getDocumentState());
+        so.setPostedDate(entity.getPostedDate());
+        so.setRejectedDate(entity.getRejectedDate());
+        so.setRejectedReason(entity.getRejectionReason());
+        so.setTitle(entity.getTitle());
+        so.setType(entity.getType());
+
+
+        so.setFilesAttachedToDocument(entity.getFileSet()
+                .stream()
+                .map(file -> new FileServiceObject(file.getFileName(), file.getContentType(), file.getSize(), file.getIdentifier()))
+                .collect(Collectors.toSet()));
+        return so;
     }
 }
 

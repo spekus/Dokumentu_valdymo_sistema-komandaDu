@@ -13,7 +13,7 @@ export default class FileUploader extends Component {
         msg: '',
         // savedFileIdentifier: '',
         // savedDocumentIdentifier: '',
-        type: 'Pirmas',
+        type: '',
         title: '',
         description: '',
         availableTypes: []
@@ -154,7 +154,7 @@ export default class FileUploader extends Component {
                 <div>
                     <div>
                         <h4 className="my-4" align="center">
-                            Naujo dokumento sukūrimas
+                            Naujo dokumento sukūrimasss
                         </h4>
 
 
@@ -201,7 +201,7 @@ export default class FileUploader extends Component {
                         <React.Fragment>
 
                             <div className="text-center">
-                                <button type="submit" className="btn btn-danger my-4"
+                                <button type="submit" className="btn btn-info my-4"
                                         onClick={this.uploadFile}>Išsaugoti
                                 </button>
                             </div>
