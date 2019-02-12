@@ -5,7 +5,7 @@ import axios from 'axios';
 
 class AugisDokumentas extends Component {
     state = {
-        submitAction: false,
+
         type: '',
         description: '',
         title: '',
@@ -16,6 +16,8 @@ class AugisDokumentas extends Component {
         rejectedReason: '',
         documentInfo: {}
     };
+
+    action = this.state.documentInfo.documentState;
 
     componentWillMount() {
         this.getDocumentInformation();
@@ -227,18 +229,32 @@ class AugisDokumentas extends Component {
                     {/*onClick={this.downloadFile}>Download {this.state.attachedFileName} file*/}
                     {/*</button>*/}
 
-                    {/*{this.state.submitAction ?*/}
+                    {/*{this.state.documentInfo.documentState == 'CREATED' ?*/}
 
-                            <button className="btn btn-info btn-sm ml-5" onClick={this.submitDocument}>Pateikti</button>
-
+                        {/*<button className="btn btn-info btn-sm ml-5" onClick={this.submitDocument}>Pateikti</button>*/}
                         {/*:*/}
-
-                            < button className="btn btn-success btn-sm ml-5" onClick={this.approveDocument}>Patvirtinti
-                            </button>
-                            <button className="btn btn-danger btn-sm ml-5" onClick={this.rejectDocument}>Atmesti
-                            </button>
-
+                        {/*<div>*/}
+                            {/*<button className="btn btn-success btn-sm ml-5"*/}
+                                    {/*onClick={this.approveDocument}>Patvirtinti*/}
+                            {/*</button>*/}
+                            {/*< button className="btn btn-danger btn-sm ml-5" onClick={this.rejectDocument}>Atmesti*/}
+                            {/*</button>*/}
+                        {/*</div>*/}
                     {/*}*/}
+
+                    {this.state.documentInfo.documentState == 'CREATED' ?
+
+                        <button className="btn btn-info btn-sm ml-5" onClick={this.submitDocument}>Pateikti</button>
+                        : (this.state.documentInfo.documentState == 'SUBMITTED' ?
+                        <div>
+                            <button className="btn btn-success btn-sm ml-5"
+                                    onClick={this.approveDocument}>Patvirtinti
+                            </button>
+                            < button className="btn btn-danger btn-sm ml-5" onClick={this.rejectDocument}>Atmesti
+                            </button>
+                        </div> : '')
+                    }
+
 
                 </div>
 

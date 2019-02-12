@@ -37,8 +37,8 @@ class App extends React.Component {
         {iconClass: 'fa fw fa-id-card', path: 'profile', text: 'Profilis'},
         {iconClass: 'fa fw fa-list', path: 'documents', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
-        {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
-        {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai 2'},
+        // {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
+        {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai '},
         {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai'},
     ];
 
@@ -142,7 +142,7 @@ class App extends React.Component {
                                             <Route path="/users" component={UsersList}/>
                                             <Route exact path="/upload-file" render={(props) => <FileUploader user={this.state.user} {...props}/>}/>
                                             <Route exact path="/download-file" component={FileDownloader}/>
-                                            <Route exact path="/user-administration" component={UserAdministration}/>
+                                            {/*<Route exact path="/user-administration" component={UserAdministration}/>*/}
                                             <Route exact path="/user-administration-list" component={UserAdminisrationList}/>
                                             <Route path="/settings" component={Settings}/>
                                             {/*<Route exact path="/user-administration"*/}
