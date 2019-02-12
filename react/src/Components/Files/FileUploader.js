@@ -11,8 +11,6 @@ export default class FileUploader extends Component {
         file: '',
         error: '',
         msg: '',
-        // savedFileIdentifier: '',
-        // savedDocumentIdentifier: '',
         type: '',
         title: '',
         description: '',
@@ -33,8 +31,10 @@ export default class FileUploader extends Component {
             .then(result => {
                 if (result.data.length > 0) {
                     this.setState({availableTypes: result.data});
-                    this.setState({type: result.data[0]});
-                    console.log("Atsakymas is getTypesFromServer -" + result.data);
+                    this.setState({type: result.data[0].title});
+                    // console.log("state pridetas type kuris dabar yra" +
+                    // this.state.type)
+                    // console.log("Atsakymas is getTypesFromServer -" + result.data);
                 }
             })
             .catch(error => {
@@ -45,6 +45,7 @@ export default class FileUploader extends Component {
 
 
     uploadFile = (event) => {
+        this.getTypesFromServer();
         event.preventDefault();
         this.setState({error: '', msg: ''});
 
@@ -65,6 +66,7 @@ export default class FileUploader extends Component {
 
         axios.post('/api/files', data)
             .then(response => {
+                this.getTypesFromServer();
                 this.setState({error: '', msg: 'Sucessfully uploaded file'});
                 if (response.data.text) {
                     var fileId = response.data.text;
@@ -95,6 +97,11 @@ export default class FileUploader extends Component {
     // kuris jau buvo ikeltas anksciau.
     //Kol kas lyk neveikia?? 
     addDocument(userId, documentDetails, fileId) {
+        console.log("running addDocument");
+        // console.log(this.state.type);
+        // console.log("type is" +this.state.type.valueOf);
+        // console.log("type is" +this.state.type.text);
+        // console.log("type is" +this.state.type.title);
         axios.post('/api/documents/' + userId + '/documentAddToGroups', documentDetails)
             .then(response => {
                 this.setState({'type': '', 'title': '', 'description': ''});
@@ -216,5 +223,3 @@ export default class FileUploader extends Component {
         );
     }
 }
-
-
