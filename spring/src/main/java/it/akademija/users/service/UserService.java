@@ -1,5 +1,6 @@
 package it.akademija.users.service;
 
+import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.users.repository.UserEntity;
@@ -101,6 +102,10 @@ public class UserService implements UserDetailsService {
     @Transactional
     @Modifying
     public void deleteUserByIdentifier(String userIdentifier) {
+        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+        for (DocumentEntity documentEntity:userEntity.getDocumentEntities()) {
+            userEntity.removeDocument(documentEntity);
+        }
         userRepository.deleteByUserIdentifier(userIdentifier);
     }
 

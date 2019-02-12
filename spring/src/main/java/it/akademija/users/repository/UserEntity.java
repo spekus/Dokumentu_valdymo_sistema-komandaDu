@@ -108,7 +108,6 @@ public class UserEntity {
         this.documentEntities.add(documentEntity);
     }
 
-
     public String getPassword() {
         return password;
     }
@@ -123,7 +122,6 @@ public class UserEntity {
 
     public void setDocumentEntities(Set<DocumentEntity> documentEntities) {
         this.documentEntities = documentEntities;
-
     }
 
     public Set<UserGroupEntity> getUserGroups() {

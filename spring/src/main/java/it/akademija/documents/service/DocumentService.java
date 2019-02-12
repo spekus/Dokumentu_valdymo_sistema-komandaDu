@@ -323,6 +323,7 @@ specialisto Dokumento saraso*/
         if (documentEntity.getDocumentState().equals(DocumentState.CREATED) ||
                 documentEntity.getDocumentState().equals(DocumentState.REJECTED)) {
             documentRepository.deleteDocumentByDocumentIdentifier(documentIdentifier);
+
         }
     }
 }
