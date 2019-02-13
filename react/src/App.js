@@ -135,7 +135,7 @@ class App extends React.Component {
                                             <Route exact path="/" component={InitialDashBoard}/>
                                             <Route path="/dashboard/documents/to_aproove"
                                                    component={ToAprooveDashboard}/>
-                                            <Route path="/dashboard/documents/:id" component={GenericDashBoard}/>
+                                            <Route path="/dashboard/documents/:id" render={(props) => <GenericDashBoard user={this.state.user} {...props}/>}/>
                                             <Route exact path="/documents/:id" render={(props) => <AugisDokumentas user={this.state.user} {...props}/>}/>
                                             <Route path="/documents" component={DocumentsHome}/>
                                             <Route path="/profile" render={(props) => <UserProfile user={this.state.user} {...props}/>}/>

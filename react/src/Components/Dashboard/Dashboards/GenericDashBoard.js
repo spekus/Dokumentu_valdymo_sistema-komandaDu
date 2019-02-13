@@ -8,7 +8,6 @@ import DashboardNavigation from './DashBoardElements/DashboardNavigation';
 class GenericDashBoard extends Component {
     state = { 
         nameOfWindow : 'default',
-        userId : 'id123',
         userDocuments : [],
     }
     componentWillUnmount(){
@@ -45,9 +44,18 @@ class GenericDashBoard extends Component {
         console.log("runing getAllDocuments");
         console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
         
-        
-        
-        axios.get('/api/documents/' + this.state.userId + '/documents/' + this.props.match.params.id.toUpperCase())
+        let requestPath = "";
+
+        if (this.props.match.params.id.toLowerCase() === "all")
+        {
+            requestPath = '/api/documents/' + this.props.user.userIdentifier + '/documents/';
+        }
+        else
+        {
+             requestPath = '/api/documents/' + this.props.user.userIdentifier + '/documents/' + this.props.match.params.id.toUpperCase();
+        }
+
+        axios.get(requestPath)
             .then(response => {
                
                 console.log("response from /api/documents/' - " + response);

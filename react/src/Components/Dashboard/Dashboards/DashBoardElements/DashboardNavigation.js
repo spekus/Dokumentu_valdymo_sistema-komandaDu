@@ -8,7 +8,7 @@ const DashboardNavigation = (props) => {
         <React.Fragment>
                    <div className='col-lg-2'> 
                         <Link className="btn btn-dark btn-lg btn-block" to=
-                        {"/"}>
+                        {"/dashboard/documents/all/"}>
                         Visi dokumentai 
                         </Link>
                     </div>
