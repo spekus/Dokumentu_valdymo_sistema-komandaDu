@@ -7,7 +7,9 @@ import it.akademija.documents.service.DocumentTypeService;
 import it.akademija.documents.service.DocumentTypeServiceObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.validation.Valid;
 import java.util.Set;
@@ -29,6 +31,13 @@ public class DocumentTypeController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public Set<DocumentTypeServiceObject> getDocumentTypes() {
         return documentTypeService.getAllDocumentTypes();
+    }
+
+    @RequestMapping(value = "/allowed", method = RequestMethod.GET)
+    @ApiOperation(value="Get all document types which current user is allowed to upload", notes="Returns all allowed document types")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
+    public Set<DocumentTypeServiceObject> getAllowedDocumentTypes(@ApiIgnore Authentication authentication) {
+        return documentTypeService.getAllAllowedDocumentTypes(authentication.getName());
     }
 
 
