@@ -1,5 +1,6 @@
 main {
     margin-left: 64px;
+    margin-top: 40px;
 
 }
 
@@ -32,5 +33,18 @@ td.lastColumn,th.lastColumn {
 }
 
 #mysidenav{
-    background: #0caac3 !important;
+    background: #0c9dc3 !important;
+    position: fixed;
+}
+
+#mainnavbar{
+    position: fixed;
+    top: 0;
+    right: 0;
+    left: 64px;
+    z-index: 10;
+}
+
+#mainnavbar.open{
+    left: 240px;
 }
