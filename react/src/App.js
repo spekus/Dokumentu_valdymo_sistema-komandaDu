@@ -35,7 +35,7 @@ class App extends React.Component {
     menuItems = [
         {iconClass: 'fa fw fa-home', path: '', text: 'Pradžia'},
         {iconClass: 'fa fw fa-id-card', path: 'profile', text: 'Profilis'},
-        {iconClass: 'fa fw fa-list', path: 'documents', text: 'Dokumentai'},
+        {iconClass: 'fa fw fa-list', path: 'documents/all', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
         // {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
         {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai '},
@@ -132,7 +132,8 @@ class App extends React.Component {
                                         :
                                         <Switch>
                                             {/* <Route exact path="/" component={AugisDashBoard}/> */}
-                                            <Route exact path="/" component={InitialDashBoard}/>
+                                            {/*<Route exact path="/" component={InitialDashBoard}/>*/}
+                                            <Redirect  exact from='/' to='/dashboard/documents/all'/>
                                             <Route path="/dashboard/documents/to_aproove"
                                                    component={ToAprooveDashboard}/>
                                             <Route path="/dashboard/documents/:id" render={(props) => <GenericDashBoard user={this.state.user} {...props}/>}/>
