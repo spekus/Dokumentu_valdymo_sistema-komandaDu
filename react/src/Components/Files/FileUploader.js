@@ -21,41 +21,35 @@ export default class FileUploader extends Component {
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
     handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
 
-
-    componentWillMount(userId){
-        this.getTypesFromServer();
+    componentDidMount() {
+        this.getAllowedTypes();
     }
 
-    getTypesFromServer = (userId) => {
-        axios.get('/api/documentTypes/')
+    getAllowedTypes = () => {
+        axios.get('/api/documentTypes/allowed')
             .then(result => {
                 if (result.data.length > 0) {
                     this.setState({availableTypes: result.data});
                     this.setState({type: result.data[0].title});
-                    // console.log("state pridetas type kuris dabar yra" +
-                    // this.state.type)
-                    // console.log("Atsakymas is getTypesFromServer -" + result.data);
                 }
             })
             .catch(error => {
-                console.log("Atsakymas is getTypesFromServer - " + error)
+                console.log("Atsakymas is /api/documentTypes/allowed - " + error)
             })
-
     }
 
 
     uploadFile = (event) => {
-        this.getTypesFromServer();
         event.preventDefault();
         this.setState({error: '', msg: ''});
 
         if (!this.state.file) {
-            this.setState({error: 'Please upload a file.'})
+            this.setState({error: 'Pasirinkite failą'})
             return;
         }
 
         if (this.state.file.size >= 2000000) {
-            this.setState({error: 'File size exceeds limit of 2MB.'})
+            this.setState({error: 'Failo dydis viršija 2MB'})
             return;
         }
 
@@ -66,11 +60,10 @@ export default class FileUploader extends Component {
 
         axios.post('/api/files', data)
             .then(response => {
-                this.getTypesFromServer();
-                this.setState({error: '', msg: 'Sucessfully uploaded file'});
+                this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
                 if (response.data.text) {
                     var fileId = response.data.text;
-                    
+
 
                     let documentDetails = {
                         title: this.state.title,
@@ -102,15 +95,15 @@ export default class FileUploader extends Component {
         // console.log("type is" +this.state.type.valueOf);
         // console.log("type is" +this.state.type.text);
         // console.log("type is" +this.state.type.title);
-        axios.post('/api/documents/' + userId + '/documentAddToGroups', documentDetails)
+        axios.post('/api/documents/' + this.props.user.userIdentifier + '/documentAddToGroups', documentDetails)
             .then(response => {
                 this.setState({'type': '', 'title': '', 'description': ''});
 
                 if (response.data.text) {
                     var docId = response.data.text;
                     this.addFileToDocument(docId, fileId);
-                    console.log("Document has been created with identifier - " 
-                    + docId);
+                    console.log("Document has been created with identifier - "
+                        + docId);
                 }
             })
             .catch(err => {
@@ -126,17 +119,16 @@ export default class FileUploader extends Component {
             documentIdentifier: docId,
             fileIdentifier: fileID
         }
-        console.log("docId"  + docId);
-        console.log("fileID"  + fileID);
+        console.log("docId" + docId);
+        console.log("fileID" + fileID);
 
         axios.post('/api/files/addFileToDocument'
-        , fileDocumentCommand)
+            , fileDocumentCommand)
             .then(response => {
                 this.setState({[this.state.name]: ''});
                 console.log("Response from addFileToDocument - " + response)
                 console.log(" " + response.status)
                 console.log(" " + response.statusText)
-
 
 
             })
@@ -161,7 +153,7 @@ export default class FileUploader extends Component {
                 <div>
                     <div>
                         <h4 className="my-4" align="center">
-                            Naujo dokumento sukūrimasss
+                            Naujo dokumento sukūrimas
                         </h4>
 
 
@@ -180,8 +172,8 @@ export default class FileUploader extends Component {
                                         <label htmlFor="exampleFormControlSelect1">Dokumento tipas</label>
                                         <select className="form-control" id="exampleFormControlSelect1"
                                                 value={this.state.type} onChange={this.handleChangeSelect} name="type">
-                                            {this.state.availableTypes.map(item =>(
-                                            <option value={item.title}>{item.title}</option>
+                                            {this.state.availableTypes.map(item => (
+                                                <option value={item.title}>{item.title}</option>
                                             ))}
 
                                         </select>
