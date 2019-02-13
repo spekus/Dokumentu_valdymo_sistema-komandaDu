@@ -58,7 +58,18 @@ class App extends React.Component {
         axios.get('/api/users/whoami')
             .then(response => {
                 if (response.data.username != null) {
-                    this.setState({user: response.data});
+
+                    let user = response.data;
+                    let isAdmin = false;
+
+                    user.userGroups.map(group => {
+                        if (group.role === "ROLE_ADMIN") {
+                            isAdmin = true;
+                        }
+                    })
+                    user = {...user, isAdmin: isAdmin}
+                    console.log(user)
+                    this.setState({user: user});
                 }
             })
             .catch(error => {
@@ -152,7 +163,8 @@ class App extends React.Component {
                                             {/*<Route exact path="/user-administration" component={UserAdministration}/>*/}
                                             <Route exact path="/user-administration-list"
                                                    component={UserAdminisrationList}/>
-                                            <Route path="/settings" component={Settings}/>
+                                            <Route path="/settings"
+                                                   render={(props) => <Settings user={this.state.user} {...props}/>}/>
                                             {/*<Route exact path="/user-administration"*/}
                                             {/*render={(props) => <UserAdministration {...props}  />}/>*/}
                                             <Route exact path="/user-registration" component={NewUserForm}/>

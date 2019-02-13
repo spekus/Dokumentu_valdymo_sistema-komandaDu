@@ -5,12 +5,20 @@ import SettingsUserGroups from "./SettingsUserGroups";
 class Settings extends Component {
     render() {
         return (
-            <div>
-                <h3>Dokumentai</h3>
-                <SettingsDocumentTypes/>
-                <h3>Naudotojai</h3>
-                <SettingsUserGroups/>
-            </div>
+            <React.Fragment>
+                {this.props.user.isAdmin ?
+                    <div>
+                        <h3>Dokumentai</h3>
+                        <SettingsDocumentTypes/>
+                        <h3>Naudotojai</h3>
+                        <SettingsUserGroups/>
+                    </div>
+                    :
+                    <div>
+                        <h1>Ne, jums cia negalima</h1>
+                    </div>
+                }
+            </React.Fragment>
         );
     }
 }
