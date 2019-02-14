@@ -104,7 +104,7 @@ public class UserService implements UserDetailsService {
     public void deleteUserByIdentifier(String userIdentifier) {
         UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
         for (DocumentEntity documentEntity:userEntity.getDocumentEntities()) {
-            userEntity.removeDocument(documentEntity);
+//            userEntity.removeDocument(documentEntity);
         }
         userRepository.deleteByUserIdentifier(userIdentifier);
     }
