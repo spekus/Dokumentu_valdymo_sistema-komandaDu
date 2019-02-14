@@ -56,9 +56,9 @@ export default class Login extends Component {
             <div className="username">
                 <h4>Login to Your DMS Account</h4><br/>
                 <form>
-                    <input type="text" value={this.state.username} onChange={this.handleChange1}/><br/>
-                    <input type="password" value={this.state.password} onChange={this.handleChange2}/><br/>
-                    <button type="submit" value="username" className="btn btn-danger my-2 "
+                    <input type="text" value={this.state.username} placeholder="Vartotojo vardas" onChange={this.handleChange1}/><br/>
+                    <input type="password" value={this.state.password} placeholder="Slaptažodis" onChange={this.handleChange2}/><br/>
+                    <button type="submit" value="username" className="btn btn-outline-info my-2 "
                             onClick={this.handleSubmit}>Prisijungti
                     </button>
                 </form>

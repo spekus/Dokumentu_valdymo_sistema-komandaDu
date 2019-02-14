@@ -3,8 +3,8 @@ import React from 'react';
 const UserProfile = (props) => {
     return (
         <div>
-            <h1 className="text-center">Jūsų profilis:</h1>
-            <div className="row">
+            <h2 className="text-center">Mano profilis:</h2>
+            <div className="row mt-5">
                 <div className="col-md-3"></div>
                 <div className="col-md-6">
             <table className="table">
@@ -17,15 +17,15 @@ const UserProfile = (props) => {
                     <td>{props.user.lastname}</td>
                 </tr>
                 <tr>
-                    <th>Username</th>
+                    <th>Naudotojo vardas</th>
                     <td>{props.user.username}</td>
                 </tr>
+                {/*<tr>*/}
+                    {/*<th>UserID</th>*/}
+                    {/*<td>{props.user.userIdentifier}</td>*/}
+                {/*</tr>*/}
                 <tr>
-                    <th>UserID</th>
-                    <td>{props.user.userIdentifier}</td>
-                </tr>
-                <tr>
-                    <th>Grupės</th>
+                    <th>Mano grupės</th>
                     <td>
                         <ul>
                             {props.user.userGroups.map(group =>

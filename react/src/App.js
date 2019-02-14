@@ -24,7 +24,6 @@ import axios from "axios";
 import {Redirect} from "react-router";
 
 
-
 class App extends React.Component {
     state = {
         sideBarIsOpen: false,
@@ -35,10 +34,10 @@ class App extends React.Component {
     menuItems = [
         {iconClass: 'fa fw fa-home', path: '', text: 'Pradžia'},
         {iconClass: 'fa fw fa-id-card', path: 'profile', text: 'Profilis'},
-        {iconClass: 'fa fw fa-list', path: 'documents', text: 'Dokumentai'},
+        {iconClass: 'fa fw fa-list', path: 'documents/all', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
-        {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
-        {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai 2'},
+        // {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
+        {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai '},
         {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai'},
     ];
 
@@ -59,7 +58,18 @@ class App extends React.Component {
         axios.get('/api/users/whoami')
             .then(response => {
                 if (response.data.username != null) {
-                    this.setState({user: response.data});
+
+                    let user = response.data;
+                    let isAdmin = false;
+
+                    user.userGroups.map(group => {
+                        if (group.role === "ROLE_ADMIN") {
+                            isAdmin = true;
+                        }
+                    })
+                    user = {...user, isAdmin: isAdmin}
+                    console.log(user)
+                    this.setState({user: user});
                 }
             })
             .catch(error => {
@@ -96,11 +106,11 @@ class App extends React.Component {
                         <React.Fragment>
 
                             <SideNav id="mysidenav"
-                                onSelect={(selected) => {
-                                    this.sideBarClicked(selected, location, history)
-                                }}
-                                onToggle={this.sideBarToggled}
-                                expanded={this.state.sideBarIsOpen}
+                                     onSelect={(selected) => {
+                                         this.sideBarClicked(selected, location, history)
+                                     }}
+                                     onToggle={this.sideBarToggled}
+                                     expanded={this.state.sideBarIsOpen}
                             >
                                 <SideNav.Toggle/>
 
@@ -117,14 +127,17 @@ class App extends React.Component {
                                 </SideNav.Nav>
                             </SideNav>
 
+                            <nav id="mainnavbar" className={this.state.sideBarIsOpen ?
+                                'navbar navbar-expand-sm bg-light navbar-light justify-content-between open'
+                                :
+                                'navbar navbar-expand-sm bg-light navbar-light justify-content-between'}>
+                                <NavLink to='/' className="navbar-brand">{this.state.appBarText}</NavLink>
+
+                                <LoginLogoutLink user={this.state.user}/>
+                            </nav>
 
                             <main className={this.state.sideBarIsOpen ? 'open' : ''}>
 
-                                <nav className="navbar navbar-expand-sm bg-light navbar-light justify-content-between">
-                                    <NavLink to='/' className="navbar-brand">{this.state.appBarText}</NavLink>
-
-                                    <LoginLogoutLink user={this.state.user}/>
-                                </nav>
 
                                 <div id='main-content'>
                                     {this.state.user === "" ?
@@ -132,19 +145,26 @@ class App extends React.Component {
                                         :
                                         <Switch>
                                             {/* <Route exact path="/" component={AugisDashBoard}/> */}
-                                            <Route exact path="/" component={InitialDashBoard}/>
+                                            {/*<Route exact path="/" component={InitialDashBoard}/>*/}
+                                            <Redirect exact from='/' to='/dashboard/documents/all'/>
                                             <Route path="/dashboard/documents/to_aproove"
                                                    component={ToAprooveDashboard}/>
-                                            <Route path="/dashboard/documents/:id" component={GenericDashBoard}/>
-                                            <Route exact path="/documents/:id" render={(props) => <AugisDokumentas user={this.state.user} {...props}/>}/>
+                                            <Route path="/dashboard/documents/:id" render={(props) => <GenericDashBoard
+                                                user={this.state.user} {...props}/>}/>
+                                            <Route exact path="/documents/:id" render={(props) => <AugisDokumentas
+                                                user={this.state.user} {...props}/>}/>
                                             <Route path="/documents" component={DocumentsHome}/>
-                                            <Route path="/profile" render={(props) => <UserProfile user={this.state.user} {...props}/>}/>
+                                            <Route path="/profile" render={(props) => <UserProfile
+                                                user={this.state.user} {...props}/>}/>
                                             <Route path="/users" component={UsersList}/>
-                                            <Route exact path="/upload-file" component={FileUploader}/>
+                                            <Route exact path="/upload-file" render={(props) => <FileUploader
+                                                user={this.state.user} {...props}/>}/>
                                             <Route exact path="/download-file" component={FileDownloader}/>
-                                            <Route exact path="/user-administration" component={UserAdministration}/>
-                                            <Route exact path="/user-administration-list" component={UserAdminisrationList}/>
-                                            <Route path="/settings" component={Settings}/>
+                                            {/*<Route exact path="/user-administration" component={UserAdministration}/>*/}
+                                            <Route exact path="/user-administration-list"
+                                                   component={UserAdminisrationList}/>
+                                            <Route path="/settings"
+                                                   render={(props) => <Settings user={this.state.user} {...props}/>}/>
                                             {/*<Route exact path="/user-administration"*/}
                                             {/*render={(props) => <UserAdministration {...props}  />}/>*/}
                                             <Route exact path="/user-registration" component={NewUserForm}/>

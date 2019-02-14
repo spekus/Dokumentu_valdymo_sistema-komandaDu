@@ -86,7 +86,7 @@ class SettingsUserGroups extends Component {
                                        value={this.state.newUserGroupInputField}
                                        name="newUserGroupInputField"
                                        onChange={this.handleChangeInput}/>
-                                <button type="submit" className="btn btn-primary mt-2">Sukurti</button>
+                                <button type="submit" className="btn btn-info mt-2">Sukurti</button>
                             </div>
 
                         </form>

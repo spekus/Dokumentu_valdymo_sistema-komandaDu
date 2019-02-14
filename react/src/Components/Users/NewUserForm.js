@@ -88,7 +88,7 @@ class NewUserForm extends Component {
                                            onChange={this.handleChangeInput}/>
                                 </div>
                                 <div className="form-group">
-                                    <label htmlFor="exampleFormControlInput1">Username</label>
+                                    <label htmlFor="exampleFormControlInput1">Naudotojo vardas</label>
                                     <input type="text" className="form-control" id="exampleFormUsername"
                                            placeholder="Įveskite vartotojo prisijungimo vardą" name="username"
                                            value={this.state.username}
@@ -116,15 +116,16 @@ class NewUserForm extends Component {
                                 {/*</small>*/}
                                 {/*</div>*/}
 
-                                <label htmlFor="inputPassword5">Password</label>
+                                <label htmlFor="inputPassword5">Slaptažodis</label>
                                 <input type="password" id="inputPassword5" className="form-control"
                                        value={this.state.password}
                                        aria-describedby="passwordHelpBlock" onChange={this.handleChangeInput}
                                        name="password"/>
                                 <small id="passwordHelpBlock" className="form-text text-muted">
-                                    Your password must be 8-20 characters long, contain letters and numbers, and must
-                                    not
-                                    contain spaces, special characters, or emoji.
+                                    {/*Your password must be 8-20 characters long, contain letters and numbers, and must*/}
+                                    {/*not*/}
+                                    {/*contain spaces, special characters, or emoji.*/}
+                                    Slaptažodis privalo būti 8-20 simbolių ilgio.
                                 </small>
 
                                 <div className="text-center">

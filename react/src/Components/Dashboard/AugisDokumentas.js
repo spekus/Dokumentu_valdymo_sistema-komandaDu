@@ -5,6 +5,7 @@ import axios from 'axios';
 
 class AugisDokumentas extends Component {
     state = {
+
         type: '',
         description: '',
         title: '',
@@ -15,6 +16,8 @@ class AugisDokumentas extends Component {
         rejectedReason: '',
         documentInfo: {}
     };
+
+    action = this.state.documentInfo.documentState;
 
     componentWillMount() {
         this.getDocumentInformation();
@@ -44,7 +47,7 @@ class AugisDokumentas extends Component {
                 //     , type: result.data.type
                 //     , description: result.data.description
                 // });
-                this.setState({documentInfo:result.data});
+                this.setState({documentInfo: result.data});
                 this.getFileList();
             })
             .catch(error => {
@@ -86,7 +89,7 @@ class AugisDokumentas extends Component {
         // atsakymas kuris grizta yra dvejetainis, ir jame yra pats failas kuri norime atsisiusti
         // reikia gauti ji kaip BLOB'a (Binary Large OBject) ir issaugoti
         console.log("downloadOneFile start")
-        axios.get('/api/files/download/'+fileIdentifier)
+        axios.get('/api/files/download/' + fileIdentifier)
             .then(response => {
                 // console.log(response);
                 // const fileNameHeader = "x-suggested-filename";
@@ -94,7 +97,7 @@ class AugisDokumentas extends Component {
                 // let effectiveFileName = (suggestedFileName === undefined
                 //     ? "document.txt"
                 //     : suggestedFileName);
-               // FileSaver.saveAs(response.url, suggestedFileName);
+                // FileSaver.saveAs(response.url, suggestedFileName);
                 FileSaver.SaveAs(response.data);
             })
             .catch(error => {
@@ -128,6 +131,21 @@ class AugisDokumentas extends Component {
         });
     }
 
+    submitDocument = (props) => {
+        var docID = this.props.match.params.id;
+        var params = new URLSearchParams();
+        params.append('userIdentifier', this.props.user.userIdentifier);
+        axios.post("/api/documents/documents/" + docID + "/submit", params)
+            .then(response => {
+                this.setState({documentState: 'Pateikta'});
+            })
+            .catch(error => {
+                window.alert("Klaida is submitDocument - " + error.message)
+                // console.log("Klaida is approveDocument - " + error.message);
+            })
+    }
+
+
     approveDocument = (props) => {
         var docID = this.props.match.params.id;
         var params = new URLSearchParams();
@@ -137,7 +155,7 @@ class AugisDokumentas extends Component {
                 this.setState({documentState: 'Patvirtinta'});
             })
             .catch(error => {
-                window.alert("Klaida is approveDocument - " + error.data.message)
+                window.alert("Klaida is approveDocument - " + error.message)
                 // console.log("Klaida is approveDocument - " + error.message);
             })
     }
@@ -176,22 +194,29 @@ class AugisDokumentas extends Component {
                             <td>{this.state.documentInfo.title}</td>
                         </tr>
                         <tr>
+                            <th>Dokumento tipas</th>
+                            <td>{this.state.documentInfo.type}</td>
+                        </tr>
+                        <tr>
                             <th>Aprašymas</th>
                             <td>{this.state.documentInfo.description}</td>
                         </tr>
                         <tr>
                             <th>Failo pavadinimas</th>
-                            <td><ul>
-                                {this.state.documentInfo.filesAttachedToDocument ?
-                                this.state.documentInfo.filesAttachedToDocument.map(file => <li>
-                                    <a href={'http://localhost:8181/api/files/download/'+file.identifier} target='_blank'>{file.fileName}</a>
-                                    {/* mes naudojame localhost:8181/api  todel, kad react-server proxy nesuveikia kai content tipas yra nustatytas
+                            <td>
+                                <ul>
+                                    {this.state.documentInfo.filesAttachedToDocument ?
+                                        this.state.documentInfo.filesAttachedToDocument.map(file => <li>
+                                            <a href={'http://localhost:8181/api/files/download/' + file.identifier}
+                                               target='_blank'>{file.fileName}</a>
+                                            {/* mes naudojame localhost:8181/api  todel, kad react-server proxy nesuveikia kai content tipas yra nustatytas
                                     */}
-                                    {/*<a href='#' onClick={() => this.downloadOneFile(file.identifier)} >{file.fileName}</a>*/}
-                                    </li>)
-                                : ''
-                                }
-                        </ul></td>
+                                            {/*<a href='#' onClick={() => this.downloadOneFile(file.identifier)} >{file.fileName}</a>*/}
+                                        </li>)
+                                        : ''
+                                    }
+                                </ul>
+                            </td>
                         </tr>
                         <tr>
                             <th>Dokumento statusas</th>
@@ -205,12 +230,34 @@ class AugisDokumentas extends Component {
                     {/* <h5>Laukiantys patvirtinimo</h5> */}
                     {/*<h6>Download</h6>*/}
                     {/*<button className="btn btn-dark"*/}
-                            {/*onClick={this.downloadFile}>Download {this.state.attachedFileName} file*/}
+                    {/*onClick={this.downloadFile}>Download {this.state.attachedFileName} file*/}
                     {/*</button>*/}
 
+                    {/*{this.state.documentInfo.documentState == 'CREATED' ?*/}
 
-                    <button className="btn btn-info btn-sm ml-5" onClick={this.approveDocument}>Patvirtinti</button>
-                    <button className="btn btn-danger btn-sm ml-5" onClick={this.rejectDocument}>Atmesti</button>
+                    {/*<button className="btn btn-info btn-sm ml-5" onClick={this.submitDocument}>Pateikti</button>*/}
+                    {/*:*/}
+                    {/*<div>*/}
+                    {/*<button className="btn btn-success btn-sm ml-5"*/}
+                    {/*onClick={this.approveDocument}>Patvirtinti*/}
+                    {/*</button>*/}
+                    {/*< button className="btn btn-danger btn-sm ml-5" onClick={this.rejectDocument}>Atmesti*/}
+                    {/*</button>*/}
+                    {/*</div>*/}
+                    {/*}*/}
+
+                    {this.state.documentInfo.documentState === 'CREATED' ?
+
+                        <button className="btn btn-info btn-sm" onClick={this.submitDocument}>Pateikti</button>
+                        : (this.state.documentInfo.documentState == 'SUBMITTED' ?
+                            <div>
+                                <button className="btn btn-success btn-sm mr-4"
+                                        onClick={this.approveDocument}>Patvirtinti
+                                </button>
+                                < button className="btn btn-danger btn-sm ml-5" onClick={this.rejectDocument}>Atmesti
+                                </button>
+                            </div> : '')
+                    }
 
 
                 </div>
