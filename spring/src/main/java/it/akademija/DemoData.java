@@ -58,11 +58,11 @@ public class DemoData implements ApplicationRunner {
         createDocumentTypeIfNotExists("Darbo sutartis");
         createDocumentTypeIfNotExists("Registruotas laiškas");
 
-        createUserIfNotExists("admin", "Administrator", "IT", "admin", "admin");
-        createUserIfNotExists("id123", "Augustas", "Dirzys", "id123", "id123");
-        createUserIfNotExists("annpai", "Anna", "Paidem", "annpai", "annpai");
-        createUserIfNotExists("user1", "User", "Vienas", "user1", "user1");
-        createUserIfNotExists("user2", "User", "Du", "user2", "user2");
+        createUserIfNotExists("Administrator", "IT", "admin", "admin");
+        createUserIfNotExists("Augustas", "Dirzys", "id123", "id123");
+        createUserIfNotExists( "Anna", "Paidem", "annpai", "annpai");
+        createUserIfNotExists( "User", "Vienas", "user1", "user1");
+        createUserIfNotExists( "User", "Du", "user2", "user2");
 
         userGroupService.addGroupToUser("Administratoriai","admin");
         userGroupService.addGroupToUser("Administratoriai","id123");
@@ -79,13 +79,16 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Darbo sutartis");
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Registruotas laiškas");
 
+        userGroupService.addDocumentTypeToApprove("Administratoriai", "Paraiška");
+        userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis");
+
     }
 
-    private void createUserIfNotExists(String id, String fn, String ln, String un, String pswd) {
-        UserEntity u = userRepository.findUserByUserIdentifier(id);
+    private void createUserIfNotExists(String fn, String ln, String un, String pswd) {
+        UserEntity u = userRepository.findUserByUsername(un);
 
         if (u == null) {
-            userService.addNewUser(id, fn, ln, un, pswd);
+            userService.addNewUser(fn, ln, un, pswd);
         }
     }
 

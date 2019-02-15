@@ -1,7 +1,12 @@
 package it.akademija.users.service;
 
+import it.akademija.documents.DocumentState;
+import it.akademija.documents.repository.DocumentEntity;
+import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
+import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.documents.service.DocumentTypeServiceObject;
+import it.akademija.files.service.FileServiceObject;
 import it.akademija.users.repository.UserEntity;
 
 import it.akademija.users.repository.UserGroupEntity;
@@ -38,13 +43,17 @@ public class UserService implements UserDetailsService {
     UserGroupRepository userGroupRepository;
 
     @Autowired
+    DocumentRepository documentRepository;
+
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     public UserService() {
     }
 
-    public UserService(UserRepository userRepository, UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, DocumentRepository documentRepository, UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.documentRepository=documentRepository;
         this.userGroupRepository = userGroupRepository;
         this.passwordEncoder = passwordEncoder;
     }
@@ -66,26 +75,29 @@ public class UserService implements UserDetailsService {
         this.userGroupRepository = userGroupRepository;
     }
 
-
     @Transactional
-    public void addNewUser(String userIdentifier, String firstname, String lastname, String username, String password) {
-        UserEntity userEntityFromDataBase1 = userRepository.findUserByUserIdentifier(userIdentifier);
-        UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
+    public Set<DocumentServiceObject> getUserDocumentsByState(String username, DocumentState state) throws IllegalArgumentException {
+        // pasitikrinam ar yra toks naudotojas
+        UserEntity userEntity = userRepository.findUserByUsername(username);
 
-        if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
-            UserEntity userEntity = new UserEntity(userIdentifier, firstname, lastname, username, passwordEncoder.encode(password));
-            userRepository.save(userEntity);
+        if (userEntity == null){
+            throw new IllegalArgumentException("User with username '" + username + "' does not exits.");
         }
 
+        return documentRepository.findByDocumentStateAndAuthor(state, username)
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toSet());
     }
 
     @Transactional
-    public UserServiceObject getUserByUserId(String userIdentifier) {
-        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-        if (userEntity != null) {
-            return SOfromEntity(userEntity);
-        }
-        return null;
+    public Set<DocumentServiceObject> getAllUserDocuments(String username) {
+
+        UserEntity userEntity = userRepository.findUserByUsername(username);
+        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
+
+        return documentsFromDatabase.stream().map(documentEntity ->
+                SOfromEntity(documentEntity)).collect(Collectors.toSet());
     }
 
     @Transactional
@@ -99,31 +111,28 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    @Modifying
-    public void deleteUserByIdentifier(String userIdentifier) {
-        userRepository.deleteByUserIdentifier(userIdentifier);
+    public UserServiceObject getUserByUsername(String username) {
+        UserEntity userEntity = userRepository.findUserByUsername(username);
+        if (userEntity != null) {
+            return SOfromEntity(userEntity);
+        }
+        return null;
     }
 
     @Transactional
-    public void updateUserPassword(String userIdentifier, String password) {
-        UserEntity savedUserEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-        savedUserEntity.setPassword(passwordEncoder.encode(password));
-        UserEntity updateUserEntity = userRepository.save(savedUserEntity);
-    }
-
-    @Transactional
-    public List<UserGroupServiceObject> getUserGroups(String userIdentifier) {
-        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+    public List<UserGroupServiceObject> getUserGroups(String username) {
+        UserEntity userEntity = userRepository.findUserByUsername(username);
         Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
 
         return groupsUserBelongsTo.stream().map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle(), userGroupEntity.getRole()))
                 .collect(Collectors.toList());
     }
 
+
     //Gets all user's document types that he can create documents
     @Transactional
-    public Set<DocumentTypeServiceObject> getUserDocumentTypesHeCanCreate(String userIdentifier) {
-        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+    public Set<DocumentTypeServiceObject> getUserDocumentTypesHeCanCreate(String username) {
+        UserEntity userEntity = userRepository.findUserByUsername(username);
 
         if (userEntity != null) {
             Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
@@ -142,13 +151,88 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public UserServiceObject getUserByUsername(String username) {
-        UserEntity userEntity = userRepository.findUserByUsername(username);
-        if (userEntity != null) {
-            return SOfromEntity(userEntity);
+    public List<UserServiceObject> getUserByCriteria(String criteria) {
+        if (userRepository.findByUsernameOrLastname(criteria) != null) {
+            return userRepository.findByUsernameOrLastname(criteria)
+                    .stream()
+                    .map(userEntity -> SOfromEntity(userEntity))
+                    .collect(Collectors.toList());
         }
         return null;
+
     }
+
+    @Transactional
+    public Set<DocumentServiceObject> getDocumentsToApprove(String username) {
+        UserEntity userEntity = userRepository.findUserByUsername(username);
+        Set<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
+        Set<DocumentEntity> allDocumentsToApprove = new HashSet<>();
+
+        for (UserGroupEntity userGroupEntity : groupsFromUser) {
+            allDocumentsToApprove.addAll(userGroupEntity.getDocumentsToApprove());
+        }
+
+        return allDocumentsToApprove.stream().map((documentEntity) ->
+                new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
+                        documentEntity.getAuthor(),
+                        documentEntity.getTitle(),
+                        documentEntity.getType(),
+                        documentEntity.getDocumentState(),
+                        documentEntity.getDescription(),
+                        documentEntity.getPostedDate(),
+                        documentEntity.getApprovalDate(),
+                        documentEntity.getRejectedDate(),
+                        documentEntity.getRejectionReason(),
+                        documentEntity.getApprover())).collect(Collectors.toSet());
+    }
+
+    @Transactional
+    public void addNewUser(String firstname, String lastname, String username, String password) {
+        UserEntity userEntityFromDataBase1 = userRepository.findUserByUsername(username);
+        UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
+
+        if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
+            UserEntity userEntity = new UserEntity(firstname, lastname, username, passwordEncoder.encode(password));
+            userRepository.save(userEntity);
+        }
+
+    }
+
+        @Transactional
+    public void updateUserPassword(String username, String password) {
+        UserEntity savedUserEntity = userRepository.findUserByUsername(username);
+        savedUserEntity.setPassword(passwordEncoder.encode(password));
+        UserEntity updateUserEntity = userRepository.save(savedUserEntity);
+    }
+        @Transactional
+    public void updateUserInformation(String username, String newFirstname, String newLastname) {
+            UserEntity savedUserEntity = userRepository.findUserByUsername(username);
+            savedUserEntity.setFirstname(newFirstname);
+            savedUserEntity.setLastname(newLastname);
+            UserEntity updateUserEntity = userRepository.save(savedUserEntity);
+
+    }
+
+    @Transactional
+    @Modifying
+    public void deleteUserByUsername(String username) {
+//        UserEntity userEntity = userRepository.findUserByUsername(username);
+//        for (DocumentEntity documentEntity:userEntity.getDocumentEntities()) {
+////            userEntity.removeDocument(documentEntity);
+//        }
+        userRepository.deleteUserByUsername(username);
+    }
+
+
+
+//    @Transactional
+//    public UserServiceObject getUserByUserId(String userIdentifier) {
+//        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
+//        if (userEntity != null) {
+//            return SOfromEntity(userEntity);
+//        }
+//        return null;
+//    }
 
 
     @Transactional
@@ -158,18 +242,6 @@ public class UserService implements UserDetailsService {
             return SOfromEntity(userEntity);
         }
         return null;
-    }
-
-    @Transactional
-    public List<UserServiceObject> getUserByCriteria(String criteria) {
-        if (userRepository.findByUsernameOrLastnameOrId(criteria) != null) {
-            return userRepository.findByUsernameOrLastnameOrId(criteria)
-                    .stream()
-                    .map(userEntity -> SOfromEntity(userEntity))
-                    .collect(Collectors.toList());
-        }
-        return null;
-
     }
 
     @Transactional
@@ -193,7 +265,6 @@ public class UserService implements UserDetailsService {
 
     public UserServiceObject SOfromEntity(UserEntity entity){
         UserServiceObject so = new UserServiceObject();
-        so.setUserIdentifier(entity.getUserIdentifier());
         so.setFirstname(entity.getFirstname());
         so.setLastname(entity.getLastname());
         so.setUsername(entity.getUsername());
@@ -204,6 +275,31 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toSet()));
         return so;
     }
+
+    private DocumentServiceObject SOfromEntity(DocumentEntity entity) {
+        DocumentServiceObject so = new DocumentServiceObject();
+
+        so.setApprovalDate(entity.getApprovalDate());
+        so.setApprover(entity.getApprover());
+        so.setAuthor(entity.getAuthor());
+        so.setDescription(entity.getDescription());
+        so.setDocumentIdentifier(entity.getDocumentIdentifier());
+        so.setDocumentState(entity.getDocumentState());
+        so.setPostedDate(entity.getPostedDate());
+        so.setRejectedDate(entity.getRejectedDate());
+        so.setRejectedReason(entity.getRejectionReason());
+        so.setTitle(entity.getTitle());
+        so.setType(entity.getType());
+
+
+        so.setFilesAttachedToDocument(entity.getFileSet()
+                .stream()
+                .map(file -> new FileServiceObject(file.getFileName(), file.getContentType(), file.getSize(), file.getIdentifier()))
+                .collect(Collectors.toSet()));
+        return so;
+    }
+
+
 
 }
 

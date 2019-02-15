@@ -35,29 +35,6 @@ public class DocumentTypeService {
     }
 
     @Transactional
-    public Set<DocumentTypeServiceObject> getAllAllowedDocumentTypes(String userIdentifier) {
-        UserEntity user = userRepository.findUserByUserIdentifier(userIdentifier);
-
-        if (user == null){
-            return null;
-        }
-
-        Set<DocumentTypeServiceObject> allowedTypes = new HashSet<>();
-
-        for (UserGroupEntity group : user.getUserGroups())
-        {
-            allowedTypes.addAll(group.getAvailableDocumentTypesToUpload()
-                    .stream()
-                    .map(typeEntity ->
-                            new DocumentTypeServiceObject(typeEntity.getTitle())
-                    )
-                    .collect(Collectors.toSet()));
-        }
-
-        return allowedTypes;
-    }
-
-    @Transactional
     public void createNewDocumentType(String title) {
         DocumentTypeEntity newDocumentTypeEntity = new DocumentTypeEntity(title);
         documentTypeRepository.save(newDocumentTypeEntity);

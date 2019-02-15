@@ -38,45 +38,28 @@ public class DocumentService {
     @Autowired
     private UserGroupRepository userGroupRepository;
 
+    @Transactional
+    public Set<DocumentServiceObject> getDocumentsByState(DocumentState state) {
+        return documentRepository.findByDocumentState(state)
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toSet());
+    }
 
     @Transactional
-
-    public Set<DocumentServiceObject> getDocumentsByState(String userIdentifier, DocumentState state) throws IllegalArgumentException {
-        // pasitikrinam ar yra toks naudotojas
-        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-
-        if (userEntity == null){
-            throw new IllegalArgumentException("User with identifier '" + userIdentifier + "' does not exits.");
+    public DocumentServiceObject getDocument(String documentIdentifier) {
+        DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+        if (documentFromDatabase == null) {
+            throw new IllegalArgumentException("Dokuments su id '" + documentIdentifier + "'nerastas");
         }
-
-        return documentRepository.findByDocumentStateAndAuthor(state, userIdentifier)
-                .stream()
-                .map(documentEntity -> SOfromEntity(documentEntity))
-                .collect(Collectors.toSet());
+        return SOfromEntity(documentFromDatabase);
     }
 
-    public Set<DocumentServiceObject> getDocumentsByState(DocumentState state)
-    {
-        return  documentRepository.findByDocumentState(state)
-                .stream()
-                .map(documentEntity -> SOfromEntity(documentEntity))
-                .collect(Collectors.toSet());
-    }
 
     @Transactional
-    public Set<DocumentServiceObject> getAllUserDocuments(String userIdentifier) {
-
-        UserEntity userEntity = userRepository.findUserByUserIdentifier(userIdentifier);
-        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
-
-        return documentsFromDatabase.stream().map(documentEntity ->
-                SOfromEntity(documentEntity)).collect(Collectors.toSet());
-    }
-
-    @Transactional
-    public DocumentEntity addDocument(String userIdentifier, String title, String type, String description) {
+    public DocumentEntity createDocument(String username, String title, String type, String description) {
         //Pasiimam useri is DB
-        UserEntity userFromDatabase = userRepository.findUserByUserIdentifier(userIdentifier);
+        UserEntity userFromDatabase = userRepository.findUserByUsername(username);
         //Pasiimam grupes, kurioms jis yra priskirtas
         Set<UserGroupEntity> availableUserGroups = userFromDatabase.getUserGroups();
 
@@ -107,18 +90,6 @@ public class DocumentService {
     }
 
     @Transactional
-    public void updateDocument(String documentIdentifier, String title, String description, String type) {
-        if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
-
-            DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-            documentFromDatabase.setTitle(title);
-            documentFromDatabase.setDescription(description);
-            documentFromDatabase.setType(type);
-            documentRepository.save(documentFromDatabase);
-        }
-    }
-
-    @Transactional
     public void submitDocument(String documentIdentifier) {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
@@ -131,24 +102,12 @@ public class DocumentService {
     }
 
     @Transactional
-    private void sendSubmittedDocumentToApprove(DocumentEntity documentEntity) {
-        List<UserGroupEntity> availableUserGroupsToGetSubmittedDoc = userGroupRepository.findAll();
-        for (UserGroupEntity userGroupEntity : availableUserGroupsToGetSubmittedDoc) {
-            for (DocumentTypeEntity documentTypeEntity : userGroupEntity.getAvailableDocumentTypesToApprove()) {
-                if (documentEntity.getType().equals(documentTypeEntity.getTitle())) {
-                    userGroupEntity.getDocumentsToApprove().add(documentEntity);
-                }
-            }
-        }
-    }
-
-    @Transactional
-    public void approveDocument(String documentIdentifier, String userIdentifier) {
+    public void approveDocument(String documentIdentifier, String username) {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
             //surandamas dokumentas
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             //surandame prisiloginusi useri
-            UserEntity userEntityFromDataBase = userRepository.findUserByUserIdentifier(userIdentifier);
+            UserEntity userEntityFromDataBase = userRepository.findUserByUsername(username);
 
             for (UserGroupEntity userGroupEntity : userEntityFromDataBase.getUserGroups()) {
                 if (userGroupEntity.getDocumentsToApprove().contains(documentEntityFromDatabase)) {
@@ -165,10 +124,10 @@ public class DocumentService {
     }
 
     @Transactional
-    public void rejectDocument(String documentIdentifier, String userIdentifier, String rejectedReason) {
+    public void rejectDocument(String documentIdentifier, String username, String rejectedReason) {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-            UserEntity userEntityFromDataBase = userRepository.findUserByUserIdentifier(userIdentifier);
+            UserEntity userEntityFromDataBase = userRepository.findUserByUsername(username);
 
             for (UserGroupEntity userGroupEntity : userEntityFromDataBase.getUserGroups()) {
                 if (userGroupEntity.getDocumentsToApprove().contains(documentEntityFromDatabase)) {
@@ -185,6 +144,35 @@ public class DocumentService {
 
         }
     }
+//
+//    @Transactional
+//    public void updateDocument(String documentIdentifier, String title, String description, String type) {
+//        if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
+//
+//            DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+//            documentFromDatabase.setTitle(title);
+//            documentFromDatabase.setDescription(description);
+//            documentFromDatabase.setType(type);
+//            documentRepository.save(documentFromDatabase);
+//        }
+//    }
+
+
+    @Transactional
+    private void sendSubmittedDocumentToApprove(DocumentEntity documentEntity) {
+        List<UserGroupEntity> availableUserGroupsToGetSubmittedDoc = userGroupRepository.findAll();
+        for (UserGroupEntity userGroupEntity : availableUserGroupsToGetSubmittedDoc) {
+            for (DocumentTypeEntity documentTypeEntity : userGroupEntity.getAvailableDocumentTypesToApprove()) {
+                if (documentEntity.getType().equals(documentTypeEntity.getTitle())) {
+                    userGroupEntity.getDocumentsToApprove().add(documentEntity);
+                }
+            }
+        }
+    }
+
+
+
+
 /*dokumentas su jo pasirasusiu specialistu issaugotas, dabar patvirtinta dokumenta reiktu pasalinti is
 specialisto Dokumento saraso*/
 
@@ -222,7 +210,6 @@ specialisto Dokumento saraso*/
         getDocumentEntityByDocumentIdentifier(documentIdentifier).addFileToDocument(fileEntity);
     }
 
-
     @Transactional
     public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier) {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
@@ -247,13 +234,6 @@ specialisto Dokumento saraso*/
         }
     }
 
-    @Transactional
-    public DocumentServiceObject getDocument(String documentIdentifier) {
-        DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-        if (documentFromDatabase == null){
-            throw new IllegalArgumentException("Dokuments su id '" + documentIdentifier + "'nerastas");
-        }
-        return SOfromEntity(documentFromDatabase);
 //        if (documentFromDatabase.getDocumentState().equals(DocumentState.CREATED)) {
 //            return new DocumentServiceObject(documentFromDatabase.getDocumentIdentifier(), documentFromDatabase.getTitle(), documentFromDatabase.getType(), documentFromDatabase.getDescription());
 //
@@ -271,7 +251,7 @@ specialisto Dokumento saraso*/
 //
 //        }
 
-    }
+//    }
 
     @Transactional
     public void deleteDocument(String documentIdentifier) {
@@ -279,6 +259,7 @@ specialisto Dokumento saraso*/
         if (documentEntity.getDocumentState().equals(DocumentState.CREATED) ||
                 documentEntity.getDocumentState().equals(DocumentState.REJECTED)) {
             documentRepository.deleteDocumentByDocumentIdentifier(documentIdentifier);
+
         }
     }
 

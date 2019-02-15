@@ -8,10 +8,6 @@ public class CreateUserCommand {
 
     @NotNull
     @Length(min=1, max=50)
-    private String userIdentifier;
-
-    @NotNull
-    @Length(min=1, max=50)
     private String username;
 
     @NotNull
@@ -26,13 +22,6 @@ public class CreateUserCommand {
     @Length(min=1, max=50)
     private String password;
 
-    public String getUserIdentifier() {
-        return userIdentifier;
-    }
-
-    public void setUserIdentifier(String userIdentifier) {
-        this.userIdentifier = userIdentifier;
-    }
 
     public String getUsername() {
         return username;
