@@ -33,30 +33,31 @@ class GenericDashBoard extends Component {
         
     }
 
+
     getAllDocuments() {
-        console.log("runing getAllDocuments");
+        console.log("running getAllDocuments");
         console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
         
         let requestPath = "";
 
         if (this.props.match.params.id.toLowerCase() === "all")
         {
-            requestPath = '/api/documents/' + this.props.user.userIdentifier + '/documents/';
+            requestPath = '/api/users/user/documents';
         }
         else
         {
-             requestPath = '/api/documents/' + this.props.user.userIdentifier + '/documents/' + this.props.match.params.id.toUpperCase();
+             requestPath = '/api/users/user/documents/' + this.props.match.params.id.toUpperCase();
         }
 
         axios.get(requestPath)
             .then(response => {
                
-                console.log("response from /api/documents/' - " + response);
+                console.log("response from /api/users/user/documents/ - " + response);
                 this.setState({userDocuments : response.data})
             })
             .catch(err => {
                 this.setState({error: err.message})
-                console.log("Error from /api/documents/{userIdentifier}/documents - " 
+                console.log("Error from /api/users/user/documents/ - "
                 + err)
             });
     }

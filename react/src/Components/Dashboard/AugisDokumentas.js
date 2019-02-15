@@ -21,18 +21,28 @@ class AugisDokumentas extends Component {
 
     componentWillMount() {
         this.getDocumentInformation();
-
     }
 
     componentDidMount() {
-
-
     }
 
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
 
+
     getDocumentInformation = () => {
-        axios.get('/api/documents/' + this.props.match.params.id)
+        // let params = new URLSearchParams();
+        // params.append('documentIdentifier', this.props.match.params.id)
+        // axios.get('/api/documents', params)
+
+        axios({
+                method: 'GET',
+                url: '/api/documents',
+                params: {
+                    documentIdentifier: (this.props.match.params.id)
+                },
+            headers: {'Content-Type': 'application/json;charset=utf-8'}
+            }
+        )
             .then(result => {
                 //kelyje turi but uzsifruotas dokumento id
                 console.log("Dokumento kelio id - " + this.props.match.params.id);
@@ -51,7 +61,7 @@ class AugisDokumentas extends Component {
                 this.getFileList();
             })
             .catch(error => {
-                console.log("Atsakymas is getTypesFromServer - " + error)
+                console.log("Atsakymas is getDocumentInformation - " + error)
             })
 
     }
@@ -59,13 +69,13 @@ class AugisDokumentas extends Component {
         console.log("getFileList is being run")
         axios({
             method: 'GET',
-            url: '/api/files/findAllFilesByDocument',
+            url: '/api/files/findAllFilesByDocumentIdentifier',
             params: {
                 DocumentIdentifier: (this.props.match.params.id)
-                // newBalance: parseFloat(account.balance)
+
 
             },
-            // headers: {'Content-Type': 'application/json;charset=utf-8'}
+            headers: {'Content-Type': 'application/json;charset=utf-8'}
         })
             .then(result => {
 
@@ -80,7 +90,7 @@ class AugisDokumentas extends Component {
 
             })
             .catch(error => {
-                console.log("Atsakymas is getTypesFromServer - " + error)
+                console.log("Atsakymas is getFileList - " + error)
             })
     }
 
@@ -131,28 +141,32 @@ class AugisDokumentas extends Component {
         });
     }
 
+
+
     submitDocument = (props) => {
         var docID = this.props.match.params.id;
-        var params = new URLSearchParams();
-        params.append('userIdentifier', this.props.user.userIdentifier);
-        axios.post("/api/documents/documents/" + docID + "/submit", params)
+        // var params = new URLSearchParams();
+        // params.append('userIdentifier', this.props.user.userIdentifier);
+        axios.post("/api/documents/" + docID + "/submit")
             .then(response => {
                 this.setState({documentState: 'Pateikta'});
             })
             .catch(error => {
-                window.alert("Klaida is submitDocument - " + error.message)
-                // console.log("Klaida is approveDocument - " + error.message);
+                window.alert("Klaida is submitDocument - " + error.message);
             })
     }
 
 
+
+
     approveDocument = (props) => {
         var docID = this.props.match.params.id;
-        var params = new URLSearchParams();
-        params.append('userIdentifier', this.props.user.userIdentifier);
-        axios.post("/api/documents/documents/" + docID + "/approve", params)
+        // var params = new URLSearchParams();
+        // params.append('userIdentifier', this.props.user.userIdentifier);
+        axios.post("/api/documents/" + docID + "/approve")
             .then(response => {
                 this.setState({documentState: 'Patvirtinta'});
+                this.getDocumentInformation();
             })
             .catch(error => {
                 window.alert("Klaida is approveDocument - " + error.message)
@@ -161,11 +175,9 @@ class AugisDokumentas extends Component {
     }
 
     rejectDocument = (props) => {
-        // document.getElementById('rejectReason').style.visibility = 'visible';
         var reason = window.prompt("Iveskite atmetimo priezasti");
         var docID = this.state.documentInfo.documentIdentifier;
         var params = new URLSearchParams();
-        params.append('userIdentifier', this.props.user.userIdentifier);
         params.append('rejectedReason', reason);
         axios.post("/api/documents/documents/" + docID + "/reject", params)
             .then(response => {
@@ -226,25 +238,6 @@ class AugisDokumentas extends Component {
                         </tbody>
                     </table>
 
-
-                    {/* <h5>Laukiantys patvirtinimo</h5> */}
-                    {/*<h6>Download</h6>*/}
-                    {/*<button className="btn btn-dark"*/}
-                    {/*onClick={this.downloadFile}>Download {this.state.attachedFileName} file*/}
-                    {/*</button>*/}
-
-                    {/*{this.state.documentInfo.documentState == 'CREATED' ?*/}
-
-                    {/*<button className="btn btn-info btn-sm ml-5" onClick={this.submitDocument}>Pateikti</button>*/}
-                    {/*:*/}
-                    {/*<div>*/}
-                    {/*<button className="btn btn-success btn-sm ml-5"*/}
-                    {/*onClick={this.approveDocument}>Patvirtinti*/}
-                    {/*</button>*/}
-                    {/*< button className="btn btn-danger btn-sm ml-5" onClick={this.rejectDocument}>Atmesti*/}
-                    {/*</button>*/}
-                    {/*</div>*/}
-                    {/*}*/}
 
                     {this.state.documentInfo.documentState === 'CREATED' ?
 

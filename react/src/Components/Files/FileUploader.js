@@ -25,12 +25,9 @@ export default class FileUploader extends Component {
         this.getAllowedTypes();
     }
 
-    // componentDidMount() {
-    //     this.getAllowedTypes();
-    // }
 
     getAllowedTypes = () => {
-        axios.get('/api/documentTypes/allowed')
+        axios.get('/api/users/user/document-types')
             .then(result => {
                 if (result.data.length > 0) {
                     this.setState({availableTypes: result.data});
@@ -38,7 +35,7 @@ export default class FileUploader extends Component {
                 }
             })
             .catch(error => {
-                console.log("Atsakymas is /api/documentTypes/allowed - " + error)
+                console.log("Atsakymas is /api/users/user/document-types - " + error)
             })
     }
 
@@ -101,7 +98,7 @@ export default class FileUploader extends Component {
         // console.log("type is" +this.state.type.valueOf);
         // console.log("type is" +this.state.type.text);
         // console.log("type is" +this.state.type.title);
-        axios.post('/api/documents/' + this.props.user.userIdentifier + '/documentAddToGroups', documentDetails)
+        axios.post('/api/documents', documentDetails)
             .then(response => {
                 this.setState({'type': '', 'title': '', 'description': ''});
 

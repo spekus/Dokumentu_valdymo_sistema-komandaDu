@@ -14,7 +14,6 @@ class ToApproveDashboard extends Component {
 
 
     componentDidMount = () => {
-        // this.setState({userId: this.props.user.userIdentifier});
         this.getWhoAmI();
         // this.getDocumentsToApprove();
         // this.setState({userId: this.props.user.userIdentifier});
@@ -43,44 +42,44 @@ class ToApproveDashboard extends Component {
 
             })
             .catch(error => {
-                console.log("Error getting user info from server");
+                console.log("Error from getWhoAmI");
                 console.log(error);
             })
     }
 
-    //
-    // getDocumentsToApprove = () => {
-    //     // var userID = this.state.userIdentifier;
-    //     // this.setState({userIdentifier: this.props.user.userIdentifier});
-    //     let params = new URLSearchParams();
-    //     params.append('userIdentifier', this.state.userIdentifier);
-    //     console.log("params - " + params);
-    //     axios.get('/api/usergroup/getDocumentsToApprove', params)
-    //         .then(response => {
-    //             this.setState({userDocuments: response.data});
-    //         })
-    //         .catch(error => {
-    //             console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
-    //         })
-    // }
 
     getDocumentsToApprove = () => {
-        axios({
-            method: 'get',
-            url: '/api/usergroup/getDocumentsToApprove',
-            params: {
-                userIdentifier: this.state.userIdentifier
-    },
-        headers: {'Content-Type': 'application/json;charset=utf-8'}
-
-    })
-                .then(response => {
+        // var userID = this.state.userIdentifier;
+        // this.setState({userIdentifier: this.props.user.userIdentifier});
+        // let params = new URLSearchParams();
+        // params.append('userIdentifier', this.state.userIdentifier);
+        // console.log("params - " + params);
+        axios.get('/api/users/user/get-documents-to-approve')
+            .then(response => {
                 this.setState({userDocuments: response.data});
             })
             .catch(error => {
                 console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
             })
     }
+
+    // getDocumentsToApprove = () => {
+    //     axios({
+    //         method: 'get',
+    //         url: '/api/users/user/get-documents-to-approve',
+    //         params: {
+    //             userIdentifier: this.state.userIdentifier
+    // },
+    //     headers: {'Content-Type': 'application/json;charset=utf-8'}
+    //
+    // })
+    //             .then(response => {
+    //             this.setState({userDocuments: response.data});
+    //         })
+    //         .catch(error => {
+    //             console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
+    //         })
+    // }
 
 
 

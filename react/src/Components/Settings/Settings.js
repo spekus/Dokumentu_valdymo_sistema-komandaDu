@@ -15,7 +15,7 @@ class Settings extends Component {
                     </div>
                     :
                     <div>
-                        <h1>Ne, jums cia negalima</h1>
+                        <h1>Jums cia negalima :P</h1>
                     </div>
                 }
             </React.Fragment>
