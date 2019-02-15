@@ -22,7 +22,6 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 
-    private String userIdentifier;
     private String username;
     private String firstname;
     private String lastname;
@@ -46,8 +45,7 @@ public class UserEntity {
     public UserEntity() {
     }
 
-    public UserEntity(String userIdentifier, String firstname, String lastname, String username, String password) {
-        this.userIdentifier = userIdentifier;
+    public UserEntity(String firstname, String lastname, String username, String password) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.username = username;
@@ -86,14 +84,6 @@ public class UserEntity {
 
     public void setLastname(String lastname) {
         this.lastname = lastname;
-    }
-
-    public String getUserIdentifier() {
-        return userIdentifier;
-    }
-
-    public void setUserIdentifier(String userIdentifier) {
-        this.userIdentifier = userIdentifier;
     }
 
     public Set<DocumentEntity> getDocuments() {

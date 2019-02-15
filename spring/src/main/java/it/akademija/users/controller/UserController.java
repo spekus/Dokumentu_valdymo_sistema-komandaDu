@@ -3,6 +3,8 @@ package it.akademija.users.controller;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import it.akademija.auth.AppRoleEnum;
+import it.akademija.documents.DocumentState;
+import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.users.service.UserGroupServiceObject;
 import it.akademija.users.service.UserService;
@@ -18,6 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
@@ -41,95 +45,62 @@ public class UserController {
         this.userService = userService;
     }
 
-
-    @RequestMapping(value = "/", method = RequestMethod.POST)
-    @ApiOperation(value = "Create user", notes = "")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void addNewUser(@RequestBody CreateUserCommand cuc) {
-        userService.addNewUser(cuc.getUserIdentifier(), cuc.getFirstname(), cuc.getLastname(), cuc.getUsername(),
-                cuc.getPassword());
-    }
-
-    // berods neveikia. Ir ar kazkur naudojame username kaip path variable
-    //patikrinau-lyg ir veikia, pakeiciau i identifier vietoje username
-    @RequestMapping(value = "/{userIdentifier}", method = RequestMethod.GET, produces = "application/json")
-    //@ApiOperation(value = "Get info on user", notes = "")
+    @RequestMapping(value = "user/documents/{state}", method = RequestMethod.GET)
+    @ApiOperation(value = "Get user's documents by state", notes = "Returns wanted user's documents by state")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public UserServiceObject getUserByUserId(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
-        return userService.getUserByUserId(userIdentifier);
+    public Set<DocumentServiceObject> getDocuments(@ApiIgnore Authentication authentication,
+                                                   @ApiParam(value = "State", required = true)
+                                                   @Valid @PathVariable DocumentState state) throws IllegalArgumentException {
+        try {
+            return userService.getUserDocumentsByState(authentication.getName(), state);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
-    @RequestMapping(value = "/{userIdentifier}/usergroups", method = RequestMethod.GET, produces = "application/json")
-    @ApiOperation(value = "Get user's groups", notes = "")
+    @RequestMapping(value = "user/documents", method = RequestMethod.GET)
+    @ApiOperation(value = "Get all user's documents", notes = "Returns wanted user's all documents")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public List<UserGroupServiceObject> getUserGroups(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
-        return userService.getUserGroups(userIdentifier);
+    public Set<DocumentServiceObject> getAllUserDocuments(@ApiIgnore Authentication authentication) {
+        return userService.getAllUserDocuments(authentication.getName());
     }
 
-    @RequestMapping(value = "/{userIdentifier}/documentTypes", method = RequestMethod.GET, produces = "application/json")
-    @ApiOperation(value = "Get user's document types that he can create", notes = "")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public Set<DocumentTypeServiceObject> getUserDocumentTypes(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier) {
-        return userService.getUserDocumentTypesHeCanCreate(userIdentifier);
-    }
 
-    // GET /api/users - returns all users
-    @RequestMapping(value = "/", method = RequestMethod.GET)
-    @ApiOperation(value = "List all users and all related info", notes = "")
+    @RequestMapping(value = "", method = RequestMethod.GET)
+    @ApiOperation(value = "List all users and all related info", notes = "Lists all users all information")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public Collection<UserServiceObject> getAllUsers() {
         return userService.getAllUsers();
     }
 
-    @RequestMapping(value = "/{userIdentifier}", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Delete user", notes = "")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void deleteUser(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier,
-                           @ApiIgnore HttpServletRequest request) {
-        // neleidziam naudotojui istrinti pati save
-        // kaip nustatyti kitose koks naudotojo vardas kitose vietose, pravers sitas puslapis:
-        // https://www.baeldung.com/get-user-in-spring-security
-        // Galima naudoti "HttpServletRequest request" arba "Authentication authentication"
-        if (request.getRemoteUser().equals(userIdentifier)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete yourself!");
-            // parodome exception, kuri galima pasiimti axios ... catch (response => ... response.data.message)
-        } else {
-            userService.deleteUserByIdentifier(userIdentifier);
-        }
-    }
-
-    @RequestMapping(value = "/{userIdentifier}/password", method = RequestMethod.PUT)
-    @ApiOperation(value = "Update users password", notes = "Should be removed later, of locked for admins only")
+    @RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "Get info on user", notes = "")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public void updateUserPassword(@PathVariable("userIdentifier") @Length(min = 1) String userIdentifier,
-                                   @RequestParam("password") @Length(min = 1) String password,
-                                   @ApiIgnore HttpServletRequest request) {
-
-        // leidziam keisti passworda jeigu adminas arba jeigu naudotajas yra tas pats kaip prisijunges
-        // kaip nustatyti, ar turi ADMIN role, mes suzinome is cia:
-        // https://www.baeldung.com/spring-security-expressions-basic
-        // 4 punktas
-        boolean isAdmin = request.isUserInRole("ADMIN");
-        boolean isHimself = request.getRemoteUser().equals(userIdentifier);
-        if (isAdmin || isHimself) {
-            userService.updateUserPassword(userIdentifier, password);
-        } else {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to change other user's password !");
-        }
-    }
-
-    @RequestMapping(value = "/username", method = RequestMethod.GET, produces = "application/json")
-    @ApiOperation(value = "username", notes = "Returns user by username")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public UserServiceObject getUserByUsername(@RequestParam("username") @Length(min = 1) String username) {
+    public UserServiceObject getUserByUsername(@PathVariable("username") @NotNull @Length(min = 1) String username) {
         return userService.getUserByUsername(username);
-
     }
+
+    @RequestMapping(value = "/user/usergroups", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "Get user's groups", notes = "Gets user's groups")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
+    public List<UserGroupServiceObject> getUserGroups(@ApiIgnore Authentication authentication) {
+        return userService.getUserGroups(authentication.getName());
+    }
+
+    @RequestMapping(value = "/user/document-types", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "Get user's document types that he can create", notes = "")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
+    public Set<DocumentTypeServiceObject> getUserDocumentTypes(@ApiIgnore Authentication authentication) {
+        return userService.getUserDocumentTypesHeCanCreate(authentication.getName());
+    }
+
 
     @RequestMapping(value = "/criteria", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "criteria", notes = "Returns users by criteria")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public Collection<UserServiceObject> getUserByCriteria(@RequestParam("criteria") @Length(min = 1) String criteria) {
+    public Collection<UserServiceObject> getUserByCriteria(@RequestParam("criteria") @NotNull @Length(min = 1) String criteria) {
         return userService.getUserByCriteria(criteria);
 
     }
@@ -138,9 +109,80 @@ public class UserController {
     @ApiOperation(value = "whoami", notes = "Returns user which is currently logged in")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public UserServiceObject getCurrentUser(@ApiIgnore Authentication authentication) {
-        return userService.getUserByUserId(authentication.getName());
+        return userService.getUserByUsername(authentication.getName());
 
     }
+
+        @RequestMapping(value = "user/get-documents-to-approve", method = RequestMethod.GET)
+    public Set<DocumentServiceObject> getDocumentsToApprove(@ApiIgnore Authentication authentication
+    ) {
+        return userService.getDocumentsToApprove(authentication.getName());
+    }
+
+    @RequestMapping(value = "", method = RequestMethod.POST)
+    @ApiOperation(value = "Create user", notes = "Creates new user")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void addNewUser(@RequestBody CreateUserCommand cuc) {
+        userService.addNewUser(cuc.getFirstname(), cuc.getLastname(), cuc.getUsername(),
+                cuc.getPassword());
+    }
+
+    @RequestMapping (value="/{username/", method = RequestMethod.PUT)
+    @ApiOperation(value = "Update user's info", notes = "Updates user's information")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
+    public void updateUserInformation(@PathVariable ("username") @NotNull @Length(min=1) String username,
+                                   @RequestParam("newFirstname") @NotNull @Length(min = 1) String newFirstname,
+                                      @RequestParam("newLastname") @NotNull @Length(min = 1) String newLastname,
+                                   @ApiIgnore HttpServletRequest request) {
+        boolean isAdmin = request.isUserInRole("ADMIN");
+        boolean isHimself = request.getRemoteUser().equals(username);
+        if (isAdmin || isHimself) {
+            userService.updateUserInformation(username, newFirstname, newLastname);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to change other user's information!");
+        }
+    }
+
+    @RequestMapping(value = "/{username}/password", method = RequestMethod.PUT)
+    @ApiOperation(value = "Update users password", notes = "Should be removed later, of locked for admins only")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
+    public void updateUserPassword(@PathVariable ("username") @NotNull @Length(min=1) String username,
+                                   @RequestParam("password") @NotNull @Length(min = 1) String password,
+                                   @ApiIgnore HttpServletRequest request) {
+
+        // leidziam keisti passworda jeigu adminas arba jeigu naudotajas yra tas pats kaip prisijunges
+        // kaip nustatyti, ar turi ADMIN role, mes suzinome is cia:
+        // https://www.baeldung.com/spring-security-expressions-basic
+        // 4 punktas
+        boolean isAdmin = request.isUserInRole("ADMIN");
+        boolean isHimself = request.getRemoteUser().equals(username);
+        if (isAdmin || isHimself) {
+            userService.updateUserPassword(username, password);
+        } else {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to change other user's password !");
+        }
+    }
+
+
+    @RequestMapping(value = "/{username}", method = RequestMethod.DELETE)
+    @ApiOperation(value = "Delete user", notes = "Deletes user")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void deleteUser(@PathVariable("username") @NotNull @Length(min = 1) String username,
+                           @ApiIgnore HttpServletRequest request) {
+        // neleidziam naudotojui istrinti pati save
+        // kaip nustatyti kitose koks naudotojo vardas kitose vietose, pravers sitas puslapis:
+        // https://www.baeldung.com/get-user-in-spring-security
+        // Galima naudoti "HttpServletRequest request" arba "Authentication authentication"
+        if (request.getRemoteUser().equals(username)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete yourself!");
+            // parodome exception, kuri galima pasiimti axios ... catch (response => ... response.data.message)
+        } else {
+            userService.deleteUserByUsername(username);
+        }
+    }
+
+
+
 
 
 }
