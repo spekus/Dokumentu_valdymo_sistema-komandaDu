@@ -17,7 +17,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
    UserEntity findByUsername(String username);
 
-    @Query("select u from UserEntity u where u.firstname=:criteria OR u.lastname=:criteria")
+    @Query("select u from UserEntity u where u.firstname=:criteria OR u.lastname=:criteria OR u.username=:criteria")
     List<UserEntity> findByUsernameOrLastname(@Param("criteria")String criteria);
 
     void deleteUserByUsername(String username);

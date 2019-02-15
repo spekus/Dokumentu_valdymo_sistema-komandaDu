@@ -53,9 +53,7 @@ public class UserController {
                                                    @Valid @PathVariable DocumentState state) throws IllegalArgumentException {
         try {
             return userService.getUserDocumentsByState(authentication.getName(), state);
-        }
-        catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
@@ -113,7 +111,7 @@ public class UserController {
 
     }
 
-        @RequestMapping(value = "user/get-documents-to-approve", method = RequestMethod.GET)
+    @RequestMapping(value = "user/get-documents-to-approve", method = RequestMethod.GET)
     public Set<DocumentServiceObject> getDocumentsToApprove(@ApiIgnore Authentication authentication
     ) {
         return userService.getDocumentsToApprove(authentication.getName());
@@ -127,13 +125,13 @@ public class UserController {
                 cuc.getPassword());
     }
 
-    @RequestMapping (value="/{username/", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{username}", method = RequestMethod.PUT)
     @ApiOperation(value = "Update user's info", notes = "Updates user's information")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public void updateUserInformation(@PathVariable ("username") @NotNull @Length(min=1) String username,
-                                   @RequestParam("newFirstname") @NotNull @Length(min = 1) String newFirstname,
+    public void updateUserInformation(@PathVariable("username") @NotNull @Length(min = 1) String username,
+                                      @RequestParam("newFirstname") @NotNull @Length(min = 1) String newFirstname,
                                       @RequestParam("newLastname") @NotNull @Length(min = 1) String newLastname,
-                                   @ApiIgnore HttpServletRequest request) {
+                                      @ApiIgnore HttpServletRequest request) {
         boolean isAdmin = request.isUserInRole("ADMIN");
         boolean isHimself = request.getRemoteUser().equals(username);
         if (isAdmin || isHimself) {
@@ -146,7 +144,7 @@ public class UserController {
     @RequestMapping(value = "/{username}/password", method = RequestMethod.PUT)
     @ApiOperation(value = "Update users password", notes = "Should be removed later, of locked for admins only")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public void updateUserPassword(@PathVariable ("username") @NotNull @Length(min=1) String username,
+    public void updateUserPassword(@PathVariable("username") @NotNull @Length(min = 1) String username,
                                    @RequestParam("password") @NotNull @Length(min = 1) String password,
                                    @ApiIgnore HttpServletRequest request) {
 
@@ -180,9 +178,6 @@ public class UserController {
             userService.deleteUserByUsername(username);
         }
     }
-
-
-
 
 
 }
