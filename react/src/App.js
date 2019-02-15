@@ -19,7 +19,7 @@ import Settings from "./Components/Settings/Settings";
 import UserAdminisrationList from "./Components/Users/UserAdminisrationList";
 import InitialDashBoard from "./Components/Dashboard/Dashboards/InitialDashBoard";
 import GenericDashBoard from "./Components/Dashboard/Dashboards/GenericDashBoard";
-import ToAprooveDashboard from "./Components/Dashboard/Dashboards/ToAprooveDashboard";
+import ToApproveDashboard from "./Components/Dashboard/Dashboards/ToApproveDashboard";
 import axios from "axios";
 import {Redirect} from "react-router";
 
@@ -148,7 +148,8 @@ class App extends React.Component {
                                             {/*<Route exact path="/" component={InitialDashBoard}/>*/}
                                             <Redirect exact from='/' to='/dashboard/documents/all'/>
                                             <Route path="/dashboard/documents/to_aproove"
-                                                   component={ToAprooveDashboard}/>
+                                                   render={(props) => <ToApproveDashboard user={this.state.user} {...props}/>}/>
+                                                {/*// component={ToApproveDashboard}/>*/}
                                             <Route path="/dashboard/documents/:id" render={(props) => <GenericDashBoard
                                                 user={this.state.user} {...props}/>}/>
                                             <Route exact path="/documents/:id" render={(props) => <AugisDokumentas

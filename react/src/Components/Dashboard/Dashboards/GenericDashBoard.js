@@ -10,14 +10,7 @@ class GenericDashBoard extends Component {
         nameOfWindow : 'default',
         userDocuments : [],
     }
-    componentWillUnmount(){
-    
-    }
 
-    componentWillMount(){
-        
-
-    }
     componentDidMount(){
         this.getAllDocuments();
     }

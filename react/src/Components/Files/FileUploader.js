@@ -21,9 +21,13 @@ export default class FileUploader extends Component {
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
     handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
 
-    componentDidMount() {
+    componentWillMount() {
         this.getAllowedTypes();
     }
+
+    // componentDidMount() {
+    //     this.getAllowedTypes();
+    // }
 
     getAllowedTypes = () => {
         axios.get('/api/documentTypes/allowed')
@@ -40,6 +44,7 @@ export default class FileUploader extends Component {
 
 
     uploadFile = (event) => {
+        this.getAllowedTypes();
         event.preventDefault();
         this.setState({error: '', msg: ''});
 
@@ -60,6 +65,7 @@ export default class FileUploader extends Component {
 
         axios.post('/api/files', data)
             .then(response => {
+                this.getAllowedTypes();
                 this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
                 if (response.data.text) {
                     var fileId = response.data.text;
@@ -150,8 +156,8 @@ export default class FileUploader extends Component {
             <React.Fragment>
 
                 {/* Main content */}
-                <div>
-                    <div>
+                <div className="container">
+                    <div className="page1 shadow p-3 mb-5 bg-white rounded">
                         <h4 className="my-4" align="center">
                             Naujo dokumento sukūrimas
                         </h4>

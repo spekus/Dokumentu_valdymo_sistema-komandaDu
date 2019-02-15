@@ -37,7 +37,7 @@ class NewUserForm extends Component {
         console.log("New User: " + newUser);
 
         if (this.state.editmode) {
-            axios.put('/api/users/' + this.state.userIdentifier)
+            axios.post('/api/users/', newUser)
                 .then()
         } else {
 
