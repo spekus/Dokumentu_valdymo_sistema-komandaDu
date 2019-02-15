@@ -47,11 +47,11 @@ public class DocumentController {
     }
 
 
-    @RequestMapping(value = "/{documentIdentifier}", method = RequestMethod.GET)
+    @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation(value = "Get document", notes = "Returns one document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public DocumentServiceObject getDocument(@ApiParam(value = "DocumentIdentifier", required = true)
-                                             @Valid @PathVariable @NotNull @Length(min = 1) String documentIdentifier) {
+                                                 @RequestParam @Valid @NotNull @Length(min = 1) String documentIdentifier) {
         try{
             return documentService.getDocument(documentIdentifier);
         }catch (IllegalArgumentException e)
@@ -99,7 +99,7 @@ public class DocumentController {
         documentService.approveDocument(documentIdentifier, authentication.getName());
     }
 
-    @RequestMapping(value = "/documents/{documentIdentifier}/reject", method = RequestMethod.POST)
+    @RequestMapping(value = "/{documentIdentifier}/reject", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Reject document", notes = "Rejects document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
