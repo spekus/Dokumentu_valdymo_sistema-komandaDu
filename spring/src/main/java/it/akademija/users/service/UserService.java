@@ -164,7 +164,9 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public Set<DocumentServiceObject> getDocumentsToApprove(String username) {
+    public Page<DocumentServiceObject> getDocumentsToApprove(String username, Integer page, Integer size) {
+        // manau sita visa reiktu perasyti metoda,
+        //grazinama pageable, bet nedirbama tiesiogiai su duombaze, tikriausiai bus labai leta
         UserEntity userEntity = userRepository.findUserByUsername(username);
         Set<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
         Set<DocumentEntity> allDocumentsToApprove = new HashSet<>();
@@ -172,8 +174,10 @@ public class UserService implements UserDetailsService {
         for (UserGroupEntity userGroupEntity : groupsFromUser) {
             allDocumentsToApprove.addAll(userGroupEntity.getDocumentsToApprove());
         }
+        Pageable sortedByTitleDesc =
+                PageRequest.of(page, size, Sort.by("title").ascending());
 
-        return allDocumentsToApprove.stream().map((documentEntity) ->
+         List<DocumentServiceObject> listOfDocumentServiceObject = allDocumentsToApprove.stream().map((documentEntity) ->
                 new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
                         documentEntity.getAuthor(),
                         documentEntity.getTitle(),
@@ -184,7 +188,11 @@ public class UserService implements UserDetailsService {
                         documentEntity.getApprovalDate(),
                         documentEntity.getRejectedDate(),
                         documentEntity.getRejectionReason(),
-                        documentEntity.getApprover())).collect(Collectors.toSet());
+                        documentEntity.getApprover())).collect(Collectors.toList());
+
+        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
+                sortedByTitleDesc, allDocumentsToApprove.size()) ;
+        return pageData;
     }
 
     @Transactional

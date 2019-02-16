@@ -130,9 +130,11 @@ public class UserController {
     }
 
     @RequestMapping(value = "user/get-documents-to-approve", method = RequestMethod.GET)
-    public Set<DocumentServiceObject> getDocumentsToApprove(@ApiIgnore Authentication authentication
+    public Page<DocumentServiceObject> getDocumentsToApprove(@ApiIgnore Authentication authentication,
+                                                            @RequestParam("page") int page,
+                                                            @RequestParam("size") int size
     ) {
-        return userService.getDocumentsToApprove(authentication.getName());
+        return userService.getDocumentsToApprove(authentication.getName(), page, size);
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)
