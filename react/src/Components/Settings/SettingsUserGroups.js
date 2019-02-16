@@ -19,7 +19,7 @@ class SettingsUserGroups extends Component {
 
     createUserGroup = (event) => {
         event.preventDefault();
-        axios.post('/api/usergroup/', {title: this.state.newUserGroupInputField})
+        axios.post('/api/usergroups', {title: this.state.newUserGroupInputField})
             .then(reponse => {
                     this.getUserGroups();
                     this.setState({newUserGroupInputField: ""})
@@ -28,7 +28,7 @@ class SettingsUserGroups extends Component {
     }
 
     getUserGroups = () => {
-        axios.get('/api/usergroup/')
+        axios.get('/api/usergroups')
             .then(result => {
                 this.setState({allUserGroups: result.data});
             })
@@ -38,7 +38,7 @@ class SettingsUserGroups extends Component {
     }
 
     deleteUserGroup = (userGroupTitle) => {
-        axios.delete('/api/usergroup/' + userGroupTitle)
+        axios.delete('/api/usergroups/' + userGroupTitle)
             .then(result => {
                 this.getUserGroups();
             })
@@ -86,7 +86,7 @@ class SettingsUserGroups extends Component {
                                        value={this.state.newUserGroupInputField}
                                        name="newUserGroupInputField"
                                        onChange={this.handleChangeInput}/>
-                                <button type="submit" className="btn btn-primary mt-2">Sukurti</button>
+                                <button type="submit" className="btn btn-info mt-2">Sukurti</button>
                             </div>
 
                         </form>

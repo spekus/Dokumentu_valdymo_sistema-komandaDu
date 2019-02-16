@@ -11,9 +11,7 @@ export default class FileUploader extends Component {
         file: '',
         error: '',
         msg: '',
-        // savedFileIdentifier: '',
-        // savedDocumentIdentifier: '',
-        type: 'Pirmas',
+        type: '',
         title: '',
         description: '',
         availableTypes: []
@@ -23,38 +21,37 @@ export default class FileUploader extends Component {
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
     handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
 
-
-    componentWillMount(userId){
-        this.getTypesFromServer();
+    componentWillMount() {
+        this.getAllowedTypes();
     }
 
-    getTypesFromServer = (userId) => {
-        axios.get('/api/documentTypes/')
+
+    getAllowedTypes = () => {
+        axios.get('/api/users/user/document-types')
             .then(result => {
                 if (result.data.length > 0) {
                     this.setState({availableTypes: result.data});
-                    this.setState({type: result.data[0]});
-                    console.log("Atsakymas is getTypesFromServer -" + result.data);
+                    this.setState({type: result.data[0].title});
                 }
             })
             .catch(error => {
-                console.log("Atsakymas is getTypesFromServer - " + error)
+                console.log("Atsakymas is /api/users/user/document-types - " + error)
             })
-
     }
 
 
     uploadFile = (event) => {
+        // this.getAllowedTypes();
         event.preventDefault();
         this.setState({error: '', msg: ''});
 
         if (!this.state.file) {
-            this.setState({error: 'Please upload a file.'})
+            this.setState({error: 'Pasirinkite failą'})
             return;
         }
 
         if (this.state.file.size >= 2000000) {
-            this.setState({error: 'File size exceeds limit of 2MB.'})
+            this.setState({error: 'Failo dydis viršija 2MB'})
             return;
         }
 
@@ -65,10 +62,11 @@ export default class FileUploader extends Component {
 
         axios.post('/api/files', data)
             .then(response => {
-                this.setState({error: '', msg: 'Sucessfully uploaded file'});
+                this.getAllowedTypes();
+                this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
                 if (response.data.text) {
                     var fileId = response.data.text;
-                    
+
 
                     let documentDetails = {
                         title: this.state.title,
@@ -79,7 +77,7 @@ export default class FileUploader extends Component {
                     // Jeigu pavyko sukelti faila, mes bandome vartotojo vardu
                     // sukurti dokumento specifikacija
                     // ir suristi sukelta faila su juo
-                    this.addDocument("id123", documentDetails, fileId);
+                    this.addDocument(documentDetails, fileId);
 
                 }
             })
@@ -94,16 +92,22 @@ export default class FileUploader extends Component {
     // Metodas prideda naudotojui dokumento specifikacija (DocumentDetails) ir susieja su failu,
     // kuris jau buvo ikeltas anksciau.
     //Kol kas lyk neveikia?? 
-    addDocument(userId, documentDetails, fileId) {
-        axios.post('/api/documents/' + userId + '/documentAddToGroups', documentDetails)
+    addDocument(documentDetails, fileId) {
+        console.log("running addDocument");
+        // console.log(this.state.type);
+        // console.log("type is" +this.state.type.valueOf);
+        // console.log("type is" +this.state.type.text);
+        // console.log("type is" +this.state.type.title);
+        axios.post('/api/documents', documentDetails)
             .then(response => {
-                this.setState({'type': '', 'title': '', 'description': ''});
-
+                this.setState({'title': '', 'description': ''});
+                //idejau sita , nes vel buvo bugas.
+                // this.getAllowedTypes()
                 if (response.data.text) {
                     var docId = response.data.text;
                     this.addFileToDocument(docId, fileId);
-                    console.log("Document has been created with identifier - " 
-                    + docId);
+                    console.log("Document has been created with identifier - "
+                        + docId);
                 }
             })
             .catch(err => {
@@ -119,17 +123,16 @@ export default class FileUploader extends Component {
             documentIdentifier: docId,
             fileIdentifier: fileID
         }
-        console.log("docId"  + docId);
-        console.log("fileID"  + fileID);
+        console.log("docId" + docId);
+        console.log("fileID" + fileID);
 
         axios.post('/api/files/addFileToDocument'
-        , fileDocumentCommand)
+            , fileDocumentCommand)
             .then(response => {
                 this.setState({[this.state.name]: ''});
                 console.log("Response from addFileToDocument - " + response)
                 console.log(" " + response.status)
                 console.log(" " + response.statusText)
-
 
 
             })
@@ -151,8 +154,8 @@ export default class FileUploader extends Component {
             <React.Fragment>
 
                 {/* Main content */}
-                <div>
-                    <div>
+                <div className="container">
+                    <div className="page1 shadow p-3 mb-5 bg-white rounded">
                         <h4 className="my-4" align="center">
                             Naujo dokumento sukūrimas
                         </h4>
@@ -173,8 +176,8 @@ export default class FileUploader extends Component {
                                         <label htmlFor="exampleFormControlSelect1">Dokumento tipas</label>
                                         <select className="form-control" id="exampleFormControlSelect1"
                                                 value={this.state.type} onChange={this.handleChangeSelect} name="type">
-                                            {this.state.availableTypes.map(item =>(
-                                            <option value={item.title}>{item.title}</option>
+                                            {this.state.availableTypes.map(item => (
+                                                <option value={item.title}>{item.title}</option>
                                             ))}
 
                                         </select>
@@ -189,7 +192,7 @@ export default class FileUploader extends Component {
                                     </div>
 
                                     <div className="form-group col-md-9 mt-4">
-                                        <input onChange={this.onFileChange} type="file"></input><br/>
+                                        <input onChange={this.onFileChange} multiple type="file"></input><br/>
                                         <h4 style={{color: 'red'}}>{this.state.error}</h4>
                                         <h4 style={{color: 'green'}}>{this.state.msg}</h4>
 
@@ -201,7 +204,7 @@ export default class FileUploader extends Component {
                         <React.Fragment>
 
                             <div className="text-center">
-                                <button type="submit" className="btn btn-danger my-4"
+                                <button type="submit" className="btn btn-info my-4"
                                         onClick={this.uploadFile}>Išsaugoti
                                 </button>
                             </div>
@@ -216,5 +219,3 @@ export default class FileUploader extends Component {
         );
     }
 }
-
-

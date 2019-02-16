@@ -1,6 +1,7 @@
 package it.akademija.users.repository;
 
 
+import it.akademija.auth.AppRoleEnum;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import org.hibernate.annotations.LazyCollection;
@@ -14,26 +15,40 @@ import java.util.Set;
 @Entity
 public class UserGroupEntity {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.AUTO)
     protected Long id;
     private String title;
 
-    @OneToMany
+    @ManyToMany
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinTable(
+            name = "usergroup_types_to_upload",
+            joinColumns = @JoinColumn(name = "usergroup_id"),
+            inverseJoinColumns = @JoinColumn(name = "documenttype_id"))
+    private Set<DocumentTypeEntity> availableDocumentTypesToUpload = new HashSet<>();
+
+    @ManyToMany
+    @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinTable(
+            name = "usergroup_types_to_approve",
+            joinColumns = @JoinColumn(name = "usergroup_id"),
+            inverseJoinColumns = @JoinColumn(name = "documenttype_id"))
     private Set<DocumentTypeEntity> availableDocumentTypesToApprove = new HashSet<>();
 
     @OneToMany
+    @LazyCollection(LazyCollectionOption.TRUE)
+    private Set<DocumentEntity> documentsToApprove = new HashSet<>();
+
+    @ManyToMany(mappedBy = "userGroups")
     @LazyCollection(LazyCollectionOption.FALSE)
-    private Set<DocumentTypeEntity> availableDocumentTypesToUpload = new HashSet<>();
-    @OneToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private Set<DocumentEntity> documentsToApprove= new HashSet<>();
+    private Set<UserEntity> groupUsers = new HashSet<>();
 
+    protected UserGroupEntity() {
+    }
 
-    protected UserGroupEntity(){}
-
-    public UserGroupEntity(String title) {
+    public UserGroupEntity(String title, AppRoleEnum role) {
         this.title = title;
+        this.role = role;
     }
 
     public Long getId() {
@@ -76,11 +91,11 @@ public class UserGroupEntity {
         this.documentsToApprove = documentsToApprove;
     }
 
-    public void addAvailableDocumentTypeToUpload (DocumentTypeEntity documentTypeEntity) {
+    public void addAvailableDocumentTypeToUpload(DocumentTypeEntity documentTypeEntity) {
         this.availableDocumentTypesToUpload.add(documentTypeEntity);
     }
 
-    public void addAvailableDocumentTypeToApprove (DocumentTypeEntity documentTypeEntity) {
+    public void addAvailableDocumentTypeToApprove(DocumentTypeEntity documentTypeEntity) {
         this.availableDocumentTypesToApprove.add(documentTypeEntity);
     }
 
@@ -88,5 +103,22 @@ public class UserGroupEntity {
         this.documentsToApprove.add(documentEntity);
     }
 
+    public Set<UserEntity> getGroupUsers() {
+        return groupUsers;
+    }
 
+    public void setGroupUsers(Set<UserEntity> groupUsers) {
+        this.groupUsers = groupUsers;
+    }
+
+    @Enumerated(EnumType.STRING)
+    private AppRoleEnum role;
+
+    public AppRoleEnum getRole() {
+        return role;
+    }
+
+    public void setRole(AppRoleEnum role) {
+        this.role = role;
+    }
 }

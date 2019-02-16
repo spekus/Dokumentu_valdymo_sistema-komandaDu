@@ -3,23 +3,25 @@ package it.akademija.users.repository;
 
 import it.akademija.documents.repository.DocumentEntity;
 import org.h2.engine.Role;
+import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.HashSet;
 
+import java.util.List;
 import java.util.Set;
 
 @Entity
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.TABLE)
     private long id;
 
-    private String userIdentifier;
     private String username;
     private String firstname;
     private String lastname;
@@ -31,15 +33,19 @@ public class UserEntity {
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<DocumentEntity> documentEntities = new HashSet<>();
 
-    @OneToMany
+    @ManyToMany
     @LazyCollection(LazyCollectionOption.FALSE)
+    @JoinTable(
+            name = "user_usergroup",
+            joinColumns = @JoinColumn(name = "userEntity_id"),
+            inverseJoinColumns = @JoinColumn(name = "userGroupEntity_id"))
     private Set<UserGroupEntity> userGroups = new HashSet<>();
+
 
     public UserEntity() {
     }
 
-    public UserEntity(String userIdentifier, String firstname, String lastname, String username, String password) {
-        this.userIdentifier = userIdentifier;
+    public UserEntity(String firstname, String lastname, String username, String password) {
         this.firstname = firstname;
         this.lastname = lastname;
         this.username = username;
@@ -80,14 +86,6 @@ public class UserEntity {
         this.lastname = lastname;
     }
 
-    public String getUserIdentifier() {
-        return userIdentifier;
-    }
-
-    public void setUserIdentifier(String userIdentifier) {
-        this.userIdentifier = userIdentifier;
-    }
-
     public Set<DocumentEntity> getDocuments() {
         return documentEntities;
     }
@@ -114,7 +112,6 @@ public class UserEntity {
 
     public void setDocumentEntities(Set<DocumentEntity> documentEntities) {
         this.documentEntities = documentEntities;
-
     }
 
     public Set<UserGroupEntity> getUserGroups() {
@@ -124,6 +121,4 @@ public class UserEntity {
     public void setUserGroups(Set<UserGroupEntity> userGroups) {
         this.userGroups = userGroups;
     }
-
-
 }

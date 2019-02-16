@@ -1,6 +1,8 @@
 package it.akademija.users.repository;
 
 
+import it.akademija.auth.AppRoleEnum;
+import it.akademija.documents.repository.DocumentTypeEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -11,8 +13,13 @@ public interface UserGroupRepository extends JpaRepository<UserGroupEntity, Long
 
     UserGroupEntity findGroupByTitle(String title);
 
+    UserGroupEntity findGroupByRole(AppRoleEnum role);
+
     void deleteGroupByTitle(String title);
 
+    List<UserGroupEntity> findAll();
 
-    public List<UserGroupEntity> findAll();
+
+
+
 }
