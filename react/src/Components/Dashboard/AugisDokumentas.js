@@ -149,6 +149,7 @@ class AugisDokumentas extends Component {
         // params.append('userIdentifier', this.props.user.userIdentifier);
         axios.post("/api/documents/" + docID + "/submit")
             .then(response => {
+                // this.getDocumentInformation();
                 this.setState({documentState: 'Pateikta'});
             })
             .catch(error => {
@@ -165,7 +166,7 @@ class AugisDokumentas extends Component {
         // params.append('userIdentifier', this.props.user.userIdentifier);
         axios.post("/api/documents/" + docID + "/approve")
             .then(response => {
-                this.setState({documentState: 'Patvirtinta'});
+                this.setState({documentState: this.state.documentInfo.documentState});
                 this.getDocumentInformation();
             })
             .catch(error => {
