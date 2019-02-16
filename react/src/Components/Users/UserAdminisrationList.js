@@ -25,16 +25,12 @@ class UserAdminisrationList extends Component {
     getFilteredUsers = (event) => {
         document.getElementById('userListTable').style.visibility = 'visible';
         event.preventDefault();
-        axios({
-            method: 'GET',
-            url: '/api/users/criteria',
-            params: {
-                criteria: this.state.searchField
-            },
-            headers: {"Accept": "application/json"}
-        })
-
-        // axios.get("/api/users/criteria", this.state.searchField)
+        axios.get(
+            '/api/users/criteria', {
+                params: {
+                    criteria: this.state.searchField
+                }
+            })
             .then(response => {
                 if (response.data.length > 0) {
                     this.setState({userlist: response.data});
@@ -79,19 +75,9 @@ class UserAdminisrationList extends Component {
 
     addGroup = (event) => {
         var newGroup = this.state.group;
-        var params = new URLSearchParams();
-        params.append('username', this.state.userBeingEdited.username);
-        axios.put('/api/usergroups/' + newGroup + '/add-person', params)
-
-        // axios({
-        //         method: 'PUT',
-        //         url: '/api/usergroups/' + newGroup + '/add-person',
-        //         params: {
-        //             username: (this.state.userBeingEdited.username)
-        //         },
-        //         headers: {'Content-Type': 'application/json;charset=utf-8'}
-        //     }
-        // )
+        axios.put('/api/usergroups/' + newGroup + '/add-person', {
+            username: this.state.userBeingEdited.username
+        })
             .then(response => {
                 // this.getAllUserGroups(this.state.userBeingEdited.userIdentifier);
                 console.log("Response from addGroup - " + response.data.message)
