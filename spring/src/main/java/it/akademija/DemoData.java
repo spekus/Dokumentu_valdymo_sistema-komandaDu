@@ -53,6 +53,7 @@ public class DemoData implements ApplicationRunner {
         createUserGroupIfNotExists("Buhalteriai",AppRoleEnum.ROLE_USER);
         createUserGroupIfNotExists("Vadybininkai",AppRoleEnum.ROLE_USER);
         createUserGroupIfNotExists("Vadovai",AppRoleEnum.ROLE_USER);
+        createUserGroupIfNotExists("Suspenduoti vartotojai", AppRoleEnum.ROLE_SUSPENDED);
 
         createDocumentTypeIfNotExists("Paraiška");
         createDocumentTypeIfNotExists("Darbo sutartis");
