@@ -2,11 +2,9 @@ import React from 'react';
 
 const UserProfile = (props) => {
     return (
-        <div>
+        <div className="container">
             <h2 className="text-center">Mano profilis:</h2>
-            <div className="row mt-5">
-                <div className="col-md-3"></div>
-                <div className="col-md-6">
+            <div className="page1 shadow p-3 mb-5 bg-white rounded">
                     <table className="table">
                         <tbody>
                         <tr>
@@ -33,8 +31,6 @@ const UserProfile = (props) => {
                         </tr>
                         </tbody>
                     </table>
-                </div>
-                <div className="col-md-3"></div>
             </div>
         </div>
     );
