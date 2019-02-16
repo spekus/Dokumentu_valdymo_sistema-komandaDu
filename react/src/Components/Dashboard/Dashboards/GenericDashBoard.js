@@ -99,7 +99,7 @@ class GenericDashBoard extends Component {
 
                 {/* pagination */}
                 <div className='container-fluid mt-5'>
-                <div class="row">
+                <div className="row">
                 <div className="col-lg-12 my-auto center-block text-center">
                 <ReactPaginate 
                 previousLabel={'previous'}
