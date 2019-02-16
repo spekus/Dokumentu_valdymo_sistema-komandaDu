@@ -56,7 +56,6 @@ public class UserGroupController {
         userGroupService.updateGroupByTitle(userGroupTitle, newTitle);
     }
 
-
     @RequestMapping(value = "/{userGroupTitle}/add-person", method = RequestMethod.PUT)
     @ApiOperation(value = "Add group to user", notes = "")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
@@ -64,6 +63,14 @@ public class UserGroupController {
                                @RequestParam("username") @NotNull @Length(min = 1) String username) {
 
         userGroupService.addGroupToUser(userGroupTitle,username);
+    }
+
+    @RequestMapping(value = "/suspend-user", method = RequestMethod.PUT)
+    @ApiOperation(value = "Suspend user", notes = "Suspends user so that he cannot log in to the system")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void suspendUser(
+            @RequestParam("username") @NotNull @Length(min=1) String username) {
+        userGroupService.suspendUser(username);
     }
 
     @RequestMapping(value = "/{userGroupTitle}/add-document-type-to-upload", method = RequestMethod.PUT)

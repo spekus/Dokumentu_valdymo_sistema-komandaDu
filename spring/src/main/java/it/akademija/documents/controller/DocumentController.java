@@ -99,7 +99,7 @@ public class DocumentController {
         documentService.approveDocument(documentIdentifier, authentication.getName());
     }
 
-    @RequestMapping(value = "/documents/{documentIdentifier}/reject", method = RequestMethod.POST)
+    @RequestMapping(value = "/{documentIdentifier}/reject", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Reject document", notes = "Rejects document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")

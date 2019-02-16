@@ -6,5 +6,6 @@ package it.akademija.auth;
 // SPRING pats priklijuos prefiksa ROLE_ pries tikrinant!
 public enum AppRoleEnum {
     ROLE_ADMIN,
-    ROLE_USER
+    ROLE_USER,
+    ROLE_SUSPENDED
 }

@@ -67,6 +67,8 @@ public class FormLoginOperations extends ApiListingScanner
                 .summary("Log in") //
                 .notes("Here you can log in")
                 .build());
+
+
         apis.add(new ApiDescription("/login", "Authentication documentation", operations, false));
 
 

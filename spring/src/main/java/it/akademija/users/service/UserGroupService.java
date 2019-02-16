@@ -1,5 +1,6 @@
 package it.akademija.users.service;
 
+import it.akademija.auth.AppRoleEnum;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
@@ -76,6 +77,17 @@ public class UserGroupService {
         Set<UserGroupEntity> allUserGroups = userEntity.getUserGroups();
         if (!allUserGroups.contains(userGroupEntity)) {
             allUserGroups.add(userGroupEntity);
+            userRepository.save(userEntity);
+        }
+    }
+
+    @Transactional
+    public void suspendUser(String username) {
+        UserEntity userEntity = userRepository.findUserByUsername(username);
+        userEntity.getUserGroups().clear();
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByRole(AppRoleEnum.ROLE_SUSPENDED);
+        if (userGroupEntity!=null) {
+            addGroupToUser(userGroupEntity.getTitle(), username);
             userRepository.save(userEntity);
         }
     }
