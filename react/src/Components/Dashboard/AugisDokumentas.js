@@ -30,19 +30,9 @@ class AugisDokumentas extends Component {
 
 
     getDocumentInformation = () => {
-        // let params = new URLSearchParams();
-        // params.append('documentIdentifier', this.props.match.params.id)
-        // axios.get('/api/documents', params)
-
-        axios({
-                method: 'GET',
-                url: '/api/documents',
-                params: {
-                    documentIdentifier: (this.props.match.params.id)
-                },
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
-            }
-        )
+        let params = new URLSearchParams();
+        params.append('documentIdentifier', this.props.match.params.id);
+        axios.get('/api/documents', {params: params})
             .then(result => {
                 //kelyje turi but uzsifruotas dokumento id
                 console.log("Dokumento kelio id - " + this.props.match.params.id);
@@ -142,7 +132,6 @@ class AugisDokumentas extends Component {
     }
 
 
-
     submitDocument = (props) => {
         var docID = this.props.match.params.id;
         // var params = new URLSearchParams();
@@ -156,8 +145,6 @@ class AugisDokumentas extends Component {
                 window.alert("Klaida is submitDocument - " + error.message);
             })
     }
-
-
 
 
     approveDocument = (props) => {
