@@ -19,43 +19,42 @@ class SettingsDocumentTypes extends Component {
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
 
 
-
     createDocumentType = (event) => {
         event.preventDefault();
-        axios.post('/api/documentTypes/', {title: this.state.newDocumentTypeInputField})
-            .then(response =>{
+        var newType = {title: this.state.newDocumentTypeInputField}
+        axios.post('/api/document-types', newType)
+            .then(response => {
                 this.getAllDocumentTypes();
                 this.setState({newDocumentTypeInputField: ''});
             })
-            .catch(error =>{
+            .catch(error => {
                 console.log("Klaida is createDocumentType: " + error);
             })
 
     }
 
     getAllDocumentTypes = () => {
-        axios.get('/api/documentTypes/')
-            .then(result =>{
-              this.setState({allDocumentTypes: result.data});
+        axios.get('/api/document-types')
+            .then(result => {
+                this.setState({allDocumentTypes: result.data});
             })
-            .catch(error=>{
+            .catch(error => {
                 console.log("Klaida is getAllDocumentTypes: " + error.response.data.message);
 
             })
     }
 
-    deleteDocumentType =(title) => {
-        axios.delete('/api/documentTypes/'+ title)
-            .then(result =>{
+    deleteDocumentType = (title) => {
+        axios.delete('/api/document-types/' + title)
+            .then(result => {
                 this.getAllDocumentTypes();
             })
-            .catch(error =>{
+            .catch(error => {
                 console.log("Klaida is getAllDocumentTypes: " + error);
                 $("#modalError").modal('show');
             })
 
     }
-
 
 
     render() {

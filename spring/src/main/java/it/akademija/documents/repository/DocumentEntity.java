@@ -2,6 +2,7 @@ package it.akademija.documents.repository;
 
 import it.akademija.documents.DocumentState;
 import it.akademija.files.repository.FileEntity;
+import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -169,6 +170,16 @@ public class DocumentEntity {
     public void setDocumentIdentifier(String documentIdentifier) {
         this.documentIdentifier = documentIdentifier;
     }
+
+    public Set<FileEntity> getFilesAttachedToDocument() {
+        return filesAttachedToDocument;
+    }
+
+    public void setFilesAttachedToDocument(Set<FileEntity> filesAttachedToDocument) {
+        this.filesAttachedToDocument = filesAttachedToDocument;
+    }
+
+
 }
 
 

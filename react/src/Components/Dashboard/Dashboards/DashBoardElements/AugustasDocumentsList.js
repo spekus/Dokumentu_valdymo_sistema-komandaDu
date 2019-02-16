@@ -3,15 +3,6 @@ import {Link} from 'react-router-dom';
 // import {Button} from 'react-native';
 
 const AugustasDocumentsList = (props) => {
-    // const doStufff = () => {
-    //     console.log("HEEEELP")
-    //     return (
-    //     <div>
-    // <h1>labas!!</h1>
-    //     </div>
-    //     )
-    // }
-
     return (
 
 

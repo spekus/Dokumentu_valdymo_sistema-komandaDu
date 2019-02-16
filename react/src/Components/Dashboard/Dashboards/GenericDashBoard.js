@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import DocumentsListSimple from "../../Documents/ReactFragments/AugustasDocumentsList";
+import DocumentsListSimple from "./DashBoardElements/AugustasDocumentsList";
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import DashboardNavigation from './DashBoardElements/DashboardNavigation';
@@ -11,18 +11,10 @@ class GenericDashBoard extends Component {
         userDocuments : [],
         pageCount : 3,
         perPage : 5,
-        count: 2,
-        offset: 0 //which page
+        offset: 0 //identifies which page is used
 
     }
-    componentWillUnmount(){
-    
-    }
 
-    componentWillMount(){
-        
-
-    }
     componentDidMount(){
         this.getAllDocuments();
     }
@@ -45,17 +37,21 @@ class GenericDashBoard extends Component {
         
     }
 
+
     getAllDocuments() {
+        console.log("running getAllDocuments");
+        console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
+        
         let requestPath = "";
 
         if (this.props.match.params.id.toLowerCase() === "all")
         {
-            requestPath = '/api/documents/' + this.props.user.userIdentifier + '/documents/';
+            requestPath = '/api/users/user/documents';
         }
         else
         {
-            requestPath = '/api/documents/' + this.props.user.userIdentifier + '/documents/' + this.props.match.params.id.toUpperCase();
-}
+             requestPath = '/api/users/user/documents/' + this.props.match.params.id.toUpperCase();
+        }
 
         console.log("getFileList is being run")
         axios({
@@ -69,14 +65,9 @@ class GenericDashBoard extends Component {
         })
             .then(response => {
                 this.setState({userDocuments : response.data.content})
-                // this.setState({pageCount: response.data.totalElements})
                 this.setState({pageCount: 
                     Math.ceil(response.data.totalElements 
                         / this.state.perPage)})
-                // this.setState({count: this.response.data.totalElements})
-                // this.setState({pageCount: Math.ceil(response.meta.total_count / response.meta.limit)})
-
-                // console.log("ammount of total elements" + this.state.count);
             })
             .catch(error => {
                 this.setState({error: error.message})
@@ -94,16 +85,6 @@ class GenericDashBoard extends Component {
 
 
     render() {
-        // const person = (props) => {
-        //     if(this.state.nameOfWindow == "submitted"){
-        //         return (
-        //             <div>
-        //         <h1>"Hi my name is augustas and this 
-        //             window is submitted"</h1>
-        //         <DashboardNavigation/>
-        //         </div>)
-        //     }
-        // }
         return (
             <React.Fragment>
                 {/* Dokumentu {this.state.nameOfWindow} */}
@@ -115,6 +96,8 @@ class GenericDashBoard extends Component {
                         <DocumentsListSimple list={this.state.userDocuments}/>
                     </div>
                 </div>
+
+                {/* pagination */}
                 <div className='container-fluid mt-5'>
                 <div class="row">
                 <div className="col-lg-12 my-auto center-block text-center">

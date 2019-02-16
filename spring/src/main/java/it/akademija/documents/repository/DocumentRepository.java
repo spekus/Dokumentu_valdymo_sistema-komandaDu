@@ -11,10 +11,10 @@ import java.util.Set;
 
 public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> {
 
-    public DocumentEntity findDocumentByDocumentIdentifier(String documentIdentifier);
-    public Set<DocumentEntity> findByDocumentState(DocumentState state);
-    public Set<DocumentEntity> findByDocumentStateAndAuthor(DocumentState state, String author);
-//    public Set<DocumentEntity> findDocumentsByUserIdentifier(String userIdentifier);
+    DocumentEntity findDocumentByDocumentIdentifier(String documentIdentifier);
+    Set<DocumentEntity> findByDocumentState(DocumentState state);
+    Set<DocumentEntity> findByDocumentStateAndAuthor(DocumentState state, String author);
+    List<DocumentEntity> findByDocumentStateAndAuthor(DocumentState state, String author, Pageable pageable);
     void deleteDocumentByDocumentIdentifier(String documentIdentifier);
 
     //we can choose to return either a Page<T>, a Slice<T> or a List<T>

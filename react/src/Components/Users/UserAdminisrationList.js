@@ -2,7 +2,7 @@ import React, {Component} from 'react';
 import NewUserForm from "./NewUserForm";
 import axios from "axios";
 import ModalError from "../UI/ModalError";
-import ModalMessage from"../UI/ModalMessage"
+import ModalMessage from "../UI/ModalMessage"
 import $ from "jquery";
 
 class UserAdminisrationList extends Component {
@@ -26,8 +26,8 @@ class UserAdminisrationList extends Component {
         document.getElementById('userListTable').style.visibility = 'visible';
         event.preventDefault();
         axios({
-            method: 'get',
-            url: "/api/users/criteria",
+            method: 'GET',
+            url: '/api/users/criteria',
             params: {
                 criteria: this.state.searchField
             },
@@ -47,7 +47,7 @@ class UserAdminisrationList extends Component {
 
 
     getAllGroupsfromServer = () => {
-        axios.get("/api/usergroup/")
+        axios.get("/api/usergroups")
             .then(response => {
                     if (response.data.length > 0) {
                         this.setState({allgroups: response.data});
@@ -60,28 +60,38 @@ class UserAdminisrationList extends Component {
     }
 
 
-        getAllUserGroups = (userID) => {
-        axios.get('/api/users/' + userID + '/usergroups')
-            .then(response => {
-                if (response.data.length > 0) {
-                    this.setState({usergroups: response.data});
-                } else {
-                    (window.alert("Naudotojas nepriskirtas grupėms"));
-                    this.setState({usergroups: ["Naudotojas nepriskirtas grupėms"]})
-                }
-            })
-            .catch(error => {
-                    console.log("Atsakymas is getUserByUserIdentifier getUserGroup: " + error)
-                }
-            )
-    }
+    //     getAllUserGroups = (userID) => {
+    //     axios.get('/api/users/' + userID + '/usergroups')
+    //         .then(response => {
+    //             if (response.data.length > 0) {
+    //                 this.setState({usergroups: response.data});
+    //             } else {
+    //                 (window.alert("Naudotojas nepriskirtas grupėms"));
+    //                 this.setState({usergroups: ["Naudotojas nepriskirtas grupėms"]})
+    //             }
+    //         })
+    //         .catch(error => {
+    //                 console.log("Atsakymas is getUserByUserIdentifier getUserGroup: " + error)
+    //             }
+    //         )
+    // }
 
 
     addGroup = (event) => {
-        var params = new URLSearchParams();
-        params.append('userIdentifier', this.state.userBeingEdited.userIdentifier);
         var newGroup = this.state.group;
-        axios.put('/api/usergroup/' + newGroup + '/add-person', params)
+        var params = new URLSearchParams();
+        params.append('username', this.state.userBeingEdited.username);
+        axios.put('/api/usergroups/' + newGroup + '/add-person', params)
+
+        // axios({
+        //         method: 'PUT',
+        //         url: '/api/usergroups/' + newGroup + '/add-person',
+        //         params: {
+        //             username: (this.state.userBeingEdited.username)
+        //         },
+        //         headers: {'Content-Type': 'application/json;charset=utf-8'}
+        //     }
+        // )
             .then(response => {
                 // this.getAllUserGroups(this.state.userBeingEdited.userIdentifier);
                 console.log("Response from addGroup - " + response.data.message)
@@ -95,10 +105,10 @@ class UserAdminisrationList extends Component {
 
 
     deleteUser = (user) => {
-        axios.delete('/api/users/' + user.userIdentifier)
+        axios.delete('/api/users/' + user.username)
             .then(response => {
                 this.setState(this.emptyState);
-                window.alert("Vartotojas " + user.username + " (vartotojo identifikatorius " + user.userIdentifier + " ) ištrintas")
+                window.alert("Vartotojas " + user.username + " ištrintas")
             })
             .catch(error => {
                 console.log("Error from deleteUser - " + error)
