@@ -188,7 +188,7 @@ export default class FileUploader extends Component {
                                     </div>
 
                                     <div className="form-group col-md-9 mt-4">
-                                        <input onChange={this.onFileChange} type="file"></input><br/>
+                                        <input onChange={this.onFileChange} multiple type="file"></input><br/>
                                         <h4 style={{color: 'red'}}>{this.state.error}</h4>
                                         <h4 style={{color: 'green'}}>{this.state.msg}</h4>
 

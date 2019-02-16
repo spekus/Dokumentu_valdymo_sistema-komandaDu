@@ -15,6 +15,7 @@ import it.akademija.users.repository.UserRepository;
 import it.akademija.users.service.UserServiceObject;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -27,7 +28,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class DocumentService {
+public class DocumentService{
 
     @Autowired
     private DocumentRepository documentRepository;
@@ -303,6 +304,33 @@ specialisto Dokumento saraso*/
                 .map(file -> new FileServiceObject(file.getFileName(), file.getContentType(), file.getSize(), file.getIdentifier()))
                 .collect(Collectors.toSet()));
         return so;
+    }
+    @Transactional
+    public Page<DocumentServiceObject> pagingStuffTesting(String userIdentifier,int page, int size){
+
+
+        Pageable sortedByTitleDesc =
+                PageRequest.of(page, size, Sort.by("title").ascending());
+
+//         documentRepository.findAllByOrderByAuthorAscTitleAsc(userIdentifier, sortedByTitleDesc);
+
+//        if (userEntity == null){
+//            throw new IllegalArsgumentException("User with identifier '" + userIdentifier + "' does not exits.");
+//        }
+
+//        return  documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc)
+//                .stream()
+//                .map(documentEntity -> SOfromEntity(documentEntity))
+//                .collect(Collectors.toList());
+
+         List<DocumentServiceObject>  listOfDocumentServiceObject= documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc)
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toList());
+         PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
+                 sortedByTitleDesc, documentRepository.findByAuthor(userIdentifier).size()) ;
+         return pageData;
+
     }
 }
 

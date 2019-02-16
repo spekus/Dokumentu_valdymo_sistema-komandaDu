@@ -3,12 +3,17 @@ import DocumentsListSimple from "../../Documents/ReactFragments/AugustasDocument
 import axios from 'axios';
 import {Link} from 'react-router-dom';
 import DashboardNavigation from './DashBoardElements/DashboardNavigation';
-
+import ReactPaginate from 'react-paginate';
 
 class GenericDashBoard extends Component {
     state = { 
         nameOfWindow : 'default',
         userDocuments : [],
+        pageCount : 3,
+        perPage : 5,
+        count: 2,
+        offset: 0 //which page
+
     }
     componentWillUnmount(){
     
@@ -41,9 +46,6 @@ class GenericDashBoard extends Component {
     }
 
     getAllDocuments() {
-        console.log("runing getAllDocuments");
-        console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
-        
         let requestPath = "";
 
         if (this.props.match.params.id.toLowerCase() === "all")
@@ -52,21 +54,43 @@ class GenericDashBoard extends Component {
         }
         else
         {
-             requestPath = '/api/documents/' + this.props.user.userIdentifier + '/documents/' + this.props.match.params.id.toUpperCase();
-        }
+            requestPath = '/api/documents/' + this.props.user.userIdentifier + '/documents/' + this.props.match.params.id.toUpperCase();
+}
 
-        axios.get(requestPath)
+        console.log("getFileList is being run")
+        axios({
+            method: 'GET',
+            url: requestPath,
+            params: {
+                page: this.state.offset ,
+                size: this.state.perPage
+            },
+            // headers: {'Content-Type': 'application/json;charset=utf-8'}
+        })
             .then(response => {
-               
-                console.log("response from /api/documents/' - " + response);
-                this.setState({userDocuments : response.data})
+                this.setState({userDocuments : response.data.content})
+                // this.setState({pageCount: response.data.totalElements})
+                this.setState({pageCount: 
+                    Math.ceil(response.data.totalElements 
+                        / this.state.perPage)})
+                // this.setState({count: this.response.data.totalElements})
+                // this.setState({pageCount: Math.ceil(response.meta.total_count / response.meta.limit)})
+
+                // console.log("ammount of total elements" + this.state.count);
             })
-            .catch(err => {
-                this.setState({error: err.message})
-                console.log("Error from /api/documents/{userIdentifier}/documents - " 
-                + err)
-            });
+            .catch(error => {
+                this.setState({error: error.message})
+                console.log("error message " + error)
+            })
     }
+    handlePageClick = data => {
+        let selected = data.selected;
+        let offset = Math.ceil(selected);
+    
+        this.setState({ offset: offset }, () => {
+          this.getAllDocuments();
+        });
+    };
 
 
     render() {
@@ -83,6 +107,7 @@ class GenericDashBoard extends Component {
         return (
             <React.Fragment>
                 {/* Dokumentu {this.state.nameOfWindow} */}
+
                 <div className="row mt-2">
                     <DashboardNavigation/>
                     
@@ -90,6 +115,26 @@ class GenericDashBoard extends Component {
                         <DocumentsListSimple list={this.state.userDocuments}/>
                     </div>
                 </div>
+                <div className='container-fluid mt-5'>
+                <div class="row">
+                <div className="col-lg-12 my-auto center-block text-center">
+                <ReactPaginate 
+                previousLabel={'previous'}
+                nextLabel={'next'}
+                breakLabel={'...'}
+                breakClassName={'break-me'}
+                pageCount={this.state.pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={this.handlePageClick}
+                containerClassName={'pagination'}
+                subContainerClassName={'pagesPagination'}
+                activeClassName={'active'}
+                />
+                </div>
+                </div>
+                </div>
+
 
             </React.Fragment>
         );

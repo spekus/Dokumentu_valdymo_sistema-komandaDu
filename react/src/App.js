@@ -1,7 +1,6 @@
 import React from 'react';
 import './App.css';
 import {Route, BrowserRouter as Router, NavLink, Switch} from 'react-router-dom'
-import Dashboard from "./Components/Dashboard/Dashboard";
 import AugisDokumentas from "./Components/Dashboard/AugisDokumentas";
 import UsersList from "./Components/Users/UsersList";
 import UserProfile from "./Components/Users/UserProfile";

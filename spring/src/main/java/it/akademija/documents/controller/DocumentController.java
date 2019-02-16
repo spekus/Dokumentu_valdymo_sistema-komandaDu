@@ -14,11 +14,15 @@ import it.akademija.files.ResponseTransfer;
 import it.akademija.files.service.FileServiceObject;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -64,9 +68,14 @@ public class DocumentController {
     @RequestMapping(value = "/{userIdentifier}/documents", method = RequestMethod.GET)
     @ApiOperation(value = "Get all user's documents", notes = "Returns wanted user's all documents")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public Set<DocumentServiceObject> getAllUserDocuments(@ApiParam(value = "UserIdentifier", required = true)
-                                                          @Valid @PathVariable String userIdentifier) {
-        return documentService.getAllUserDocuments(userIdentifier);
+    public Page<DocumentServiceObject> getAllUserDocuments(@ApiParam(value = "UserIdentifier", required = true)
+                                                          @Valid @PathVariable String userIdentifier
+                                                          ,@RequestParam("page") int page,
+                                                           @RequestParam("size") int size, UriComponentsBuilder uriBuilder,
+                                                           HttpServletResponse response) {
+        return documentService.pagingStuffTesting(userIdentifier, page, size);
+
+//        @RequestParam("file") Pagea multipartFile)
     }
 
 
