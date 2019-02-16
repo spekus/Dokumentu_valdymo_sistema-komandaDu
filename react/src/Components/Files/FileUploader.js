@@ -77,7 +77,7 @@ export default class FileUploader extends Component {
                     // Jeigu pavyko sukelti faila, mes bandome vartotojo vardu
                     // sukurti dokumento specifikacija
                     // ir suristi sukelta faila su juo
-                    this.addDocument("id123", documentDetails, fileId);
+                    this.addDocument(documentDetails, fileId);
 
                 }
             })
@@ -92,7 +92,7 @@ export default class FileUploader extends Component {
     // Metodas prideda naudotojui dokumento specifikacija (DocumentDetails) ir susieja su failu,
     // kuris jau buvo ikeltas anksciau.
     //Kol kas lyk neveikia?? 
-    addDocument(userId, documentDetails, fileId) {
+    addDocument(documentDetails, fileId) {
         console.log("running addDocument");
         // console.log(this.state.type);
         // console.log("type is" +this.state.type.valueOf);
@@ -101,7 +101,8 @@ export default class FileUploader extends Component {
         axios.post('/api/documents', documentDetails)
             .then(response => {
                 this.setState({'type': '', 'title': '', 'description': ''});
-
+                //idejau sita , nes vel buvo bugas.
+                this.getAllowedTypes()
                 if (response.data.text) {
                     var docId = response.data.text;
                     this.addFileToDocument(docId, fileId);
