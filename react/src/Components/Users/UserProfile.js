@@ -7,34 +7,32 @@ const UserProfile = (props) => {
             <div className="row mt-5">
                 <div className="col-md-3"></div>
                 <div className="col-md-6">
-            <table className="table">
-                <tr>
-                    <th>Vardas</th>
-                    <td>{props.user.firstname}</td>
-                </tr>
-                <tr>
-                    <th>Pavardė</th>
-                    <td>{props.user.lastname}</td>
-                </tr>
-                <tr>
-                    <th>Naudotojo vardas</th>
-                    <td>{props.user.username}</td>
-                </tr>
-                {/*<tr>*/}
-                    {/*<th>UserID</th>*/}
-                    {/*<td>{props.user.userIdentifier}</td>*/}
-                {/*</tr>*/}
-                <tr>
-                    <th>Mano grupės</th>
-                    <td>
-                        <ul>
-                            {props.user.userGroups.map(group =>
-                                <li>{group.title}</li>
-                            )}
-                        </ul>
-                    </td>
-                </tr>
-            </table>
+                    <table className="table">
+                        <tbody>
+                        <tr>
+                            <th>Vardas</th>
+                            <td>{props.user.firstname}</td>
+                        </tr>
+                        <tr>
+                            <th>Pavardė</th>
+                            <td>{props.user.lastname}</td>
+                        </tr>
+                        <tr>
+                            <th>Naudotojo vardas</th>
+                            <td>{props.user.username}</td>
+                        </tr>
+                        <tr>
+                            <th>Mano grupės</th>
+                            <td>
+                                <ul>
+                                    {props.user.userGroups.map((group,index) =>
+                                        <li key={index}>{group.title}</li>
+                                    )}
+                                </ul>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
                 <div className="col-md-3"></div>
             </div>
