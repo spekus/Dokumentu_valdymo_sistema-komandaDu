@@ -62,7 +62,7 @@ export default class FileUploader extends Component {
 
         axios.post('/api/files', data)
             .then(response => {
-                this.getAllowedTypes();
+                // this.getAllowedTypes();
                 this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
                 if (response.data.text) {
                     var fileId = response.data.text;
