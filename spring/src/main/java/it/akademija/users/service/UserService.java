@@ -4,6 +4,7 @@ import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
+import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.files.service.FileServiceObject;
@@ -45,6 +46,8 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     DocumentRepository documentRepository;
+    @Autowired
+    DocumentTypeRepository documentTypeRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -165,33 +168,44 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Page<DocumentServiceObject> getDocumentsToApprove(String username, Integer page, Integer size) {
-        // manau sita visa reiktu perasyti metoda,
-        //grazinama pageable, bet nedirbama tiesiogiai su duombaze, tikriausiai bus labai leta
-        UserEntity userEntity = userRepository.findUserByUsername(username);
-        Set<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
-        Set<DocumentEntity> allDocumentsToApprove = new HashSet<>();
-
-        for (UserGroupEntity userGroupEntity : groupsFromUser) {
-            allDocumentsToApprove.addAll(userGroupEntity.getDocumentsToApprove());
-        }
+        List<DocumentTypeEntity> documentTypeEntityList =
+                documentTypeRepository.getDocumentTypesToApproveByUsername(username);
+        //take all document types which this particular user can aprove
+        List <String> documentTypesForAproval = documentTypeEntityList.stream().map((documentTypeEntity) ->
+                documentTypeEntity.getTitle()).collect(Collectors.toList());
+        // create pageable settings, so that later query knows which part of database to search
         Pageable sortedByTitleDesc =
                 PageRequest.of(page, size, Sort.by("title").ascending());
+        //send query to get all needed document
+        List<DocumentEntity> allDocumentsToApprove =
+                documentRepository.getDocumentsToApprove(documentTypesForAproval, sortedByTitleDesc);
+        // we need total ammount of documents to be displayed for pagination to work, thus we need second query.
+        // this part is not efficient, would anyone know how to replace?
+        int getTotalSize = documentRepository.getDocumentsToApprove(documentTypesForAproval).size();
 
-         List<DocumentServiceObject> listOfDocumentServiceObject = allDocumentsToApprove.stream().map((documentEntity) ->
-                new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
-                        documentEntity.getAuthor(),
-                        documentEntity.getTitle(),
-                        documentEntity.getType(),
-                        documentEntity.getDocumentState(),
-                        documentEntity.getDescription(),
-                        documentEntity.getPostedDate(),
-                        documentEntity.getApprovalDate(),
-                        documentEntity.getRejectedDate(),
-                        documentEntity.getRejectionReason(),
-                        documentEntity.getApprover())).collect(Collectors.toList());
+        //conversion from one type to another
+        List<DocumentServiceObject>  listOfDocumentServiceObject =
+                allDocumentsToApprove
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toList());
+
+        // to delete
+//         List<DocumentServiceObject> listOfDocumentServiceObject = allDocumentsToApprove.stream().map((documentEntity) ->
+//                new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
+//                        documentEntity.getAuthor(),
+//                        documentEntity.getTitle(),
+//                        documentEntity.getType(),
+//                        documentEntity.getDocumentState(),
+//                        documentEntity.getDescription(),
+//                        documentEntity.getPostedDate(),
+//                        documentEntity.getApprovalDate(),
+//                        documentEntity.getRejectedDate(),
+//                        documentEntity.getRejectionReason(),
+//                        documentEntity.getApprover())).collect(Collectors.toList());
 
         PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
-                sortedByTitleDesc, allDocumentsToApprove.size()) ;
+                sortedByTitleDesc, getTotalSize) ;
         return pageData;
     }
 
