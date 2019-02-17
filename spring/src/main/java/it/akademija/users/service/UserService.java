@@ -168,40 +168,41 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Page<DocumentServiceObject> getDocumentsToApprove(String username, Integer page, Integer size) {
-        // manau sita visa reiktu perasyti metoda,
-        //grazinama pageable, bet nedirbama tiesiogiai su duombaze, tikriausiai bus labai leta
-//        UserEntity userEntity = userRepository.findUserByUsername(username);
         List<DocumentTypeEntity> documentTypeEntityList =
                 documentTypeRepository.getDocumentTypesToApproveByUsername(username);
-//        Set<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
-        List <String> listas= new ArrayList<String>();
-        listas = documentTypeEntityList.stream().map((documentTypeEntity) ->
+        //take all document types which this particular user can aprove
+        List <String> documentTypesForAproval = documentTypeEntityList.stream().map((documentTypeEntity) ->
                 documentTypeEntity.getTitle()).collect(Collectors.toList());
-
-//        List <String> listas= new ArrayList<String>();
-//        listas.add("Paraiška");
-//        listas.add("Darbo sutartis");
-//        listas.add("Registruotas laiškas");
-
+        // create pageable settings, so that later query knows which part of database to search
         Pageable sortedByTitleDesc =
                 PageRequest.of(page, size, Sort.by("title").ascending());
+        //send query to get all needed document
         List<DocumentEntity> allDocumentsToApprove =
-                documentRepository.getDocumentsToApprove(listas, sortedByTitleDesc);
-        int getTotalSize = documentRepository.getDocumentsToApprove(listas).size();
+                documentRepository.getDocumentsToApprove(documentTypesForAproval, sortedByTitleDesc);
+        // we need total ammount of documents to be displayed for pagination to work, thus we need second query.
+        // this part is not efficient, would anyone know how to replace?
+        int getTotalSize = documentRepository.getDocumentsToApprove(documentTypesForAproval).size();
 
+        //conversion from one type to another
+        List<DocumentServiceObject>  listOfDocumentServiceObject =
+                allDocumentsToApprove
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toList());
 
-         List<DocumentServiceObject> listOfDocumentServiceObject = allDocumentsToApprove.stream().map((documentEntity) ->
-                new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
-                        documentEntity.getAuthor(),
-                        documentEntity.getTitle(),
-                        documentEntity.getType(),
-                        documentEntity.getDocumentState(),
-                        documentEntity.getDescription(),
-                        documentEntity.getPostedDate(),
-                        documentEntity.getApprovalDate(),
-                        documentEntity.getRejectedDate(),
-                        documentEntity.getRejectionReason(),
-                        documentEntity.getApprover())).collect(Collectors.toList());
+        // to delete
+//         List<DocumentServiceObject> listOfDocumentServiceObject = allDocumentsToApprove.stream().map((documentEntity) ->
+//                new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
+//                        documentEntity.getAuthor(),
+//                        documentEntity.getTitle(),
+//                        documentEntity.getType(),
+//                        documentEntity.getDocumentState(),
+//                        documentEntity.getDescription(),
+//                        documentEntity.getPostedDate(),
+//                        documentEntity.getApprovalDate(),
+//                        documentEntity.getRejectedDate(),
+//                        documentEntity.getRejectionReason(),
+//                        documentEntity.getApprover())).collect(Collectors.toList());
 
         PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
                 sortedByTitleDesc, getTotalSize) ;
