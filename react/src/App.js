@@ -12,15 +12,11 @@ import LoginLogoutLink from "./Components/UI/LoginLogoutLink";
 import NewUserForm from "./Components/Users/NewUserForm";
 import LoginComponent from "./Components/Users/LoginComponent";
 import Settings from "./Components/Settings/Settings";
-<<<<<<< HEAD
-import AugisDashBoard from "./Components/Dashboard/AugisDashBoard";
-=======
 import UserAdminisrationList from "./Components/Users/UserAdminisrationList";
 import GenericDashBoard from "./Components/Dashboard/Dashboards/GenericDashBoard";
 import ToApproveDashboard from "./Components/Dashboard/Dashboards/ToApproveDashboard";
 import axios from "axios";
 import {Redirect} from "react-router";
->>>>>>> master
 
 
 class App extends React.Component {
@@ -143,16 +139,6 @@ class App extends React.Component {
                                         <LoginComponent onLogin={this.getWhoAmI}/>
                                         :
                                         <Switch>
-<<<<<<< HEAD
-
-                                            {/* <Route exact path="/" component={AugisDashBoard}/> */}
-                                            <Route exact path="/" component={AugisDashBoard}/>
-                                            <Route exact path="/login" component={LoginComponent}/>
-
-                                            <Route exact path="/documents/:id" component={AugisDokumentas}/>
-                                            <Route path="/documents" component={DocumentsHome}/>
-                                            <Route path="/profile" component={UserProfile}/>
-=======
                                             {/* <Route exact path="/" component={AugisDashBoard}/> */}
                                             <Redirect exact from='/' to='/dashboard/documents/all'/>
                                             <Route path="/dashboard/documents/to_aproove"
@@ -165,7 +151,6 @@ class App extends React.Component {
                                             {/* <Route path="/documents" component={DocumentsHome}/> */}
                                             <Route path="/profile" render={(props) => <UserProfile
                                                 user={this.state.user} {...props}/>}/>
->>>>>>> master
                                             <Route path="/users" component={UsersList}/>
                                             <Route exact path="/upload-file" render={(props) => <FileUploader
                                                 user={this.state.user} {...props}/>}/>

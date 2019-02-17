@@ -4,6 +4,8 @@ import it.akademija.documents.DocumentState;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 
 import java.util.List;
@@ -24,6 +26,14 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
     public List<DocumentEntity> findByAuthor(String Author);
 
 //    public List<DocumentEntity> findByOrderByAuthorAscTitleAsc(String Author,Pageable pageable);
+
+    @Query("select dta From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types")
+    List<DocumentEntity> getDocumentsToApprove(@Param("types") List<String>types, Pageable pageable);
+
+    @Query("select dta From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types")
+    List<DocumentEntity> getDocumentsToApprove(@Param("types") List<String>types);
+
+
 
 
 

@@ -4,6 +4,7 @@ import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
+import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.files.service.FileServiceObject;
@@ -45,6 +46,8 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     DocumentRepository documentRepository;
+    @Autowired
+    DocumentTypeRepository documentTypeRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -167,15 +170,25 @@ public class UserService implements UserDetailsService {
     public Page<DocumentServiceObject> getDocumentsToApprove(String username, Integer page, Integer size) {
         // manau sita visa reiktu perasyti metoda,
         //grazinama pageable, bet nedirbama tiesiogiai su duombaze, tikriausiai bus labai leta
-        UserEntity userEntity = userRepository.findUserByUsername(username);
-        Set<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
-        Set<DocumentEntity> allDocumentsToApprove = new HashSet<>();
+//        UserEntity userEntity = userRepository.findUserByUsername(username);
+        List<DocumentTypeEntity> documentTypeEntityList =
+                documentTypeRepository.getDocumentTypesToApproveByUsername(username);
+//        Set<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
+        List <String> listas= new ArrayList<String>();
+        listas = documentTypeEntityList.stream().map((documentTypeEntity) ->
+                documentTypeEntity.getTitle()).collect(Collectors.toList());
 
-        for (UserGroupEntity userGroupEntity : groupsFromUser) {
-            allDocumentsToApprove.addAll(userGroupEntity.getDocumentsToApprove());
-        }
+//        List <String> listas= new ArrayList<String>();
+//        listas.add("Paraiška");
+//        listas.add("Darbo sutartis");
+//        listas.add("Registruotas laiškas");
+
         Pageable sortedByTitleDesc =
                 PageRequest.of(page, size, Sort.by("title").ascending());
+        List<DocumentEntity> allDocumentsToApprove =
+                documentRepository.getDocumentsToApprove(listas, sortedByTitleDesc);
+        int getTotalSize = documentRepository.getDocumentsToApprove(listas).size();
+
 
          List<DocumentServiceObject> listOfDocumentServiceObject = allDocumentsToApprove.stream().map((documentEntity) ->
                 new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
@@ -191,7 +204,7 @@ public class UserService implements UserDetailsService {
                         documentEntity.getApprover())).collect(Collectors.toList());
 
         PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
-                sortedByTitleDesc, allDocumentsToApprove.size()) ;
+                sortedByTitleDesc, getTotalSize) ;
         return pageData;
     }
 
