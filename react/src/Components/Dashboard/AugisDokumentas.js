@@ -30,19 +30,12 @@ class AugisDokumentas extends Component {
 
 
     getDocumentInformation = () => {
-        // let params = new URLSearchParams();
-        // params.append('documentIdentifier', this.props.match.params.id)
-        // axios.get('/api/documents', params)
 
-        axios({
-                method: 'GET',
-                url: '/api/documents',
-                params: {
-                    documentIdentifier: (this.props.match.params.id)
-                },
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
+        axios.get('/api/documents', {
+            params: {
+                documentIdentifier: this.props.match.params.id
             }
-        )
+        })
             .then(result => {
                 //kelyje turi but uzsifruotas dokumento id
                 console.log("Dokumento kelio id - " + this.props.match.params.id);
@@ -67,19 +60,12 @@ class AugisDokumentas extends Component {
     }
     getFileList = () => {
         console.log("getFileList is being run")
-        axios({
-            method: 'GET',
-            url: '/api/files/findAllFilesByDocumentIdentifier',
+        axios.get('/api/files/findAllFilesByDocumentIdentifier', {
             params: {
-                DocumentIdentifier: (this.props.match.params.id)
-
-
-            },
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
+                documentIdentifier: this.props.match.params.id
+            }
         })
             .then(result => {
-
-
                 this.setState({attachedFileIdentifier: result.data[0].identifier});
                 this.setState({attachedFileName: result.data[0].fileName});
                 console.log("failo Pavadinimas -  "
@@ -142,13 +128,11 @@ class AugisDokumentas extends Component {
     }
 
 
-
     submitDocument = (props) => {
         var docID = this.props.match.params.id;
-        // var params = new URLSearchParams();
-        // params.append('userIdentifier', this.props.user.userIdentifier);
         axios.post("/api/documents/" + docID + "/submit")
             .then(response => {
+                // this.getDocumentInformation();
                 this.setState({documentState: 'Pateikta'});
             })
             .catch(error => {
@@ -157,15 +141,11 @@ class AugisDokumentas extends Component {
     }
 
 
-
-
     approveDocument = (props) => {
         var docID = this.props.match.params.id;
-        // var params = new URLSearchParams();
-        // params.append('userIdentifier', this.props.user.userIdentifier);
         axios.post("/api/documents/" + docID + "/approve")
             .then(response => {
-                this.setState({documentState: 'Patvirtinta'});
+                this.setState({documentState: this.state.documentInfo.documentState});
                 this.getDocumentInformation();
             })
             .catch(error => {
@@ -177,9 +157,11 @@ class AugisDokumentas extends Component {
     rejectDocument = (props) => {
         var reason = window.prompt("Iveskite atmetimo priezasti");
         var docID = this.state.documentInfo.documentIdentifier;
-        var params = new URLSearchParams();
-        params.append('rejectedReason', reason);
-        axios.post("/api/documents/documents/" + docID + "/reject", params)
+        axios.post("/api/documents/documents/" + docID + "/reject", null, {
+            params: {
+                rejectedReason: reason
+            }
+        })
             .then(response => {
                 this.setState({documentState: 'Atmesta'});
             })
@@ -187,7 +169,6 @@ class AugisDokumentas extends Component {
                 console.log("Klaida is rejectDocument - " + error.message);
             })
     }
-
 
     render() {
         return (

@@ -55,15 +55,10 @@ class GenericDashBoard extends Component {
         }
 
         console.log("getFileList is being run")
-        axios({
-            method: 'GET',
-            url: requestPath,
-            params: {
+        axios.get(requestPath,{params: {
                 page: this.state.offset ,
                 size: this.state.perPage
-            },
-            // headers: {'Content-Type': 'application/json;charset=utf-8'}
-        })
+            }})
             .then(response => {
                 this.setState({userDocuments : response.data.content})
                 this.setState({pageCount: 
@@ -100,7 +95,7 @@ class GenericDashBoard extends Component {
 
                 {/* pagination */}
                 <div className='container-fluid mt-5'>
-                <div class="row">
+                <div className="row">
                 <div className="col-lg-12 my-auto center-block text-center">
                 <ReactPaginate 
                 previousLabel={'previous'}

@@ -53,11 +53,6 @@ class ToApproveDashboard extends Component {
 
 
     // getDocumentsToApprove = () => {
-    //     // var userID = this.state.userIdentifier;
-    //     // this.setState({userIdentifier: this.props.user.userIdentifier});
-    //     // let params = new URLSearchParams();
-    //     // params.append('userIdentifier', this.state.userIdentifier);
-    //     // console.log("params - " + params);
     //     axios.get('/api/users/user/get-documents-to-approve')
     //         .then(response => {
     //             this.setState({userDocuments: response.data});
@@ -66,6 +61,7 @@ class ToApproveDashboard extends Component {
     //             console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
     //         })
     // }
+
 
     getDocumentsToApprove = () => {
         axios({

@@ -11,12 +11,10 @@ export default class Login extends Component {
     }
 
     tryLogin() {
-        var params = new URLSearchParams();
-        params.append('username', this.state.username);
-        params.append('password', this.state.password);
-
-
-        axios.post('/login', params)
+        axios.post('/login', null, {params:{
+            username: this.state.username,
+            password: this.state.password
+        }})
             .then(response => {
                 // mes prisijungeme, todel dabar galime suzinoti naudotojo informacija
                 this.props.onLogin(this.props.history);
@@ -28,7 +26,7 @@ export default class Login extends Component {
             })
     }
 
-       resetState() {
+    resetState() {
         this.state = {
             username: '',
             password: '',
@@ -56,8 +54,10 @@ export default class Login extends Component {
             <div className="username">
                 <h4>Login to Your DMS Account</h4><br/>
                 <form>
-                    <input type="text" value={this.state.username} placeholder="Vartotojo vardas" onChange={this.handleChange1}/><br/>
-                    <input type="password" value={this.state.password} placeholder="Slaptažodis" onChange={this.handleChange2}/><br/>
+                    <input type="text" value={this.state.username} placeholder="Vartotojo vardas"
+                           onChange={this.handleChange1}/><br/>
+                    <input type="password" value={this.state.password} placeholder="Slaptažodis"
+                           onChange={this.handleChange2}/><br/>
                     <button type="submit" value="username" className="btn btn-outline-info my-2 "
                             onClick={this.handleSubmit}>Prisijungti
                     </button>

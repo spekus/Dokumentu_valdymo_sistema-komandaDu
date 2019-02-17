@@ -65,6 +65,15 @@ public class UserGroupController {
         userGroupService.addGroupToUser(userGroupTitle,username);
     }
 
+    @RequestMapping(value = "/{userGroupTitle}/remove-person", method = RequestMethod.PUT)
+    @ApiOperation(value = "Remove group from user", notes = "")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void removeGroupFromUser(@PathVariable("userGroupTitle") @NotNull @Length(min = 1) String userGroupTitle,
+                               @RequestParam("username") @NotNull @Length(min = 1) String username) {
+
+        userGroupService.removeGroupFromUser(userGroupTitle,username);
+    }
+
     @RequestMapping(value = "/suspend-user", method = RequestMethod.PUT)
     @ApiOperation(value = "Suspend user", notes = "Suspends user so that he cannot log in to the system")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
