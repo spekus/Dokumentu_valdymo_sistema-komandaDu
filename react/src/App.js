@@ -1,11 +1,11 @@
 import React from 'react';
 import './App.css';
 import {Route, BrowserRouter as Router, NavLink, Switch} from 'react-router-dom'
-import AugisDokumentas from "./Components/Dashboard/AugisDokumentas";
+import DocumentDetailed from "./Components/FilesAndDocumens/DokumentDetailed";
 import UsersList from "./Components/Users/UsersList";
 import UserProfile from "./Components/Users/UserProfile";
 import NotFound from "./Components/UI/ServicePages/NotFound";
-import FileUploader from "./Components/Files/FileUploader";
+import FileUploader from "./Components/FilesAndDocumens/UploadFileAndDocument";
 import SideNav, {NavItem, NavIcon, NavText} from '@trendmicro/react-sidenav';
 import '@trendmicro/react-sidenav/dist/react-sidenav.css';
 import LoginLogoutLink from "./Components/UI/LoginLogoutLink";
@@ -146,7 +146,7 @@ class App extends React.Component {
                                                 {/*// component={ToApproveDashboard}/>*/}
                                             <Route path="/dashboard/documents/:id" render={(props) => <GenericDashBoard
                                                 user={this.state.user} {...props}/>}/>
-                                            <Route exact path="/documents/:id" render={(props) => <AugisDokumentas
+                                            <Route exact path="/documents/:id" render={(props) => <DocumentDetailed
                                                 user={this.state.user} {...props}/>}/>
                                             {/* <Route path="/documents" component={DocumentsHome}/> */}
                                             <Route path="/profile" render={(props) => <UserProfile
