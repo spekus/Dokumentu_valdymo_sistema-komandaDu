@@ -11,10 +11,10 @@ export default class Login extends Component {
     }
 
     tryLogin() {
-        axios.post('/login', {
+        axios.post('/login', null, {params:{
             username: this.state.username,
             password: this.state.password
-        })
+        }})
             .then(response => {
                 // mes prisijungeme, todel dabar galime suzinoti naudotojo informacija
                 this.props.onLogin(this.props.history);

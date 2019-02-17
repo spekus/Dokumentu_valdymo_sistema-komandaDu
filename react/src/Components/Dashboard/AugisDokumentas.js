@@ -157,7 +157,11 @@ class AugisDokumentas extends Component {
     rejectDocument = (props) => {
         var reason = window.prompt("Iveskite atmetimo priezasti");
         var docID = this.state.documentInfo.documentIdentifier;
-        axios.post("/api/documents/documents/" + docID + "/reject", {rejectedReason: reason})
+        axios.post("/api/documents/documents/" + docID + "/reject", null, {
+            params: {
+                rejectedReason: reason
+            }
+        })
             .then(response => {
                 this.setState({documentState: 'Atmesta'});
             })
