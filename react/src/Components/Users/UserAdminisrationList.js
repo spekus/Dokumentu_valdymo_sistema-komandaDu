@@ -7,7 +7,11 @@ import $ from "jquery";
 
 class UserAdminisrationList extends Component {
     state = {
-        userBeingEdited: {}, // naudotojo, kuri siuo metu redaguojame, duomenys
+        userBeingEdited: {
+            firstname:"",
+            lastname:"",
+            username:"",
+            userGroups:[]}, // naudotojo, kuri siuo metu redaguojame, duomenys
         userlist: [], // masyvas visu surastu pagal paieska naudotoju
         searchField: '',
         usergroups: [],
@@ -167,7 +171,7 @@ class UserAdminisrationList extends Component {
                                 <td>{user.lastname}</td>
                                 <td>
                                     {user.userGroups.map((group, index) =>
-                                        <span>{group.title} {index < user.userGroups.length - 1 ? '|' : ''} </span>)}
+                                        <span key={index}>{group.title} {index < user.userGroups.length - 1 ? '|' : ''} </span>)}
                                 </td>
                                 <td>
                                     <button className="btn btn-info btn-sm"
@@ -190,7 +194,8 @@ class UserAdminisrationList extends Component {
                     {/*<button onClick={this.handleChangeUser}>Redaguoti</button>*/}
                     {/*<button onClick={this.handleChangeUserHide}>Paslėpti redagavimo forma</button>*/}
 
-                    <div id="editUserForm" style={{'visibility': 'hidden'}}>
+                    <div  className='row' id="editUserForm" style={{'visibility': 'hidden'}}>
+                        <div className="col-md-6">
                         <NewUserForm editmode={true}
 
                                      userIdentifier={this.state.userBeingEdited.userIdentifier}
@@ -199,33 +204,35 @@ class UserAdminisrationList extends Component {
                                      username={this.state.userBeingEdited.username}
 
                         />
+                        </div>
 
-
-                        <div>
+                        <div className="col-md-6">
+                               <h4 className="my-4" align="center">Naudotojo grupės</h4>
+                            <h5>Priklauso šioms grupėms:</h5>
+                            <ul>
+                                {this.state.userBeingEdited.userGroups.map((group,index) =>
+                                    <li key={index}>{group.title}</li>
+                                )}
+                            </ul>
+                            <h5>Pridėti į naują grupę:</h5>
                             <form>
                                 <div className="form-group col-md-10">
-                                    <label htmlFor="exampleFormControlSelect1">Grupės</label>
-
                                     <select className="form-control" id="exampleFormControlSelect1"
                                             value={this.state.group} onChange={this.handleChangeSelect} name="group">
-                                        {this.state.allgroups.map(item => (
-                                            <option value={item.title}>{item.title}</option>
+                                        {this.state.allgroups.map((item,index) => (
+                                            <option key={index} value={item.title}>{item.title}</option>
                                         ))}
                                     </select>
                                 </div>
                             </form>
-                        </div>
 
-                        <div>
                             <button type="submit" className="btn btn-info my-1 mx-3"
                                     onClick={this.addGroup}>Pridėti
                             </button>
 
                             <ModalMessage messageText="Grupė pridėta sėkmingai"/>
                         </div>
-
                     </div>
-
                 </div>
             </React.Fragment>
         );
