@@ -9,6 +9,7 @@ import it.akademija.files.ResponseTransfer;
 import it.akademija.files.service.FileDocumentCommand;
 import it.akademija.files.service.FileService;
 import it.akademija.files.service.FileServiceObject;
+import it.akademija.files.service.ZipService;
 import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -19,8 +20,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -50,6 +53,9 @@ public class FileController {
 
     @Autowired
     private DocumentService documentService;
+
+    @Autowired
+    private ZipService zipService;
 
     //    private final FileRepository fileRepository;
 //
@@ -92,6 +98,9 @@ public class FileController {
 //        }
 
     // downloads a file, need unique document identifier
+
+
+
     @RequestMapping(value = "/download/{identifier}", method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable final String identifier)
             throws IOException {
@@ -117,6 +126,37 @@ public class FileController {
                         "attachment;filename=" + fileObject.getFileName())
                 .contentType(MediaType.valueOf(fileObject.getContentType())).contentLength(fileObject.getSize())
                 .body(resource);
+    }
+    // create a zip
+    @RequestMapping(value = "/zip", method = RequestMethod.GET)
+    public ResponseEntity<Resource> makeZip(
+            @ApiIgnore Authentication authentication) throws Exception{
+                File file = zipService.zip(authentication.getName());
+                InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+
+
+
+//        FileServiceObject fileObject = fileService.findFile(identifier);
+//        File file = new File(
+//                fileObject.getFileLocation());
+//        System.out.println("FILE LOCATION" + file.getAbsolutePath());
+//        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+//
+//        System.out.println("File name = " + fileObject.getFileName());
+//        System.out.println("File location = " + fileObject.getFileLocation());
+//        System.out.println("File type = " + fileObject.getContentType());
+//        System.out.println("File size = " + fileObject.getSize());
+//        return ResponseEntity.ok()
+//                .header(HttpHeaders.CONTENT_DISPOSITION,
+//                        "attachment;filename=" + fileObject.getFileName())
+//                .contentType(MediaType.valueOf(fileObject.getContentType())).contentLength(fileObject.getSize())
+//                .body(resource);
+//
+
     }
 //
 //    // Using ResponseEntity<ByteArrayResource>
@@ -178,12 +218,15 @@ public class FileController {
 //    }
 
 
+
+
     @PostMapping
     @ResponseBody
     // create a file and upload it. return unique identifier.
-    public ResponseTransfer uploadNewFile(@NotNull @RequestParam("file") MultipartFile multipartFile)
-            throws Exception{
-        String uniqueIdentifier = fileService.addFileToDataBase(multipartFile);
+    public ResponseTransfer uploadNewFile(
+                        @ApiIgnore Authentication authentication,
+                        @NotNull @RequestParam("file") MultipartFile multipartFile) throws Exception{
+        String uniqueIdentifier = fileService.addFileToDataBase(multipartFile, authentication.getName());
         //just sends identifier for a file as a JSON fi private Set<FileEntity> filesAttachedToDocument=le, visible on swager and react.
         FileServiceObject fileServiceObject = fileService.findFile(uniqueIdentifier);
         return new ResponseTransfer(fileServiceObject.getIdentifier());

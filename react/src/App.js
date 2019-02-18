@@ -17,6 +17,7 @@ import GenericDashBoard from "./Components/Dashboard/Dashboards/GenericDashBoard
 import ToApproveDashboard from "./Components/Dashboard/Dashboards/ToApproveDashboard";
 import axios from "axios";
 import {Redirect} from "react-router";
+import DownloadZip from "./Components/FilesAndDocumens/DownloadZip"
 
 
 class App extends React.Component {
@@ -164,7 +165,13 @@ class App extends React.Component {
                                             {/*render={(props) => <UserAdministration {...props}  />}/>*/}
                                             <Route exact path="/user-registration" component={NewUserForm}/>
                                             <Route exact path="/logout" render={() => this.handleLogOut()}/>
+                                            {/* <Route exact path="/zip"
+                                                   render={(props) => <DownloadZip 
+                                                   user={this.state.user} {...props}/>}/>
+                                             */}
                                             <Route component={NotFound}/>
+
+                                            
                                         </Switch>
                                     }
                                 </div>
