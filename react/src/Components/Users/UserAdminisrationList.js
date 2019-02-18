@@ -7,16 +7,20 @@ import $ from "jquery";
 
 class UserAdminisrationList extends Component {
     state = {
-        userBeingEdited: {}, // naudotojo, kuri siuo metu redaguojame, duomenys
+        userBeingEdited: {
+            firstname: "",
+            lastname: "",
+            username: "",
+            userGroups: []
+        }, // naudotojo, kuri siuo metu redaguojame, duomenys
         userlist: [], // masyvas visu surastu pagal paieska naudotoju
         searchField: '',
-        usergroups: [],
         allgroups: [],
-        group: ''
+        modalMessageText: ''
     }
 
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
-    handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
+    //handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
 
     componentDidMount() {
         this.getAllGroupsfromServer()
@@ -25,16 +29,12 @@ class UserAdminisrationList extends Component {
     getFilteredUsers = (event) => {
         document.getElementById('userListTable').style.visibility = 'visible';
         event.preventDefault();
-        axios({
-            method: 'GET',
-            url: '/api/users/criteria',
-            params: {
-                criteria: this.state.searchField
-            },
-            headers: {"Accept": "application/json"}
-        })
-
-        // axios.get("/api/users/criteria", this.state.searchField)
+        axios.get(
+            '/api/users/criteria', {
+                params: {
+                    criteria: this.state.searchField
+                }
+            })
             .then(response => {
                 if (response.data.length > 0) {
                     this.setState({userlist: response.data});
@@ -45,70 +45,49 @@ class UserAdminisrationList extends Component {
             });
     }
 
-
     getAllGroupsfromServer = () => {
         axios.get("/api/usergroups")
             .then(response => {
                     if (response.data.length > 0) {
                         this.setState({allgroups: response.data});
-                    } else {
-                        (window.alert("Nėra sukurta jokių grupių"));
-                        this.setState({allgroups: ["Nėra sukurta jokių grupių", ""]})
                     }
                 }
             )
     }
 
-
-    //     getAllUserGroups = (userID) => {
-    //     axios.get('/api/users/' + userID + '/usergroups')
-    //         .then(response => {
-    //             if (response.data.length > 0) {
-    //                 this.setState({usergroups: response.data});
-    //             } else {
-    //                 (window.alert("Naudotojas nepriskirtas grupėms"));
-    //                 this.setState({usergroups: ["Naudotojas nepriskirtas grupėms"]})
-    //             }
-    //         })
-    //         .catch(error => {
-    //                 console.log("Atsakymas is getUserByUserIdentifier getUserGroup: " + error)
-    //             }
-    //         )
-    // }
-
-
-    addGroup = (event) => {
-        var newGroup = this.state.group;
-        var params = new URLSearchParams();
-        params.append('username', this.state.userBeingEdited.username);
-        axios.put('/api/usergroups/' + newGroup + '/add-person', params)
-
-        // axios({
-        //         method: 'PUT',
-        //         url: '/api/usergroups/' + newGroup + '/add-person',
-        //         params: {
-        //             username: (this.state.userBeingEdited.username)
-        //         },
-        //         headers: {'Content-Type': 'application/json;charset=utf-8'}
-        //     }
-        // )
+    addUserToGroup = (username, groupTitle) => {
+        axios.put('/api/usergroups/' + groupTitle + '/add-person', null, {
+            params: {
+                username: username
+            }
+        })
             .then(response => {
-                // this.getAllUserGroups(this.state.userBeingEdited.userIdentifier);
-                console.log("Response from addGroup - " + response.data.message)
-                window.alert("Grupė " + newGroup + " sėkmingai pridėta");
-                $("#modalMessage").modal('show');
+                this.loadUserToEdit(this.state.userBeingEdited.username);
             })
             .catch(error => {
-                console.log("Error from addGroup - " + error)
+                console.log("Error from removeUserFromGroup - " + error)
             })
     }
 
+    removeUserFromGroup = (username, groupTitle) => {
+        axios.put('/api/usergroups/' + groupTitle + '/remove-person', null, {
+            params: {
+                username: username
+            }
+        })
+            .then(response => {
+                this.loadUserToEdit(this.state.userBeingEdited.username);
+            })
+            .catch(error => {
+                console.log("Error from removeUserFromGroup - " + error)
+            })
+    }
 
     deleteUser = (user) => {
         axios.delete('/api/users/' + user.username)
             .then(response => {
-                this.setState(this.emptyState);
-                window.alert("Vartotojas " + user.username + " ištrintas")
+                let newUserlist = this.state.userlist.filter(u => u.username !== user.username)
+                this.setState({userlist: newUserlist});
             })
             .catch(error => {
                 console.log("Error from deleteUser - " + error)
@@ -117,12 +96,19 @@ class UserAdminisrationList extends Component {
     }
 
     handleChangeUser = (user) => {
-        this.setState({userBeingEdited: user});
+        this.loadUserToEdit(user.username);
         document.getElementById('editUserForm').style.visibility = 'visible';
 
     }
-    handleChangeUserHide = (event) => {
-        document.getElementById('editUserForm').style.visibility = 'hidden';
+
+    loadUserToEdit = (username) => {
+        if (username !== "") {
+            axios.get('/api/users/' + username)
+                .then(response => {
+                        this.setState({userBeingEdited: response.data});
+                    }
+                )
+        }
     }
 
     render() {
@@ -181,7 +167,8 @@ class UserAdminisrationList extends Component {
                                 <td>{user.lastname}</td>
                                 <td>
                                     {user.userGroups.map((group, index) =>
-                                        <span>{group.title} {index < user.userGroups.length - 1 ? '|' : ''} </span>)}
+                                        <span
+                                            key={index}>{group.title} {index < user.userGroups.length - 1 ? '|' : ''} </span>)}
                                 </td>
                                 <td>
                                     <button className="btn btn-info btn-sm"
@@ -191,8 +178,6 @@ class UserAdminisrationList extends Component {
                                             onClick={() => this.deleteUser(user)}>Trinti
                                     </button>
                                 </td>
-
-
                             </tr>
                         ))}
                         <tr>
@@ -201,50 +186,58 @@ class UserAdminisrationList extends Component {
                         </tbody>
                     </table>
 
-                    {/*<button onClick={this.handleChangeUser}>Redaguoti</button>*/}
-                    {/*<button onClick={this.handleChangeUserHide}>Paslėpti redagavimo forma</button>*/}
+                    <div className='row' id="editUserForm" style={{'visibility': 'hidden'}}>
+                        <div className="col-md-6">
+                            <NewUserForm editmode={true}
 
-                    <div id="editUserForm" style={{'visibility': 'hidden'}}>
-                        <NewUserForm editmode={true}
+                                         userIdentifier={this.state.userBeingEdited.userIdentifier}
+                                         firstname={this.state.userBeingEdited.firstname}
+                                         lastname={this.state.userBeingEdited.lastname}
+                                         username={this.state.userBeingEdited.username}
 
-                                     userIdentifier={this.state.userBeingEdited.userIdentifier}
-                                     firstname={this.state.userBeingEdited.firstname}
-                                     lastname={this.state.userBeingEdited.lastname}
-                                     username={this.state.userBeingEdited.username}
-
-                        />
-
-
-                        <div>
-                            <form>
-                                <div className="form-group col-md-10">
-                                    <label htmlFor="exampleFormControlSelect1">Grupės</label>
-
-                                    <select className="form-control" id="exampleFormControlSelect1"
-                                            value={this.state.group} onChange={this.handleChangeSelect} name="group">
-                                        {this.state.allgroups.map(item => (
-                                            <option value={item.title}>{item.title}</option>
-                                        ))}
-                                    </select>
-                                </div>
-                            </form>
+                            />
                         </div>
 
-                        <div>
-                            <button type="submit" className="btn btn-info my-1 mx-3"
-                                    onClick={this.addGroup}>Pridėti
-                            </button>
-
-                            <ModalMessage messageText="Grupė pridėta sėkmingai"/>
+                        <div className="col-md-6">
+                            <h4 className="my-4" align="center">Naudotojo grupės</h4>
+                            <table className="table">
+                                <thead>
+                                <tr>
+                                    <th style={{width: '45%'}}>Priklauso</th>
+                                    <th>&nbsp;</th>
+                                    <th style={{width: '45%'}}>Nepriklauso</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                {this.state.allgroups.map((group, index) =>
+                                    this.state.userBeingEdited.userGroups.map(group => group.title).indexOf(group.title) > -1 ?
+                                        <tr>
+                                            <td>{group.title}</td>
+                                            <td><a href="#"
+                                                   onClick={() => this.removeUserFromGroup(this.state.userBeingEdited.username, group.title)}>▶</a>
+                                            </td>
+                                            <td></td>
+                                        </tr>
+                                        :
+                                        <tr>
+                                            <td></td>
+                                            <td><a href="#"
+                                                   onClick={() => this.addUserToGroup(this.state.userBeingEdited.username, group.title)}>◀</a>
+                                            </td>
+                                            <td>{group.title}</td>
+                                        </tr>
+                                )}
+                                </tbody>
+                            </table>
                         </div>
-
                     </div>
-
                 </div>
             </React.Fragment>
         );
     }
+
 }
+
 
 /*{...this.state.userBeingEdited}*/
 

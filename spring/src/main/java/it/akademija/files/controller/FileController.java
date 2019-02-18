@@ -217,7 +217,7 @@ public class FileController {
 
     //not working yet
     @RequestMapping(value = "/findAllFilesByDocumentIdentifier", method = RequestMethod.GET)
-    public List<String> getAllFileIdentifiers(@NotNull @RequestParam("DocumentIdentifier") String documentIdentifier){
+    public List<String> getAllFileIdentifiers(@NotNull @RequestParam("documentIdentifier") String documentIdentifier){
         ArrayList <String> identifierList = new ArrayList<>();
 //        identifierList = fileService.getAllFileIdentifiers(documentIdentifier);
         DocumentServiceObject documentServiceObject = null;

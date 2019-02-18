@@ -41,7 +41,7 @@ export default class FileUploader extends Component {
 
 
     uploadFile = (event) => {
-        this.getAllowedTypes();
+        // this.getAllowedTypes();
         event.preventDefault();
         this.setState({error: '', msg: ''});
 
@@ -62,7 +62,7 @@ export default class FileUploader extends Component {
 
         axios.post('/api/files', data)
             .then(response => {
-                this.getAllowedTypes();
+                // this.getAllowedTypes();
                 this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
                 if (response.data.text) {
                     var fileId = response.data.text;
@@ -77,7 +77,7 @@ export default class FileUploader extends Component {
                     // Jeigu pavyko sukelti faila, mes bandome vartotojo vardu
                     // sukurti dokumento specifikacija
                     // ir suristi sukelta faila su juo
-                    this.addDocument("id123", documentDetails, fileId);
+                    this.addDocument(documentDetails, fileId);
 
                 }
             })
@@ -92,7 +92,7 @@ export default class FileUploader extends Component {
     // Metodas prideda naudotojui dokumento specifikacija (DocumentDetails) ir susieja su failu,
     // kuris jau buvo ikeltas anksciau.
     //Kol kas lyk neveikia?? 
-    addDocument(userId, documentDetails, fileId) {
+    addDocument(documentDetails, fileId) {
         console.log("running addDocument");
         // console.log(this.state.type);
         // console.log("type is" +this.state.type.valueOf);
@@ -100,8 +100,9 @@ export default class FileUploader extends Component {
         // console.log("type is" +this.state.type.title);
         axios.post('/api/documents', documentDetails)
             .then(response => {
-                this.setState({'type': '', 'title': '', 'description': ''});
-
+                this.setState({'title': '', 'description': ''});
+                //idejau sita , nes vel buvo bugas.
+                // this.getAllowedTypes()
                 if (response.data.text) {
                     var docId = response.data.text;
                     this.addFileToDocument(docId, fileId);
@@ -191,7 +192,7 @@ export default class FileUploader extends Component {
                                     </div>
 
                                     <div className="form-group col-md-9 mt-4">
-                                        <input onChange={this.onFileChange} type="file"></input><br/>
+                                        <input onChange={this.onFileChange} multiple type="file"></input><br/>
                                         <h4 style={{color: 'red'}}>{this.state.error}</h4>
                                         <h4 style={{color: 'green'}}>{this.state.msg}</h4>
 

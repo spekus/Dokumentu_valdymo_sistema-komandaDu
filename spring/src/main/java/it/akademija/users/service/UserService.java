@@ -4,6 +4,7 @@ import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
+import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.files.service.FileServiceObject;
@@ -14,6 +15,7 @@ import it.akademija.users.repository.UserGroupRepository;
 
 import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.Modifying;
 
 import org.springframework.security.core.GrantedAuthority;
@@ -44,6 +46,8 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     DocumentRepository documentRepository;
+    @Autowired
+    DocumentTypeRepository documentTypeRepository;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -74,31 +78,31 @@ public class UserService implements UserDetailsService {
     public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
         this.userGroupRepository = userGroupRepository;
     }
-
-    @Transactional
-    public Set<DocumentServiceObject> getUserDocumentsByState(String username, DocumentState state) throws IllegalArgumentException {
-        // pasitikrinam ar yra toks naudotojas
-        UserEntity userEntity = userRepository.findUserByUsername(username);
-
-        if (userEntity == null){
-            throw new IllegalArgumentException("User with username '" + username + "' does not exits.");
-        }
-
-        return documentRepository.findByDocumentStateAndAuthor(state, username)
-                .stream()
-                .map(documentEntity -> SOfromEntity(documentEntity))
-                .collect(Collectors.toSet());
-    }
-
-    @Transactional
-    public Set<DocumentServiceObject> getAllUserDocuments(String username) {
-
-        UserEntity userEntity = userRepository.findUserByUsername(username);
-        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
-
-        return documentsFromDatabase.stream().map(documentEntity ->
-                SOfromEntity(documentEntity)).collect(Collectors.toSet());
-    }
+// Replaced by same method with paging
+//    @Transactional
+//    public Set<DocumentServiceObject> getUserDocumentsByState(String username, DocumentState state) throws IllegalArgumentException {
+//        // pasitikrinam ar yra toks naudotojas
+//        UserEntity userEntity = userRepository.findUserByUsername(username);
+//
+//        if (userEntity == null){
+//            throw new IllegalArgumentException("User with username '" + username + "' does not exits.");
+//        }
+//
+//        return documentRepository.findByDocumentStateAndAuthor(state, username)
+//                .stream()
+//                .map(documentEntity -> SOfromEntity(documentEntity))
+//                .collect(Collectors.toSet());
+//    }
+//replaced by same method with paging
+//    @Transactional
+//    public Set<DocumentServiceObject> getAllUserDocuments(String username) {
+//
+//        UserEntity userEntity = userRepository.findUserByUsername(username);
+//        Set<DocumentEntity> documentsFromDatabase = userEntity.getDocumentEntities();
+//
+//        return documentsFromDatabase.stream().map(documentEntity ->
+//                SOfromEntity(documentEntity)).collect(Collectors.toSet());
+//    }
 
     @Transactional
     public List<UserServiceObject> getAllUsers() {
@@ -163,27 +167,46 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
-    public Set<DocumentServiceObject> getDocumentsToApprove(String username) {
-        UserEntity userEntity = userRepository.findUserByUsername(username);
-        Set<UserGroupEntity> groupsFromUser = userEntity.getUserGroups();
-        Set<DocumentEntity> allDocumentsToApprove = new HashSet<>();
+    public Page<DocumentServiceObject> getDocumentsToApprove(String username, Integer page, Integer size) {
+        List<DocumentTypeEntity> documentTypeEntityList =
+                documentTypeRepository.getDocumentTypesToApproveByUsername(username);
+        //take all document types which this particular user can aprove
+        List <String> documentTypesForAproval = documentTypeEntityList.stream().map((documentTypeEntity) ->
+                documentTypeEntity.getTitle()).collect(Collectors.toList());
+        // create pageable settings, so that later query knows which part of database to search
+        Pageable sortedByTitleDesc =
+                PageRequest.of(page, size, Sort.by("title").ascending());
+        //send query to get all needed document
+        List<DocumentEntity> allDocumentsToApprove =
+                documentRepository.getDocumentsToApprove(documentTypesForAproval, sortedByTitleDesc);
+        // we need total ammount of documents to be displayed for pagination to work, thus we need second query.
+        // this part is not efficient, would anyone know how to replace?
+        int getTotalSize = documentRepository.getDocumentsToApprove(documentTypesForAproval).size();
 
-        for (UserGroupEntity userGroupEntity : groupsFromUser) {
-            allDocumentsToApprove.addAll(userGroupEntity.getDocumentsToApprove());
-        }
+        //conversion from one type to another
+        List<DocumentServiceObject>  listOfDocumentServiceObject =
+                allDocumentsToApprove
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toList());
 
-        return allDocumentsToApprove.stream().map((documentEntity) ->
-                new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
-                        documentEntity.getAuthor(),
-                        documentEntity.getTitle(),
-                        documentEntity.getType(),
-                        documentEntity.getDocumentState(),
-                        documentEntity.getDescription(),
-                        documentEntity.getPostedDate(),
-                        documentEntity.getApprovalDate(),
-                        documentEntity.getRejectedDate(),
-                        documentEntity.getRejectionReason(),
-                        documentEntity.getApprover())).collect(Collectors.toSet());
+        // to delete
+//         List<DocumentServiceObject> listOfDocumentServiceObject = allDocumentsToApprove.stream().map((documentEntity) ->
+//                new DocumentServiceObject(documentEntity.getDocumentIdentifier(),
+//                        documentEntity.getAuthor(),
+//                        documentEntity.getTitle(),
+//                        documentEntity.getType(),
+//                        documentEntity.getDocumentState(),
+//                        documentEntity.getDescription(),
+//                        documentEntity.getPostedDate(),
+//                        documentEntity.getApprovalDate(),
+//                        documentEntity.getRejectedDate(),
+//                        documentEntity.getRejectionReason(),
+//                        documentEntity.getApprover())).collect(Collectors.toList());
+
+        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
+                sortedByTitleDesc, getTotalSize) ;
+        return pageData;
     }
 
     @Transactional
@@ -298,9 +321,53 @@ public class UserService implements UserDetailsService {
                 .collect(Collectors.toSet()));
         return so;
     }
+    @Transactional
+    public Page<DocumentServiceObject> getAllUserDocuments(String userIdentifier, int page, int size){
 
 
+        Pageable sortedByTitleDesc =
+                PageRequest.of(page, size, Sort.by("title").ascending());
 
+//         documentRepository.findAllByOrderByAuthorAscTitleAsc(userIdentifier, sortedByTitleDesc);
+
+//        if (userEntity == null){
+//            throw new IllegalArsgumentException("User with identifier '" + userIdentifier + "' does not exits.");
+//        }
+
+//        return  documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc)
+//                .stream()
+//                .map(documentEntity -> SOfromEntity(documentEntity))
+//                .collect(Collectors.toList());
+
+        List<DocumentServiceObject>  listOfDocumentServiceObject= documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc)
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toList());
+        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
+                sortedByTitleDesc, documentRepository.findByAuthor(userIdentifier).size()) ;
+        return pageData;
+
+    }
+
+
+    public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {
+        // pasitikrinam ar yra toks naudotojas
+        UserEntity userEntity = userRepository.findUserByUsername(userName);
+
+        if (userEntity == null){
+            throw new IllegalArgumentException("User with username '" + userName + "' does not exits.");
+        }
+        Pageable sortedByTitleDesc =
+                PageRequest.of(page, size, Sort.by("title").ascending());
+
+        List<DocumentServiceObject>  listOfDocumentServiceObject = documentRepository.findByDocumentStateAndAuthor(state, userName, sortedByTitleDesc)
+                .stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toList());
+        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
+                sortedByTitleDesc, documentRepository.findByDocumentStateAndAuthor(state, userName).size()) ;
+        return pageData;
+    }
 }
 
 

@@ -3,25 +3,17 @@ import {Link} from 'react-router-dom';
 // import {Button} from 'react-native';
 
 const AugustasDocumentsList = (props) => {
-    // const doStufff = () => {
-    //     console.log("HEEEELP")
-    //     return (
-    //     <div>
-    // <h1>labas!!</h1>
-    //     </div>
-    //     )
-    // }
-
     return (
 
 
         <React.Fragment>
-            <table class="table">
+            <table className="table">
                 <thead style={{backgroundColor: '#EEEEEE'}}>
                 <tr>
                     <th>Dokumento pavadinimas</th>
                     <th>Autorius</th>
                     <th>Pateikimo data</th>
+                    <th>Dokumento tipas</th>
                     <th className="text-center">Veiksmas</th>
                 </tr>
                 </thead>
@@ -31,6 +23,7 @@ const AugustasDocumentsList = (props) => {
                     <td>{item.title}</td>
                     <td>{item.author}</td>
                     <td>{item.postedDate}</td>
+                    <td>{item.type}</td>
 
                     <td><Link className="btn btn-outline-info btn-block" to=
                     {"/documents/" + item.documentIdentifier}>Detaliau</Link></td>

@@ -11,6 +11,7 @@ import it.akademija.users.service.UserService;
 import it.akademija.users.service.UserServiceObject;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -48,11 +49,14 @@ public class UserController {
     @RequestMapping(value = "user/documents/{state}", method = RequestMethod.GET)
     @ApiOperation(value = "Get user's documents by state", notes = "Returns wanted user's documents by state")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public Set<DocumentServiceObject> getDocuments(@ApiIgnore Authentication authentication,
+    public Page<DocumentServiceObject> getDocuments(@ApiIgnore Authentication authentication,
                                                    @ApiParam(value = "State", required = true)
-                                                   @Valid @PathVariable DocumentState state) throws IllegalArgumentException {
+                                                   @Valid @PathVariable DocumentState state,
+                                                   @RequestParam("page") int page,
+                                                   @RequestParam("size") int size )throws IllegalArgumentException {
         try {
-            return userService.getUserDocumentsByState(authentication.getName(), state);
+//            return userService.getUserDocumentsByState(authentication.getName(), state);
+            return userService.getUserDocumentsByState(authentication.getName(), state, page, size);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -61,8 +65,22 @@ public class UserController {
     @RequestMapping(value = "user/documents", method = RequestMethod.GET)
     @ApiOperation(value = "Get all user's documents", notes = "Returns wanted user's all documents")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public Set<DocumentServiceObject> getAllUserDocuments(@ApiIgnore Authentication authentication) {
-        return userService.getAllUserDocuments(authentication.getName());
+    public Page<DocumentServiceObject> getAllUserDocuments(@ApiIgnore Authentication authentication
+            , @RequestParam("page") int page, @RequestParam("size") int size) {
+//previous method, to be deleted
+//return userService.getAllUserDocuments(authentication.getName());
+        try {
+        return userService.getAllUserDocuments(authentication.getName(), page, size);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+//previous method, to be deleted
+//    public Page<DocumentServiceObject> getAllUserDocuments(@ApiParam(value = "UserIdentifier", required = true)
+//                                                          @Valid @PathVariable String userIdentifier
+//                                                          ,@RequestParam("page") int page,
+//                                                           @RequestParam("size") int size, UriComponentsBuilder uriBuilder,
+//                                                           HttpServletResponse response) {
+//        return documentService.pagingStuffTesting(userIdentifier, page, size);
     }
 
 
@@ -112,9 +130,14 @@ public class UserController {
     }
 
     @RequestMapping(value = "user/get-documents-to-approve", method = RequestMethod.GET)
-    public Set<DocumentServiceObject> getDocumentsToApprove(@ApiIgnore Authentication authentication
-    ) {
-        return userService.getDocumentsToApprove(authentication.getName());
+    public Page<DocumentServiceObject> getDocumentsToApprove(@ApiIgnore Authentication authentication,
+                                                            @RequestParam("page") int page,
+                                                            @RequestParam("size") int size) {
+        try{
+        return userService.getDocumentsToApprove(authentication.getName(), page, size);
+        } catch (IllegalArgumentException e) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

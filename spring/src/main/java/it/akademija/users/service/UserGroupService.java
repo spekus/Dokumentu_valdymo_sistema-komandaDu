@@ -82,6 +82,16 @@ public class UserGroupService {
     }
 
     @Transactional
+    public void removeGroupFromUser(String userGroupTitle,String username) {
+        UserEntity userEntity = userRepository.findUserByUsername(username);
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
+
+        if (userEntity != null && userGroupEntity != null) {
+            userEntity.getUserGroups().remove(userGroupEntity);
+        }
+    }
+
+    @Transactional
     public void suspendUser(String username) {
         UserEntity userEntity = userRepository.findUserByUsername(username);
         userEntity.getUserGroups().clear();

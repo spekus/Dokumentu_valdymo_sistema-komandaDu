@@ -67,6 +67,7 @@ public class DemoData implements ApplicationRunner {
 
         userGroupService.addGroupToUser("Administratoriai","admin");
         userGroupService.addGroupToUser("Administratoriai","id123");
+        userGroupService.addGroupToUser("Vadovai","id123");
         userGroupService.addGroupToUser("Vadybininkai","annpai");
         userGroupService.addGroupToUser("Vadybininkai","user1");
         userGroupService.addGroupToUser("Vadybininkai","user2");
@@ -82,6 +83,7 @@ public class DemoData implements ApplicationRunner {
 
         userGroupService.addDocumentTypeToApprove("Administratoriai", "Paraiška");
         userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis");
+        userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas");
 
     }
 

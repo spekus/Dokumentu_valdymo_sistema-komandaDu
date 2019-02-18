@@ -15,13 +15,18 @@ import it.akademija.files.ResponseTransfer;
 import it.akademija.files.service.FileServiceObject;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.util.UriComponentsBuilder;
 import springfox.documentation.annotations.ApiIgnore;
 
+
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.util.List;
@@ -52,12 +57,18 @@ public class DocumentController {
     @ApiOperation(value = "Get document", notes = "Returns one document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public DocumentServiceObject getDocument(@ApiParam(value = "DocumentIdentifier", required = true)
+
                                              @RequestParam @Valid @NotNull @Length(min = 1) String documentIdentifier) {
         try {
+
             return documentService.getDocument(documentIdentifier);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
+
+
+
+
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

@@ -17,6 +17,7 @@ import it.akademija.users.repository.UserRepository;
 import it.akademija.users.service.UserServiceObject;
 import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -29,7 +30,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class DocumentService {
+public class DocumentService{
 
     @Autowired
     private DocumentRepository documentRepository;
@@ -309,6 +310,7 @@ specialisto Dokumento saraso*/
                 .collect(Collectors.toSet()));
         return so;
     }
+
 }
 
 

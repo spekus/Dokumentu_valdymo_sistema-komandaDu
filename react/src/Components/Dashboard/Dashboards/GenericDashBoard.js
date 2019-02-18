@@ -1,14 +1,18 @@
 import React, {Component} from 'react';
-import DocumentsListSimple from "../../Documents/ReactFragments/AugustasDocumentsList";
+import DocumentsListSimple from "./ElementsOfDashBoard/DocumentsList";
 import axios from 'axios';
-import {Link} from 'react-router-dom';
-import DashboardNavigation from './DashBoardElements/DashboardNavigation';
-
+import DashboardNavigation from './ElementsOfDashBoard/DashboardNavigation';
+import ReactPaginate from 'react-paginate';
 
 class GenericDashBoard extends Component {
     state = { 
         nameOfWindow : 'default',
         userDocuments : [],
+        
+        // used for paging
+        pageCount : 3,
+        perPage : 5,
+        offset: 0 //identifies which page is used
     }
 
     componentDidMount(){
@@ -16,18 +20,19 @@ class GenericDashBoard extends Component {
     }
 
     componentDidUpdate(){
+        // these are just to make sure new data is leaded when going between dashboards
         console.log("window did update");
         if(!(this.state.nameOfWindow == this.props.match.params.id))
         {
         this.setState({nameOfWindow : this.props.match.params.id})
-        console.log("state of name of the window was set to - " +
-        this.state.nameOfWindow);
+        // console.log("state of name of the window was set to - " +
+        // this.state.nameOfWindow);
         this.getAllDocuments();
         }
         if (this.state.nameOfWindow == '') {
             this.setState({nameOfWindow : this.props.match.params.id})
-            console.log("state of name of the window was set to - " +
-            this.state.nameOfWindow);
+            // console.log("state of name of the window was set to - " +
+            // this.state.nameOfWindow);
             this.getAllDocuments();
         }
         
@@ -35,8 +40,8 @@ class GenericDashBoard extends Component {
 
 
     getAllDocuments() {
-        console.log("running getAllDocuments");
-        console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
+        // console.log("running getAllDocuments");
+        // console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
         
         let requestPath = "";
 
@@ -49,34 +54,37 @@ class GenericDashBoard extends Component {
              requestPath = '/api/users/user/documents/' + this.props.match.params.id.toUpperCase();
         }
 
-        axios.get(requestPath)
+        console.log("getFileList is being run")
+        axios.get(requestPath,{params: {
+                page: this.state.offset ,
+                size: this.state.perPage
+            }})
             .then(response => {
-               
-                console.log("response from /api/users/user/documents/ - " + response);
-                this.setState({userDocuments : response.data})
+                this.setState({userDocuments : response.data.content})
+                this.setState({pageCount: 
+                    Math.ceil(response.data.totalElements 
+                        / this.state.perPage)})
             })
-            .catch(err => {
-                this.setState({error: err.message})
-                console.log("Error from /api/users/user/documents/ - "
-                + err)
-            });
+            .catch(error => {
+                this.setState({error: error.message})
+                console.log("error message " + error)
+            })
     }
+    handlePageClick = data => {
+        let selected = data.selected;
+        let offset = Math.ceil(selected);
+    
+        this.setState({ offset: offset }, () => {
+          this.getAllDocuments();
+        });
+    };
 
 
     render() {
-        // const person = (props) => {
-        //     if(this.state.nameOfWindow == "submitted"){
-        //         return (
-        //             <div>
-        //         <h1>"Hi my name is augustas and this 
-        //             window is submitted"</h1>
-        //         <DashboardNavigation/>
-        //         </div>)
-        //     }
-        // }
         return (
             <React.Fragment>
                 {/* Dokumentu {this.state.nameOfWindow} */}
+
                 <div className="row mt-2">
                     <DashboardNavigation/>
                     
@@ -84,6 +92,28 @@ class GenericDashBoard extends Component {
                         <DocumentsListSimple list={this.state.userDocuments}/>
                     </div>
                 </div>
+
+                {/* pagination */}
+                <div className='container-fluid mt-5'>
+                <div className="row">
+                <div className="col-lg-12 my-auto center-block text-center">
+                <ReactPaginate 
+                previousLabel={'previous'}
+                nextLabel={'next'}
+                breakLabel={'...'}
+                breakClassName={'break-me'}
+                pageCount={this.state.pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={this.handlePageClick}
+                containerClassName={'pagination'}
+                subContainerClassName={'pagesPagination'}
+                activeClassName={'active'}
+                />
+                </div>
+                </div>
+                </div>
+
 
             </React.Fragment>
         );
