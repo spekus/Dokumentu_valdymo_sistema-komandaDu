@@ -5,6 +5,8 @@ import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
+import it.akademija.documents.repository.DocumentTypeRepository;
+import it.akademija.exceptions.NoApproverAvailableException;
 import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileServiceObject;
 import it.akademija.users.repository.UserEntity;
@@ -37,6 +39,9 @@ public class DocumentService {
 
     @Autowired
     private UserGroupRepository userGroupRepository;
+
+    @Autowired
+    private DocumentTypeRepository documentTypeRepository;
 
     @Transactional
     public Set<DocumentServiceObject> getDocumentsByState(DocumentState state) {
@@ -90,14 +95,33 @@ public class DocumentService {
     }
 
     @Transactional
-    public void submitDocument(String documentIdentifier) {
+    public void submitDocument(String documentIdentifier) throws NoApproverAvailableException {
+
+        boolean alreadyExecuted=false;
+
+        List<UserGroupEntity> allUserGroups = userGroupRepository.findAll();
+        DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+        DocumentTypeEntity type = documentTypeRepository.findDocumentTypeByTitle(documentEntityFromDatabase.getType());
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
-            DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-            sendSubmittedDocumentToApprove(documentEntityFromDatabase);
-            documentEntityFromDatabase.setDocumentState(DocumentState.SUBMITTED);
-            LocalDateTime datePosted = LocalDateTime.now();
-            documentEntityFromDatabase.setPostedDate(datePosted);
-            documentRepository.save(documentEntityFromDatabase);
+
+            //Check if to be submitted document type is already available to approve by some group. Otherwise, throw exception.
+            for (UserGroupEntity group : allUserGroups) {
+                if (group.getAvailableDocumentTypesToApprove().contains(type) && !alreadyExecuted) {
+                    sendSubmittedDocumentToApprove(documentEntityFromDatabase);
+                    documentEntityFromDatabase.setDocumentState(DocumentState.SUBMITTED);
+                    LocalDateTime datePosted = LocalDateTime.now();
+                    documentEntityFromDatabase.setPostedDate(datePosted);
+                    documentRepository.save(documentEntityFromDatabase);
+                    alreadyExecuted=true;
+
+                }
+            }
+
+            if (!alreadyExecuted) {
+                throw new NoApproverAvailableException("Document cannot be submitted until there's a group that" +
+                        " can approve " + documentEntityFromDatabase.getType());
+            }
+
         }
     }
 
