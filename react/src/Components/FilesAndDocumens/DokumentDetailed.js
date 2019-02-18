@@ -253,17 +253,21 @@ class AugisDokumentas extends Component {
                     </table>
 
 
-                    {/*{this.state.documentInfo.documentState === 'CREATED' ?*/}
-                    {/*: (this.state.documentInfo.documentState == 'SUBMITTED' ?*/}
+                    {/*Dokumentui kuris yra CREATED parodysima "Pateikti"*/}
+                    {this.state.documentInfo.documentState === 'CREATED' ?
+                        <button className="btn btn-info btn-sm mr-4" onClick={this.submitDocument}>Pateikti</button>
+                        : ''}
 
-                    <button className="btn btn-info btn-sm mr-4" onClick={this.submitDocument}>Pateikti</button>
-
-
-                    <button className="btn btn-success btn-sm mr-4"
-                            onClick={this.approveDocument}>Patvirtinti
-                    </button>
-                    < button className="btn btn-danger btn-sm ml-5" onClick={this.rejectDocument}>Atmesti
-                    </button>
+                    {/*Dokumentui kuris yra SUBMITTED parodysime "Patvirtinti" ir "Atmesti"*/}
+                    {this.state.documentInfo.documentState === 'SUBMITTED' ?
+                        <React.Fragment>
+                            <button className="btn btn-success btn-sm mr-4"
+                                    onClick={this.approveDocument}>Patvirtinti
+                            </button>
+                            <button className="btn btn-danger btn-sm mr-4" onClick={this.rejectDocument}>Atmesti
+                            </button>
+                        </React.Fragment>
+                        : ''}
 
 
                 </div>
