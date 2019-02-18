@@ -96,7 +96,7 @@ public class DocumentController {
         documentService.submitDocument(documentIdentifier);
     }
 
-    @RequestMapping(value = "{documentIdentifier}/approve", method = RequestMethod.POST)
+    @RequestMapping(value = "/{documentIdentifier}/approve", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Approve document", notes = "Approves document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
