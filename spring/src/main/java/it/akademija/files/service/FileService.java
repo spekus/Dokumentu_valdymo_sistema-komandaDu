@@ -18,6 +18,8 @@ import javax.tools.FileObject;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 
 @Service
@@ -29,9 +31,9 @@ public class FileService {
     DocumentService documentService;
 
     @Transactional
-    public String addFileToDataBase(MultipartFile multipartFile) throws Exception {
+    public String addFileToDataBase(MultipartFile multipartFile, String userName) throws Exception {
 
-        File uploadingLocation = uploadFileToLocalServer(multipartFile); //uploads file to the server
+        File uploadingLocation = uploadFileToLocalServer(multipartFile, userName); //uploads file to the server
 //        System.out.println("FILE LOCATION - " + uploadingLocation.getAbsolutePath());
         //creating and saving data base entity
         FileEntity fileEntity = new FileEntity(multipartFile.getOriginalFilename());
@@ -44,7 +46,7 @@ public class FileService {
 
     }
     @Transactional
-    public File uploadFileToLocalServer(MultipartFile file) throws Exception{
+    public File uploadFileToLocalServer(MultipartFile file, String name) throws Exception{
 
         try {
 //            File fileLocation = new File(File.separator + "home"
@@ -60,12 +62,22 @@ public class FileService {
 //              for this to work create folder named - tmpDocs in relevant location
 //              than in console run sudo chmod -R 777 tmpDocs , so that folder is accessible
 
+
+            // this is for later naming each saved file, so that files with identical name would not be named identically
+            String time = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+
             String currentUsersHomeDir = System.getProperty("user.home");
-            File fileLocation = new File(currentUsersHomeDir + File.separator  + "tmpDocs" + File.separator  +  file.getOriginalFilename());
-            File fileLocationDirectory = new File(currentUsersHomeDir + File.separator  + "tmpDocs");
+            File fileLocation = new File(currentUsersHomeDir + File.separator  + "tmpDocs"
+                    + File.separator  + name + File.separator  + file.getOriginalFilename() + time);
+            File generalLocation = new File(currentUsersHomeDir + File.separator  + "tmpDocs");
+            File fileLocationDirectory = new File(currentUsersHomeDir + File.separator  + "tmpDocs"
+                    + File.separator  + name);
 
             //if directory not created it creates one. and it SHOULD make directory writable for all users meaning to more need for chmod
             if(!fileLocationDirectory.isDirectory()){
+                System.out.println(generalLocation.mkdir());
+                System.out.println(generalLocation.setWritable(true));
                 System.out.println(fileLocationDirectory.mkdir());
                 System.out.println(fileLocationDirectory.setWritable(true));
             }

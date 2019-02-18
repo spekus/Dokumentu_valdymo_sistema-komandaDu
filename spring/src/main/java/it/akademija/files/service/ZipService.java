@@ -1,5 +1,7 @@
-package it.akademija.zipping;
+package it.akademija.files.service;
 
+
+import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.io.File;
@@ -13,12 +15,12 @@ import java.util.zip.ZipOutputStream;
 //                    File fileLocation = new File(currentUsersHomeDir + File.separator  + "tmpDocs" + File.separator  +  file.getOriginalFilename());
 //                    File fileLocationDirectory = new File(currentUsersHomeDir + File.separator  + "tmpDocs");
 
-
+@Service
 public class ZipService {
 
 
     @Transactional
-    public void zip(String userName) throws IOException {
+    public File zip(String userName) throws IOException {
 //            File fileLocation = new File(currentUsersHomeDir + File.separator  + "tmpDocs"
 //                    + File.separator  + name + File.separator  + file.getOriginalFilename());
 //            File fileLocationDirectory = new File(currentUsersHomeDir + File.separator  + "tmpDocs" + File.separator  + name);
@@ -64,6 +66,7 @@ public class ZipService {
         zipFile(fileToZip, fileToZip.getName(), zipOut);
         zipOut.close();
         fos.close();
+        return zipName;
     }
 
     @Transactional
