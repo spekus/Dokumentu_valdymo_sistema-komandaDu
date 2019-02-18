@@ -10,6 +10,7 @@ import it.akademija.documents.repository.DocumentEntity;
 
 import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
+import it.akademija.exceptions.NoApproverAvailableException;
 import it.akademija.files.ResponseTransfer;
 import it.akademija.files.service.FileServiceObject;
 import org.hibernate.validator.constraints.Length;
@@ -46,8 +47,8 @@ public class DocumentController {
     @RequestMapping(value = "/{state}", method = RequestMethod.GET)
     @ApiOperation(value = "Get all documents by state", notes = "Returns all documents in a given state")
     public Set<DocumentServiceObject> getDocumentsByState(
-                                                   @ApiParam(value = "State", required = true)
-                                                   @Valid @PathVariable DocumentState state) throws IllegalArgumentException {
+            @ApiParam(value = "State", required = true)
+            @Valid @PathVariable DocumentState state) throws IllegalArgumentException {
         return documentService.getDocumentsByState(state);
     }
 
@@ -56,11 +57,12 @@ public class DocumentController {
     @ApiOperation(value = "Get document", notes = "Returns one document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public DocumentServiceObject getDocument(@ApiParam(value = "DocumentIdentifier", required = true)
-                                                    @RequestParam @Valid @NotNull @Length(min = 1) String documentIdentifier) {
-        try{
+
+                                             @RequestParam @Valid @NotNull @Length(min = 1) String documentIdentifier) {
+        try {
+
             return documentService.getDocument(documentIdentifier);
-        }catch (IllegalArgumentException e)
-        {
+        } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
 
@@ -90,17 +92,22 @@ public class DocumentController {
     public void submitDocument(
             @ApiParam(value = "DocumentEntity identifier", required = true)
             @Valid
-            @PathVariable final @NotNull @Length(min=1) String documentIdentifier) {
+            @PathVariable final @NotNull @Length(min = 1) String documentIdentifier) throws NoApproverAvailableException {
 
+        try {
+            documentService.submitDocument(documentIdentifier);
+        } catch (NoApproverAvailableException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "NoApproverAvailableException");
 
-        documentService.submitDocument(documentIdentifier);
+        }
+
     }
 
-    @RequestMapping(value = "{documentIdentifier}/approve", method = RequestMethod.POST)
+    @RequestMapping(value = "/{documentIdentifier}/approve", method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.OK)
     @ApiOperation(value = "Approve document", notes = "Approves document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public void approveDocument (
+    public void approveDocument(
             @ApiParam(value = "DocumentEntity identifier", required = true)
             @Valid
             @PathVariable @NotNull @Length(min = 1) String documentIdentifier,
@@ -117,7 +124,7 @@ public class DocumentController {
             @Valid
             @PathVariable @NotNull @Length(min = 1) String documentIdentifier,
             @ApiIgnore Authentication authentication,
-            @RequestParam @NotNull @Length(min=1) String rejectedReason) {
+            @RequestParam @NotNull @Length(min = 1) String rejectedReason) {
         documentService.rejectDocument(documentIdentifier, authentication.getName(), rejectedReason);
     }
 
@@ -125,8 +132,8 @@ public class DocumentController {
     @ApiOperation(value = "Delete document", notes = "Deletes one document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void deleteDocument(@ApiParam(value = "DocumentIdentifier", required = true)
-                                             @Valid @PathVariable @NotNull @Length(min = 1) String documentIdentifier) {
-       documentService.deleteDocument(documentIdentifier);
+                               @Valid @PathVariable @NotNull @Length(min = 1) String documentIdentifier) {
+        documentService.deleteDocument(documentIdentifier);
     }
 
 

@@ -9,9 +9,11 @@ import it.akademija.users.service.UserGroupServiceObject;
 import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.w3c.dom.DocumentType;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -38,6 +40,7 @@ public class DocumentTypeService {
     public void createNewDocumentType(String title) {
         DocumentTypeEntity newDocumentTypeEntity = new DocumentTypeEntity(title);
         documentTypeRepository.save(newDocumentTypeEntity);
+
     }
 
     @Transactional

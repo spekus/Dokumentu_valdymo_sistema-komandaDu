@@ -129,35 +129,35 @@ class AugisDokumentas extends Component {
 
 
     submitDocument = (props) => {
-        var docID = this.props.match.params.id;
+        let docID = this.props.match.params.id;
         axios.post("/api/documents/" + docID + "/submit")
             .then(response => {
                 // this.getDocumentInformation();
-                this.setState({documentState: 'Pateikta'});
+                this.setState({documentState: this.state.documentInfo.documentState});
             })
             .catch(error => {
                 window.alert("Klaida is submitDocument - " + error.message);
             })
     }
 
-
     approveDocument = (props) => {
-        var docID = this.props.match.params.id;
+        let docID = this.props.match.params.id;
+        console.log("Dokumento Identifier - " + this.props.match.params.id);
         axios.post("/api/documents/" + docID + "/approve")
             .then(response => {
                 this.setState({documentState: this.state.documentInfo.documentState});
                 this.getDocumentInformation();
             })
             .catch(error => {
-                window.alert("Klaida is approveDocument - " + error.message)
-                // console.log("Klaida is approveDocument - " + error.message);
+                window.alert("Klaida is approveDocument - " + error)
+                console.log("Klaida is approveDocument - " + error.message);
             })
     }
 
     rejectDocument = (props) => {
-        var reason = window.prompt("Iveskite atmetimo priezasti");
-        var docID = this.state.documentInfo.documentIdentifier;
-        axios.post("/api/documents/documents/" + docID + "/reject", null, {
+        let reason = window.prompt("Iveskite atmetimo priezasti");
+        let docID = this.state.documentInfo.documentIdentifier;
+        axios.post("/api/documents/" + docID + "/reject", null, {
             params: {
                 rejectedReason: reason
             }
@@ -194,6 +194,39 @@ class AugisDokumentas extends Component {
                             <th>Aprašymas</th>
                             <td>{this.state.documentInfo.description}</td>
                         </tr>
+
+
+                        <tr>
+                            <th>Dokumento autorius</th>
+                            <td>{this.state.documentInfo.author}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Sukurimo data</th>
+                            <td>{this.state.documentInfo.postedDate}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Patvirtinimo data</th>
+                            <td>{this.state.documentInfo.approvalDate}</td>
+                        </tr>
+
+
+                        <tr>
+                            <th>Atmetimo data</th>
+                            <td>{this.state.documentInfo.rejectedDate}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Atmetimo priežastis</th>
+                            <td>{this.state.documentInfo.rejectedReason}</td>
+                        </tr>
+
+                        <tr>
+                            <th>Tvirtintojas</th>
+                            <td>{this.state.documentInfo.approver}</td>
+                        </tr>
+
                         <tr>
                             <th>Failo pavadinimas</th>
                             <td>
@@ -220,18 +253,17 @@ class AugisDokumentas extends Component {
                     </table>
 
 
-                    {this.state.documentInfo.documentState === 'CREATED' ?
+                    {/*{this.state.documentInfo.documentState === 'CREATED' ?*/}
+                    {/*: (this.state.documentInfo.documentState == 'SUBMITTED' ?*/}
 
-                        <button className="btn btn-info btn-sm" onClick={this.submitDocument}>Pateikti</button>
-                        : (this.state.documentInfo.documentState == 'SUBMITTED' ?
-                            <div>
-                                <button className="btn btn-success btn-sm mr-4"
-                                        onClick={this.approveDocument}>Patvirtinti
-                                </button>
-                                < button className="btn btn-danger btn-sm ml-5" onClick={this.rejectDocument}>Atmesti
-                                </button>
-                            </div> : '')
-                    }
+                    <button className="btn btn-info btn-sm mr-4" onClick={this.submitDocument}>Pateikti</button>
+
+
+                    <button className="btn btn-success btn-sm mr-4"
+                            onClick={this.approveDocument}>Patvirtinti
+                    </button>
+                    < button className="btn btn-danger btn-sm ml-5" onClick={this.rejectDocument}>Atmesti
+                    </button>
 
 
                 </div>
