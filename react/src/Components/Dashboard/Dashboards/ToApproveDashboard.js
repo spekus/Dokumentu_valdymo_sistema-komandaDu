@@ -1,15 +1,19 @@
 import React, {Component} from 'react';
-import DocumentsListSimple from "./DashBoardElements/AugustasDocumentsList";
+import DocumentsListSimple from "./ElementsOfDashBoard/DocumentsList";
 import axios from 'axios';
-import {Link} from 'react-router-dom';
-import DashboardNavigation from './DashBoardElements/DashboardNavigation';
-
+import ReactPaginate from 'react-paginate';
+import DashboardNavigation from './ElementsOfDashBoard/DashboardNavigation';
 
 class ToApproveDashboard extends Component {
     state = {
         nameOfWindow: 'default',
         userIdentifier: '',
         userDocuments: [],
+
+        // used for paging
+        pageCount : 3,
+        perPage : 5,
+        offset: 0 //identifies which page is used
     }
 
 
@@ -48,33 +52,41 @@ class ToApproveDashboard extends Component {
     }
 
 
-    getDocumentsToApprove = () => {
-        axios.get('/api/users/user/get-documents-to-approve')
-            .then(response => {
-                this.setState({userDocuments: response.data});
-            })
-            .catch(error => {
-                console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
-            })
-    }
-
     // getDocumentsToApprove = () => {
-    //     axios({
-    //         method: 'get',
-    //         url: '/api/users/user/get-documents-to-approve',
-    //         params: {
-    //             userIdentifier: this.state.userIdentifier
-    // },
-    //     headers: {'Content-Type': 'application/json;charset=utf-8'}
-    //
-    // })
-    //             .then(response => {
+    //     axios.get('/api/users/user/get-documents-to-approve')
+    //         .then(response => {
     //             this.setState({userDocuments: response.data});
     //         })
     //         .catch(error => {
     //             console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
     //         })
     // }
+
+
+    getDocumentsToApprove = () => {
+        axios({
+            method: 'get',
+            url: '/api/users/user/get-documents-to-approve',
+            params: {
+                page: this.state.offset ,
+                size: this.state.perPage
+    },
+        headers: {'Content-Type': 'application/json;charset=utf-8'}
+    
+    })
+                .then(response => {
+                    //we use response.data.content, becouse files re under content
+                    //data. allso holds paging information
+                this.setState({userDocuments: response.data.content});
+                this.setState({pageCount: 
+                    Math.ceil(response.data.totalElements 
+                        / this.state.perPage)})
+                        console.log("totalElements - = " + response.data.totalElements)
+            })
+            .catch(error => {
+                console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
+            })
+    }
 
 
 
@@ -92,6 +104,14 @@ class ToApproveDashboard extends Component {
     //             console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
     //         })
     // }
+    handlePageClick = data => {
+        let selected = data.selected;
+        let offset = Math.ceil(selected);
+    
+        this.setState({ offset: offset }, () => {
+          this.getDocumentsToApprove();
+        });
+    };
 
 
     render() {
@@ -109,6 +129,27 @@ class ToApproveDashboard extends Component {
                         {/*/!*<p>Hello {this.state.userDocuments[0]}</p>*!/*/}
                         <DocumentsListSimple list={this.state.userDocuments}/>
                     </div>
+                </div>
+
+                {/* pagination */}
+                <div className='container-fluid mt-5'>
+                <div class="row">
+                <div className="col-lg-12 my-auto center-block text-center">
+                <ReactPaginate 
+                previousLabel={'previous'}
+                nextLabel={'next'}
+                breakLabel={'...'}
+                breakClassName={'break-me'}
+                pageCount={this.state.pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={this.handlePageClick}
+                containerClassName={'pagination'}
+                subContainerClassName={'pagesPagination'}
+                activeClassName={'active'}
+                />
+                </div>
+                </div>
                 </div>
 
             </React.Fragment>

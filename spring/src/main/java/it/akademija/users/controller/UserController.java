@@ -130,9 +130,14 @@ public class UserController {
     }
 
     @RequestMapping(value = "user/get-documents-to-approve", method = RequestMethod.GET)
-    public Set<DocumentServiceObject> getDocumentsToApprove(@ApiIgnore Authentication authentication
-    ) {
-        return userService.getDocumentsToApprove(authentication.getName());
+    public Page<DocumentServiceObject> getDocumentsToApprove(@ApiIgnore Authentication authentication,
+                                                            @RequestParam("page") int page,
+                                                            @RequestParam("size") int size) {
+        try{
+        return userService.getDocumentsToApprove(authentication.getName(), page, size);
+        } catch (IllegalArgumentException e) {
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

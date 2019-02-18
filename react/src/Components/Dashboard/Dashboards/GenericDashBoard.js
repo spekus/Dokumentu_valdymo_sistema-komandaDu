@@ -1,18 +1,18 @@
 import React, {Component} from 'react';
-import DocumentsListSimple from "./DashBoardElements/AugustasDocumentsList";
+import DocumentsListSimple from "./ElementsOfDashBoard/DocumentsList";
 import axios from 'axios';
-import {Link} from 'react-router-dom';
-import DashboardNavigation from './DashBoardElements/DashboardNavigation';
+import DashboardNavigation from './ElementsOfDashBoard/DashboardNavigation';
 import ReactPaginate from 'react-paginate';
 
 class GenericDashBoard extends Component {
     state = { 
         nameOfWindow : 'default',
         userDocuments : [],
+        
+        // used for paging
         pageCount : 3,
         perPage : 5,
         offset: 0 //identifies which page is used
-
     }
 
     componentDidMount(){
@@ -20,18 +20,19 @@ class GenericDashBoard extends Component {
     }
 
     componentDidUpdate(){
+        // these are just to make sure new data is leaded when going between dashboards
         console.log("window did update");
         if(!(this.state.nameOfWindow == this.props.match.params.id))
         {
         this.setState({nameOfWindow : this.props.match.params.id})
-        console.log("state of name of the window was set to - " +
-        this.state.nameOfWindow);
+        // console.log("state of name of the window was set to - " +
+        // this.state.nameOfWindow);
         this.getAllDocuments();
         }
         if (this.state.nameOfWindow == '') {
             this.setState({nameOfWindow : this.props.match.params.id})
-            console.log("state of name of the window was set to - " +
-            this.state.nameOfWindow);
+            // console.log("state of name of the window was set to - " +
+            // this.state.nameOfWindow);
             this.getAllDocuments();
         }
         
@@ -39,8 +40,8 @@ class GenericDashBoard extends Component {
 
 
     getAllDocuments() {
-        console.log("running getAllDocuments");
-        console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
+        // console.log("running getAllDocuments");
+        // console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
         
         let requestPath = "";
 
