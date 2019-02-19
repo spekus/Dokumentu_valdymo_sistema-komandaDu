@@ -17,7 +17,6 @@ class AugisDokumentas extends Component {
         documentInfo: {}
     };
 
-    action = this.state.documentInfo.documentState;
 
     componentWillMount() {
         this.getDocumentInformation();
@@ -132,8 +131,8 @@ class AugisDokumentas extends Component {
         let docID = this.props.match.params.id;
         axios.post("/api/documents/" + docID + "/submit")
             .then(response => {
-                // this.getDocumentInformation();
                 this.setState({documentState: this.state.documentInfo.documentState});
+                this.getDocumentInformation();
             })
             .catch(error => {
                 window.alert("Klaida is submitDocument - " + error.message);
@@ -163,7 +162,8 @@ class AugisDokumentas extends Component {
             }
         })
             .then(response => {
-                this.setState({documentState: 'Atmesta'});
+                this.setState({documentState: this.state.documentInfo.documentState});
+                this.getDocumentInformation();
             })
             .catch(error => {
                 console.log("Klaida is rejectDocument - " + error.message);
@@ -173,7 +173,8 @@ class AugisDokumentas extends Component {
     render() {
         return (
             <React.Fragment>
-                <div>
+                <div className='container'>
+                <div className='shadow p-3 mb-5 bg-white rounded' align="center">
 
 
                     {/* <h5>Sukurti</h5> */}
@@ -254,17 +255,17 @@ class AugisDokumentas extends Component {
 
 
                     {/*Dokumentui kuris yra CREATED parodysima "Pateikti"*/}
-                    {this.state.documentInfo.documentState === 'CREATED' ?
-                        <button className="btn btn-info btn-sm mr-4" onClick={this.submitDocument}>Pateikti</button>
+                    {this.state.documentInfo.documentState === 'CREATED' && this.props.user.username === this.state.documentInfo.author ?
+                        <button className="btn mr-4" id='mybutton' onClick={this.submitDocument}>Pateikti</button>
                         : ''}
 
                     {/*Dokumentui kuris yra SUBMITTED parodysime "Patvirtinti" ir "Atmesti"*/}
-                    {this.state.documentInfo.documentState === 'SUBMITTED' ?
+                    {this.state.documentInfo.documentState === 'SUBMITTED' && this.props.user.username !== this.state.documentInfo.author ?
                         <React.Fragment>
-                            <button className="btn btn-success btn-sm mr-4"
+                            <button className="btn btn-success mr-4"
                                     onClick={this.approveDocument}>Patvirtinti
                             </button>
-                            <button className="btn btn-danger btn-sm mr-4" onClick={this.rejectDocument}>Atmesti
+                            <button className="btn btn-danger mr-4" onClick={this.rejectDocument}>Atmesti
                             </button>
                         </React.Fragment>
                         : ''}
@@ -277,7 +278,7 @@ class AugisDokumentas extends Component {
                 {/*<h4 style={{color: 'green'}}>Type: {this.state.type}</h4>*/}
                 {/*<h4 style={{color: 'green'}}>Failo Pavadinimas {this.state.attachedFileName}</h4>*/}
                 {/*<button onClick={this.downloadFile}>Download {this.state.attachedFileName} file</button>*/}
-
+                </div>
             </React.Fragment>
         );
     }
