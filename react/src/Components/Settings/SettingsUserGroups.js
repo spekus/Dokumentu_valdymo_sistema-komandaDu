@@ -50,7 +50,7 @@ class SettingsUserGroups extends Component {
 
     render() {
         return (
-            <div>
+            <div className='shadow p-3 mb-5 bg-white rounded'>
                 <h5>Naudotojų grupės</h5>
                 <div class="row">
                     <div className="col-md-8">

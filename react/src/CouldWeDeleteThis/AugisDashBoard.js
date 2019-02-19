@@ -1,5 +1,5 @@
 // import React, {Component} from 'react';
-// import DocumentsListSimple from "../Documents/ReactFragments/AugustasDocumentsList";
+// import DocumentsList from "../Documents/ReactFragments/AugustasDocumentsList";
 // import axios from 'axios';
 
 
@@ -54,7 +54,7 @@
 //                 <div className="row mt-2">
 //                     <div className='col-lg-12'>
 //                         {/* <h5>Atmesti</h5> */}
-//                         <DocumentsListSimple list={this.state.userDocuments}
+//                         <DocumentsList list={this.state.userDocuments}
 //                         press={this.doStuff}
 //                         press2={this.doStuff2}/>
 //                     </div>

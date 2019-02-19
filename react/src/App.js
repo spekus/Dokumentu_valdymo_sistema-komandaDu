@@ -177,6 +177,9 @@ class App extends React.Component {
                                 </div>
                             </main>
 
+                            {/*<div className="footer">*/}
+                                {/*<p>Footer</p>*/}
+                            {/*</div>*/}
 
                         </React.Fragment>
                     )}
