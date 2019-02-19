@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import FileSaver from 'file-saver';
 import axios from 'axios';
 
+
 // run npm install file-saver --save
 
 export default class FileUploader extends Component {
@@ -25,6 +26,9 @@ export default class FileUploader extends Component {
         this.getAllowedTypes();
     }
 
+    validation(){
+
+    }
 
     getAllowedTypes = () => {
         axios.get('/api/users/user/document-types')
@@ -40,7 +44,7 @@ export default class FileUploader extends Component {
     }
 
 
-    uploadFile = (event) => {
+    handleSubmit = (event) => {
         // this.getAllowedTypes();
         event.preventDefault();
         this.setState({error: '', msg: ''});
@@ -54,6 +58,7 @@ export default class FileUploader extends Component {
             this.setState({error: 'Failo dydis viršija 2MB'})
             return;
         }
+
 
         let data = new FormData();
         data.append('file', this.state.file);
@@ -152,15 +157,11 @@ export default class FileUploader extends Component {
     render() {
         return (
             <React.Fragment>
-
-                {/* Main content */}
                 <div className="container">
                     <div className="page1 shadow p-3 mb-5 bg-white rounded">
                         <h4 className="my-4" align="center">
                             Naujo dokumento sukūrimas
                         </h4>
-
-
                         <form classname="form1 col-md-9" onSubmit={this.handleSubmit}>
                             <div className="row">
                                 <div className="col-md-2"></div>
@@ -168,9 +169,13 @@ export default class FileUploader extends Component {
                                     <div className="form-group col-md-10">
                                         <label htmlFor="exampleFormControlInput1">Pavadinimas</label>
                                         <input type="text" className="form-control" id="exampleFormControlInput1"
+                                               minLength="3"
+                                               maxLength="50"
+                                               pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?[ ]?|[A-Za-z0-9]+['-]?)+$"
+                                               title="Only letters and numbers should be provided!"
                                                placeholder="Įveskite dokumento pavadinimą" name="title"
                                                value={this.state.title}
-                                               onChange={this.handleChangeInput}/>
+                                               onChange={this.handleChangeInput} required/>
                                     </div>
                                     <div className="form-group col-md-10">
                                         <label htmlFor="exampleFormControlSelect1">Dokumento tipas</label>
@@ -185,35 +190,29 @@ export default class FileUploader extends Component {
                                     <div className="form-group col-md-10">
                                         <label htmlFor="exampleFormControlTextarea1">Aprašymas</label>
                                         <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"
+                                                  minLength="8"
+                                                  maxLength="255"
+                                                  pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?[ ]?|[A-Za-z0-9]+['-]?)+$"
                                                   placeholder="Įveskite trumpą dokumento aprašymą"
                                                   name="description"
                                                   value={this.state.description}
-                                                  onChange={this.handleChangeInput}></textarea>
+                                                  onChange={this.handleChangeInput} required/>
                                     </div>
 
                                     <div className="form-group col-md-9 mt-4">
                                         <input onChange={this.onFileChange} multiple type="file"></input><br/>
-                                        <h4 style={{color: 'red'}}>{this.state.error}</h4>
-                                        <h4 style={{color: 'green'}}>{this.state.msg}</h4>
+                                        <h5 style={{color: 'red'}}>{this.state.error}</h5>
+                                        <h5 style={{color: 'green'}}>{this.state.msg}</h5>
 
                                     </div>
                                 </div>
                             </div>
-                        </form>
-
-                        <React.Fragment>
-
                             <div className="text-center">
-                                <button type="submit" className="btn btn-info my-4"
-                                        onClick={this.uploadFile}>Išsaugoti
+                                <button type="submit" className="btn btn-info my-4">Išsaugoti
                                 </button>
                             </div>
-
-                        </React.Fragment>
-
-
+                        </form>
                     </div>
-
                 </div>
             </React.Fragment>
         );
