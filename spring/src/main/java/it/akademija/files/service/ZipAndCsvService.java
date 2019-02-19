@@ -153,6 +153,9 @@ public class ZipAndCsvService {
         CSVWriter writer = new CSVWriter(new FileWriter(path.toString()));
 
         List<String[]> stringList = new ArrayList<>();
+        
+        //this is simply to get the field names on the top of csv file
+        stringList.add(documents.get(0).getFieldNames().split(","));
 
         // goes through all dcumentEntities and converts them to string arrays and places arrays in a list
         for (DocumentEntity documentEntity: documents

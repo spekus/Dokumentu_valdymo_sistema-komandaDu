@@ -197,6 +197,19 @@ public class DocumentEntity implements Serializable {
                 rejectionReason
                 ;
     }
+    public String getFieldNames(){
+        return "documentIdentifier" + ',' +
+                "author" + ',' +
+                "title" + ',' +
+                "description" + ',' +
+                "type" + ',' +
+                "postedDate" +  ',' +
+                "approvalDate" + ',' +
+                "rejectedDate" + ',' +
+                "approver" + ',' +
+                "rejectionReason";
+    }
+
 }
 
 
