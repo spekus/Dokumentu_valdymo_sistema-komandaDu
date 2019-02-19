@@ -1,13 +1,17 @@
 package it.akademija.files.service;
 
 
+import com.opencsv.CSVWriter;
+import it.akademija.documents.repository.DocumentEntity;
+import it.akademija.files.Helpers;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -98,5 +102,37 @@ public class ZipService {
         }
         fis.close();
     }
+
+    @Transactional
+    public void writeCsv(List<DocumentEntity> documents, String name) throws IOException {
+        Path path = null;
+        try {
+            //creates path in user computer
+            path = Paths.get("/home/augustas/tmpDocs/"+ name +"/info.csv");
+        } catch (Exception ex) {
+            Helpers.err(ex);
+        }
+
+        //where file will be written
+        CSVWriter writer = new CSVWriter(new FileWriter(path.toString()));
+
+        List<String[]> stringList = new ArrayList<>();
+
+        // goes through all dcumentEntities and converts them to string arrays and places arrays in a list
+        for (DocumentEntity documentEntity: documents
+        ) {
+            String stringas = documentEntity.toString();
+            String[] entries = stringas.split(",");
+            stringList.add(entries);
+        }
+        //writes fenerated arrays in csv, one sting array is one line in csv
+        for (String[] stringEntries:stringList
+        ) {
+            writer.writeNext(stringEntries);
+        }
+        //closing stream
+        writer.close();
+    }
+
 }
 
