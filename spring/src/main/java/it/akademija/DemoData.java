@@ -5,12 +5,10 @@ import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.documents.service.DocumentService;
-import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.documents.service.DocumentTypeService;
 
 import it.akademija.users.controller.CreateUserGroupCommand;
 
-import it.akademija.exceptions.NoApproverAvailableException;
 import it.akademija.files.service.FileService;
 
 import it.akademija.users.repository.UserEntity;
@@ -18,7 +16,6 @@ import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
 import it.akademija.users.repository.UserRepository;
 import it.akademija.users.service.UserGroupService;
-import it.akademija.users.service.UserGroupServiceObject;
 import it.akademija.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -142,7 +139,7 @@ public class DemoData implements ApplicationRunner {
 
     }
 
-    private void addDummydata() throws NoApproverAvailableException {
+    private void addDummydata() {
         //patikrina ar jau buvo prideta data
         if(userRepository.findUserByUsername("testuser1") ==  null) {
 

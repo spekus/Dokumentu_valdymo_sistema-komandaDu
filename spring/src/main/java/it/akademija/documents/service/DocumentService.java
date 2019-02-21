@@ -6,7 +6,6 @@ import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.repository.DocumentTypeRepository;
-import it.akademija.exceptions.NoApproverAvailableException;
 import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileServiceObject;
 import it.akademija.users.repository.UserEntity;
@@ -14,10 +13,7 @@ import it.akademija.users.repository.UserGroupEntity;
 
 import it.akademija.users.repository.UserGroupRepository;
 import it.akademija.users.repository.UserRepository;
-import it.akademija.users.service.UserServiceObject;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,12 +21,11 @@ import java.time.LocalDateTime;
 
 import java.util.HashSet;
 
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
-public class DocumentService{
+public class DocumentService {
 
     @Autowired
     private DocumentRepository documentRepository;
@@ -63,112 +58,108 @@ public class DocumentService{
 
 
     @Transactional
-    public DocumentEntity createDocument(String username, String title, String type, String description) {
+    public DocumentEntity createDocument(String username, String title, String type, String description)
+            throws IllegalArgumentException, SecurityException{
         //Pasiimam useri is DB
-        UserEntity userFromDatabase = userRepository.findUserByUsername(username);
-        //Pasiimam grupes, kurioms jis yra priskirtas
-        Set<UserGroupEntity> availableUserGroups = userFromDatabase.getUserGroups();
-
-        //Pereinam per tas grupes ir tikrinam
-        for (UserGroupEntity userGroup : availableUserGroups) {
-            //Pasiimam kiekvienos grupes galimus kurti failus
-            Set<DocumentTypeEntity> groupAvailableDocumentTypes = userGroup.getAvailableDocumentTypesToUpload();
-            //Einam per kiekviena is tu tipu ir tikrinam, ar jis atitinka norimo sukurti dokumento
-            for (DocumentTypeEntity documentTypeEntity : groupAvailableDocumentTypes) {
-                if (documentTypeEntity.getTitle().equals(type)) {
-//                    if (userFromDatabase.getUsername() != null) {
-                    DocumentEntity documentEntity = new DocumentEntity(title, description, type);
-                    documentEntity.setAuthor(userFromDatabase.getUsername());
-                    userFromDatabase.addDocument(documentEntity);
-                    documentRepository.save(documentEntity);
-                    return documentEntity;
-
-
-                } else {
-                    System.out.println("User doesn't belong to a group that can create that type's documents");
-                }
-
-            }
-
+        UserEntity user = userRepository.findUserByUsername(username);
+        if (user == null) {
+            throw new SecurityException("Naudotojas " + username + " nerastas");
         }
-        return null;
+        // susirinkime visus tipus, kuriuos sis naudotojas gali ikelti
+        Set<DocumentTypeEntity> typesUserAllowedToUpload = new HashSet<DocumentTypeEntity>();
+
+        // surenkame sarasa dokumentu tipu, kuriuos siam naudotojui leidziama tvirtinti
+        for (UserGroupEntity userGroupEntity : user.getUserGroups()) {
+            typesUserAllowedToUpload.addAll(userGroupEntity.getAvailableDocumentTypesToUpload());
+        }
+
+        // patikriname ar sis tipas yra tarp leidziamu kurti
+        if (!typesUserAllowedToUpload.stream()
+                .map(t -> t.getTitle()).collect(Collectors.toSet())
+                .contains(type)) {
+            throw new SecurityException("Jums negalima kurtio '" + type +  "' tipo dokumento !");
+        }
+
+
+        DocumentEntity newDocument = new DocumentEntity(title, description, type);
+        newDocument.setAuthor(user.getUsername());
+        user.addDocument(newDocument);
+        documentRepository.save(newDocument);
+        return newDocument;
+    }
+
+    @Transactional
+    public void submitDocument(String documentIdentifier) throws IllegalArgumentException {
+        DocumentEntity document = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+
+        if (document == null) {
+            throw new IllegalArgumentException("Documentas su id '" + documentIdentifier + "' nerastas");
+        }
+
+        document.setDocumentState(DocumentState.SUBMITTED);
+        document.setPostedDate(LocalDateTime.now());
+        documentRepository.save(document);
 
     }
 
     @Transactional
-    public void submitDocument(String documentIdentifier) throws NoApproverAvailableException {
-
-        boolean alreadyExecuted=false;
-
-        List<UserGroupEntity> allUserGroups = userGroupRepository.findAll();
-        DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-        DocumentTypeEntity type = documentTypeRepository.findDocumentTypeByTitle(documentEntityFromDatabase.getType());
-        if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
-
-            //Check if to be submitted document type is already available to approve by some group. Otherwise, throw exception.
-            for (UserGroupEntity group : allUserGroups) {
-                if (group.getAvailableDocumentTypesToApprove().contains(type) && !alreadyExecuted) {
-                    sendSubmittedDocumentToApprove(documentEntityFromDatabase);
-                    documentEntityFromDatabase.setDocumentState(DocumentState.SUBMITTED);
-                    LocalDateTime datePosted = LocalDateTime.now();
-                    documentEntityFromDatabase.setPostedDate(datePosted);
-                    documentRepository.save(documentEntityFromDatabase);
-                    alreadyExecuted=true;
-
-                }
-            }
-
-            if (!alreadyExecuted) {
-                throw new NoApproverAvailableException("Document cannot be submitted until there's a group that" +
-                        " can approve " + documentEntityFromDatabase.getType());
-            }
-
-        }
-    }
-
-    @Transactional
-    public void approveDocument(String documentIdentifier, String username) {
+    public void approveOrRejectDocument(String documentIdentifier,
+                                        String username,
+                                        DocumentState newState,
+                                        String rejectedReason) throws IllegalArgumentException, SecurityException {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
             //surandamas dokumentas
-            DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+            DocumentEntity document = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
+            if (document == null) {
+                throw new IllegalArgumentException("Dokumentas su ID '" + documentIdentifier + "' nerastas");
+            }
+
             //surandame prisiloginusi useri
-            UserEntity userEntityFromDataBase = userRepository.findUserByUsername(username);
-
-            for (UserGroupEntity userGroupEntity : userEntityFromDataBase.getUserGroups()) {
-                if (userGroupEntity.getDocumentsToApprove().contains(documentEntityFromDatabase)) {
-                    LocalDateTime dateApproved = LocalDateTime.now();
-                    documentEntityFromDatabase.setDocumentState(DocumentState.APPROVED);
-                    documentEntityFromDatabase.setApprovalDate(dateApproved);
-                    documentEntityFromDatabase.setApprover(userEntityFromDataBase.getFirstname() + " " + userEntityFromDataBase.getLastname());
-                    documentRepository.save(documentEntityFromDatabase);
-                    removeDocFromApproverList(documentIdentifier);
-
-                }
-            }
-        }
-    }
-
-    @Transactional
-    public void rejectDocument(String documentIdentifier, String username, String rejectedReason) {
-        if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
-            DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-            UserEntity userEntityFromDataBase = userRepository.findUserByUsername(username);
-
-            for (UserGroupEntity userGroupEntity : userEntityFromDataBase.getUserGroups()) {
-                if (userGroupEntity.getDocumentsToApprove().contains(documentEntityFromDatabase)) {
-
-                    LocalDateTime dateRejected = LocalDateTime.now();
-                    documentEntityFromDatabase.setDocumentState(DocumentState.REJECTED);
-                    documentEntityFromDatabase.setRejectedDate(dateRejected);
-                    documentEntityFromDatabase.setApprover(userEntityFromDataBase.getFirstname() + " " + userEntityFromDataBase.getLastname());
-                    documentEntityFromDatabase.setRejectionReason(rejectedReason);
-                    documentRepository.save(documentEntityFromDatabase);
-                    removeDocFromApproverList(documentIdentifier);
-                }
+            UserEntity user = userRepository.findUserByUsername(username);
+            if (user == null) {
+                throw new SecurityException("Naudotojas " + username + " nerastas");
             }
 
+            // susirinkime visus tipus, kuriuos sis naudotojas gali tvirtinti
+            Set<DocumentTypeEntity> typesUserAllowedToApprove = new HashSet<DocumentTypeEntity>();
+
+            // surenkame sarasa dokumentu tipu, kuriuos siam naudotojui leidziama tvirtinti
+            for (UserGroupEntity userGroupEntity : user.getUserGroups()) {
+                typesUserAllowedToApprove.addAll(userGroupEntity.getAvailableDocumentTypesToApprove());
+            }
+
+            // jeigu tvirtinamo dokumento tipas yra leistinu tvirtinti sarase - tvirtima.
+            // reikalinga tokia stream-map-collect konstrukcija nes mes susirinkome "DocumentTypeEntity"
+            // o lyginam ir tikrinam ar ten yra Stringas, nes document.getType()
+            if (!typesUserAllowedToApprove.stream()
+                    .map(type -> type.getTitle()).collect(Collectors.toSet())
+                    .contains(document.getType())) {
+                throw new IllegalArgumentException("Jums negalima tvirtintio šio dokumento !");
+            }
+
+            switch (newState) {
+                case REJECTED:
+                    document.setDocumentState(newState);
+                    document.setRejectedDate(LocalDateTime.now());
+                    document.setApprover(user.getFirstname() + " " + user.getLastname());
+                    document.setRejectionReason(rejectedReason);
+                    documentRepository.save(document);
+                    break;
+                case APPROVED:
+                    document.setDocumentState(newState);
+                    document.setApprovalDate(LocalDateTime.now());
+                    document.setApprover(user.getFirstname() + " " + user.getLastname());
+                    documentRepository.save(document);
+                    break;
+                default:
+                    throw new IllegalArgumentException("WRONG TYPE");
+            }
+
+
         }
+
     }
+
 //
 //    @Transactional
 //    public void updateDocument(String documentIdentifier, String title, String description, String type) {
@@ -181,38 +172,6 @@ public class DocumentService{
 //            documentRepository.save(documentFromDatabase);
 //        }
 //    }
-
-
-    @Transactional
-    private void sendSubmittedDocumentToApprove(DocumentEntity documentEntity) {
-        List<UserGroupEntity> availableUserGroupsToGetSubmittedDoc = userGroupRepository.findAll();
-        for (UserGroupEntity userGroupEntity : availableUserGroupsToGetSubmittedDoc) {
-            for (DocumentTypeEntity documentTypeEntity : userGroupEntity.getAvailableDocumentTypesToApprove()) {
-                if (documentEntity.getType().equals(documentTypeEntity.getTitle())) {
-                    userGroupEntity.getDocumentsToApprove().add(documentEntity);
-                }
-            }
-        }
-    }
-
-
-
-
-/*dokumentas su jo pasirasusiu specialistu issaugotas, dabar patvirtinta dokumenta reiktu pasalinti is
-specialisto Dokumento saraso*/
-
-    @Transactional
-    private void removeDocFromApproverList(String documentIdentifier) {
-        List<UserGroupEntity> availableUserGroups = userGroupRepository.findAll();
-        for (UserGroupEntity userGroupEntity : availableUserGroups) {
-            Set<DocumentEntity> allDocsToApproveFromGroup = userGroupEntity.getDocumentsToApprove();
-            for (DocumentEntity documentEntity : allDocsToApproveFromGroup) {
-                if (documentEntity.getDocumentIdentifier().equals(documentIdentifier)) {
-                    allDocsToApproveFromGroup.remove(documentEntity);
-                }
-            }
-        }
-    }
 
     public DocumentRepository getDocumentRepository() {
         return documentRepository;

@@ -35,10 +35,6 @@ public class UserGroupEntity {
             inverseJoinColumns = @JoinColumn(name = "documenttype_id"))
     private Set<DocumentTypeEntity> availableDocumentTypesToApprove = new HashSet<>();
 
-    @OneToMany
-    @LazyCollection(LazyCollectionOption.TRUE)
-    private Set<DocumentEntity> documentsToApprove = new HashSet<>();
-
     @ManyToMany(mappedBy = "userGroups")
     @LazyCollection(LazyCollectionOption.FALSE)
     private Set<UserEntity> groupUsers = new HashSet<>();
@@ -83,15 +79,7 @@ public class UserGroupEntity {
         this.availableDocumentTypesToUpload = availableDocumentTypesToUpload;
     }
 
-    public Set<DocumentEntity> getDocumentsToApprove() {
-        return documentsToApprove;
-    }
-
-    public void setDocumentsToApprove(Set<DocumentEntity> documentsToApprove) {
-        this.documentsToApprove = documentsToApprove;
-    }
-
-    public void addAvailableDocumentTypeToUpload(DocumentTypeEntity documentTypeEntity) {
+     public void addAvailableDocumentTypeToUpload(DocumentTypeEntity documentTypeEntity) {
         this.availableDocumentTypesToUpload.add(documentTypeEntity);
     }
 
@@ -106,10 +94,6 @@ public class UserGroupEntity {
 
     public void removeAvailableDocumentTypeToApprove(DocumentTypeEntity documentTypeEntity) {
         this.availableDocumentTypesToApprove.remove(documentTypeEntity);
-    }
-
-    public void addDocumentsToApprove(DocumentEntity documentEntity) {
-        this.documentsToApprove.add(documentEntity);
     }
 
     public Set<UserEntity> getGroupUsers() {
