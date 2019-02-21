@@ -122,8 +122,25 @@ public class UserGroupService {
         if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.addAvailableDocumentTypeToApprove(documentTypeEntity);
         }
+    }
 
+    @Transactional
+    public void removeDocumentTypeToUpload(String userGroupTitle, String documentTypeTitle) {
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
+        DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
+        if (userGroupEntity != null && documentTypeEntity != null) {
+            userGroupEntity.removeAvailableDocumentTypeToUpload(documentTypeEntity);
 
+        }
+    }
+
+    @Transactional
+    public void removeDocumentTypeToApprove(String userGroupTitle, String documentTypeTitle) {
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
+        DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
+        if (userGroupEntity != null && documentTypeEntity != null) {
+            userGroupEntity.removeAvailableDocumentTypeToApprove(documentTypeEntity);
+        }
     }
 
     @Transactional

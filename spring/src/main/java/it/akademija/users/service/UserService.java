@@ -349,6 +349,26 @@ public class UserService implements UserDetailsService {
 
     }
 
+    @Transactional
+    public List<DocumentEntity> getAllUserDocuments(String userName) {
+
+
+        return documentRepository.findByAuthor(userName);
+    }
+////                .stream()
+////                .map(documentEntity -> SOfromEntity(documentEntity))
+////                .collect(Collectors.toSet());
+//
+////        List<DocumentServiceObject>  listOfDocumentServiceObject= documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc)
+////                .stream()
+////                .map(documentEntity -> SOfromEntity(documentEntity))
+////                .collect(Collectors.toList());
+////        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
+////                sortedByTitleDesc, documentRepository.findByAuthor(userIdentifier).size()) ;
+////        return null;
+//
+//    }
+
 
     public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {
         // pasitikrinam ar yra toks naudotojas

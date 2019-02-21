@@ -21,6 +21,7 @@ import DownloadZip from "./Components/FilesAndDocumens/DownloadZip"
 import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
 
 
+
 class App extends React.Component {
     state = {
         sideBarIsOpen: false,
@@ -174,8 +175,10 @@ class App extends React.Component {
                                                    user={this.state.user} {...props}/>}/>
                                              */}
                                             <Route component={NotFound}/>
-                                            <Route  exact path="/settings-test"
-                                                   render={(props) => <SettingsGroupsTypes user={this.state.user} {...props}/>}/>
+
+                                            {/*<Route  exact path="/settings-test"*/}
+                                                   {/*render={(props) => <SettingsGroupsTypes user={this.state.user} {...props}/>}/>*/}
+
 
                                             
                                         </Switch>
