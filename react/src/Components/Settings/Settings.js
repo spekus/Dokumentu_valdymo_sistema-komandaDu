@@ -7,7 +7,7 @@ class Settings extends Component {
         return (
             <React.Fragment>
                 {this.props.user.isAdmin ?
-                    <div>
+                    <div className="container">
                         <h3>Dokumentai</h3>
                         <SettingsDocumentTypes/>
                         <h3>Naudotojai</h3>

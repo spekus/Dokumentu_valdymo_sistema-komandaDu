@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import DocumentsListSimple from "./ElementsOfDashBoard/DocumentsList";
+import DocumentsList from "./ElementsOfDashBoard/DocumentsList";
 import axios from 'axios';
 import DashboardNavigation from './ElementsOfDashBoard/DashboardNavigation';
 import ReactPaginate from 'react-paginate';
@@ -11,7 +11,7 @@ class GenericDashBoard extends Component {
         
         // used for paging
         pageCount : 3,
-        perPage : 5,
+        perPage : 7,
         offset: 0 //identifies which page is used
     }
 
@@ -84,17 +84,18 @@ class GenericDashBoard extends Component {
         return (
             <React.Fragment>
                 {/* Dokumentu {this.state.nameOfWindow} */}
+                <div className="container">
 
                 <div className="row mt-2">
                     <DashboardNavigation/>
                     
-                    <div className='col-lg-12 mt-3'>
-                        <DocumentsListSimple list={this.state.userDocuments}/>
+                    <div className='col-lg-12 mt-3 shadow p-3 mb-5 bg-white rounded'>
+                        <DocumentsList list={this.state.userDocuments}/>
                     </div>
                 </div>
 
                 {/* pagination */}
-                <div className='container-fluid mt-5'>
+                <div className='container-fluid mt-2'>
                 <div className="row">
                 <div className="col-lg-12 my-auto center-block text-center">
                 <ReactPaginate 
@@ -114,7 +115,7 @@ class GenericDashBoard extends Component {
                 </div>
                 </div>
 
-
+                </div>
             </React.Fragment>
         );
     }

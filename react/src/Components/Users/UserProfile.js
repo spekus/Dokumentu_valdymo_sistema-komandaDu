@@ -1,4 +1,5 @@
 import React from 'react';
+import DownloadZip from "../FilesAndDocumens/DownloadZip"
 
 const UserProfile = (props) => {
     return (
@@ -12,15 +13,15 @@ const UserProfile = (props) => {
                             <td>{props.user.firstname}</td>
                         </tr>
                         <tr>
-                            <th>Pavardė</th>
+                            <th>Pavardė:</th>
                             <td>{props.user.lastname}</td>
                         </tr>
                         <tr>
-                            <th>Naudotojo vardas</th>
+                            <th>Naudotojo vardas:</th>
                             <td>{props.user.username}</td>
                         </tr>
                         <tr>
-                            <th>Mano grupės</th>
+                            <th>Mano grupės:</th>
                             <td>
                                 <ul>
                                     {props.user.userGroups.map((group,index) =>
@@ -29,8 +30,17 @@ const UserProfile = (props) => {
                                 </ul>
                             </td>
                         </tr>
+                        <tr>
+                            <th>Duomenys apie mane:</th>
+                            <td>
+                            
+                                <DownloadZip/>
+                            
+                            </td>
+                        </tr>
                         </tbody>
                     </table>
+                    
             </div>
         </div>
     );

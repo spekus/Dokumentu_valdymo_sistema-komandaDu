@@ -1,24 +1,23 @@
 package it.akademija.files.service;
 
 
+
 import it.akademija.documents.service.DocumentService;
-import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.files.repository.FileEntity;
 import it.akademija.files.repository.FileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.tools.FileObject;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+import java.io.*;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class FileService {
@@ -29,9 +28,9 @@ public class FileService {
     DocumentService documentService;
 
     @Transactional
-    public String addFileToDataBase(MultipartFile multipartFile) throws Exception {
+    public String addFileToDataBase(MultipartFile multipartFile, String userName) throws Exception {
 
-        File uploadingLocation = uploadFileToLocalServer(multipartFile); //uploads file to the server
+        File uploadingLocation = uploadFileToLocalServer(multipartFile, userName); //uploads file to the server
 //        System.out.println("FILE LOCATION - " + uploadingLocation.getAbsolutePath());
         //creating and saving data base entity
         FileEntity fileEntity = new FileEntity(multipartFile.getOriginalFilename());
@@ -43,34 +42,29 @@ public class FileService {
         return fileEntity.getIdentifier();
 
     }
+
     @Transactional
-    public File uploadFileToLocalServer(MultipartFile file) throws Exception{
-
+    public File uploadFileToLocalServer(MultipartFile file, String name) throws Exception {
         try {
-//            File fileLocation = new File(File.separator + "home"
-//                    + File.separator + "augustas" + File.separator + "tmpDocs" + File.separator
-//                    + file.getOriginalFilename());
-//
-
-//                File fileLocation = new File( ".." + File.separator + ".." + File.separator +".." + File.separator
-//                        + ".." + File.separator +".." + File.separator  + "tmpDocs" + File.separator  +  file.getOriginalFilename());
-
-
-
-//              for this to work create folder named - tmpDocs in relevant location
-//              than in console run sudo chmod -R 777 tmpDocs , so that folder is accessible
+            // this is for later naming each saved file, so that files with identical name would not be named identically
+            String time = LocalDateTime.now()
+                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
 
             String currentUsersHomeDir = System.getProperty("user.home");
-            File fileLocation = new File(currentUsersHomeDir + File.separator  + "tmpDocs" + File.separator  +  file.getOriginalFilename());
-            File fileLocationDirectory = new File(currentUsersHomeDir + File.separator  + "tmpDocs");
+            File fileLocation = new File(currentUsersHomeDir + File.separator + "tmpDocs"
+                    + File.separator + name + File.separator + file.getOriginalFilename() + time);
+            File generalLocation = new File(currentUsersHomeDir + File.separator + "tmpDocs");
+            File fileLocationDirectory = new File(currentUsersHomeDir + File.separator + "tmpDocs"
+                    + File.separator + name);
 
             //if directory not created it creates one. and it SHOULD make directory writable for all users meaning to more need for chmod
-            if(!fileLocationDirectory.isDirectory()){
+            if (!fileLocationDirectory.isDirectory()) {
+                System.out.println(generalLocation.mkdir());
+                System.out.println(generalLocation.setWritable(true));
                 System.out.println(fileLocationDirectory.mkdir());
                 System.out.println(fileLocationDirectory.setWritable(true));
             }
             System.out.println("File location is    -  " + fileLocation.getAbsolutePath());
-
 
 
             file.transferTo(fileLocation);
@@ -86,10 +80,10 @@ public class FileService {
     //Finds file in database and converts it to object
     public FileServiceObject findFile(String identifier) {
 
-        if (identifier.isEmpty() || identifier==null || fileRepository.getFileByIdentifier(identifier) == null) {
+        if (identifier.isEmpty() || identifier == null || fileRepository.getFileByIdentifier(identifier) == null) {
             throw new IllegalArgumentException("ERROR no valid File identifier provided!!");
         }
-        if (identifier!=null && !identifier.isEmpty()) {
+        if (identifier != null && !identifier.isEmpty()) {
             FileEntity fileEntity = fileRepository.getFileByIdentifier(identifier);
             FileServiceObject fileServiceObject = new FileServiceObject();
             fileServiceObject.setContentType(fileEntity.getContentType());
@@ -98,8 +92,7 @@ public class FileService {
             fileServiceObject.setSize(fileEntity.getSize());
             fileServiceObject.setIdentifier(fileEntity.getIdentifier());
             return fileServiceObject;
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("ERROR no valid File identifier provided");
         }
     }
@@ -107,11 +100,10 @@ public class FileService {
     @Transactional
     //Finds file in database and converts it to object
     public FileEntity findFileEntity(String identifier) {
-        if (identifier!=null && !identifier.isEmpty()) {
+        if (identifier != null && !identifier.isEmpty()) {
             FileEntity fileEntity = fileRepository.getFileByIdentifier(identifier);
             return fileEntity;
-        }
-        else{
+        } else {
             throw new IllegalArgumentException("ERROR no valid File identifier provided");
         }
     }
@@ -129,37 +121,7 @@ public class FileService {
     }
 
 
-//    @Transactional
-//    public FileObject downloadFileFromLocalServer(String identifier) {
-//        FileServiceObject fileObject = findFile(identifier);
-//        return fileObject;
-//        File file = new File(
-////                ".." + File.separator + ".." + File.separator +".." + File.separator
-////                + ".." + File.separator +".." + File.separator  +
-//                fileObject.getFileLocation());
-//        System.out.println("FILE LOCATION  " + file.getAbsolutePath());
-//        InputStreamResource resource = null;
-//        try {
-//            resource = new InputStreamResource(new FileInputStream(file));
-//        } catch (FileNotFoundException e) {
-//            e.printStackTrace();
-//        }
-//
-//        //        HttpHeaders header = new HttpHeaders();
-////
-////        header.setContentType(MediaType.valueOf(fileEntity.getContentType()));
-////        header.setContentLength(fileEntity.getData().length);
-////        header.set("Content-Disposition", "attachment; filename=" + fileEntity.getFileName());
-//        System.out.println("File name = " + fileObject.getFileName());
-//        System.out.println("File location = " + fileObject.getFileLocation());
-//        System.out.println("File type = " + fileObject.getContentType());
-//        System.out.println("File size = " + fileObject.getSize());
-//        return ResponseEntity.ok()
-//                .header(HttpHeaders.CONTENT_DISPOSITION,
-//                        "attachment;filename=" + fileObject.getFileName())
-//                .contentType(MediaType.valueOf(fileObject.getContentType())).contentLength(fileObject.getSize())
-//                .body(resource);
-//    }
+
 }
 
 

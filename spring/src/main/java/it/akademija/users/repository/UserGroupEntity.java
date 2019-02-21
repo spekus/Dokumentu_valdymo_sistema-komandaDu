@@ -99,6 +99,15 @@ public class UserGroupEntity {
         this.availableDocumentTypesToApprove.add(documentTypeEntity);
     }
 
+    public void removeAvailableDocumentTypeToUpload(DocumentTypeEntity documentTypeEntity) {
+        this.availableDocumentTypesToUpload.remove(documentTypeEntity);
+
+    }
+
+    public void removeAvailableDocumentTypeToApprove(DocumentTypeEntity documentTypeEntity) {
+        this.availableDocumentTypesToApprove.remove(documentTypeEntity);
+    }
+
     public void addDocumentsToApprove(DocumentEntity documentEntity) {
         this.documentsToApprove.add(documentEntity);
     }

@@ -20,6 +20,7 @@ class UserAdminisrationList extends Component {
     }
 
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
+
     //handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
 
     componentDidMount() {
@@ -57,9 +58,7 @@ class UserAdminisrationList extends Component {
 
     addUserToGroup = (username, groupTitle) => {
         axios.put('/api/usergroups/' + groupTitle + '/add-person', null, {
-            params: {
-                username: username
-            }
+            params: {username: username}
         })
             .then(response => {
                 this.loadUserToEdit(this.state.userBeingEdited.username);
@@ -161,7 +160,7 @@ class UserAdminisrationList extends Component {
                         </thead>
                         <tbody>
                         {this.state.userlist.map(user => (
-                            <tr key={user.userIdentifier}>
+                            <tr key={user.username}>
                                 <td>{user.username}</td>
                                 <td>{user.firstname}</td>
                                 <td>{user.lastname}</td>
