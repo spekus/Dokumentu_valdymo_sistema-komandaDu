@@ -168,19 +168,11 @@ export default class FileUploader extends Component {
         this.setState({ files: [...this.state.files, event.target.files[0]] })    
     }
 
-    removeFile = (file) => {
-        this.setState(prevState =>{
-            data:prevState.data.filter(i=>i!==file)
-            
-        });
+    removeFile = (index) => {
+        var arrayCopy = [...this.state.files];
+        arrayCopy.splice(index,1);
+        this.setState({files: arrayCopy});
     }
-
-    // removeItem(item) {
-    //     this.setState(prevState => {
-    //       data: prevState.data.filter(i => i !== item)
-    //     });
-    //   }
-
 
     render() {
         return (
@@ -229,11 +221,19 @@ export default class FileUploader extends Component {
 
                                     <div className="form-group col-md-9 mt-4">
                                         <input onChange={this.onFileChange} multiple type="file"></input><br/>
-        
-                                            {this.state.files.map(file => (
-                                                <h4>{file.name}<span><i onClick={(file) => this.removeFile} className="fas fa-minus-circle" style={{fontSize: '0.5em'}}/></span></h4>
+                                        <h4 style={{marginTop:'20px'}}> {this.state.files.length>0 ? 'Pridėti failai:' : ''}  </h4>
+                                            <ul>
+                                            {
+                                                this.state.files.map((file,index) => (
+                                                <li style={{fontSize:'1.5em'}}>
+                                                {file.name}
+                                                <span>
+                                                    <i onClick={()=> this.removeFile(index)} className="fas fa-minus-circle" style={{fontSize: '1.0em'}}/>
+                                                    </span>
+                                                </li>
                                             ))}
-                                       
+
+                                            </ul>
                                         <h4 style={{color: 'red'}}>{this.state.error}</h4>
                                         <h4 style={{color: 'green'}}>{this.state.msg}</h4>
 
