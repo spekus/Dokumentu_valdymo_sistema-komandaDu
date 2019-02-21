@@ -11,7 +11,7 @@ class GenericDashBoard extends Component {
         
         // used for paging
         pageCount : 3,
-        perPage : 5,
+        perPage : 7,
         offset: 0 //identifies which page is used
     }
 
