@@ -4,6 +4,7 @@ import it.akademija.auth.AppRoleEnum;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.documents.service.DocumentTypeService;
+import it.akademija.users.controller.CreateUserGroupCommand;
 import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
@@ -99,7 +100,7 @@ public class DemoData implements ApplicationRunner {
         UserGroupEntity uge = userGroupRepository.findGroupByTitle(title);
 
         if (uge == null) {
-            userGroupService.addNewUserGroup(new UserGroupServiceObject(title,role));
+            userGroupService.addNewUserGroup(new CreateUserGroupCommand(title,role));
         }
     }
     private void createDocumentTypeIfNotExists(String title) {

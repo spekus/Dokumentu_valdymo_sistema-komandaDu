@@ -44,8 +44,8 @@ public class UserGroupController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ApiOperation(value = "Create usergroup", notes = "")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void addNewUserGroup(@RequestBody UserGroupServiceObject userGroupServiceObject) {
-        userGroupService.addNewUserGroup(userGroupServiceObject);
+    public void addNewUserGroup(@RequestBody CreateUserGroupCommand createUserGroupCommand) {
+        userGroupService.addNewUserGroup(createUserGroupCommand);
     }
 
     @RequestMapping(value = "/{userGroupTitle}", method = RequestMethod.POST)

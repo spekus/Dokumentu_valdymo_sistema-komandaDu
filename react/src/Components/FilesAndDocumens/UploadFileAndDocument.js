@@ -14,7 +14,8 @@ export default class FileUploader extends Component {
         type: '',
         title: '',
         description: '',
-        availableTypes: []
+        availableTypes: [],
+
     }
 
 
