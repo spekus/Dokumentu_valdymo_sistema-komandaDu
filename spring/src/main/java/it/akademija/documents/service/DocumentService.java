@@ -68,7 +68,7 @@ public class DocumentService {
             throw new SecurityException("Naudotojas " + username + " nerastas");
         }
 
-        // surandame tipa, kuri prasoma sukurti. Patikrinam kad egzistuoja toks.
+        // surandame tipa, kuri prasoma sukurti. Patikrinam, kad egzistuoja toks.
         DocumentTypeEntity typeEntity = documentTypeRepository.findDocumentTypeByTitle(type);
         if (typeEntity == null) {
             throw new IllegalArgumentException("Tipas '" + type +"' nerastas");
@@ -77,14 +77,14 @@ public class DocumentService {
         // susirinkime visus tipus, kuriuos sis naudotojas gali ikelti
         Set<DocumentTypeEntity> typesUserAllowedToUpload = new HashSet<DocumentTypeEntity>();
 
-        // surenkame sarasa dokumentu tipu, kuriuos siam naudotojui leidziama tvirtinti
+        // surenkame sarasa dokumentu tipu, kuriuos siam naudotojui leidziama kurti
         for (UserGroupEntity userGroupEntity : user.getUserGroups()) {
             typesUserAllowedToUpload.addAll(userGroupEntity.getAvailableDocumentTypesToUpload());
         }
 
-        // patikriname ar sis tipas yra tarp leidziamu kurti
+        // patikriname, ar sis tipas yra tarp leidziamu kurti
         if (!typesUserAllowedToUpload.contains(typeEntity)) {
-            throw new SecurityException("Jums negalima kurti '" + type + "' tipo dokumento !");
+            throw new SecurityException("Jums negalima kurti '" + type + "' tipo dokumento");
         }
 
         DocumentEntity newDocument = new DocumentEntity(title, description, type);
@@ -105,7 +105,7 @@ public class DocumentService {
 
         DocumentTypeEntity type = documentTypeRepository.findDocumentTypeByTitle(document.getType());
         if (type == null) {
-            throw new IllegalArgumentException("Documentas su id '" + documentIdentifier + "' turi bloga tipa");
+            throw new IllegalArgumentException("Documentas su id '" + documentIdentifier + "' turi klaidingą tipą");
         }
 
         List<UserGroupEntity> allUserGroups = userGroupRepository.findAll();
@@ -129,11 +129,11 @@ public class DocumentService {
                 }
 
             if (!groupWhichCanApproveDocumentTypeFound) {
-                throw new NoApproverAvailableException("Nera grupės, kuri galėtu patvirtinti šį dokumentą");
+                throw new NoApproverAvailableException("Nėra grupės, kuri galėtų tvirtinti šį dokumentą");
             }
 
             if (!groupWhichCanApproveDocumentTypeAndHasUsersFound) {
-                throw new NoApproverAvailableException("Yra grupė(-s), bet nėra naudotojų, kurie galėtu patvirtinti šį dokumentą");
+                throw new NoApproverAvailableException("Yra grupė(-s), bet nėra naudotojų, kurie galėtų tvirtinti šį dokumentą");
             }
 
             document.setDocumentState(DocumentState.SUBMITTED);
@@ -152,7 +152,7 @@ public class DocumentService {
             //surandamas dokumentas
             DocumentEntity document = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             if (document == null) {
-                throw new IllegalArgumentException("Dokumentas su ID '" + documentIdentifier + "' nerastas");
+                throw new IllegalArgumentException("Dokumentas, kurio ID '" + documentIdentifier + "', nerastas");
             }
 
             //surandame prisiloginusi useri
@@ -161,7 +161,7 @@ public class DocumentService {
                 throw new SecurityException("Naudotojas " + username + " nerastas");
             }
 
-            // susirinkime visus tipus, kuriuos sis naudotojas gali tvirtinti
+            // susirinkime visus tipus, kuriuos sis naudotojas gali tvirtinti:
             Set<DocumentTypeEntity> typesUserAllowedToApprove = new HashSet<DocumentTypeEntity>();
 
             // surenkame sarasa dokumentu tipu, kuriuos siam naudotojui leidziama tvirtinti
@@ -169,17 +169,15 @@ public class DocumentService {
                 typesUserAllowedToApprove.addAll(userGroupEntity.getAvailableDocumentTypesToApprove());
             }
 
-            // gaunam dokumento tipo kaip objekta
+            // gaunam dokumento tipa kaip objekta
             DocumentTypeEntity type = documentTypeRepository.findDocumentTypeByTitle(document.getType());
             if (type == null) {
-                throw new IllegalArgumentException("Documentas su id '" + documentIdentifier + "' turi bloga tipa");
+                throw new IllegalArgumentException("Documentas, kurio id '" + documentIdentifier + "', turi klaidingą tipą");
             }
 
-            // jeigu tvirtinamo dokumento tipas yra leistinu tvirtinti sarase - tvirtima.
-            // reikalinga tokia stream-map-collect konstrukcija nes mes susirinkome "DocumentTypeEntity"
-            // o lyginam ir tikrinam ar ten yra Stringas, nes document.getType()
+            // jeigu tvirtinamo dokumento tipas yra leistinu tvirtinti sarase - tvirtinama.
             if (!typesUserAllowedToApprove.contains(type)) {
-                throw new IllegalArgumentException("Jums negalima tvirtintio šio dokumento !");
+                throw new IllegalArgumentException("Jums negalima tvirtinti šio dokumento");
             }
 
             switch (newState) {
