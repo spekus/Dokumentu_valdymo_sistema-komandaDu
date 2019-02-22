@@ -55,7 +55,7 @@ class SettingsGroupsTypes extends Component {
     }
 
     addTypeToGroupForApprove = (group) => {
-     console.log("Group for editing - " + group.title);
+        console.log("Group for editing - " + group.title);
         let doctype = window.prompt("Iveskite dokumento tipą, kurį norite pridėti grupei " + group.title);
         axios.put('/api/usergroups/' + group.title + '/add-document-type-to-approve', null, {params: {documentTypeTitle: doctype}})
             .then(response => {
@@ -68,9 +68,22 @@ class SettingsGroupsTypes extends Component {
     }
 
 
-    removeTypefromGroup = (group, type) => {
-        axios.put("/api/usergroups/" + group.title + "/remove-person", null, {params: {type}})
+    removeTypeForUploadfromGroup = (group, type) => {
+        axios.put("/api/usergroups/" + group.title + "/remove-document-type-to-upload", null, {params: {documentTypeTitle: type.title}})
             .then(response => {
+                this.getAllGroupsFromServer();
+                console.log(group.title + " group removed")
+            })
+            .catch(error => {
+                console.log("Error from removeTypefromGroup" + error.message)
+            })
+    }
+
+
+    removeTypeForApprovefromGroup = (group, type) => {
+        axios.put("/api/usergroups/" + group.title + "/remove-document-type-to-approve", null, {params: {documentTypeTitle: type.title}})
+            .then(response => {
+                this.getAllGroupsFromServer();
                 console.log(group.title + " group removed")
             })
             .catch(error => {
@@ -94,19 +107,27 @@ class SettingsGroupsTypes extends Component {
                         <tbody>
                         {this.state.allgroups.map(group => (
                                 <tr>
-                                    <td>
+                                    <th>
                                         {group.title}
-                                    </td>
+                                    </th>
 
                                     <td>
+
+
+                                            <button type="submit" className="btn btn-link btn-sm btn-block"
+                                                    onClick={() => this.addTypeToGroupForUpload(group)}
+                                            >Pridėti dokumento tipą kūrimui
+                                            </button>
+
                                         {group.typesToUpload.map(type => (
                                             <div className="row">
                                                 <div className="col-md-10">
                                                     <li>{type.title}</li>
                                                 </div>
                                                 <div className="col-md-2">
-                                                    <button className="text-danger"
-                                                            onClick={() => this.removeTypefromGroup(type.title)}>x
+                                                    <button className="btn btn-link text-danger"
+                                                            onClick={() => this.removeTypeForUploadfromGroup(group, type)}>
+                                                        <i className="fa fa-ban" aria-hidden="true"></i>
                                                     </button>
                                                 </div>
 
@@ -141,29 +162,28 @@ class SettingsGroupsTypes extends Component {
                                         {/*</form>*/}
 
                                         {/*</td>*/}
-
-                                        <button type="submit" className="btn btn-outline-primary btn-sm"
-                                                onClick={() => this.addTypeToGroupForUpload(group)}
-                                        >Pridėti dokumento tipą kūrimui
-                                        </button>
-                                    </td>
+                                   </td>
                                     <td>
+
+                                            <button type="submit" className="btn btn-link btn-sm btn-block"
+                                                    onClick={() => this.addTypeToGroupForApprove(group)}
+                                            >Pridėti dokumento tipą patvirtinimui
+                                            </button>
+
                                         {group.typesToApprove.map(type => (
                                             <div className="row">
-                                                <div className="col-md-10">
+                                                <div className="col-md-9">
                                                     <li>{type.title}</li>
                                                 </div>
-                                                <div className="col-md-2">
-                                                    <button className="text-danger"
-                                                            onClick={() => this.removeTypefromGroup(group, type)}>x
+                                                <div className="col-md-3">
+                                                    <button className="btn btn-link text-danger"
+                                                            onClick={() => this.removeTypeForApprovefromGroup(group, type)}>
+                                                        <i className="fa fa-ban" aria-hidden="true"></i>
                                                     </button>
                                                 </div>
                                             </div>
                                         ))}
-                                        <button type="submit" className="btn btn-outline-primary btn-sm"
-                                                onClick={() => this.addTypeToGroupForApprove(group)}
-                                        >Pridėti dokumento tipą patvirtinimui
-                                        </button>
+
 
                                     </td>
 
@@ -174,6 +194,8 @@ class SettingsGroupsTypes extends Component {
                         )}
                         </tbody>
                     </table>
+                    <i className="fa fa-trash-o" aria-hidden="true"></i>
+
                 </div>
             </div>
         );
