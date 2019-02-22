@@ -7,6 +7,7 @@ import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentTypeService;
 
+import it.akademija.exceptions.NoApproverAvailableException;
 import it.akademija.users.controller.CreateUserGroupCommand;
 
 import it.akademija.files.service.FileService;
@@ -69,6 +70,7 @@ public class DemoData implements ApplicationRunner {
         createDocumentTypeIfNotExists("Paraiška");
         createDocumentTypeIfNotExists("Darbo sutartis");
         createDocumentTypeIfNotExists("Registruotas laiškas");
+        createDocumentTypeIfNotExists("Receptas");
 
         createUserIfNotExists("Administrator", "IT", "admin", "admin");
         createUserIfNotExists("Augustas", "Dirzys", "id123", "id123");
@@ -80,6 +82,7 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška");
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Darbo sutartis");
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Registruotas laiškas");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Receptas");
 
 
         userGroupService.addGroupToUser("Administratoriai","admin");
@@ -139,7 +142,7 @@ public class DemoData implements ApplicationRunner {
 
     }
 
-    private void addDummydata() {
+    private void addDummydata() throws NoApproverAvailableException {
         //patikrina ar jau buvo prideta data
         if(userRepository.findUserByUsername("testuser1") ==  null) {
 

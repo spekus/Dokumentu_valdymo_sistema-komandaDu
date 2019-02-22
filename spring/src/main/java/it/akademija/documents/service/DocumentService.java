@@ -6,6 +6,7 @@ import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.repository.DocumentTypeRepository;
+import it.akademija.exceptions.NoApproverAvailableException;
 import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileServiceObject;
 import it.akademija.users.repository.UserEntity;
@@ -21,6 +22,7 @@ import java.time.LocalDateTime;
 
 import java.util.HashSet;
 
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -59,12 +61,19 @@ public class DocumentService {
 
     @Transactional
     public DocumentEntity createDocument(String username, String title, String type, String description)
-            throws IllegalArgumentException, SecurityException{
+            throws IllegalArgumentException, SecurityException {
         //Pasiimam useri is DB
         UserEntity user = userRepository.findUserByUsername(username);
         if (user == null) {
             throw new SecurityException("Naudotojas " + username + " nerastas");
         }
+
+        // surandame tipa, kuri prasoma sukurti. Patikrinam kad egzistuoja toks.
+        DocumentTypeEntity typeEntity = documentTypeRepository.findDocumentTypeByTitle(type);
+        if (typeEntity == null) {
+            throw new IllegalArgumentException("Tipas '" + type +"' nerastas");
+        }
+
         // susirinkime visus tipus, kuriuos sis naudotojas gali ikelti
         Set<DocumentTypeEntity> typesUserAllowedToUpload = new HashSet<DocumentTypeEntity>();
 
@@ -74,12 +83,9 @@ public class DocumentService {
         }
 
         // patikriname ar sis tipas yra tarp leidziamu kurti
-        if (!typesUserAllowedToUpload.stream()
-                .map(t -> t.getTitle()).collect(Collectors.toSet())
-                .contains(type)) {
-            throw new SecurityException("Jums negalima kurtio '" + type +  "' tipo dokumento !");
+        if (!typesUserAllowedToUpload.contains(typeEntity)) {
+            throw new SecurityException("Jums negalima kurti '" + type + "' tipo dokumento !");
         }
-
 
         DocumentEntity newDocument = new DocumentEntity(title, description, type);
         newDocument.setAuthor(user.getUsername());
@@ -89,17 +95,52 @@ public class DocumentService {
     }
 
     @Transactional
-    public void submitDocument(String documentIdentifier) throws IllegalArgumentException {
+    public void submitDocument(String documentIdentifier)
+            throws IllegalArgumentException, NoApproverAvailableException {
         DocumentEntity document = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
 
         if (document == null) {
             throw new IllegalArgumentException("Documentas su id '" + documentIdentifier + "' nerastas");
         }
 
-        document.setDocumentState(DocumentState.SUBMITTED);
-        document.setPostedDate(LocalDateTime.now());
-        documentRepository.save(document);
+        DocumentTypeEntity type = documentTypeRepository.findDocumentTypeByTitle(document.getType());
+        if (type == null) {
+            throw new IllegalArgumentException("Documentas su id '" + documentIdentifier + "' turi bloga tipa");
+        }
 
+        List<UserGroupEntity> allUserGroups = userGroupRepository.findAll();
+
+        boolean groupWhichCanApproveDocumentTypeFound = false;
+        boolean groupWhichCanApproveDocumentTypeAndHasUsersFound = false;
+
+        //Check if to be submitted document type is already available to approve by some group. Otherwise, throw exception.
+        for (UserGroupEntity group : allUserGroups) {
+            if (!groupWhichCanApproveDocumentTypeAndHasUsersFound) // patikriname ar jau nebuvome surade reikiamos grupes
+                if (group.getAvailableDocumentTypesToApprove().contains(type)) { // grupe turi tureti teise tvirtinti toki tipa
+                    groupWhichCanApproveDocumentTypeFound = true;
+
+                    if (group.getGroupUsers().size() > 0) // na ir butu gerai kad joje butu naudotoju
+                    {
+                        // radome grupe, kuri gali tvirtinti sio tipo dokumentus
+                        // ir kurioje yra naudotoju
+                        groupWhichCanApproveDocumentTypeAndHasUsersFound = true;
+
+                    }
+                }
+
+            if (!groupWhichCanApproveDocumentTypeFound) {
+                throw new NoApproverAvailableException("Nera grupės, kuri galėtu patvirtinti šį dokumentą");
+            }
+
+            if (!groupWhichCanApproveDocumentTypeAndHasUsersFound) {
+                throw new NoApproverAvailableException("Yra grupė(-s), bet nėra naudotojų, kurie galėtu patvirtinti šį dokumentą");
+            }
+
+            document.setDocumentState(DocumentState.SUBMITTED);
+            document.setPostedDate(LocalDateTime.now());
+            documentRepository.save(document);
+
+        }
     }
 
     @Transactional
@@ -128,12 +169,16 @@ public class DocumentService {
                 typesUserAllowedToApprove.addAll(userGroupEntity.getAvailableDocumentTypesToApprove());
             }
 
+            // gaunam dokumento tipo kaip objekta
+            DocumentTypeEntity type = documentTypeRepository.findDocumentTypeByTitle(document.getType());
+            if (type == null) {
+                throw new IllegalArgumentException("Documentas su id '" + documentIdentifier + "' turi bloga tipa");
+            }
+
             // jeigu tvirtinamo dokumento tipas yra leistinu tvirtinti sarase - tvirtima.
             // reikalinga tokia stream-map-collect konstrukcija nes mes susirinkome "DocumentTypeEntity"
             // o lyginam ir tikrinam ar ten yra Stringas, nes document.getType()
-            if (!typesUserAllowedToApprove.stream()
-                    .map(type -> type.getTitle()).collect(Collectors.toSet())
-                    .contains(document.getType())) {
+            if (!typesUserAllowedToApprove.contains(type)) {
                 throw new IllegalArgumentException("Jums negalima tvirtintio šio dokumento !");
             }
 

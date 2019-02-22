@@ -135,7 +135,12 @@ class AugisDokumentas extends Component {
                 this.getDocumentInformation();
             })
             .catch(error => {
-                window.alert("Klaida is submitDocument - " + error.message);
+                if (error.response.data.message) {
+                    window.alert("Klaida: " + error.response.data.message);
+                    console.log(error.response);
+                }else{
+                    window.alert("Klaida is submitDocument - " + error.message);
+                }
             })
     }
 

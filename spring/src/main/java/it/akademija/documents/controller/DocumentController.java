@@ -10,6 +10,7 @@ import it.akademija.documents.repository.DocumentEntity;
 
 import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
+import it.akademija.exceptions.NoApproverAvailableException;
 import it.akademija.files.ResponseTransfer;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -92,6 +93,8 @@ public class DocumentController {
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 
+        } catch (NoApproverAvailableException e) {
+            throw new ResponseStatusException(HttpStatus.FAILED_DEPENDENCY, e.getMessage());
         }
 
     }
