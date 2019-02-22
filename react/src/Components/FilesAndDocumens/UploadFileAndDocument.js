@@ -226,9 +226,10 @@ export default class FileUploader extends Component {
                                             {
                                                 this.state.files.map((file,index) => (
                                                 <li style={{fontSize:'1.5em'}}>
-                                                {file.name}
+                                                {file===undefined?'':file.name}
                                                 <span>
-                                                    <i onClick={()=> this.removeFile(index)} className="fas fa-minus-circle" style={{fontSize: '1.0em'}}/>
+                                                    <i onClick={()=> this.removeFile(index)} className="fas fa-minus-circle"
+                                                    style={{fontSize: '1.0em', color:'red', marginLeft:'8px'}}/>
                                                     </span>
                                                 </li>
                                             ))}
