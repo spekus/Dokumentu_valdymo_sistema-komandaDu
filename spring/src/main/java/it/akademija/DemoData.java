@@ -5,16 +5,18 @@ import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.documents.service.DocumentService;
-import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.documents.service.DocumentTypeService;
+
 import it.akademija.exceptions.NoApproverAvailableException;
+import it.akademija.users.controller.CreateUserGroupCommand;
+
 import it.akademija.files.service.FileService;
+
 import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
 import it.akademija.users.repository.UserRepository;
 import it.akademija.users.service.UserGroupService;
-import it.akademija.users.service.UserGroupServiceObject;
 import it.akademija.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -68,6 +70,7 @@ public class DemoData implements ApplicationRunner {
         createDocumentTypeIfNotExists("Paraiška");
         createDocumentTypeIfNotExists("Darbo sutartis");
         createDocumentTypeIfNotExists("Registruotas laiškas");
+        createDocumentTypeIfNotExists("Receptas");
 
         createUserIfNotExists("Administrator", "IT", "admin", "admin");
         createUserIfNotExists("Augustas", "Dirzys", "id123", "id123");
@@ -79,6 +82,7 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška");
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Darbo sutartis");
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Registruotas laiškas");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Receptas");
 
 
         userGroupService.addGroupToUser("Administratoriai","admin");
@@ -100,7 +104,7 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas");
 
 
-    //addDummydata();
+//        addDummydata();
     }
 
     private void createUserIfNotExists(String fn, String ln, String un, String pswd) {
@@ -115,7 +119,7 @@ public class DemoData implements ApplicationRunner {
         UserGroupEntity uge = userGroupRepository.findGroupByTitle(title);
 
         if (uge == null) {
-            userGroupService.addNewUserGroup(new UserGroupServiceObject(title,role));
+            userGroupService.addNewUserGroup(new CreateUserGroupCommand(title,role));
         }
     }
     private void createDocumentTypeIfNotExists(String title) {
@@ -142,14 +146,14 @@ public class DemoData implements ApplicationRunner {
         //patikrina ar jau buvo prideta data
         if(userRepository.findUserByUsername("testuser1") ==  null) {
 
-            // jei dar neiko nebuvo prideta  x skaiciu useriu
-            for (int userNumber = 0; userNumber < 3; userNumber++) {
+            // jei dar neiko nebuvo prideta prideda 10 useriu
+            for (int userNumber = 0; userNumber < 5; userNumber++) {
                 createUserIfNotExists("name" + userNumber, "surename" + userNumber,
                         "testuser" + userNumber, "testuser" + userNumber);
                 userGroupService.addGroupToUser("Vadybininkai", "testuser" + userNumber);
 
                 //kiekvienam useriui pridada po tusciu dokumentu
-                for (int documentNumber = 0; documentNumber < 10; documentNumber++) {
+                for (int documentNumber = 0; documentNumber < 25; documentNumber++) {
                     DocumentEntity documentEntity =addDocumentToUser("testuser" + userNumber, documentNumber);
                     //submits part of documents
                     if(documentNumber>5 && documentNumber <20){

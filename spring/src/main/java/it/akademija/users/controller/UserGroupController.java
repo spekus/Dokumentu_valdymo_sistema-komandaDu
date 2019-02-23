@@ -44,8 +44,8 @@ public class UserGroupController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ApiOperation(value = "Create usergroup", notes = "")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void addNewUserGroup(@RequestBody UserGroupServiceObject userGroupServiceObject) {
-        userGroupService.addNewUserGroup(userGroupServiceObject);
+    public void addNewUserGroup(@RequestBody CreateUserGroupCommand createUserGroupCommand) {
+        userGroupService.addNewUserGroup(createUserGroupCommand);
     }
 
     @RequestMapping(value = "/{userGroupTitle}", method = RequestMethod.POST)
@@ -69,7 +69,7 @@ public class UserGroupController {
     @ApiOperation(value = "Remove group from user", notes = "")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void removeGroupFromUser(@PathVariable("userGroupTitle") @NotNull @Length(min = 1) String userGroupTitle,
-                               @RequestParam("username") @NotNull @Length(min = 1) String username) {
+                                    @RequestParam("username") @NotNull @Length(min = 1) String username) {
 
         userGroupService.removeGroupFromUser(userGroupTitle,username);
     }
@@ -97,6 +97,26 @@ public class UserGroupController {
                                          @RequestParam("documentTypeTitle") @NotNull @Length(min=1) String documentTypeTitle) {
         userGroupService.addDocumentTypeToApprove(userGroupTitle, documentTypeTitle);
     }
+
+    @RequestMapping(value = "/{userGroupTitle}/remove-document-type-to-upload", method = RequestMethod.PUT)
+    @ApiOperation(value = "Removes document type allowed to create documents for a group", notes = "")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void removeDocumentTypeToUpload(@PathVariable("userGroupTitle") @NotNull @Length(min=1) String userGroupTitle,
+                                           @RequestParam("documentTypeTitle") @NotNull @Length(min=1) String documentTypeTitle) {
+        userGroupService.removeDocumentTypeToUpload(userGroupTitle, documentTypeTitle);
+    }
+
+    @RequestMapping(value = "/{userGroupTitle}/remove-document-type-to-approve", method = RequestMethod.PUT)
+    @ApiOperation(value = "Removes document type allowed to approve documents for a group", notes = "")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    public void removeDocumentTypeToApprove(@PathVariable("userGroupTitle") @NotNull @Length(min=1) String userGroupTitle,
+                                            @RequestParam("documentTypeTitle") @NotNull @Length(min=1) String documentTypeTitle) {
+        userGroupService.removeDocumentTypeToApprove(userGroupTitle, documentTypeTitle);
+    }
+
+
+
+
 
     @RequestMapping(value = "/{userGroupTitle}", method = RequestMethod.DELETE)
     @ApiOperation(value = "Delete usergroup", notes = "")

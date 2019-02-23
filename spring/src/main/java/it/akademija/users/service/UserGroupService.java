@@ -6,6 +6,8 @@ import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.documents.service.DocumentServiceObject;
+import it.akademija.documents.service.DocumentTypeServiceObject;
+import it.akademija.users.controller.CreateUserGroupCommand;
 import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
@@ -49,15 +51,15 @@ public class UserGroupService {
         return userGroupRepository.
                 findAll()
                 .stream()
-                .map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle(),userGroupEntity.getRole()))
+                .map(userGroupEntity -> SOfromEntity(userGroupEntity))
                 .collect(Collectors.toList());
     }
 
     @Transactional
-    public void addNewUserGroup(UserGroupServiceObject userGroupServiceObject) {
-        UserGroupEntity userGroupEntityFromDataBase = userGroupRepository.findGroupByTitle(userGroupServiceObject.getTitle());
+    public void addNewUserGroup(CreateUserGroupCommand createUserGroupCommand) {
+        UserGroupEntity userGroupEntityFromDataBase = userGroupRepository.findGroupByTitle(createUserGroupCommand.getTitle());
         if (userGroupEntityFromDataBase == null) {
-            UserGroupEntity userGroupEntity = new UserGroupEntity(userGroupServiceObject.getTitle(),userGroupServiceObject.getRole());
+            UserGroupEntity userGroupEntity = new UserGroupEntity(createUserGroupCommand.getTitle(), createUserGroupCommand.getRole());
             userGroupRepository.save(userGroupEntity);
         }
     }
@@ -71,7 +73,7 @@ public class UserGroupService {
 
 
     @Transactional
-    public void addGroupToUser(String userGroupTitle,String username) {
+    public void addGroupToUser(String userGroupTitle, String username) {
         UserEntity userEntity = userRepository.findUserByUsername(username);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         Set<UserGroupEntity> allUserGroups = userEntity.getUserGroups();
@@ -82,7 +84,7 @@ public class UserGroupService {
     }
 
     @Transactional
-    public void removeGroupFromUser(String userGroupTitle,String username) {
+    public void removeGroupFromUser(String userGroupTitle, String username) {
         UserEntity userEntity = userRepository.findUserByUsername(username);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
 
@@ -96,7 +98,7 @@ public class UserGroupService {
         UserEntity userEntity = userRepository.findUserByUsername(username);
         userEntity.getUserGroups().clear();
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByRole(AppRoleEnum.ROLE_SUSPENDED);
-        if (userGroupEntity!=null) {
+        if (userGroupEntity != null) {
             addGroupToUser(userGroupEntity.getTitle(), username);
             userRepository.save(userEntity);
         }
@@ -120,8 +122,25 @@ public class UserGroupService {
         if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.addAvailableDocumentTypeToApprove(documentTypeEntity);
         }
+    }
 
+    @Transactional
+    public void removeDocumentTypeToUpload(String userGroupTitle, String documentTypeTitle) {
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
+        DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
+        if (userGroupEntity != null && documentTypeEntity != null) {
+            userGroupEntity.removeAvailableDocumentTypeToUpload(documentTypeEntity);
 
+        }
+    }
+
+    @Transactional
+    public void removeDocumentTypeToApprove(String userGroupTitle, String documentTypeTitle) {
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
+        DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
+        if (userGroupEntity != null && documentTypeEntity != null) {
+            userGroupEntity.removeAvailableDocumentTypeToApprove(documentTypeEntity);
+        }
     }
 
     @Transactional
@@ -135,7 +154,7 @@ public class UserGroupService {
     public UserGroupServiceObject getGroupByTitle(String title) {
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(title);
         if (userGroupEntity != null) {
-            UserGroupServiceObject userGroupServiceObject = new UserGroupServiceObject(userGroupEntity.getTitle(), userGroupEntity.getRole());
+            UserGroupServiceObject userGroupServiceObject = SOfromEntity(userGroupEntity);
             return userGroupServiceObject;
         }
         return null;
@@ -161,6 +180,18 @@ public class UserGroupService {
     }
 
 
+    static UserGroupServiceObject SOfromEntity(UserGroupEntity entity) {
+        UserGroupServiceObject so = new UserGroupServiceObject();
+        so.setTitle(entity.getTitle());
+        so.setRole(entity.getRole());
+        so.setTypesToUpload(entity.getAvailableDocumentTypesToUpload()
+                .stream().map(dte -> new DocumentTypeServiceObject(dte.getTitle())).collect(Collectors.toSet())
+        );
+        so.setTypesToApprove(entity.getAvailableDocumentTypesToApprove()
+                .stream().map(dte -> new DocumentTypeServiceObject(dte.getTitle())).collect(Collectors.toSet())
+        );
+        return so;
+    }
 
 }
 

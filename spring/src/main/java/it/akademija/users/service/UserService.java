@@ -128,7 +128,7 @@ public class UserService implements UserDetailsService {
         UserEntity userEntity = userRepository.findUserByUsername(username);
         Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
 
-        return groupsUserBelongsTo.stream().map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle(), userGroupEntity.getRole()))
+        return groupsUserBelongsTo.stream().map(userGroupEntity -> UserGroupService.SOfromEntity(userGroupEntity))
                 .collect(Collectors.toList());
     }
 
@@ -293,7 +293,7 @@ public class UserService implements UserDetailsService {
         so.setUserGroups(entity.getUserGroups()
                 .stream()
                 .map(ug ->
-                        new UserGroupServiceObject(ug.getTitle(),ug.getRole()))
+                        UserGroupService.SOfromEntity(ug))
                 .collect(Collectors.toSet()));
         return so;
     }
@@ -347,6 +347,26 @@ public class UserService implements UserDetailsService {
         return pageData;
 
     }
+
+    @Transactional
+    public List<DocumentEntity> getAllUserDocuments(String userName) {
+
+
+        return documentRepository.findByAuthor(userName);
+    }
+////                .stream()
+////                .map(documentEntity -> SOfromEntity(documentEntity))
+////                .collect(Collectors.toSet());
+//
+////        List<DocumentServiceObject>  listOfDocumentServiceObject= documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc)
+////                .stream()
+////                .map(documentEntity -> SOfromEntity(documentEntity))
+////                .collect(Collectors.toList());
+////        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
+////                sortedByTitleDesc, documentRepository.findByAuthor(userIdentifier).size()) ;
+////        return null;
+//
+//    }
 
 
     public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {

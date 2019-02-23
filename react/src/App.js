@@ -18,6 +18,8 @@ import ToApproveDashboard from "./Components/Dashboard/Dashboards/ToApproveDashb
 import axios from "axios";
 import {Redirect} from "react-router";
 import DownloadZip from "./Components/FilesAndDocumens/DownloadZip"
+import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
+
 
 
 class App extends React.Component {
@@ -163,6 +165,9 @@ class App extends React.Component {
                                                    render={(props) => <Settings user={this.state.user} {...props}/>}/>
                                             {/*<Route exact path="/user-administration"*/}
                                             {/*render={(props) => <UserAdministration {...props}  />}/>*/}
+                                            <Route  exact path="/settings-test"
+                                                   render={(props) => <SettingsGroupsTypes user={this.state.user} {...props}/>}/>
+
                                             <Route exact path="/user-registration" component={NewUserForm}/>
                                             <Route exact path="/logout" render={() => this.handleLogOut()}/>
                                             {/* <Route exact path="/zip"
@@ -170,6 +175,10 @@ class App extends React.Component {
                                                    user={this.state.user} {...props}/>}/>
                                              */}
                                             <Route component={NotFound}/>
+
+                                            {/*<Route  exact path="/settings-test"*/}
+                                                   {/*render={(props) => <SettingsGroupsTypes user={this.state.user} {...props}/>}/>*/}
+
 
                                             
                                         </Switch>

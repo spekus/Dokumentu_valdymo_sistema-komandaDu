@@ -9,13 +9,15 @@ import org.hibernate.annotations.LazyCollectionOption;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 
 @Entity
-public class DocumentEntity {
+@Table(name = "DOCUMENTS")
+public class DocumentEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -183,6 +185,34 @@ public class DocumentEntity {
         this.filesAttachedToDocument = filesAttachedToDocument;
     }
 
+    @Override
+    public String toString() {
+        //using this for csv generation
+        return
+                documentIdentifier + ',' +
+                author + ',' +
+                title + ',' +
+                description + ',' +
+                type + ',' +
+                postedDate +  ',' +
+                        approvalDate + ',' +
+                rejectedDate + ',' +
+                 approver + ',' +
+                rejectionReason
+                ;
+    }
+    public String getFieldNames(){
+        return "documentIdentifier" + ',' +
+                "author" + ',' +
+                "title" + ',' +
+                "description" + ',' +
+                "type" + ',' +
+                "postedDate" +  ',' +
+                "approvalDate" + ',' +
+                "rejectedDate" + ',' +
+                "approver" + ',' +
+                "rejectionReason";
+    }
 
 }
 
