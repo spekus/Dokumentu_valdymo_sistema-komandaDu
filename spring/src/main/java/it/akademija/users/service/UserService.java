@@ -213,7 +213,6 @@ public class UserService implements UserDetailsService {
     public void addNewUser(String firstname, String lastname, String username, String password) {
         UserEntity userEntityFromDataBase1 = userRepository.findUserByUsername(username);
         UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
-
         if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
             UserEntity userEntity = new UserEntity(firstname, lastname, username, passwordEncoder.encode(password));
             userRepository.save(userEntity);

@@ -6,6 +6,7 @@ import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -44,7 +45,10 @@ public class DocumentEntity {
     private Set<FileEntity> filesAttachedToDocument=new HashSet<>();
 
     private LocalDateTime postedDate;
+
+
     private LocalDateTime approvalDate;
+
     private LocalDateTime rejectedDate;
     private String approver;
     private String rejectionReason;

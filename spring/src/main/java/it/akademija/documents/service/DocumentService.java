@@ -9,21 +9,13 @@ import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.exceptions.NoApproverAvailableException;
 import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileServiceObject;
-import it.akademija.users.repository.UserEntity;
-import it.akademija.users.repository.UserGroupEntity;
+import it.akademija.users.repository.*;
 
-import it.akademija.users.repository.UserGroupRepository;
-import it.akademija.users.repository.UserRepository;
-import it.akademija.users.service.UserServiceObject;
-import javassist.NotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.*;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
-
-import java.util.HashSet;
 
 import java.util.List;
 import java.util.Set;
@@ -153,10 +145,8 @@ public class DocumentService{
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             UserEntity userEntityFromDataBase = userRepository.findUserByUsername(username);
-
             for (UserGroupEntity userGroupEntity : userEntityFromDataBase.getUserGroups()) {
                 if (userGroupEntity.getDocumentsToApprove().contains(documentEntityFromDatabase)) {
-
                     LocalDateTime dateRejected = LocalDateTime.now();
                     documentEntityFromDatabase.setDocumentState(DocumentState.REJECTED);
                     documentEntityFromDatabase.setRejectedDate(dateRejected);
@@ -203,14 +193,19 @@ specialisto Dokumento saraso*/
 
     @Transactional
     private void removeDocFromApproverList(String documentIdentifier) {
+        boolean remove=false;
+        DocumentEntity documentEntityToRemove=null;
         List<UserGroupEntity> availableUserGroups = userGroupRepository.findAll();
         for (UserGroupEntity userGroupEntity : availableUserGroups) {
             Set<DocumentEntity> allDocsToApproveFromGroup = userGroupEntity.getDocumentsToApprove();
             for (DocumentEntity documentEntity : allDocsToApproveFromGroup) {
                 if (documentEntity.getDocumentIdentifier().equals(documentIdentifier)) {
-                    allDocsToApproveFromGroup.remove(documentEntity);
+                    remove=true;
+                    documentEntityToRemove=documentEntity;
                 }
+
             }
+            allDocsToApproveFromGroup.remove(documentEntityToRemove);
         }
     }
 
@@ -290,7 +285,6 @@ specialisto Dokumento saraso*/
 
     private DocumentServiceObject SOfromEntity(DocumentEntity entity) {
         DocumentServiceObject so = new DocumentServiceObject();
-
         so.setApprovalDate(entity.getApprovalDate());
         so.setApprover(entity.getApprover());
         so.setAuthor(entity.getAuthor());
@@ -310,7 +304,6 @@ specialisto Dokumento saraso*/
                 .collect(Collectors.toSet()));
         return so;
     }
-
 }
 
 
