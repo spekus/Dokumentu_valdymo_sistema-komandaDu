@@ -53,10 +53,10 @@ public class StatisticsController {
 
     }
 
-    @RequestMapping(value = "/approved-docs", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/rejected-docs", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "statistics", notes = "Returns statistics by date interval")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public Collection<Statistics> getКуоусеувDocsStatistics(
+    public Collection<Statistics> getRejectedDocsStatistics(
             @ApiIgnore Authentication authentication,
             @ApiParam(value = "startdate", required = true, defaultValue = "2018-02-21T15:39:07.936")
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime startDate,

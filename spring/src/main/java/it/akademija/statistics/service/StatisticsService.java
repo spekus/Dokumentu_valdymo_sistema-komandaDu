@@ -62,14 +62,12 @@ public class StatisticsService {
 
     @Transactional
     public Collection<Statistics> getApprovedDocsStatistics(String username, LocalDateTime startDate, LocalDateTime endDate) {
-        String state= DocumentState.APPROVED.toString();
-        return statisticsRepository.countOperationsByState(getUserInitialsByUsername(username),startDate,endDate,state);
+        return statisticsRepository.countOperationsByState(getUserInitialsByUsername(username),startDate,endDate,DocumentState.APPROVED);
     }
 
     @Transactional
     public Collection<Statistics> getRejectedDocsStatistics(String username, LocalDateTime startDate, LocalDateTime endDate) {
-        String state= DocumentState.REJECTED.toString();
-        return statisticsRepository.countOperationsByState(getUserInitialsByUsername(username),startDate,endDate,state);
+        return statisticsRepository.countOperationsByState(getUserInitialsByUsername(username),startDate,endDate,DocumentState.REJECTED);
     }
 
     @Transactional

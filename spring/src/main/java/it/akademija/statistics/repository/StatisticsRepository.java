@@ -23,7 +23,7 @@ public interface StatisticsRepository extends JpaRepository<DocumentEntity, Long
     List<Statistics> countOperationsByState(@Param("approver") String approver,
                                               @Param("startDate") LocalDateTime startDate,
                                               @Param("endDate") LocalDateTime endDate,
-                                              @Param("state")String state);
+                                              @Param("state")Enum state);
 
 }
 
