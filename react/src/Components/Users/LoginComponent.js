@@ -1,68 +1,90 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import './LoginComponent.css';
-import {Redirect} from 'react-router-dom';
-
+import $ from 'jquery';
 
 export default class Login extends Component {
-    constructor(props) {
-        super(props);
-        this.resetState();
+    state = {
+        username: '',
+        password: '',
+        errorText: ''
     }
 
     tryLogin() {
-        axios.post('/login', null, {params:{
-            username: this.state.username,
-            password: this.state.password
-        }})
+        this.setState({errorText: ''});
+        axios.post('/login', null, {
+            params: {
+                username: this.state.username,
+                password: this.state.password
+            }
+        })
             .then(response => {
                 // mes prisijungeme, todel dabar galime suzinoti naudotojo informacija
-                this.props.onLogin(this.props.history);
+                // ta padarysim iskvieciant callback onLogin
+                this.props.onLogin();
             })
             .catch(error => {
-                console.log("Error trying to log in. Dumping error: ");
-                console.log(error);
-                this.resetState();
+                let errorText = (typeof (error.response.data) === 'string') ? error.response.data : error.response.data.message;
+                this.setState({errorText: errorText});
             })
     }
 
-    resetState() {
-        this.state = {
-            username: '',
-            password: '',
-            user: null,
-            redirect: false
-        };
-    }
-
-
-    handleChange1 = (event) => {
-        this.setState({username: event.target.value});
-    }
-
-    handleChange2 = (event) => {
-        this.setState({password: event.target.value});
-    }
+    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
 
     handleSubmit = (event) => {
         event.preventDefault();
         this.tryLogin();
+
+    }
+
+    componentDidMount() {
+        $('#loginModal').modal('show');
+    }
+
+    componentWillUnmount() {
+        $('#loginModal').modal('hide');
     }
 
     render() {
         return (
-            <div className="username">
-                <h4>Login to Your DMS Account</h4><br/>
-                <form>
-                    <input type="text" value={this.state.username} placeholder="Vartotojo vardas"
-                           onChange={this.handleChange1}/><br/>
-                    <input type="password" value={this.state.password} placeholder="Slaptažodis"
-                           onChange={this.handleChange2}/><br/>
-                    <button type="submit" value="username" className="btn btn-outline-info my-2 "
-                            onClick={this.handleSubmit}>Prisijungti
-                    </button>
-                </form>
-            </div>
+            <React.Fragment>
+                <div className="modal" id='loginModal' data-backdrop="static" data-keyboard="false">
+                    <div className="modal-dialog modal-dialog-centered">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h4 className="modal-title">Prašome prisijungti</h4>
+                            </div>
+                            <div className="modal-body">
+                                {this.state.errorText === '' ? '' :
+                                    <div id='loginAlert' className="alert alert-warning show"
+                                         role="alert">
+                                        <h5>Klaida!</h5>{this.state.errorText}
+                                    </div>}
+                                <form>
+                                    <div className="form-group">
+                                        <input type="text"
+                                               name='username'
+                                               value={this.state.username}
+                                               placeholder="Vartotojo vardas"
+                                               onChange={this.handleChangeInput}/>
+                                    </div>
+                                    <div className="form-group">
+                                        <input type="password"
+                                               name='password'
+                                               value={this.state.password}
+                                               placeholder="Slaptažodis"
+                                               onChange={this.handleChangeInput}/>
+                                    </div>
+                                    <button type="submit" value="username" className="btn btn-outline-info my-2 "
+                                            onClick={this.handleSubmit}>Prisijungti
+                                    </button>
+
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </React.Fragment>
         )
     }
 }
