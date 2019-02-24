@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import axios from "axios";
 import {Link} from "react-router-dom";
-import SettingsEditGroupTypes from "./SettingsEditGroupTypes";
 
 class SettingsGroupsTypes extends Component {
     state = {
