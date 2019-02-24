@@ -4,6 +4,8 @@ import axios from "axios";
 import ModalError from "../UI/ModalError";
 import ModalMessage from "../UI/ModalMessage"
 import $ from "jquery";
+import ModalContainer from "../UI/ModalContainer";
+import EditUserGroups from "./EditUserGroups";
 
 class UserAdminisrationList extends Component {
     state = {
@@ -27,9 +29,8 @@ class UserAdminisrationList extends Component {
         this.getAllGroupsfromServer()
     }
 
-    getFilteredUsers = (event) => {
+    getFilteredUsers = () => {
         document.getElementById('userListTable').style.visibility = 'visible';
-        event.preventDefault();
         axios.get(
             '/api/users/criteria', {
                 params: {
@@ -56,31 +57,6 @@ class UserAdminisrationList extends Component {
             )
     }
 
-    addUserToGroup = (username, groupTitle) => {
-        axios.put('/api/usergroups/' + groupTitle + '/add-person', null, {
-            params: {username: username}
-        })
-            .then(response => {
-                this.loadUserToEdit(this.state.userBeingEdited.username);
-            })
-            .catch(error => {
-                console.log("Error from removeUserFromGroup - " + error)
-            })
-    }
-
-    removeUserFromGroup = (username, groupTitle) => {
-        axios.put('/api/usergroups/' + groupTitle + '/remove-person', null, {
-            params: {
-                username: username
-            }
-        })
-            .then(response => {
-                this.loadUserToEdit(this.state.userBeingEdited.username);
-            })
-            .catch(error => {
-                console.log("Error from removeUserFromGroup - " + error)
-            })
-    }
 
     deleteUser = (user) => {
         axios.delete('/api/users/' + user.username)
@@ -96,9 +72,15 @@ class UserAdminisrationList extends Component {
 
     handleChangeUser = (user) => {
         this.loadUserToEdit(user.username);
-        document.getElementById('editUserForm').style.visibility = 'visible';
-
+        // document.getElementById('editUserForm').style.visibility = 'visible';
+        $('#userEditModal').modal('show');
     }
+    handleChangeUserGroup = (user) => {
+        this.loadUserToEdit(user.username);
+        // document.getElementById('editUserForm').style.visibility = 'visible';
+        $('#editUserGroupsModal').modal('show');
+    }
+
 
     loadUserToEdit = (username) => {
         if (username !== "") {
@@ -108,6 +90,11 @@ class UserAdminisrationList extends Component {
                     }
                 )
         }
+    }
+
+    handleGroupsChanged = () => {
+        this.loadUserToEdit(this.state.userBeingEdited.username);
+        this.getFilteredUsers();
     }
 
     render() {
@@ -141,7 +128,8 @@ class UserAdminisrationList extends Component {
                             <div className="col-md-2">
                                 <button className="btn btn-outline-info my-2 my-sm-0 buttonXL" type="submit"
                                         onClick={() => {
-                                            this.props.history.push("/user-registration")
+                                            // this.props.history.push("/user-registration")
+                                            $('#newUserModal').modal('show');
                                         }}>Registruoti naują naudotoją
                                 </button>
                             </div>
@@ -173,6 +161,9 @@ class UserAdminisrationList extends Component {
                                     <button className="btn btn-info btn-sm"
                                             onClick={() => this.handleChangeUser(user)}>Redaguoti
                                     </button>
+                                    <button className="btn btn-info btn-sm ml-2"
+                                            onClick={() => this.handleChangeUserGroup(user)}>Grupes
+                                    </button>
                                     <button className="btn btn-secondary btn-sm ml-2"
                                             onClick={() => this.deleteUser(user)}>Trinti
                                     </button>
@@ -185,51 +176,37 @@ class UserAdminisrationList extends Component {
                         </tbody>
                     </table>
 
-                    <div className='row' id="editUserForm" style={{'visibility': 'hidden'}}>
-                        <div className="col-md-6">
-                            <NewUserForm editmode={true}
+                    <ModalContainer id='userEditModal' title="Naudotojo redagavimas">
+                        <NewUserForm editmode={true}
 
-                                         userIdentifier={this.state.userBeingEdited.userIdentifier}
-                                         firstname={this.state.userBeingEdited.firstname}
-                                         lastname={this.state.userBeingEdited.lastname}
-                                         username={this.state.userBeingEdited.username}
+                                     userIdentifier={this.state.userBeingEdited.userIdentifier}
+                                     firstname={this.state.userBeingEdited.firstname}
+                                     lastname={this.state.userBeingEdited.lastname}
+                                     username={this.state.userBeingEdited.username}
 
-                            />
-                        </div>
+                                     onSubmit={() => {
+                                         $('#userEditModal').modal('hide');
+                                         this.getFilteredUsers();
+                                     }}
+                        />
+                    </ModalContainer>
 
-                        <div className="col-md-6">
-                            <h4 className="my-4" align="center">Naudotojo grupės</h4>
-                            <table className="table">
-                                <thead>
-                                <tr>
-                                    <th style={{width: '45%'}}>Priklauso</th>
-                                    <th>&nbsp;</th>
-                                    <th style={{width: '45%'}}>Nepriklauso</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                {this.state.allgroups.map((group, index) =>
-                                    this.state.userBeingEdited.userGroups.map(group => group.title).indexOf(group.title) > -1 ?
-                                        <tr>
-                                            <td>{group.title}</td>
-                                            <td><a href="#"
-                                                   onClick={() => this.removeUserFromGroup(this.state.userBeingEdited.username, group.title)}>▶</a>
-                                            </td>
-                                            <td></td>
-                                        </tr>
-                                        :
-                                        <tr>
-                                            <td></td>
-                                            <td><a href="#"
-                                                   onClick={() => this.addUserToGroup(this.state.userBeingEdited.username, group.title)}>◀</a>
-                                            </td>
-                                            <td>{group.title}</td>
-                                        </tr>
-                                )}
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
+
+                    <ModalContainer id='newUserModal' title="Naudotojo registravimas">
+                        <NewUserForm editmode={false}
+
+                                     onSubmit={() => {
+                                         $('#newUserModal').modal('hide');
+                                     }}
+                        />
+                    </ModalContainer>
+
+
+                    <ModalContainer id='editUserGroupsModal' title="Naudotojo grupes">
+                        <EditUserGroups user={this.state.userBeingEdited}
+                                        allgroups={this.state.allgroups}
+                                        onGroupsChanged={this.handleGroupsChanged}/>
+                    </ModalContainer>
                 </div>
             </React.Fragment>
         );

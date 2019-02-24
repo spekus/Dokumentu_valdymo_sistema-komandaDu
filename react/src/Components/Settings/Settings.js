@@ -15,7 +15,7 @@ class Settings extends Component {
                     </div>
                     :
                     <div>
-                        <h1>Jums cia negalima :P</h1>
+                        <h1><i className="fas fa-skull-crossbones text-center"></i></h1>
                     </div>
                 }
             </React.Fragment>
