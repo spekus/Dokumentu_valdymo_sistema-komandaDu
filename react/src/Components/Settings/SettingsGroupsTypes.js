@@ -1,12 +1,17 @@
 import React, {Component} from 'react';
 import axios from "axios";
+import {Link} from "react-router-dom";
+import SettingsEditGroupTypes from "./SettingsEditGroupTypes";
 
 class SettingsGroupsTypes extends Component {
     state = {
         allgroups: [],
-        alltypes: [],
+        allTypes: [],
+        groupBeingEdited: {
+            typesToUpload: [],
+            typesToApprove: [],
+        },
         type: ''
-
     }
 
     componentDidMount() {
@@ -33,8 +38,11 @@ class SettingsGroupsTypes extends Component {
         axios.get('/api/document-types')
             .then(response => {
                 if (response.data.length > 0) {
-                    this.setState({alltypes: response.data});
+                    let allTypes = response.data;
+                    allTypes.sort((a, b) => a.title.localeCompare(b.title));
+                    this.setState({allTypes: allTypes });
                     // this.setState({type: result.data[0].title});
+                    console.log("allTypes - " + this.allTypes);
                 }
             })
             .catch(error => {
@@ -91,6 +99,37 @@ class SettingsGroupsTypes extends Component {
             })
     }
 
+    editGroupTitle = (group) => {
+        console.log("Group to edit " + group.title);
+        let newTitle = window.prompt("Įveskite naują grupės " + group.title + " pavadinimą");
+        axios.post("/api/usergroups/" + group.title, null, {params: {newTitle: newTitle}})
+            .then(response => {
+                this.getAllGroupsFromServer();
+            })
+            .catch(error => {
+                console.log("Error from removeTypefromGroup" + error.message)
+            })
+    }
+
+
+    deleteGroup = (group) => {
+        console.log("Group to remove " + group.title);
+        axios.delete('/api/usergroups/' + group.title)
+            .then(response => {
+                this.getAllGroupsFromServer();
+                window.alert("Grupė " + group.title + " sėkmingai ištrinta")
+            })
+            .catch(error => {
+                console.log("Error from deleteGroup" + error.message)
+            })
+    }
+
+    editGroup = (group) => {
+        this.setState({groupBeingEdited: group});
+        document.getElementById('editGroupTypes').style.visibility = 'visible';
+        this.getAllTypes();
+    }
+
 
     render() {
         return (
@@ -102,6 +141,7 @@ class SettingsGroupsTypes extends Component {
                             <th>Vartotojų grupė</th>
                             <th>Dokumentų tipai kūrimui</th>
                             <th>Dokumentų tipai tvirtinimui</th>
+                            <th>Veiksmai</th>
                         </tr>
                         </thead>
                         <tbody>
@@ -114,10 +154,10 @@ class SettingsGroupsTypes extends Component {
                                     <td>
 
 
-                                            <button type="submit" className="btn btn-link btn-sm btn-block"
-                                                    onClick={() => this.addTypeToGroupForUpload(group)}
-                                            >Pridėti dokumento tipą kūrimui
-                                            </button>
+                                        <button type="submit" className="btn btn-link btn-sm btn-block"
+                                                onClick={() => this.addTypeToGroupForUpload(group)}
+                                        >Pridėti dokumento tipą kūrimui
+                                        </button>
 
                                         {group.typesToUpload.map(type => (
                                             <div className="row">
@@ -134,41 +174,13 @@ class SettingsGroupsTypes extends Component {
                                             </div>
                                         ))}
 
-
-                                        {/*<td>*/}
-
-                                        {/*<form>*/}
-                                        {/*<div className="form-row align-items-center">*/}
-                                        {/*<div className="col-auto my-1">*/}
-                                        {/*<label className="mr-sm-2 sr-only"*/}
-                                        {/*htmlFor="inlineFormCustomSelect">Preference</label>*/}
-                                        {/*<select className="custom-select mr-sm-2"*/}
-                                        {/*id="inlineFormCustomSelect" value={this.state.type}*/}
-                                        {/*name="type" onChange={this.handleChangeSelect}>*/}
-                                        {/*<option selected>Choose...</option>*/}
-                                        {/*{this.state.alltypes.map(item => (*/}
-                                        {/*<option value={item.title}>{item.title}</option>*/}
-                                        {/*))}*/}
-                                        {/*</select>*/}
-                                        {/*</div>*/}
-
-                                        {/*<div className="col-auto my-1">*/}
-                                        {/*<button type="submit" className="btn btn-primary"*/}
-                                        {/*onClick={this.addTypeToGroup}*/}
-                                        {/*>Pridėti*/}
-                                        {/*</button>*/}
-                                        {/*</div>*/}
-                                        {/*</div>*/}
-                                        {/*</form>*/}
-
-                                        {/*</td>*/}
-                                   </td>
+                                    </td>
                                     <td>
 
-                                            <button type="submit" className="btn btn-link btn-sm btn-block"
-                                                    onClick={() => this.addTypeToGroupForApprove(group)}
-                                            >Pridėti dokumento tipą patvirtinimui
-                                            </button>
+                                        <button type="submit" className="btn btn-link btn-sm btn-block"
+                                                onClick={() => this.addTypeToGroupForApprove(group)}
+                                        >Pridėti dokumento tipą patvirtinimui
+                                        </button>
 
                                         {group.typesToApprove.map(type => (
                                             <div className="row">
@@ -182,20 +194,77 @@ class SettingsGroupsTypes extends Component {
                                                     </button>
                                                 </div>
                                             </div>
+
+
                                         ))}
 
 
                                     </td>
+                                    <td>
+                                        <i className="fas fa-edit mr-3" title="Koreguoti grupę"
+                                           onClick={() => this.editGroupTitle(group)}> </i>
+
+                                        <i className="fas fa-tasks mr-3" title="Redaguoti tipus"
+                                           onClick={() => this.editGroup(group)}></i>
 
 
+                                        <i className="fas fa-trash-alt" title="Ištrinti grupę"
+                                           onClick={() => this.deleteGroup(group)}></i>
+
+                                    </td>
                                 </tr>
-
                             )
                         )}
                         </tbody>
                     </table>
-                    <i className="fa fa-trash-o" aria-hidden="true"></i>
 
+                    <div className='row' id="editGroupTypes" style={{'visibility': 'hidden'}}>
+
+                        {/*<SettingsEditGroupTypes group={this.state.groupBeingEdited}*/}
+                        {/*typesToUpload={this.state.groupBeingEdited.typesToUpload}*/}
+                        {/*typesToApprove={this.state.groupBeingEdited.typesToApprove}*/}
+                        {/*alltypes={this.state.alltypes}*/}
+                        {/*/>*/}
+
+
+                        <div>
+
+                            <h5>Grupė {this.state.groupBeingEdited.title}</h5>
+                            <table className="table">
+                                <thead>
+                                <tr>
+                                    <th>Tipas</th>
+                                    <th>Kurti</th>
+                                    <th>Tvirtinti</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+
+                                {this.state.allTypes.map((type, index) =>
+                                    <tr key={index}>
+                                        <td>{type.title}</td>
+                                        <td>
+                                            <input
+                                                type="checkbox"
+                                                checked={this.state.groupBeingEdited.typesToUpload.map(t => t.title).indexOf(type.title)
+                                            > -1}/>
+                                        </td>
+                                        <td>
+                                           <input
+                                                type="checkbox"
+                                                checked={this.state.groupBeingEdited.typesToApprove.map(t => t.title).indexOf(type.title)
+                                            > -1}/>
+                                        </td>
+                                    </tr>
+                                )}
+
+                                </tbody>
+                            </table>
+
+                        </div>
+
+
+                    </div>
                 </div>
             </div>
         );
