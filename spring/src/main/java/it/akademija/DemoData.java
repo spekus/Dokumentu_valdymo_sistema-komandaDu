@@ -104,7 +104,7 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas");
 
 
-//        addDummydata();
+       //addDummydata();
     }
 
     private void createUserIfNotExists(String fn, String ln, String un, String pswd) {

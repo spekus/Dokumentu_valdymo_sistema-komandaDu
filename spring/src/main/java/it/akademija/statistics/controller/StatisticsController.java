@@ -16,11 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
 
 
-import java.text.DateFormat;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Collection;
-import java.util.Date;
+
 
 
 @RestController
@@ -62,6 +60,18 @@ public class StatisticsController {
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime startDate,
             @RequestParam("endDate")@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime endDate) {
         return statisticsService.getRejectedDocsStatistics(authentication.getName(),startDate, endDate);
+
+    }
+
+    @RequestMapping(value = "/posted-docs", method = RequestMethod.GET, produces = "application/json")
+    @ApiOperation(value = "statistics", notes = "Returns statistics by date interval")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
+    public Collection<Statistics> getPostedDocsStatistics(
+            @ApiIgnore Authentication authentication,
+            @ApiParam(value = "startdate", required = true, defaultValue = "2018-02-21T15:39:07.936")
+            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime startDate,
+            @RequestParam("endDate")@DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME)LocalDateTime endDate) {
+        return statisticsService.getPostedDocsStatistics(authentication.getName(),startDate, endDate);
 
     }
 
