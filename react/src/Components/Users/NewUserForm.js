@@ -33,13 +33,50 @@ class NewUserForm extends Component {
             password: this.state.password,
         };
 
-
         console.log("New User: " + newUser);
 
-        if (this.state.editmode) {
-            axios.put('/api/users', newUser)
-                .then()
-        } else {
+        if (this.state.editmode && this.state.password.length === 0) {
+            axios({
+                method: 'post',
+                url: '/api/users/' + this.state.username,
+                params: {
+                    firstname:newUser.firstname,
+                    lastname:newUser.lastname
+                },
+                headers: {'Content-Type': 'application/json;charset=utf-8'}
+
+
+            })
+            .then() 
+           
+        } else if (this.state.editmode && this.state.password.length>0) {
+             
+            axios({
+                method: 'post',
+                url: '/api/users/' + this.state.username,  
+                params: {
+                    firstname:newUser.firstname,
+                    lastname:newUser.lastname,
+                }
+            ,
+                headers: {'Content-Type': 'application/json;charset=utf-8'}
+
+
+            })
+            .then(
+                axios({
+                    method: 'post',
+                    url: '/api/users/' + this.state.username + "/password",  
+                    params: {
+                        password:newUser.password
+                    }
+                ,
+                    headers: {'Content-Type': 'application/json;charset=utf-8'}
+    
+    
+                })
+            ) 
+            } else {
             axios.post('/api/users', newUser)
                 .then(response => {
                     console.log(response);
@@ -93,7 +130,20 @@ class NewUserForm extends Component {
                                            value={this.state.lastname}
                                            onChange={this.handleChangeInput} required/>
                                 </div>
-
+                                {this.props.editmode ? 
+                                <div className="form-group">
+                                    <label htmlFor="exampleFormControlInput1">Naudotojo vardas</label>
+                                    <input type="text" className="form-control" id="exampleFormUsername"
+                                        readOnly 
+                                           minLength="2"
+                                           maxLength="50"
+                                           pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
+                                           title="Only letters and numbers should be provided!"
+                                           placeholder="Įveskite vartotojo prisijungimo vardą" name="username"
+                                           value={this.state.username}
+                                           onChange={this.handleChangeInput} required/>
+                                </div>
+                                :
                                 <div className="form-group">
                                     <label htmlFor="exampleFormControlInput1">Naudotojo vardas</label>
                                     <input type="text" className="form-control" id="exampleFormUsername"
@@ -105,6 +155,7 @@ class NewUserForm extends Component {
                                            value={this.state.username}
                                            onChange={this.handleChangeInput} required/>
                                 </div>
+                                }
 
                                 {this.props.editmode ? '' :
                                 <div className="form-group">
@@ -128,7 +179,10 @@ class NewUserForm extends Component {
                                 {/*</small>*/}
                                 {/*</div>*/}
 
+                                
                                 <label htmlFor="inputPassword5">Slaptažodis</label>
+                                
+                                {this.props.editmode?
                                 <input type="password" id="inputPassword5" className="form-control"
                                        minLength="8"
                                        maxLength="20"
@@ -136,7 +190,20 @@ class NewUserForm extends Component {
                                        title="Password must be 8-20 symbols length!"
                                        value={this.state.password}
                                        aria-describedby="passwordHelpBlock" onChange={this.handleChangeInput}
-                                       name="password" required/>
+                                       name="password"
+                                       />
+                                    :
+                                    <input type="password" id="inputPassword5" className="form-control"
+                                       minLength="8"
+                                       maxLength="20"
+                                       pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
+                                       title="Password must be 8-20 symbols length!"
+                                       value={this.state.password}
+                                       aria-describedby="passwordHelpBlock" onChange={this.handleChangeInput}
+                                       name="password"
+                                       required
+                                       />
+                                }
                                 <small id="passwordHelpBlock" className="form-text text-muted">
                                     {/*Your password must be 8-20 characters long, contain letters and numbers, and must*/}
                                     {/*not*/}
