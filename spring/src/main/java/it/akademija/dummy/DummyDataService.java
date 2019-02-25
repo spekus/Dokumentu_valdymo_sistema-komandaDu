@@ -31,14 +31,21 @@ public class DummyDataService {
 
     @Transactional
     public void augisTestuoja(String userInput) {
-        for(int counter =10; counter > 0; counter--){
+        //makes new users and documents for them
+        for(int counter =10000; counter > 0; counter--){
             String uniqueString = "";
             uniqueString = userInput +uniqueNumber;
             uniqueNumber++;
-            makeDocuments("testas1000", userInput, counter, author );
-            documentTypeRepository.putDummyDocumentTypes(userInput+counter);
-            makeUser(uniqueString);
 
+            //documentTypeRepository.putDummyDocumentTypes(userInput+counter);
+            makeUser(uniqueString);
+            //make documents for user which is just created
+            makeDocuments(uniqueString);
+
+        }
+        //makes documents for specific user
+        for(int counter =10; counter > 0; counter--) {
+            makeDocuments(author);
         }
         //documentTypeRepository.putTestData(title);
     }
@@ -53,7 +60,7 @@ public class DummyDataService {
     @Transactional
     private void makeDocumentTypes(String title){
 
-        for(int counter =50000; counter > 0; counter--){
+        for(int counter =500; counter > 0; counter--){
             String documentTypeTitle = title+counter;
             documentTypeRepository.putDummyDocumentTypes(documentTypeTitle);
 
@@ -62,33 +69,30 @@ public class DummyDataService {
     }
 
     @Transactional
-    private void makeDocuments(String DocumentType, String documentName, Integer counter2, String author){
+    private void makeDocuments(String author){
 //        counter2 = counter2 *10000;
         System.out.println("runnung makeDocuments");
-        for(int counter =50; counter > 0; counter--){
+        Faker faker = new Faker();
+        for(int counter =20; counter > 0; counter--){
+            String title = faker.ancient().primordial();
+            String description = faker.chuckNorris().fact();
             System.out.println("runnung makeDocuments loop");
             String DocumentIdentifier = "";
             DocumentIdentifier = "docID" + uniqueNumber;
-            String modifiedDocumentName= documentName + uniqueNumber;
+            //String modifiedDocumentName= documentName + uniqueNumber;
             uniqueNumber++;
 
             //keeps it unique
             //increment();
+            if(counter%2 == 0){
+                documentRepository.putDummyDocumentTypes(DocumentIdentifier, title, description, author, "CREATED");
+            }
+            else{
+                documentRepository.putDummyDocumentTypes(DocumentIdentifier, title, description, author, "SUBMITTED");
+            }
 
-            documentRepository.putDummyDocumentTypes(DocumentIdentifier, modifiedDocumentName, author, "CREATED");
         }
-        for(int counter =50; counter > 0; counter--){
-            System.out.println("runnung makeDocuments loop");
-            String DocumentIdentifier = "";
-            DocumentIdentifier = "docID" + uniqueNumber;
-            String modifiedDocumentName= documentName + uniqueNumber;
-            uniqueNumber++;
 
-            //keeps it unique
-            //increment();
-
-            documentRepository.putDummyDocumentTypes(DocumentIdentifier, modifiedDocumentName, author, "SUBMITTED");
-        }
 
 
     }

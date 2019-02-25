@@ -41,9 +41,10 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
 //used for generating dummy data for document types
     @Modifying
     @Query(value ="insert into DOCUMENTS (DOCUMENT_IDENTIFIER ,AUTHOR, DESCRIPTION , DOCUMENT_STATE " +
-            ", TITLE , TYPE) VALUES (:DocumentIdentifier,:AUTHOR, :DOCUMENTNAME, :STATE, :DOCUMENTNAME, 'Paraiška')", nativeQuery = true)
+            ", TITLE , TYPE) VALUES (:DocumentIdentifier,:AUTHOR, :DESCRIPTION, :STATE, :TITLE, 'Paraiška')", nativeQuery = true)
     void putDummyDocumentTypes(@Param("DocumentIdentifier") String DocumentIdentifier
-            ,@Param("DOCUMENTNAME") String documentName
+            ,@Param("TITLE") String title
+            ,@Param("DESCRIPTION") String description
             ,@Param("AUTHOR") String author
             ,@Param("STATE") String state);
 

@@ -105,7 +105,7 @@ public class DemoData implements ApplicationRunner {
 
 
 
-//        addDummydata();
+        addDummydata();
 
     }
 
@@ -146,7 +146,7 @@ public class DemoData implements ApplicationRunner {
 
     private void addDummydata() throws NoApproverAvailableException {
         //patikrina ar jau buvo prideta data
-        if(userRepository.findUserByUsername("testuser1") ==  null) {
+//        if(userRepository.findUserByUsername("testuser1") ==  null) {
 
             // jei dar neiko nebuvo prideta  x skaiciu useriu
             for (int userNumber = 0; userNumber < 2; userNumber++) {
@@ -163,7 +163,7 @@ public class DemoData implements ApplicationRunner {
                     }
 
                 }
-            }
+//            }
         }
 
 

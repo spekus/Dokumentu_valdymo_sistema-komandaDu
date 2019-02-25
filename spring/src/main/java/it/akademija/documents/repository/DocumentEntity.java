@@ -21,7 +21,7 @@ public class DocumentEntity implements Serializable {
     @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO)
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private Long id;
+    private long id;
 
     @Column(unique = true, nullable = false)
     //@GeneratedValue(strategy=GenerationType.IDENTITY) //CIA DEL DUOMBAZES
