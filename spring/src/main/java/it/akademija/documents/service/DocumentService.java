@@ -164,10 +164,12 @@ public class DocumentService {
             // susirinkime visus tipus, kuriuos sis naudotojas gali tvirtinti:
             Set<DocumentTypeEntity> typesUserAllowedToApprove = new HashSet<DocumentTypeEntity>();
 
+
             // surenkame sarasa dokumentu tipu, kuriuos siam naudotojui leidziama tvirtinti
             for (UserGroupEntity userGroupEntity : user.getUserGroups()) {
                 typesUserAllowedToApprove.addAll(userGroupEntity.getAvailableDocumentTypesToApprove());
             }
+
 
             // gaunam dokumento tipa kaip objekta
             DocumentTypeEntity type = documentTypeRepository.findDocumentTypeByTitle(document.getType());

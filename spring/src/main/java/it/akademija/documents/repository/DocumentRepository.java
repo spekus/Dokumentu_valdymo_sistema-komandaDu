@@ -3,6 +3,7 @@ package it.akademija.documents.repository;
 import it.akademija.documents.DocumentState;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
@@ -36,6 +37,23 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
     @Query("select dta From DocumentEntity dta " +
             "where dta.documentState='SUBMITTED' AND dta.type IN:types")
     List<DocumentEntity> getDocumentsToApprove(@Param("types") List<String> types);
+
+    @Query("select dta From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types")
+    List<DocumentEntity> getDocumentsToApprove(@Param("types") List<String>types);
+
+//    //used for generating dummy data for document types
+//    @Modifying
+//    @Query(value ="insert into DOCUMENT_ENTITY (TITLE) VALUES (:TITLE)", nativeQuery = true)
+//    void putDummyDocumentTypes(@Param("TITLE") String title);
+//used for generating dummy data for document types
+    @Modifying
+    @Query(value ="insert into DOCUMENTS (DOCUMENT_IDENTIFIER ,AUTHOR, DESCRIPTION , DOCUMENT_STATE " +
+            ", TITLE , TYPE) VALUES (:DocumentIdentifier,:AUTHOR, :DESCRIPTION, :STATE, :TITLE, 'Paraiška')", nativeQuery = true)
+    void putDummyDocumentTypes(@Param("DocumentIdentifier") String DocumentIdentifier
+            ,@Param("TITLE") String title
+            ,@Param("DESCRIPTION") String description
+            ,@Param("AUTHOR") String author
+            ,@Param("STATE") String state);
 
 //    @Query( //THIS IS NATIVE query which can be used to generate CSV file more efficiently
 //            value = "CALL CSVWRITE('test.csv', 'SELECT * FROM DOCUMENTS ', 'charset=UTF-8 fieldSeparator=' || CHAR(9));",

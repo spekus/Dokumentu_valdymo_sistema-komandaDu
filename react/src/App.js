@@ -19,7 +19,7 @@ import axios from "axios";
 import {Redirect} from "react-router";
 import DownloadZip from "./Components/FilesAndDocumens/DownloadZip"
 import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
-
+import Spinner from "./Components/UI/Spinner";
 
 
 class App extends React.Component {
@@ -27,6 +27,7 @@ class App extends React.Component {
         sideBarIsOpen: false,
         appBarText: "DVS",
         user: "",
+        loading: true // reiskia kad reikia rodyti Spinner elementa
     };
 
     menuItems = [
@@ -74,6 +75,12 @@ class App extends React.Component {
                 console.log("Error getting user info from server");
                 console.log(error);
             })
+            .finally(() => {
+                    // nesvarbu ar mes gavome klaida ar gera atsakyma, reikia nustoti rodyti <Spinner/>
+                    // tam padarome loading = false
+                    this.setState({loading: false})
+                }
+            )
     }
 
     handleLogOut = () => {
@@ -139,14 +146,18 @@ class App extends React.Component {
 
                                 <div id='main-content'>
                                     {this.state.user === "" ?
-                                        <LoginComponent onLogin={this.getWhoAmI}/>
+                                        // Parodom uzsikrovimo spinner jeigu mes dar nezinome, ar esam prisijunge
+                                        // jeigu ateis atsakymas is /whoAmI kad nesam prisijunge
+                                        // parodysim login langa, o jeigu esam prisijunge, prades veikti <Switch>
+                                        this.state.loading ? <Spinner/> : <LoginComponent onLogin={this.getWhoAmI}/>
                                         :
                                         <Switch>
                                             {/* <Route exact path="/" component={AugisDashBoard}/> */}
                                             <Redirect exact from='/' to='/dashboard/documents/all'/>
                                             <Route path="/dashboard/documents/to_aproove"
-                                                   render={(props) => <ToApproveDashboard user={this.state.user} {...props}/>}/>
-                                                {/*// component={ToApproveDashboard}/>*/}
+                                                   render={(props) => <ToApproveDashboard
+                                                       user={this.state.user} {...props}/>}/>
+                                            {/*// component={ToApproveDashboard}/>*/}
                                             <Route path="/dashboard/documents/:id" render={(props) => <GenericDashBoard
                                                 user={this.state.user} {...props}/>}/>
                                             <Route exact path="/documents/:id" render={(props) => <DocumentDetailed
@@ -165,8 +176,9 @@ class App extends React.Component {
                                                    render={(props) => <Settings user={this.state.user} {...props}/>}/>
                                             {/*<Route exact path="/user-administration"*/}
                                             {/*render={(props) => <UserAdministration {...props}  />}/>*/}
-                                            <Route  exact path="/settings-test"
-                                                   render={(props) => <SettingsGroupsTypes user={this.state.user} {...props}/>}/>
+                                            <Route exact path="/settings-test"
+                                                   render={(props) => <SettingsGroupsTypes
+                                                       user={this.state.user} {...props}/>}/>
 
                                             <Route exact path="/user-registration" component={NewUserForm}/>
                                             <Route exact path="/logout" render={() => this.handleLogOut()}/>
@@ -177,17 +189,16 @@ class App extends React.Component {
                                             <Route component={NotFound}/>
 
                                             {/*<Route  exact path="/settings-test"*/}
-                                                   {/*render={(props) => <SettingsGroupsTypes user={this.state.user} {...props}/>}/>*/}
+                                            {/*render={(props) => <SettingsGroupsTypes user={this.state.user} {...props}/>}/>*/}
 
 
-                                            
                                         </Switch>
                                     }
                                 </div>
                             </main>
 
                             {/*<div className="footer">*/}
-                                {/*<p>Footer</p>*/}
+                            {/*<p>Footer</p>*/}
                             {/*</div>*/}
 
                         </React.Fragment>

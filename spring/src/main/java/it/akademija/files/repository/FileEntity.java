@@ -17,7 +17,7 @@ public class FileEntity {
 
     private String fileLocation;
 
-    private Long size;
+    private long size;
 //
 //    @UniqueElements //crashina sitas, reikia kazkaip patikrin kad butu unique
     private String identifier;

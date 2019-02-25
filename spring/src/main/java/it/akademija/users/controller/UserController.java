@@ -148,12 +148,12 @@ public class UserController {
                 cuc.getPassword());
     }
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{username}", method = RequestMethod.POST)
     @ApiOperation(value = "Update user's info", notes = "Updates user's information")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void updateUserInformation(@PathVariable("username") @NotNull @Length(min = 1) String username,
-                                      @RequestParam("newFirstname") @NotNull @Length(min = 1) String newFirstname,
-                                      @RequestParam("newLastname") @NotNull @Length(min = 1) String newLastname,
+                                      @RequestParam("firstname") @NotNull @Length(min = 1) String newFirstname,
+                                      @RequestParam("lastname") @NotNull @Length(min = 1) String newLastname,
                                       @ApiIgnore HttpServletRequest request) {
         boolean isAdmin = request.isUserInRole("ADMIN");
         boolean isHimself = request.getRemoteUser().equals(username);
@@ -164,7 +164,7 @@ public class UserController {
         }
     }
 
-    @RequestMapping(value = "/{username}/password", method = RequestMethod.PUT)
+    @RequestMapping(value = "/{username}/password", method = RequestMethod.POST)
     @ApiOperation(value = "Update users password", notes = "Should be removed later, of locked for admins only")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void updateUserPassword(@PathVariable("username") @NotNull @Length(min = 1) String username,
