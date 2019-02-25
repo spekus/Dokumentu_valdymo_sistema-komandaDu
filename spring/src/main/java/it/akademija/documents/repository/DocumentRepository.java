@@ -34,10 +34,6 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
             "where dta.documentState='SUBMITTED' AND dta.type IN:types")
     List<DocumentEntity> getDocumentsToApprove(@Param("types") List<String> types, Pageable pageable);
 
-    @Query("select dta From DocumentEntity dta " +
-            "where dta.documentState='SUBMITTED' AND dta.type IN:types")
-    List<DocumentEntity> getDocumentsToApprove(@Param("types") List<String> types);
-
     @Query("select dta From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types")
     List<DocumentEntity> getDocumentsToApprove(@Param("types") List<String>types);
 
