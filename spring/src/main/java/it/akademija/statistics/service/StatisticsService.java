@@ -2,6 +2,7 @@ package it.akademija.statistics.service;
 
 
 import it.akademija.documents.DocumentState;
+import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.service.DocumentTypeServiceObject;
@@ -84,6 +85,12 @@ public class StatisticsService {
         return statisticsRepository.countPostedByState(getDocTypesToApprove(username), startDate, endDate);
     }
 
+    //Gauname surikiotą vartotojų sąrašą, kurie pateikė daugiausiai dokumentų user'ui, kuris gali tvirtinti to tipo dokumentus.
+    @Transactional
+    public Collection<DocumentEntity> getUserListByPostedDocs(String username) {
+        return statisticsRepository.userListByPostedDocs(getDocTypesToApprove(username));
+    }
+
     //Ištraukiame iš userio kitus fieldus, pagal username(nežinau gal galima paprasčiau tiesiogiai iš security, neradau
     @Transactional
     private String getUserInitialsByUsername(String username) {
@@ -107,7 +114,6 @@ public class StatisticsService {
             }
             return allDocTypesUserCanApprove.stream().map(documentTypeEntity ->
                      documentTypeEntity.getTitle()).collect(Collectors.toSet());
-
         }
         return null;
     }

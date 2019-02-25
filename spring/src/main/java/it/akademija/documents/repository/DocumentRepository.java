@@ -29,27 +29,20 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
 
     public List<DocumentEntity> findByAuthor(String Author);
 
-//    public List<DocumentEntity> findByOrderByAuthorAscTitleAsc(String Author,Pageable pageable);
-
     @Query("select dta From DocumentEntity dta " +
             "where dta.documentState='SUBMITTED' AND dta.type IN:types")
     List<DocumentEntity> getDocumentsToApprove(@Param("types") List<String> types, Pageable pageable);
-
-
 
     @Query("select dta From DocumentEntity dta " +
             "where dta.documentState='SUBMITTED' AND dta.type IN:types")
     List<DocumentEntity> getDocumentsToApprove(@Param("types") List<String> types);
 
-
-
 //    @Query( //THIS IS NATIVE query which can be used to generate CSV file more efficiently
 //            value = "CALL CSVWRITE('test.csv', 'SELECT * FROM DOCUMENTS ', 'charset=UTF-8 fieldSeparator=' || CHAR(9));",
 //            nativeQuery = true)
-//    void findAllNative();
+//    public void findAllNative();
 
-
-
-
+//    public List<DocumentEntity> findByOrderByAuthorAscTitleAsc(String Author,Pageable pageable);
 
 }
+

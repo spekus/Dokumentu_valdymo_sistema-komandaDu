@@ -48,6 +48,15 @@ public interface StatisticsRepository extends JpaRepository<DocumentEntity, Long
                                             @Param("startDate") LocalDateTime startDate,
                                             @Param("endDate") LocalDateTime endDate);
 
+    //Dažniausiai pateikiančių dokumentus vartotojų sąrašas, surikiotas pagal pateiktų dok.skaičių.
+    @Query("SELECT COUNT(de), de.author " +
+            "FROM DocumentEntity de " +
+            "WHERE de.type IN :types AND " +
+            "de.postedDate is NOT NULL " +
+            "GROUP BY de.author " +
+            "ORDER BY COUNT(de) desc")
+    List<DocumentEntity> userListByPostedDocs(@Param("types") Set<String> types);
+
 }
 
 
