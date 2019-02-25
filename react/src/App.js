@@ -19,11 +19,7 @@ import axios from "axios";
 import {Redirect} from "react-router";
 import DownloadZip from "./Components/FilesAndDocumens/DownloadZip"
 import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
-<<<<<<< HEAD
-// import SettingsEditGroupTypes from "./Components/Settings/SettingsEditGroupTypes"
-=======
 import Spinner from "./Components/UI/Spinner";
->>>>>>> 744719e4e4f8b934cf2e7c4b1d8f17dd8a79de9a
 
 
 class App extends React.Component {
