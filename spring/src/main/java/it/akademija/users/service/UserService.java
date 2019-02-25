@@ -128,7 +128,7 @@ public class UserService implements UserDetailsService {
         UserEntity userEntity = userRepository.findUserByUsername(username);
         Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
 
-        return groupsUserBelongsTo.stream().map(userGroupEntity -> new UserGroupServiceObject(userGroupEntity.getTitle(), userGroupEntity.getRole()))
+        return groupsUserBelongsTo.stream().map(userGroupEntity -> UserGroupService.SOfromEntity(userGroupEntity))
                 .collect(Collectors.toList());
     }
 
@@ -294,7 +294,7 @@ public class UserService implements UserDetailsService {
         so.setUserGroups(entity.getUserGroups()
                 .stream()
                 .map(ug ->
-                        new UserGroupServiceObject(ug.getTitle(),ug.getRole()))
+                        UserGroupService.SOfromEntity(ug))
                 .collect(Collectors.toSet()));
         return so;
     }

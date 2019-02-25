@@ -9,13 +9,14 @@ export default class FileUploader extends Component {
 
     state = {
 
-        file: '',
+        files: [],
         error: '',
         msg: '',
         type: '',
         title: '',
         description: '',
-        availableTypes: []
+        availableTypes: [],
+
     }
 
 
@@ -48,21 +49,29 @@ export default class FileUploader extends Component {
         // this.getAllowedTypes();
         event.preventDefault();
         this.setState({error: '', msg: ''});
+        this.setState({files:[]})
+        // {this.state.files.map(file => (
+        //     <h6>{file.name}<span><i onClick={this.removeFile} className="fas fa-minus-circle" style={{fontSize: '0.5em'}}/></span></h6>
+        // ))}
 
-        if (!this.state.file) {
+        var fileIdentifiers = [];
+
+        if (this.state.files.length === 0 || this.state.files ===undefined) {
             this.setState({error: 'Pasirinkite failą'})
             return;
         }
 
-        if (this.state.file.size >= 2000000) {
+        {this.state.files.map(file=> {
+
+        if (file.size >= 2000000) {
             this.setState({error: 'Failo dydis viršija 2MB'})
             return;
         }
 
 
         let data = new FormData();
-        data.append('file', this.state.file);
-        data.append('name', this.state.file.name);
+        data.append('file', file);
+        data.append('name', file.name);
 
 
         axios.post('/api/files', data)
@@ -71,19 +80,10 @@ export default class FileUploader extends Component {
                 this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
                 if (response.data.text) {
                     var fileId = response.data.text;
+                    fileIdentifiers.push(fileId);
 
 
-                    let documentDetails = {
-                        title: this.state.title,
-                        type: this.state.type,
-                        description: this.state.description
-                    };
-
-                    // Jeigu pavyko sukelti faila, mes bandome vartotojo vardu
-                    // sukurti dokumento specifikacija
-                    // ir suristi sukelta faila su juo
-                    this.addDocument(documentDetails, fileId);
-
+                    
                 }
             })
             .catch(err => {
@@ -91,13 +91,27 @@ export default class FileUploader extends Component {
                 console.log("Error from /api/files - " + err)
             });
 
+        })}
+
+        let documentDetails = {
+            title: this.state.title,
+            type: this.state.type,
+            description: this.state.description
+        };
+
+        // Jeigu pavyko sukelti faila, mes bandome vartotojo vardu
+        // sukurti dokumento specifikacija
+        // ir suristi sukelta faila su juo
+        this.addDocument(documentDetails, fileIdentifiers);
+
+
 
     }
 
     // Metodas prideda naudotojui dokumento specifikacija (DocumentDetails) ir susieja su failu,
     // kuris jau buvo ikeltas anksciau.
     //Kol kas lyk neveikia?? 
-    addDocument(documentDetails, fileId) {
+    addDocument(documentDetails, fileIdentifiers) {
         console.log("running addDocument");
         // console.log(this.state.type);
         // console.log("type is" +this.state.type.valueOf);
@@ -110,7 +124,10 @@ export default class FileUploader extends Component {
                 // this.getAllowedTypes()
                 if (response.data.text) {
                     var docId = response.data.text;
-                    this.addFileToDocument(docId, fileId);
+                    fileIdentifiers.forEach(fileId => {
+                        this.addFileToDocument(docId, fileId);
+                    })
+                
                     console.log("Document has been created with identifier - "
                         + docId);
                 }
@@ -148,11 +165,15 @@ export default class FileUploader extends Component {
     }
 
     onFileChange = (event) => {
-        this.setState({
-            file: event.target.files[0]
-        });
+  
+        this.setState({ files: [...this.state.files, event.target.files[0]] })    
     }
 
+    removeFile = (index) => {
+        var arrayCopy = [...this.state.files];
+        arrayCopy.splice(index,1);
+        this.setState({files: arrayCopy});
+    }
 
     render() {
         return (
@@ -201,10 +222,25 @@ export default class FileUploader extends Component {
 
                                     <div className="form-group col-md-9 mt-4">
                                         <input onChange={this.onFileChange} multiple type="file"></input><br/>
-                                        <h5 style={{color: 'red'}}>{this.state.error}</h5>
-                                        <h5 style={{color: 'green'}}>{this.state.msg}</h5>
+                                        <h4 style={{marginTop:'20px'}}> {this.state.files.length>0 ? 'Pridėti failai:' : ''}  </h4>
+                                            <ul>
+                                            {
+                                                this.state.files.map((file,index) => (
+                                                <li style={{fontSize:'1.5em'}}>
+                                                {file===undefined?'':file.name}
+                                                <span>
+                                                    <i onClick={()=> this.removeFile(index)} className="fas fa-minus-circle"
+                                                    style={{fontSize: '1.0em', color:'red', marginLeft:'8px'}}/>
+                                                    </span>
+                                                </li>
+                                            ))}
+
+                                            </ul>
+                                        <h4 style={{color: 'red'}}>{this.state.error}</h4>
+                                        <h4 style={{color: 'green'}}>{this.state.msg}</h4>
 
                                     </div>
+                                    
                                 </div>
                             </div>
                             <div className="text-center">

@@ -19,7 +19,7 @@ class SettingsUserGroups extends Component {
 
     createUserGroup = (event) => {
         event.preventDefault();
-        axios.post('/api/usergroups', {title: this.state.newUserGroupInputField})
+        axios.post('/api/usergroups', {title: this.state.newUserGroupInputField, role: 'ROLE_USER'})
             .then(reponse => {
                     this.getUserGroups();
                     this.setState({newUserGroupInputField: ""})

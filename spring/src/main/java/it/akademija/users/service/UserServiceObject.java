@@ -43,7 +43,7 @@ public class UserServiceObject {
         this.lastname = lastname;
         this.username = username;
         this.password = password;
-        this.userGroups = userGroups.stream().map(ug -> new UserGroupServiceObject(ug.getTitle(),ug.getRole())).collect(Collectors.toSet());
+        this.userGroups = userGroups.stream().map(ug -> UserGroupService.SOfromEntity(ug)).collect(Collectors.toSet());
     }
 
     public String getUserIdentifier() {

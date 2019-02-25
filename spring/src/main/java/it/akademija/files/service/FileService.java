@@ -48,7 +48,7 @@ public class FileService {
         try {
             // this is for later naming each saved file, so that files with identical name would not be named identically
             String time = LocalDateTime.now()
-                    .format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+                    .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
 
             String currentUsersHomeDir = System.getProperty("user.home");
             File fileLocation = new File(currentUsersHomeDir + File.separator + "tmpDocs"

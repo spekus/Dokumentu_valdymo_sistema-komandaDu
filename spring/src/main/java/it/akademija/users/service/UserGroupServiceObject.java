@@ -1,6 +1,10 @@
 package it.akademija.users.service;
 
 import it.akademija.auth.AppRoleEnum;
+import it.akademija.documents.service.DocumentTypeServiceObject;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class UserGroupServiceObject {
 
@@ -8,14 +12,16 @@ public class UserGroupServiceObject {
 
     private AppRoleEnum role;
 
-    public UserGroupServiceObject(){
+    private Set<DocumentTypeServiceObject> typesToUpload = new HashSet<>();
+
+    private Set<DocumentTypeServiceObject> typesToApprove = new HashSet<>();
+
+
+    public UserGroupServiceObject() {
 
     }
 
-    public UserGroupServiceObject(String title, AppRoleEnum role) {
-        this.title = title;
-        this.role = role;
-    }
+
 
     public String getTitle() {
         return title;
@@ -31,5 +37,23 @@ public class UserGroupServiceObject {
 
     public void setRole(AppRoleEnum role) {
         this.role = role;
+    }
+
+
+
+    public Set<DocumentTypeServiceObject> getTypesToApprove() {
+        return typesToApprove;
+    }
+
+    public void setTypesToApprove(Set<DocumentTypeServiceObject> typesToApprove) {
+        this.typesToApprove = typesToApprove;
+    }
+
+    public Set<DocumentTypeServiceObject> getTypesToUpload() {
+        return typesToUpload;
+    }
+
+    public void setTypesToUpload(Set<DocumentTypeServiceObject> typesToUpload) {
+        this.typesToUpload = typesToUpload;
     }
 }

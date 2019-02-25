@@ -12,24 +12,18 @@ import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.exceptions.NoApproverAvailableException;
 import it.akademija.files.ResponseTransfer;
-import it.akademija.files.service.FileServiceObject;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
-import org.springframework.web.util.UriComponentsBuilder;
 import springfox.documentation.annotations.ApiIgnore;
 
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -92,13 +86,15 @@ public class DocumentController {
     public void submitDocument(
             @ApiParam(value = "DocumentEntity identifier", required = true)
             @Valid
-            @PathVariable final @NotNull @Length(min = 1) String documentIdentifier) throws NoApproverAvailableException {
+            @PathVariable final @NotNull @Length(min = 1) String documentIdentifier) {
 
         try {
             documentService.submitDocument(documentIdentifier);
-        } catch (NoApproverAvailableException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "NoApproverAvailableException");
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 
+        } catch (NoApproverAvailableException e) {
+            throw new ResponseStatusException(HttpStatus.FAILED_DEPENDENCY, e.getMessage());
         }
 
     }
@@ -112,7 +108,17 @@ public class DocumentController {
             @Valid
             @PathVariable @NotNull @Length(min = 1) String documentIdentifier,
             @ApiIgnore Authentication authentication) {
-        documentService.approveDocument(documentIdentifier, authentication.getName());
+        try {
+            documentService.approveOrRejectDocument(documentIdentifier, authentication.getName(), DocumentState.APPROVED, "");
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (SecurityException e)
+        {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{documentIdentifier}/reject", method = RequestMethod.POST)
@@ -125,7 +131,19 @@ public class DocumentController {
             @PathVariable @NotNull @Length(min = 1) String documentIdentifier,
             @ApiIgnore Authentication authentication,
             @RequestParam @NotNull @Length(min = 1) String rejectedReason) {
-        documentService.rejectDocument(documentIdentifier, authentication.getName(), rejectedReason);
+        try {
+            documentService.approveOrRejectDocument(documentIdentifier, authentication.getName(), DocumentState.REJECTED, rejectedReason);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+        catch (SecurityException e)
+        {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
+        }
+
+
     }
 
     @RequestMapping(value = "/{documentIdentifier}", method = RequestMethod.DELETE)
