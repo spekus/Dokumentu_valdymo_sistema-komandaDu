@@ -19,7 +19,7 @@ import axios from "axios";
 import {Redirect} from "react-router";
 import DownloadZip from "./Components/FilesAndDocumens/DownloadZip"
 import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
-import SettingsEditGroupTypes from "./Components/Settings/SettingsEditGroupTypes"
+// import SettingsEditGroupTypes from "./Components/Settings/SettingsEditGroupTypes"
 
 
 class App extends React.Component {
