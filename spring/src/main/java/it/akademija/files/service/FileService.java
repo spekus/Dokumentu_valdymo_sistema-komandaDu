@@ -52,7 +52,7 @@ public class FileService {
 
             String currentUsersHomeDir = System.getProperty("user.home");
             File fileLocation = new File(currentUsersHomeDir + File.separator + "tmpDocs"
-                    + File.separator + name + File.separator + file.getOriginalFilename() + time);
+                    + File.separator + name + File.separator + file.getOriginalFilename()  + time);
             File generalLocation = new File(currentUsersHomeDir + File.separator + "tmpDocs");
             File fileLocationDirectory = new File(currentUsersHomeDir + File.separator + "tmpDocs"
                     + File.separator + name);

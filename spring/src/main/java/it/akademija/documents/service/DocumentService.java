@@ -133,7 +133,7 @@ public class DocumentService{
             DocumentEntity documentEntityFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             //surandame prisiloginusi useri
             UserEntity userEntityFromDataBase = userRepository.findUserByUsername(username);
-
+            boolean atisismt = false;
             for (UserGroupEntity userGroupEntity : userEntityFromDataBase.getUserGroups()) {
                 if (userGroupEntity.getDocumentsToApprove().contains(documentEntityFromDatabase)) {
                     LocalDateTime dateApproved = LocalDateTime.now();
@@ -141,9 +141,13 @@ public class DocumentService{
                     documentEntityFromDatabase.setApprovalDate(dateApproved);
                     documentEntityFromDatabase.setApprover(userEntityFromDataBase.getFirstname() + " " + userEntityFromDataBase.getLastname());
                     documentRepository.save(documentEntityFromDatabase);
-                    removeDocFromApproverList(documentIdentifier);
+                     atisismt = true;
+
 
                 }
+            }
+            if(atisismt == true){
+                removeDocFromApproverList(documentIdentifier);
             }
         }
     }
@@ -203,13 +207,22 @@ specialisto Dokumento saraso*/
 
     @Transactional
     private void removeDocFromApproverList(String documentIdentifier) {
+        boolean remove = false;
+        DocumentEntity documentEntityToRemove = null;
         List<UserGroupEntity> availableUserGroups = userGroupRepository.findAll();
         for (UserGroupEntity userGroupEntity : availableUserGroups) {
             Set<DocumentEntity> allDocsToApproveFromGroup = userGroupEntity.getDocumentsToApprove();
             for (DocumentEntity documentEntity : allDocsToApproveFromGroup) {
                 if (documentEntity.getDocumentIdentifier().equals(documentIdentifier)) {
-                    allDocsToApproveFromGroup.remove(documentEntity);
+                    remove =true;
+                    documentEntityToRemove = documentEntity;
+
                 }
+
+
+            }
+            if(remove == true){
+                allDocsToApproveFromGroup.remove(documentEntityToRemove);
             }
         }
     }

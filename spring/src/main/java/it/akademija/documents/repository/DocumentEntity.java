@@ -19,12 +19,12 @@ import java.util.UUID;
 public class DocumentEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private long id;
-
-
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private Long id;
 
     @Column(unique = true, nullable = false)
+    //@GeneratedValue(strategy=GenerationType.IDENTITY) //CIA DEL DUOMBAZES
     private String documentIdentifier = UUID.randomUUID().toString().replace("-", "");
 
 

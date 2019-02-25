@@ -100,7 +100,7 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas");
 
 
-        addDummydata();
+       addDummydata();
     }
 
     private void createUserIfNotExists(String fn, String ln, String un, String pswd) {
@@ -142,8 +142,8 @@ public class DemoData implements ApplicationRunner {
         //patikrina ar jau buvo prideta data
         if(userRepository.findUserByUsername("testuser1") ==  null) {
 
-            // jei dar neiko nebuvo prideta prideda 10 useriu
-            for (int userNumber = 0; userNumber < 5; userNumber++) {
+            // jei dar neiko nebuvo prideta  x skaiciu useriu
+            for (int userNumber = 0; userNumber < 2; userNumber++) {
                 createUserIfNotExists("name" + userNumber, "surename" + userNumber,
                         "testuser" + userNumber, "testuser" + userNumber);
                 userGroupService.addGroupToUser("Vadybininkai", "testuser" + userNumber);
