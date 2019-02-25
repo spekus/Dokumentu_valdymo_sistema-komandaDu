@@ -19,7 +19,11 @@ import axios from "axios";
 import {Redirect} from "react-router";
 import DownloadZip from "./Components/FilesAndDocumens/DownloadZip"
 import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
+<<<<<<< HEAD
 // import SettingsEditGroupTypes from "./Components/Settings/SettingsEditGroupTypes"
+=======
+import Spinner from "./Components/UI/Spinner";
+>>>>>>> 744719e4e4f8b934cf2e7c4b1d8f17dd8a79de9a
 
 
 class App extends React.Component {
@@ -27,6 +31,7 @@ class App extends React.Component {
         sideBarIsOpen: false,
         appBarText: "DVS",
         user: "",
+        loading: true // reiskia kad reikia rodyti Spinner elementa
     };
 
     menuItems = [
@@ -74,6 +79,12 @@ class App extends React.Component {
                 console.log("Error getting user info from server");
                 console.log(error);
             })
+            .finally(() => {
+                    // nesvarbu ar mes gavome klaida ar gera atsakyma, reikia nustoti rodyti <Spinner/>
+                    // tam padarome loading = false
+                    this.setState({loading: false})
+                }
+            )
     }
 
     handleLogOut = () => {
@@ -139,7 +150,10 @@ class App extends React.Component {
 
                                 <div id='main-content'>
                                     {this.state.user === "" ?
-                                        <LoginComponent onLogin={this.getWhoAmI}/>
+                                        // Parodom uzsikrovimo spinner jeigu mes dar nezinome, ar esam prisijunge
+                                        // jeigu ateis atsakymas is /whoAmI kad nesam prisijunge
+                                        // parodysim login langa, o jeigu esam prisijunge, prades veikti <Switch>
+                                        this.state.loading ? <Spinner/> : <LoginComponent onLogin={this.getWhoAmI}/>
                                         :
                                         <Switch>
                                             {/* <Route exact path="/" component={AugisDashBoard}/> */}
