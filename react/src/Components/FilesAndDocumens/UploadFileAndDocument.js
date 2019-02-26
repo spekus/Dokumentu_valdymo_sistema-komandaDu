@@ -179,7 +179,7 @@ export default class FileUploader extends Component {
         return (
             <React.Fragment>
                 <div className="container">
-                    <div className="page1 shadow p-3 mb-5 bg-white rounded">
+                    <div className="page1 p-3 mb-5 bg-white rounded">
                         <h4 className="my-4" align="center">
                             Naujo dokumento sukūrimas
                         </h4>
@@ -212,7 +212,7 @@ export default class FileUploader extends Component {
                                         <label htmlFor="exampleFormControlTextarea1">Aprašymas</label>
                                         <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"
                                                   minLength="8"
-                                                  maxLength="255"
+                                                  maxLength="15"
                                                   pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?[ ]?|[A-Za-z0-9]+['-]?)+$"
                                                   placeholder="Įveskite trumpą dokumento aprašymą"
                                                   name="description"

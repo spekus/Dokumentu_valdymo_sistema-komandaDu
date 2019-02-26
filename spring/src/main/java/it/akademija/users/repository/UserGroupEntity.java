@@ -16,7 +16,7 @@ import java.util.Set;
 public class UserGroupEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    protected Long id;
+    protected long id;
     private String title;
 
     @ManyToMany
@@ -47,11 +47,11 @@ public class UserGroupEntity {
         this.role = role;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

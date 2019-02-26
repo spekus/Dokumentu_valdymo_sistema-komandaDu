@@ -59,7 +59,7 @@ class SettingsDocumentTypes extends Component {
 
     render() {
         return (
-            <div className='shadow p-3 mb-5 bg-white rounded'>
+            <div className='p-3 mb-5 bg-white rounded'>
                 <h5>Dokumentų tipų nustatymas</h5>
                 <div className="row">
                     <div className="col-md-8">

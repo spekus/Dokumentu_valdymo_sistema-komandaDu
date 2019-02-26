@@ -69,7 +69,7 @@ public class UserGroupController {
     @ApiOperation(value = "Remove group from user", notes = "")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void removeGroupFromUser(@PathVariable("userGroupTitle") @NotNull @Length(min = 1) String userGroupTitle,
-                               @RequestParam("username") @NotNull @Length(min = 1) String username) {
+                                    @RequestParam("username") @NotNull @Length(min = 1) String username) {
 
         userGroupService.removeGroupFromUser(userGroupTitle,username);
     }
@@ -102,7 +102,7 @@ public class UserGroupController {
     @ApiOperation(value = "Removes document type allowed to create documents for a group", notes = "")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void removeDocumentTypeToUpload(@PathVariable("userGroupTitle") @NotNull @Length(min=1) String userGroupTitle,
-                                        @RequestParam("documentTypeTitle") @NotNull @Length(min=1) String documentTypeTitle) {
+                                           @RequestParam("documentTypeTitle") @NotNull @Length(min=1) String documentTypeTitle) {
         userGroupService.removeDocumentTypeToUpload(userGroupTitle, documentTypeTitle);
     }
 
@@ -110,7 +110,7 @@ public class UserGroupController {
     @ApiOperation(value = "Removes document type allowed to approve documents for a group", notes = "")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public void removeDocumentTypeToApprove(@PathVariable("userGroupTitle") @NotNull @Length(min=1) String userGroupTitle,
-                                           @RequestParam("documentTypeTitle") @NotNull @Length(min=1) String documentTypeTitle) {
+                                            @RequestParam("documentTypeTitle") @NotNull @Length(min=1) String documentTypeTitle) {
         userGroupService.removeDocumentTypeToApprove(userGroupTitle, documentTypeTitle);
     }
 

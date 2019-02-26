@@ -5,8 +5,9 @@ import javax.persistence.*;
 @Entity
 public class DocumentTypeEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long id;
+    //@GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    private long id;
 
     @Column(unique=true)
     private String title;
@@ -19,11 +20,11 @@ public class DocumentTypeEntity {
         this.title=title;
     }
 
-    public Long getId() {
+    public long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(long id) {
         this.id = id;
     }
 

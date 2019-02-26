@@ -40,7 +40,7 @@ class UserAdminisrationList extends Component {
             .then(response => {
                 if (response.data.length > 0) {
                     this.setState({userlist: response.data});
-                } else (window.alert("Pagal paieska nerasta "))
+                } else (window.alert("Pagal paiešką nerasta "))
             })
             .catch(error => {
                 console.log("Atsakymas is getFilteredUsers: " + error)
