@@ -14,7 +14,10 @@ class AugisDokumentas extends Component {
         userIdentifier: '',
         documentState: "Laukiama patvirtinimo",
         rejectedReason: '',
-        documentInfo: {}
+        documentInfo: {},
+        posted: '',
+        approved: '',
+        rejected: ''
     };
 
 
@@ -23,6 +26,7 @@ class AugisDokumentas extends Component {
     }
 
     componentDidMount() {
+
     }
 
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
@@ -51,6 +55,21 @@ class AugisDokumentas extends Component {
                 // });
                 this.setState({documentInfo: result.data});
                 this.getFileList();
+                var posteddate = this.state.documentInfo.postedDate;
+                var newposteddate = posteddate.slice(0, 10) + " " + posteddate.slice(11, 19);
+                this.setState({posted: newposteddate});
+                if (this.state.documentInfo.documentState === "APPROVED") {
+                    var aproveddate = this.state.documentInfo.approvalDate;
+                    var newaproveddate = aproveddate.slice(0, 10) + " " + aproveddate.slice(11, 19);
+                    this.setState({approved: newaproveddate});
+                }
+                if (this.state.documentInfo.documentState === "REJECTED") {
+                    var rejecteddate = this.state.documentInfo.rejectedDate;
+                    var newrejecteddate = rejecteddate.slice(0, 10) + " " + rejecteddate.slice(11, 19);
+                    this.setState({rejected: newrejecteddate});
+                }
+
+
             })
             .catch(error => {
                 console.log("Atsakymas is getDocumentInformation - " + error)
@@ -133,12 +152,13 @@ class AugisDokumentas extends Component {
             .then(response => {
                 this.setState({documentState: this.state.documentInfo.documentState});
                 this.getDocumentInformation();
+
             })
             .catch(error => {
                 if (error.response.data.message) {
                     window.alert("Klaida: " + error.response.data.message);
                     console.log(error.response);
-                }else{
+                } else {
                     window.alert("Klaida is submitDocument - " + error.message);
                 }
             })
@@ -151,6 +171,10 @@ class AugisDokumentas extends Component {
             .then(response => {
                 this.setState({documentState: this.state.documentInfo.documentState});
                 this.getDocumentInformation();
+                var aproveddate = this.state.documentInfo.approvedDate;
+
+                var newaproveddate = aproveddate.slice(0, 10) + " " + aproveddate.slice(11, 19);
+                this.setState({approved: newaproveddate});
             })
             .catch(error => {
                 window.alert("Klaida is approveDocument - " + error)
@@ -169,6 +193,11 @@ class AugisDokumentas extends Component {
             .then(response => {
                 this.setState({documentState: this.state.documentInfo.documentState});
                 this.getDocumentInformation();
+                var rejecteddate = this.state.documentInfo.rejectedDate;
+                var newrejecteddate = rejecteddate.slice(0, 10) + " " + rejecteddate.slice(11, 19);
+                this.setState({rejected: newrejecteddate});
+
+
             })
             .catch(error => {
                 console.log("Klaida is rejectDocument - " + error.message);
@@ -179,110 +208,114 @@ class AugisDokumentas extends Component {
         return (
             <React.Fragment>
                 <div className='container'>
-                <div className='p-3 mb-5 bg-white rounded' align="center">
+                    <div className='p-3 mb-5 bg-white rounded' align="center">
 
 
-                    {/* <h5>Sukurti</h5> */}
-                    <table className='table table-bordered col-md-7'>
-                        <thead>
-                        <th colspan='2' className="text-center table-secondary">DOKUMENTO DETALĖS</th>
-                        </thead>
-                        <tbody>
-                        <tr>
-                            <th>Dokumento pavadinimas</th>
-                            <td>{this.state.documentInfo.title}</td>
-                        </tr>
-                        <tr>
-                            <th>Dokumento tipas</th>
-                            <td>{this.state.documentInfo.type}</td>
-                        </tr>
-                        <tr>
-                            <th>Aprašymas</th>
-                            <td>{this.state.documentInfo.description}</td>
-                        </tr>
+                        {/* <h5>Sukurti</h5> */}
+                        <table className='table table-bordered col-md-7'>
+                            <thead>
+                            <th colspan='2' className="text-center table-secondary">DOKUMENTO DETALĖS</th>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <th>Dokumento pavadinimas</th>
+                                <td>{this.state.documentInfo.title}</td>
+                            </tr>
+                            <tr>
+                                <th>Dokumento tipas</th>
+                                <td>{this.state.documentInfo.type}</td>
+                            </tr>
+                            <tr>
+                                <th>Aprašymas</th>
+                                <td>{this.state.documentInfo.description}</td>
+                            </tr>
 
 
-                        <tr>
-                            <th>Dokumento autorius</th>
-                            <td>{this.state.documentInfo.author}</td>
-                        </tr>
+                            <tr>
+                                <th>Dokumento autorius</th>
+                                <td>{this.state.documentInfo.author}</td>
+                            </tr>
 
-                        <tr>
-                            <th>Sukurimo data</th>
-                            <td>{this.state.documentInfo.postedDate}</td>
-                        </tr>
+                            <tr>
+                                <th>Sukurimo data</th>
+                                {/*<td>{this.state.documentInfo.postedDate}</td>*/}
+                                <td>{this.state.posted}</td>
+                            </tr>
+                            {this.state.documentInfo.documentState === "APPROVED" ?
+                                <tr>
+                                    <th>Patvirtinimo data</th>
+                                    {/*<td>{this.state.documentInfo.approvalDate}</td>*/}
+                                    <td>{this.state.approved}</td>
+                                </tr> : ""}
 
-                        <tr>
-                            <th>Patvirtinimo data</th>
-                            <td>{this.state.documentInfo.approvalDate}</td>
-                        </tr>
+                            {this.state.documentInfo.documentState === "REJECTED" ?
+                                <tr>
+                                    <th>Atmetimo data</th>
+                                    {/*<td>{this.state.documentInfo.rejectedDate}</td>*/}
+                                    <td>{this.state.rejected}</td>
+                                </tr> : ""}
 
+                            {this.state.documentInfo.documentState === "REJECTED" ?
+                                <tr>
+                                    <th>Atmetimo priežastis</th>
+                                    <td>{this.state.documentInfo.rejectedReason}</td>
+                                </tr> : ""}
 
-                        <tr>
-                            <th>Atmetimo data</th>
-                            <td>{this.state.documentInfo.rejectedDate}</td>
-                        </tr>
+                            <tr>
+                                <th>Tvirtintojas</th>
+                                <td>{this.state.documentInfo.approver}</td>
+                            </tr>
 
-                        <tr>
-                            <th>Atmetimo priežastis</th>
-                            <td>{this.state.documentInfo.rejectedReason}</td>
-                        </tr>
-
-                        <tr>
-                            <th>Tvirtintojas</th>
-                            <td>{this.state.documentInfo.approver}</td>
-                        </tr>
-
-                        <tr>
-                            <th>Failo pavadinimas</th>
-                            <td>
-                                <ul>
-                                    {this.state.documentInfo.filesAttachedToDocument ?
-                                        this.state.documentInfo.filesAttachedToDocument.map(file => <li>
-                                            <a href={'http://localhost:8181/api/files/download/' + file.identifier}
-                                               target='_blank'>{file.fileName}</a>
-                                            {/* mes naudojame localhost:8181/api  todel, kad react-server proxy nesuveikia kai content tipas yra nustatytas
+                            <tr>
+                                <th>Failo pavadinimas</th>
+                                <td>
+                                    <ul>
+                                        {this.state.documentInfo.filesAttachedToDocument ?
+                                            this.state.documentInfo.filesAttachedToDocument.map(file => <li>
+                                                <a href={'http://localhost:8181/api/files/download/' + file.identifier}
+                                                   target='_blank'>{file.fileName}</a>
+                                                {/* mes naudojame localhost:8181/api  todel, kad react-server proxy nesuveikia kai content tipas yra nustatytas
                                     */}
-                                            {/*<a href='#' onClick={() => this.downloadOneFile(file.identifier)} >{file.fileName}</a>*/}
-                                        </li>)
-                                        : ''
-                                    }
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr>
-                            <th>Dokumento statusas</th>
-                            <td>{this.state.documentInfo.documentState}</td>
-                        </tr>
+                                                {/*<a href='#' onClick={() => this.downloadOneFile(file.identifier)} >{file.fileName}</a>*/}
+                                            </li>)
+                                            : ''
+                                        }
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Dokumento statusas</th>
+                                {/*<td>{this.state.documentInfo.documentState}</td>*/}
+                                {this.state.documentInfo.documentState === 'CREATED' ? <td>Sukurtas</td> : ""}
+                                {this.state.documentInfo.documentState === 'SUBMITTED' ?
+                                    <td>Pateiktas tvirtinimui</td> : ""}
+                                {this.state.documentInfo.documentState === 'APPROVED' ? <td>Patvirtintas</td> : ""}
+                                {this.state.documentInfo.documentState === 'REJECTED' ? <td>Atmestas</td> : ""}
+                            </tr>
 
-                        </tbody>
-                    </table>
-
-
-                    {/*Dokumentui kuris yra CREATED parodysima "Pateikti"*/}
-                    {this.state.documentInfo.documentState === 'CREATED' && this.props.user.username === this.state.documentInfo.author ?
-                        <button className="btn mr-4" id='mybutton' onClick={this.submitDocument}>Pateikti</button>
-                        : ''}
-
-                    {/*Dokumentui kuris yra SUBMITTED parodysime "Patvirtinti" ir "Atmesti"*/}
-                    {this.state.documentInfo.documentState === 'SUBMITTED' && this.props.user.username !== this.state.documentInfo.author ?
-                        <React.Fragment>
-                            <button className="btn btn-success mr-4"
-                                    onClick={this.approveDocument}>Patvirtinti
-                            </button>
-                            <button className="btn btn-danger mr-4" onClick={this.rejectDocument}>Atmesti
-                            </button>
-                        </React.Fragment>
-                        : ''}
+                            </tbody>
+                        </table>
 
 
-                </div>
+                        {/*Dokumentui kuris yra CREATED parodysima "Pateikti"*/}
+                        {this.state.documentInfo.documentState === 'CREATED' && this.props.user.username === this.state.documentInfo.author ?
+                            <button className="btn mr-4" id='mybutton' onClick={this.submitDocument}>Pateikti</button>
+                            : ''}
+
+                        {/*Dokumentui kuris yra SUBMITTED parodysime "Patvirtinti" ir "Atmesti"*/}
+                        {this.state.documentInfo.documentState === 'SUBMITTED' && this.props.user.username !== this.state.documentInfo.author ?
+                            <React.Fragment>
+                                <button className="btn btn-success mr-4"
+                                        onClick={this.approveDocument}>Patvirtinti
+                                </button>
+                                <button className="btn btn-danger mr-4" onClick={this.rejectDocument}>Atmesti
+                                </button>
+                            </React.Fragment>
+                            : ''}
 
 
-                {/*<h4 style={{color: 'green'}}>Description: {this.state.description}</h4>*/}
-                {/*<h4 style={{color: 'green'}}>Type: {this.state.type}</h4>*/}
-                {/*<h4 style={{color: 'green'}}>Failo Pavadinimas {this.state.attachedFileName}</h4>*/}
-                {/*<button onClick={this.downloadFile}>Download {this.state.attachedFileName} file</button>*/}
+                    </div>
+
                 </div>
             </React.Fragment>
         );

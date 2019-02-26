@@ -130,7 +130,7 @@ class App extends React.Component {
                                                 {item.text}
                                             </NavText>
                                         </NavItem> : '' )}
-                                </SideNav.Nav>:
+                                </SideNav.Nav>
                             </SideNav>
 
                             <nav id="mainnavbar" className={this.state.sideBarIsOpen ?

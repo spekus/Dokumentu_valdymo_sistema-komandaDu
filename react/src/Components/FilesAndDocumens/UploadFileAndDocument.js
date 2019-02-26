@@ -212,7 +212,7 @@ export default class FileUploader extends Component {
                                         <label htmlFor="exampleFormControlTextarea1">Aprašymas</label>
                                         <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"
                                                   minLength="8"
-                                                  maxLength="15"
+                                                  maxLength="255"
                                                   pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?[ ]?|[A-Za-z0-9]+['-]?)+$"
                                                   placeholder="Įveskite trumpą dokumento aprašymą"
                                                   name="description"
