@@ -37,7 +37,7 @@ class App extends React.Component {
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
         // {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
         {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai '},
-        {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai'},
+        {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai',admin:true},
     ];
 
     sideBarToggled = (isOpen) => {
@@ -121,6 +121,7 @@ class App extends React.Component {
 
                                 <SideNav.Nav defaultSelected="">
                                     {this.menuItems.map((item) =>
+                                        item.admin && this.state.user.isAdmin || !item.admin ?
                                         <NavItem key={item.path} eventKey={item.path} id={item.path}>
                                             <NavIcon>
                                                 <i className={item.iconClass} style={{fontSize: '1.75em'}}/>
@@ -128,8 +129,8 @@ class App extends React.Component {
                                             <NavText>
                                                 {item.text}
                                             </NavText>
-                                        </NavItem>)}
-                                </SideNav.Nav>
+                                        </NavItem> : '' )}
+                                </SideNav.Nav>:
                             </SideNav>
 
                             <nav id="mainnavbar" className={this.state.sideBarIsOpen ?
