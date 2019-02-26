@@ -5,7 +5,7 @@ const UserProfile = (props) => {
     return (
         <div className="container">
             <h2 className="text-center">Mano profilis:</h2>
-            <div className="page1 shadow p-3 mb-5 bg-white rounded">
+            <div className="page1 p-3 mb-5 bg-white rounded">
                     <table className="table">
                         <tbody>
                         <tr>

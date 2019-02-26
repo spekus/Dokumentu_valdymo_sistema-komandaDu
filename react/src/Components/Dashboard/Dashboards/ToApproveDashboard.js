@@ -122,7 +122,7 @@ class ToApproveDashboard extends Component {
                 <div className="row mt-2">
                     <DashboardNavigation/>
 
-                    <div className='col-lg-12 mt-3'>
+                    <div className='col-lg-12 mt-3 container'>
                           {/*{this.state.userDocuments.map(item => (*/}
                                                 {/*<p value={item.title}>{item.title}</p>*/}
                                             {/*))}*/}
@@ -132,7 +132,7 @@ class ToApproveDashboard extends Component {
                 </div>
 
                 {/* pagination */}
-                <div className='container-fluid mt-5'>
+                <div className='container mt-5'>
                 <div class="row">
                 <div className="col-lg-12 my-auto center-block text-center">
                 <ReactPaginate 

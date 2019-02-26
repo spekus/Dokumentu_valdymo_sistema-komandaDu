@@ -89,7 +89,7 @@ class GenericDashBoard extends Component {
                 <div className="row mt-2">
                     <DashboardNavigation/>
                     
-                    <div className='col-lg-12 mt-3 shadow p-3 mb-5 bg-white rounded'>
+                    <div className='col-lg-12 mt-3 p-3 mb-5 bg-white rounded'>
                         <DocumentsList list={this.state.userDocuments}/>
                     </div>
                 </div>

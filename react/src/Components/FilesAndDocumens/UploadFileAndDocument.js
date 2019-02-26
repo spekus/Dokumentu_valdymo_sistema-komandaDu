@@ -179,7 +179,7 @@ export default class FileUploader extends Component {
         return (
             <React.Fragment>
                 <div className="container">
-                    <div className="page1 shadow p-3 mb-5 bg-white rounded">
+                    <div className="page1 p-3 mb-5 bg-white rounded">
                         <h4 className="my-4" align="center">
                             Naujo dokumento sukūrimas
                         </h4>

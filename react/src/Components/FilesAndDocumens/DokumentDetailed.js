@@ -179,7 +179,7 @@ class AugisDokumentas extends Component {
         return (
             <React.Fragment>
                 <div className='container'>
-                <div className='shadow p-3 mb-5 bg-white rounded' align="center">
+                <div className='p-3 mb-5 bg-white rounded' align="center">
 
 
                     {/* <h5>Sukurti</h5> */}
