@@ -6,6 +6,7 @@ import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,12 +20,12 @@ import java.util.UUID;
 public class DocumentEntity implements Serializable {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+//    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy=GenerationType.IDENTITY)
     private long id;
 
-
-
     @Column(unique = true, nullable = false)
+    //@GeneratedValue(strategy=GenerationType.IDENTITY) //CIA DEL DUOMBAZES
     private String documentIdentifier = UUID.randomUUID().toString().replace("-", "");
 
 
@@ -46,7 +47,10 @@ public class DocumentEntity implements Serializable {
     private Set<FileEntity> filesAttachedToDocument=new HashSet<>();
 
     private LocalDateTime postedDate;
+
+
     private LocalDateTime approvalDate;
+
     private LocalDateTime rejectedDate;
     private String approver;
     private String rejectionReason;

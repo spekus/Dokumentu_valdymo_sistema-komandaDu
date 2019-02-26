@@ -53,6 +53,8 @@ public class DocumentTypeService {
 
     }
 
+
+
     @Transactional
     public void deleteDocumentType(String title) {
         documentTypeRepository.deleteDocumentTypeByTitle(title);
