@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import axios from 'axios'
-import $ from "jquery";
+import uuid from 'uuid';
 
 class NewUserForm extends Component {
 
@@ -108,8 +108,8 @@ class NewUserForm extends Component {
                         <div className="col-md-10">
                             <form className="col-md-11" onSubmit={this.handleSubmit}>
                                 <div className="form-group">
-                                    <label htmlFor="exampleFormControlInput1">Vardas</label>
-                                        <input type="text" className="form-control" id="exampleFormName"
+                                    <label>Vardas</label>
+                                        <input type="text" className="form-control"  id={uuid()}
                                                minLength="2"
                                                maxLength="50"
                                                pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z]+['-]?)+$"
@@ -120,8 +120,8 @@ class NewUserForm extends Component {
                                 </div>
 
                                 <div className="form-group">
-                                    <label htmlFor="exampleFormControlInput1">Pavardė</label>
-                                    <input type="text" className="form-control" id="exampleFormSurname"
+                                    <label>Pavardė</label>
+                                    <input type="text" className="form-control"  id={uuid()}
                                            minLength="2"
                                            maxLength="50"
                                            pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z]+['-]?)+$"
@@ -132,8 +132,8 @@ class NewUserForm extends Component {
                                 </div>
                                 {this.props.editmode ? 
                                 <div className="form-group">
-                                    <label htmlFor="exampleFormControlInput1">Naudotojo vardas</label>
-                                    <input type="text" className="form-control" id="exampleFormUsername"
+                                    <label>Naudotojo vardas</label>
+                                    <input type="text" className="form-control" id={uuid()}
                                         readOnly 
                                            minLength="2"
                                            maxLength="50"
@@ -141,29 +141,35 @@ class NewUserForm extends Component {
                                            title="Only letters and numbers should be provided!"
                                            placeholder="Įveskite vartotojo prisijungimo vardą" name="username"
                                            value={this.state.username}
-                                           onChange={this.handleChangeInput} required/>
+                                           onChange={this.handleChangeInput}
+                                           autoComplete="off"
+                                           required/>
                                 </div>
                                 :
                                 <div className="form-group">
-                                    <label htmlFor="exampleFormControlInput1">Naudotojo vardas</label>
-                                    <input type="text" className="form-control" id="exampleFormUsername"
+                                    <label>Naudotojo vardas</label>
+                                    <input type="text" className="form-control"  id={uuid()}
                                            minLength="2"
                                            maxLength="50"
                                            pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
                                            title="Only letters and numbers should be provided!"
                                            placeholder="Įveskite vartotojo prisijungimo vardą" name="username"
                                            value={this.state.username}
-                                           onChange={this.handleChangeInput} required/>
+                                           onChange={this.handleChangeInput}
+                                           autoComplete="off"
+                                           required/>
                                 </div>
                                 }
 
                                 {this.props.editmode ? '' :
                                 <div className="form-group">
-                                    <label htmlFor="exampleFormControlInput1">Identifikatorius</label>
-                                    <input type="text" className="form-control" id="exampleFormIdentifier"
+                                    <label>Identifikatorius</label>
+                                    <input type="text" className="form-control" id={uuid()}
                                            placeholder="Įveskite vartotojo identifikatorių" name="userIdentifier"
                                            value={this.state.userIdentifier}
-                                           onChange={this.handleChangeInput} required/>
+                                           onChange={this.handleChangeInput}
+                                           autoComplete="off"
+                                           required/>
                                 </div>}
 
                                 {/*<div className="form-group">*/}
@@ -183,17 +189,18 @@ class NewUserForm extends Component {
                                 <label htmlFor="inputPassword5">Slaptažodis</label>
                                 
                                 {this.props.editmode?
-                                <input type="password" id="inputPassword5" className="form-control"
+                                <input type="password" id={uuid()} className="form-control"
                                        minLength="8"
                                        maxLength="20"
                                        pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
                                        title="Password must be 8-20 symbols length!"
                                        value={this.state.password}
                                        aria-describedby="passwordHelpBlock" onChange={this.handleChangeInput}
+                                       autoComplete="off"
                                        name="password"
                                        />
                                     :
-                                    <input type="password" id="inputPassword5" className="form-control"
+                                    <input type="password" id={uuid()} className="form-control"
                                        minLength="8"
                                        maxLength="20"
                                        pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
@@ -201,10 +208,11 @@ class NewUserForm extends Component {
                                        value={this.state.password}
                                        aria-describedby="passwordHelpBlock" onChange={this.handleChangeInput}
                                        name="password"
+                                       autoComplete="off"
                                        required
                                        />
                                 }
-                                <small id="passwordHelpBlock" className="form-text text-muted">
+                                <small  id={uuid()} className="form-text text-muted">
                                     {/*Your password must be 8-20 characters long, contain letters and numbers, and must*/}
                                     {/*not*/}
                                     {/*contain spaces, special characters, or emoji.*/}

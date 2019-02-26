@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import NewUserForm from "./NewUserForm";
 import axios from "axios";
-import ModalError from "../UI/ModalError";
-import ModalMessage from "../UI/ModalMessage"
 import $ from "jquery";
 import ModalContainer from "../UI/ModalContainer";
 import EditUserGroups from "./EditUserGroups";
@@ -107,11 +105,11 @@ class UserAdminisrationList extends Component {
 
 
                     <div className="form-group col-md-8 my-5">
-                        <label htmlFor="exampleFormControlInput1">Naudotojo paieška</label>
+                        <label>Naudotojo paieška</label>
                         <div className="row">
                             <div className="col-md-8 input-group">
                                 <div className="input-group-prepend">
-                                    <span className="input-group-text" id="basic-addon1">🔎</span>
+                                    <span className="input-group-text" id="basic-addon1" role="img"  aria-label="Search">🔎</span>
                                 </div>
                                 <input className="form-control mr-sm-2" type="search"
                                        placeholder="Įveskite naudotojo vardą, pavardę arba registracijos vardą (username)"
@@ -140,11 +138,13 @@ class UserAdminisrationList extends Component {
                     <table className="table table-bordered table-hover table-sm" id="userListTable"
                            style={{'visibility': 'hidden'}}>
                         <thead>
-                        <th>Naudotojo vardas</th>
-                        <th>Vardas</th>
-                        <th>Pavardė</th>
-                        <th>Naudotojo&nbsp;grupės</th>
-                        <th>Veiksmai</th>
+                        <tr>
+                            <th>Naudotojo vardas</th>
+                            <th>Vardas</th>
+                            <th>Pavardė</th>
+                            <th>Naudotojo&nbsp;grupės</th>
+                            <th>Veiksmai</th>
+                        </tr>
                         </thead>
                         <tbody>
                         {this.state.userlist.map(user => (

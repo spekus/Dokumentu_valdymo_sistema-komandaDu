@@ -22,14 +22,14 @@ class GenericDashBoard extends Component {
     componentDidUpdate(){
         // these are just to make sure new data is leaded when going between dashboards
         console.log("window did update");
-        if(!(this.state.nameOfWindow == this.props.match.params.id))
+        if(!(this.state.nameOfWindow === this.props.match.params.id))
         {
         this.setState({nameOfWindow : this.props.match.params.id})
         // console.log("state of name of the window was set to - " +
         // this.state.nameOfWindow);
         this.getAllDocuments();
         }
-        if (this.state.nameOfWindow == '') {
+        if (this.state.nameOfWindow === '') {
             this.setState({nameOfWindow : this.props.match.params.id})
             // console.log("state of name of the window was set to - " +
             // this.state.nameOfWindow);

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import FileSaver from 'file-saver';
+// import FileSaver from 'file-saver';
 import axios from 'axios';
 
 
@@ -61,7 +61,7 @@ export default class FileUploader extends Component {
             return;
         }
 
-        {this.state.files.map(file=> {
+        this.state.files.forEach(file=> {
 
         if (file.size >= 2000000) {
             this.setState({error: 'Failo dydis viršija 2MB'})
@@ -91,7 +91,7 @@ export default class FileUploader extends Component {
                 console.log("Error from /api/files - " + err)
             });
 
-        })}
+        })
 
         let documentDetails = {
             title: this.state.title,
@@ -188,8 +188,8 @@ export default class FileUploader extends Component {
                                 <div className="col-md-2"></div>
                                 <div className="col-md-9">
                                     <div className="form-group col-md-10">
-                                        <label htmlFor="exampleFormControlInput1">Pavadinimas</label>
-                                        <input type="text" className="form-control" id="exampleFormControlInput1"
+                                        <label htmlFor="titleInput">Pavadinimas</label>
+                                        <input type="text" className="form-control" id="titleInput"
                                                minLength="3"
                                                maxLength="50"
                                                pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?[ ]?|[A-Za-z0-9]+['-]?)+$"
@@ -199,8 +199,8 @@ export default class FileUploader extends Component {
                                                onChange={this.handleChangeInput} required/>
                                     </div>
                                     <div className="form-group col-md-10">
-                                        <label htmlFor="exampleFormControlSelect1">Dokumento tipas</label>
-                                        <select className="form-control" id="exampleFormControlSelect1"
+                                        <label htmlFor="typeInput">Dokumento tipas</label>
+                                        <select className="form-control" id="typeInput"
                                                 value={this.state.type} onChange={this.handleChangeSelect} name="type">
                                             {this.state.availableTypes.map(item => (
                                                 <option value={item.title}>{item.title}</option>
@@ -209,8 +209,8 @@ export default class FileUploader extends Component {
                                         </select>
                                     </div>
                                     <div className="form-group col-md-10">
-                                        <label htmlFor="exampleFormControlTextarea1">Aprašymas</label>
-                                        <textarea className="form-control" id="exampleFormControlTextarea1" rows="3"
+                                        <label htmlFor="descInput">Aprašymas</label>
+                                        <textarea className="form-control" id="descInput" rows="3"
                                                   minLength="8"
                                                   maxLength="255"
                                                   pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?[ ]?|[A-Za-z0-9]+['-]?)+$"

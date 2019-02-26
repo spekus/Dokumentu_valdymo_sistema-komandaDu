@@ -236,7 +236,7 @@ class AugisDokumentas extends Component {
                                             this.state.documentInfo.filesAttachedToDocument.map(file => <li
                                                 key={file.identifier}>
                                                 <a href={'http://localhost:8181/api/files/download/' + file.identifier}
-                                                   target='_blank'>{file.fileName}</a>
+                                                   target='_blank' rel="noopener noreferrer">{file.fileName}</a>
                                                 {/* mes naudojame localhost:8181/api  todel, kad react-server proxy nesuveikia kai content tipas yra nustatytas
                                                 */}
                                                 {/*<a href='#' onClick={() => this.downloadOneFile(file.identifier)} >{file.fileName}</a>*/}
