@@ -1,6 +1,7 @@
 import React from 'react';
 import {Link} from 'react-router-dom';
 // import {Button} from 'react-native';
+import DateWithTooltip from "../../../UI/DateWithTooltip";
 
 const AugustasDocumentsList = (props) => {
     return (
@@ -22,13 +23,12 @@ const AugustasDocumentsList = (props) => {
                     <tr key={item.documentIdentifier}>
                     <td>{item.title}</td>
                     <td>{item.author}</td>
-                    <td>{item.postedDate}</td>
+                    <td><DateWithTooltip date={item.postedDate}/></td>
                     <td>{item.type}</td>
 
                     <td><Link className="btn btn-outline-info btn-block" to=
                     {"/documents/" + item.documentIdentifier}>Detaliau</Link></td>
 
-                    <td className='lastColumn'>{item.date}</td>
                     </tr>
                 ))}
                 </tbody>

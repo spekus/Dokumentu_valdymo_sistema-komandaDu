@@ -60,7 +60,19 @@ class GenericDashBoard extends Component {
                 size: this.state.perPage
             }})
             .then(response => {
-                this.setState({userDocuments : response.data.content})
+                //  kai gavome dokumentu masyva, mappinam i nauja masyva,
+                // kur visi laukai tokie patys ( ... operatorius), bet overraidinam postedDate
+                // kuris dabar tampa javascriptiniu Date tipo objektu, sukurtu is turimos datos
+                let userDocuments = response.data.content.map(document => {
+                    return ({
+                        ...document,
+                        postedDate: new Date(document.postedDate),
+                        approvedDate: new Date(document.approvedDate),
+                        rejectedDate: new Date(document.rejectedDate)
+                    })
+                });
+
+                this.setState({userDocuments : userDocuments})
                 this.setState({pageCount: 
                     Math.ceil(response.data.totalElements 
                         / this.state.perPage)})

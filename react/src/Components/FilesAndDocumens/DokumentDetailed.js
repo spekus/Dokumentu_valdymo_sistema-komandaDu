@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
-
 import FileSaver from "file-saver";
 import axios from 'axios';
+import DateWithTime from "../UI/DateWithTime";
 
 class AugisDokumentas extends Component {
     state = {
@@ -14,10 +14,7 @@ class AugisDokumentas extends Component {
         userIdentifier: '',
         documentState: "Laukiama patvirtinimo",
         rejectedReason: '',
-        documentInfo: {},
-        posted: '',
-        approved: '',
-        rejected: ''
+        documentInfo: {}
     };
 
 
@@ -31,7 +28,6 @@ class AugisDokumentas extends Component {
 
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
 
-
     getDocumentInformation = () => {
 
         axios.get('/api/documents', {
@@ -43,33 +39,15 @@ class AugisDokumentas extends Component {
                 //kelyje turi but uzsifruotas dokumento id
                 console.log("Dokumento kelio id - " + this.props.match.params.id);
                 console.log("getDocumentInformation" + result)
-                // this.setState({availableTypes: result.data});
-                // this.setState({type: result.data[0]});
-                console.log("Description -" + result.data.description);
-                console.log("title -" + result.data.title);
-                console.log("type -" + result.data.type);
-                // this.setState({
-                //     title: result.data.title
-                //     , type: result.data.type
-                //     , description: result.data.description
-                // });
-                this.setState({documentInfo: result.data});
+
+                let documentInfo = result.data;
+
+                documentInfo.postedDate = new Date(documentInfo.postedDate);
+                documentInfo.approvalDate = new Date(documentInfo.approvalDate);
+                documentInfo.rejectedDate = new Date(documentInfo.rejectedDate);
+
+                this.setState({documentInfo: documentInfo});
                 this.getFileList();
-                var posteddate = this.state.documentInfo.postedDate;
-                var newposteddate = posteddate.slice(0, 10) + " " + posteddate.slice(11, 19);
-                this.setState({posted: newposteddate});
-                if (this.state.documentInfo.documentState === "APPROVED") {
-                    var aproveddate = this.state.documentInfo.approvalDate;
-                    var newaproveddate = aproveddate.slice(0, 10) + " " + aproveddate.slice(11, 19);
-                    this.setState({approved: newaproveddate});
-                }
-                if (this.state.documentInfo.documentState === "REJECTED") {
-                    var rejecteddate = this.state.documentInfo.rejectedDate;
-                    var newrejecteddate = rejecteddate.slice(0, 10) + " " + rejecteddate.slice(11, 19);
-                    this.setState({rejected: newrejecteddate});
-                }
-
-
             })
             .catch(error => {
                 console.log("Atsakymas is getDocumentInformation - " + error)
@@ -150,7 +128,6 @@ class AugisDokumentas extends Component {
         let docID = this.props.match.params.id;
         axios.post("/api/documents/" + docID + "/submit")
             .then(response => {
-                this.setState({documentState: this.state.documentInfo.documentState});
                 this.getDocumentInformation();
 
             })
@@ -169,12 +146,7 @@ class AugisDokumentas extends Component {
         console.log("Dokumento Identifier - " + this.props.match.params.id);
         axios.post("/api/documents/" + docID + "/approve")
             .then(response => {
-                this.setState({documentState: this.state.documentInfo.documentState});
                 this.getDocumentInformation();
-                var aproveddate = this.state.documentInfo.approvedDate;
-
-                var newaproveddate = aproveddate.slice(0, 10) + " " + aproveddate.slice(11, 19);
-                this.setState({approved: newaproveddate});
             })
             .catch(error => {
                 window.alert("Klaida is approveDocument - " + error)
@@ -191,13 +163,7 @@ class AugisDokumentas extends Component {
             }
         })
             .then(response => {
-                this.setState({documentState: this.state.documentInfo.documentState});
                 this.getDocumentInformation();
-                var rejecteddate = this.state.documentInfo.rejectedDate;
-                var newrejecteddate = rejecteddate.slice(0, 10) + " " + rejecteddate.slice(11, 19);
-                this.setState({rejected: newrejecteddate});
-
-
             })
             .catch(error => {
                 console.log("Klaida is rejectDocument - " + error.message);
@@ -209,12 +175,11 @@ class AugisDokumentas extends Component {
             <React.Fragment>
                 <div className='container'>
                     <div className='p-3 mb-5 bg-white rounded' align="center">
-
-
-                        {/* <h5>Sukurti</h5> */}
                         <table className='table table-bordered col-md-7'>
                             <thead>
-                            <th colspan='2' className="text-center table-secondary">DOKUMENTO DETALĖS</th>
+                            <tr>
+                                <th colSpan='2' className="text-center table-secondary">DOKUMENTO DETALĖS</th>
+                            </tr>
                             </thead>
                             <tbody>
                             <tr>
@@ -237,29 +202,26 @@ class AugisDokumentas extends Component {
                             </tr>
 
                             <tr>
-                                <th>Sukurimo data</th>
-                                {/*<td>{this.state.documentInfo.postedDate}</td>*/}
-                                <td>{this.state.posted}</td>
+                                <th>Pateikimo data</th>
+                                <td><DateWithTime date={this.state.documentInfo.postedDate}/></td>
                             </tr>
                             {this.state.documentInfo.documentState === "APPROVED" ?
                                 <tr>
                                     <th>Patvirtinimo data</th>
-                                    {/*<td>{this.state.documentInfo.approvalDate}</td>*/}
-                                    <td>{this.state.approved}</td>
-                                </tr> : ""}
+                                    <td><DateWithTime date={this.state.documentInfo.approvalDate}/></td>
+                                </tr> : null}
 
                             {this.state.documentInfo.documentState === "REJECTED" ?
                                 <tr>
                                     <th>Atmetimo data</th>
-                                    {/*<td>{this.state.documentInfo.rejectedDate}</td>*/}
-                                    <td>{this.state.rejected}</td>
-                                </tr> : ""}
+                                    <td><DateWithTime date={this.state.documentInfo.rejectedDate}/></td>
+                                </tr> : null}
 
                             {this.state.documentInfo.documentState === "REJECTED" ?
                                 <tr>
                                     <th>Atmetimo priežastis</th>
                                     <td>{this.state.documentInfo.rejectedReason}</td>
-                                </tr> : ""}
+                                </tr> : null}
 
                             <tr>
                                 <th>Tvirtintojas</th>
@@ -271,14 +233,15 @@ class AugisDokumentas extends Component {
                                 <td>
                                     <ul>
                                         {this.state.documentInfo.filesAttachedToDocument ?
-                                            this.state.documentInfo.filesAttachedToDocument.map(file => <li>
+                                            this.state.documentInfo.filesAttachedToDocument.map(file => <li
+                                                key={file.identifier}>
                                                 <a href={'http://localhost:8181/api/files/download/' + file.identifier}
                                                    target='_blank'>{file.fileName}</a>
                                                 {/* mes naudojame localhost:8181/api  todel, kad react-server proxy nesuveikia kai content tipas yra nustatytas
-                                    */}
+                                                */}
                                                 {/*<a href='#' onClick={() => this.downloadOneFile(file.identifier)} >{file.fileName}</a>*/}
                                             </li>)
-                                            : ''
+                                            : null
                                         }
                                     </ul>
                                 </td>
@@ -286,11 +249,10 @@ class AugisDokumentas extends Component {
                             <tr>
                                 <th>Dokumento statusas</th>
                                 {/*<td>{this.state.documentInfo.documentState}</td>*/}
-                                {this.state.documentInfo.documentState === 'CREATED' ? <td>Sukurtas</td> : ""}
-                                {this.state.documentInfo.documentState === 'SUBMITTED' ?
-                                    <td>Pateiktas tvirtinimui</td> : ""}
-                                {this.state.documentInfo.documentState === 'APPROVED' ? <td>Patvirtintas</td> : ""}
-                                {this.state.documentInfo.documentState === 'REJECTED' ? <td>Atmestas</td> : ""}
+                                {this.state.documentInfo.documentState === 'CREATED' ? <td>Sukurtas</td> : null}
+                                {this.state.documentInfo.documentState === 'SUBMITTED' ? <td>Pateiktas tvirtinimui</td> : null}
+                                {this.state.documentInfo.documentState === 'APPROVED' ? <td>Patvirtintas</td> : null}
+                                {this.state.documentInfo.documentState === 'REJECTED' ? <td>Atmestas</td> : null}
                             </tr>
 
                             </tbody>
