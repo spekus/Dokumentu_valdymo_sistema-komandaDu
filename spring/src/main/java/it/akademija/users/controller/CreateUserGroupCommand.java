@@ -21,4 +21,19 @@ public class CreateUserGroupCommand {
         this.role = role;
     }
 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public AppRoleEnum getRole() {
+        return role;
+    }
+
+    public void setRole(AppRoleEnum role) {
+        this.role = role;
+    }
 }

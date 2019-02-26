@@ -181,7 +181,7 @@ public class UserService implements UserDetailsService {
                 documentRepository.getDocumentsToApprove(documentTypesForAproval, sortedByTitleDesc);
         // we need total ammount of documents to be displayed for pagination to work, thus we need second query.
         // this part is not efficient, would anyone know how to replace?
-        int getTotalSize = documentRepository.getDocumentsToApprove(documentTypesForAproval).size();
+        long getTotalSize = documentRepository.getDocumentsToApproveSize(documentTypesForAproval);
 
         //conversion from one type to another
         List<DocumentServiceObject>  listOfDocumentServiceObject =
