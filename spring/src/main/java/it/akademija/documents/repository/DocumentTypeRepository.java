@@ -12,10 +12,10 @@ public interface DocumentTypeRepository extends JpaRepository<DocumentTypeEntity
     DocumentTypeEntity findDocumentTypeByTitle(String title);
     void deleteDocumentTypeByTitle(String title);
 
-    @Query("select distinct dTta from " +
-            "UserEntity ue JOIN ue.userGroups ueG " +
-            "JOIN ueG.availableDocumentTypesToApprove dTta " +
-            "where ue.username=:username")
+//    @Query("select distinct dTta from " +
+//            "UserEntity ue JOIN ue.userGroups ueG " +
+//            "JOIN ueG.availableDocumentTypesToApprove dTta " +
+//            "where ue.username=:username")
     List<DocumentTypeEntity> getDocumentTypesToApproveByUsername(@Param("username") String username);
 
 

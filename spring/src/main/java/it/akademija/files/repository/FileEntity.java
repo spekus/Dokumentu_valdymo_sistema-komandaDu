@@ -5,6 +5,10 @@ import org.hibernate.validator.constraints.UniqueElements;
 import javax.persistence.*;
 
 @Entity
+@Table(indexes = {
+        @Index(columnList = "identifier"),
+
+})
 public class FileEntity {
 
     @Id
@@ -20,6 +24,7 @@ public class FileEntity {
     private long size;
 //
 //    @UniqueElements //crashina sitas, reikia kazkaip patikrin kad butu unique
+    @Column(name="identifier", unique=true)
     private String identifier;
 
 //
