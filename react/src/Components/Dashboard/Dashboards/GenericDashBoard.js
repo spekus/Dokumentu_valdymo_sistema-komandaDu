@@ -22,14 +22,14 @@ class GenericDashBoard extends Component {
     componentDidUpdate(){
         // these are just to make sure new data is leaded when going between dashboards
         console.log("window did update");
-        if(!(this.state.nameOfWindow == this.props.match.params.id))
+        if(!(this.state.nameOfWindow === this.props.match.params.id))
         {
         this.setState({nameOfWindow : this.props.match.params.id})
         // console.log("state of name of the window was set to - " +
         // this.state.nameOfWindow);
         this.getAllDocuments();
         }
-        if (this.state.nameOfWindow == '') {
+        if (this.state.nameOfWindow === '') {
             this.setState({nameOfWindow : this.props.match.params.id})
             // console.log("state of name of the window was set to - " +
             // this.state.nameOfWindow);
@@ -60,7 +60,19 @@ class GenericDashBoard extends Component {
                 size: this.state.perPage
             }})
             .then(response => {
-                this.setState({userDocuments : response.data.content})
+                //  kai gavome dokumentu masyva, mappinam i nauja masyva,
+                // kur visi laukai tokie patys ( ... operatorius), bet overraidinam postedDate
+                // kuris dabar tampa javascriptiniu Date tipo objektu, sukurtu is turimos datos
+                let userDocuments = response.data.content.map(document => {
+                    return ({
+                        ...document,
+                        postedDate: new Date(document.postedDate),
+                        approvedDate: new Date(document.approvedDate),
+                        rejectedDate: new Date(document.rejectedDate)
+                    })
+                });
+
+                this.setState({userDocuments : userDocuments})
                 this.setState({pageCount: 
                     Math.ceil(response.data.totalElements 
                         / this.state.perPage)})

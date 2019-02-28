@@ -1,6 +1,5 @@
 import React, {Component} from 'react';
 import axios from "axios";
-import {Link} from "react-router-dom";
 import SettingsEditGroupTypes from "./SettingsEditGroupTypes";
 import $ from "jquery";
 import ModalContainer from "../UI/ModalContainer";
@@ -31,7 +30,7 @@ class SettingsGroupsTypes extends Component {
                     let allgroups = response.data;
                     this.setState({allgroups: allgroups});
 
-                    if (this.state.groupBeingEdited.title != '')
+                    if (this.state.groupBeingEdited.title !== '')
                     {
                        this.setState({groupBeingEdited: allgroups.find((g) => g.title === this.state.groupBeingEdited.title )})
                     }

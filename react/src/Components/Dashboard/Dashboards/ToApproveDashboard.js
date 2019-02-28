@@ -38,7 +38,7 @@ class ToApproveDashboard extends Component {
     getWhoAmI = () => {
         axios.get('/api/users/whoami')
             .then(response => {
-                if (response.data.username != null) {
+                if (response.data.username !== null) {
                     this.setState({userIdentifier: response.data.userIdentifier});
                     console.log("getWhoAmI - " + this.state.userIdentifier);
                     this.getDocumentsToApprove();
@@ -134,7 +134,7 @@ class ToApproveDashboard extends Component {
 
                 {/* pagination */}
                 <div className='container mt-5'>
-                <div class="row">
+                <div className="row">
                 <div className="col-lg-12 my-auto center-block text-center">
                 <ReactPaginate 
                 previousLabel={'ankstesnis puslapis'}

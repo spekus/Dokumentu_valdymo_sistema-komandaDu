@@ -17,7 +17,7 @@ import GenericDashBoard from "./Components/Dashboard/Dashboards/GenericDashBoard
 import ToApproveDashboard from "./Components/Dashboard/Dashboards/ToApproveDashboard";
 import axios from "axios";
 import {Redirect} from "react-router";
-import DownloadZip from "./Components/FilesAndDocumens/DownloadZip"
+// import DownloadZip from "./Components/FilesAndDocumens/DownloadZip"
 import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
 import Spinner from "./Components/UI/Spinner";
 
@@ -33,7 +33,7 @@ class App extends React.Component {
     menuItems = [
         {iconClass: 'fa fw fa-home', path: '', text: 'Pradžia'},
         {iconClass: 'fa fw fa-id-card', path: 'profile', text: 'Profilis'},
-        {iconClass: 'fa fw fa-list', path: 'documents/all', text: 'Dokumentai'},
+        {iconClass: 'fa fw fa-list', path: 'dashboard/documents/all', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
         // {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
         {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai '},
@@ -56,18 +56,17 @@ class App extends React.Component {
     getWhoAmI = () => {
         axios.get('/api/users/whoami')
             .then(response => {
-                if (response.data.username != null) {
+                if (response.data.username !== null) {
 
                     let user = response.data;
                     let isAdmin = false;
 
-                    user.userGroups.map(group => {
+                    user.userGroups.forEach(group => {
                         if (group.role === "ROLE_ADMIN") {
                             isAdmin = true;
                         }
                     })
                     user = {...user, isAdmin: isAdmin}
-                    console.log(user)
                     this.setState({user: user});
                 }
             })
@@ -121,7 +120,7 @@ class App extends React.Component {
 
                                 <SideNav.Nav defaultSelected="">
                                     {this.menuItems.map((item) =>
-                                        item.admin && this.state.user.isAdmin || !item.admin ?
+                                        this.state.user.isAdmin || !item.admin ?
                                         <NavItem key={item.path} eventKey={item.path} id={item.path}>
                                             <NavIcon>
                                                 <i className={item.iconClass} style={{fontSize: '1.75em'}}/>
@@ -130,7 +129,7 @@ class App extends React.Component {
                                                 {item.text}
                                             </NavText>
                                         </NavItem> : '' )}
-                                </SideNav.Nav>:
+                                </SideNav.Nav>
                             </SideNav>
 
                             <nav id="mainnavbar" className={this.state.sideBarIsOpen ?

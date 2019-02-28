@@ -1,5 +1,6 @@
 import React from 'react';
 import axios from "axios";
+import uuid from 'uuid';
 
 const EditUserGroups = (props) => {
 
@@ -43,18 +44,18 @@ const EditUserGroups = (props) => {
                     <tbody>
                     {props.allgroups.map((group, index) =>
                         props.user.userGroups.map(group => group.title).indexOf(group.title) > -1 ?
-                            <tr>
+                            <tr key={uuid()}>
                                 <td>{group.title}</td>
-                                <td><a href="#"
-                                       onClick={() => removeUserFromGroup(props.user.username, group.title)}>▶</a>
+                                <td><button className="buttonlink"
+                                       onClick={() => removeUserFromGroup(props.user.username, group.title)}>▶</button>
                                 </td>
                                 <td></td>
                             </tr>
                             :
-                            <tr>
+                            <tr key={uuid()}>
                                 <td></td>
-                                <td><a href="#"
-                                       onClick={() => addUserToGroup(props.user.username, group.title)}>◀</a>
+                                <td><button className="buttonlink"
+                                            onClick={() => addUserToGroup(props.user.username, group.title)}>◀</button>
                                 </td>
                                 <td>{group.title}</td>
                             </tr>

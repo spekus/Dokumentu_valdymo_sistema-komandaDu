@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import axios from "axios";
 
 const SettingsEditGroupTypes = (props) => {
@@ -95,14 +95,14 @@ const SettingsEditGroupTypes = (props) => {
                                 type="checkbox"
                                 checked={props.group.typesToUpload.map(t => t.title).indexOf(type.title)
                                 > -1}
-                                onClick={(event) => handleChangeUpload(props.group, type, event)}/>
+                                onChange={(event) => handleChangeUpload(props.group, type, event)}/>
                         </td>
                         <td>
                             <input
                                 type="checkbox"
                                 checked={props.group.typesToApprove.map(t => t.title).indexOf(type.title)
                                 > -1}
-                                onClick={(event) => handleChangeApprove(props.group, type, event)}/>
+                                onChange={(event) => handleChangeApprove(props.group, type, event)}/>
                         </td>
                     </tr>
                 )}

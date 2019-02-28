@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import axios from 'axios';
 import ModalError from "../UI/ModalError";
-import SettingsGroupsTypes from "./SettingsGroupsTypes"
 import $ from 'jquery';
 import ModalContainer from "../UI/ModalContainer";
 import SettingsEditGroupTypes from "./SettingsEditGroupTypes";
+import uuid from "uuid";
 
 class SettingsUserGroups extends Component {
     state = {
@@ -77,7 +77,7 @@ class SettingsUserGroups extends Component {
                     let allgroups = response.data;
                     this.setState({allgroups: allgroups});
 
-                    if (this.state.groupBeingEdited.title != '')
+                    if (this.state.groupBeingEdited.title !== '')
                     {
                        this.setState({groupBeingEdited: allgroups.find((g) => g.title === this.state.groupBeingEdited.title )})
                     }
@@ -145,7 +145,7 @@ class SettingsUserGroups extends Component {
         return (
             <div className='p-3 mb-5 bg-white rounded'>
                 <h5>Naudotojų grupės</h5>
-                <div class="row">
+                <div className="row">
                     <div className="col-md-8">
                         <div>
                             <table className="table table-hover table-bordered table-sm">
@@ -159,7 +159,7 @@ class SettingsUserGroups extends Component {
                                 </thead>
                                 <tbody>
                                 {this.state.allgroups.map(group => (
-                                        <tr>
+                                        <tr key={uuid()}>
                                             <th>
                                                 {group.title}
                                             </th>
@@ -168,7 +168,7 @@ class SettingsUserGroups extends Component {
 
 
                                                 {group.typesToUpload.map(type => (
-                                                    <div className="row">
+                                                    <div className="row" key={uuid()}>
                                                         <div className="col-md-10">
                                                             <li>{type.title}</li>
                                                         </div>
@@ -184,7 +184,7 @@ class SettingsUserGroups extends Component {
 
 
                                                 {group.typesToApprove.map(type => (
-                                                    <div className="row">
+                                                    <div className="row" key={uuid()}>
                                                         <div className="col-md-9">
                                                             <li>{type.title}</li>
                                                         </div>

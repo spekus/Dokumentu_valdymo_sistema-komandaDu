@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import axios from 'axios'
 import $ from "jquery";
 import ModalError from "../UI/ModalError";
+import uuid from "uuid";
 
 class SettingsDocumentTypes extends Component {
     state = {
@@ -72,14 +73,14 @@ class SettingsDocumentTypes extends Component {
                             </thead>
                             <tbody>
                             {this.state.allDocumentTypes.map(item => (
-                                <tr>
+                                <tr key={uuid()}>
                                     <td>{item.title}</td>
                                     <td>
-                                        <a href="#" className="text-danger" onClick={() => {
+                                        <button className="buttonlink text-danger" onClick={() => {
                                             this.deleteDocumentType(item.title)
                                         }}>
                                             X
-                                        </a></td>
+                                        </button></td>
                                 </tr>
                             ))
                             }

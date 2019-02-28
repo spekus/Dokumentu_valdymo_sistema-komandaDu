@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
-
 import FileSaver from "file-saver";
-import axios from 'axios';
+
 
 class DownloadZip extends Component {
     state = {
