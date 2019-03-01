@@ -49,7 +49,7 @@ const LocationToText = (props) => {
             name = "Nustatymai";
             break;
         default:
-            return name = "Klaida 404"
+            return name = ""
     }
 
     return (
