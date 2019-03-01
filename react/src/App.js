@@ -20,6 +20,7 @@ import {Redirect} from "react-router";
 import DownloadZip from "./Components/FilesAndDocumens/DownloadZip"
 import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
 import Spinner from "./Components/UI/Spinner";
+import Charts from "./Components/Statistics/Charts";
 
 
 class App extends React.Component {
@@ -38,6 +39,7 @@ class App extends React.Component {
         // {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
         {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai '},
         {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai'},
+        {iconClass: 'far fa-chart-bar', path: 'statistics', text: 'Statistika'},
     ];
 
     sideBarToggled = (isOpen) => {
@@ -182,6 +184,7 @@ class App extends React.Component {
 
                                             <Route exact path="/user-registration" component={NewUserForm}/>
                                             <Route exact path="/logout" render={() => this.handleLogOut()}/>
+                                            <Route exact path="/statistics" component={Charts}/>
                                             {/* <Route exact path="/zip"
                                                    render={(props) => <DownloadZip 
                                                    user={this.state.user} {...props}/>}/>

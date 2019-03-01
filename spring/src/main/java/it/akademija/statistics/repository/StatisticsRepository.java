@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
 
+import java.awt.print.Pageable;
 import java.time.LocalDate;
 
 import java.time.LocalDateTime;
@@ -56,7 +57,6 @@ public interface StatisticsRepository extends JpaRepository<DocumentEntity, Long
             "GROUP BY de.author " +
             "ORDER BY COUNT(de) desc")
     List<DocumentEntity> userListByPostedDocs(@Param("types") Set<String> types);
-
 }
 
 
