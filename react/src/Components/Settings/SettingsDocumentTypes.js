@@ -64,7 +64,7 @@ class SettingsDocumentTypes extends Component {
             <div className='p-3 mb-5 bg-white rounded borderMain'>
                 {/*<h5>Dokumentų tipų nustatymas</h5>*/}
                 <div className="row">
-                    <div className="col-md-8">
+                        <div className="col-md-8">
                         <table className="table table-bordered table-hover">
                             <thead>
                             <tr>
