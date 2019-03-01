@@ -149,15 +149,15 @@ class SettingsGroupsTypes extends Component {
 
                                     </td>
                                     <td>
-                                        <i className="fas fa-edit mr-3" title="Koreguoti grupės pavadinimą"
+                                        <i className="fas fa-edit mr-3" id="isettings" title="Koreguoti grupės pavadinimą"
                                            onClick={() => this.editGroupTitle(group)}> </i>
 
-                                        <i className="fas fa-tasks mr-3" title="Redaguoti tipus"
+                                        <i className="fas fa-tasks mr-3 isettings" title="Redaguoti tipus"
                                            onClick={() => this.editGroup(group)}
                                            group={group}></i>
 
 
-                                        <i className="fas fa-trash-alt" title="Ištrinti grupę"
+                                        <i className="fas fa-trash-alt isettings" title="Ištrinti grupę"
                                            onClick={() => this.deleteGroup(group)}></i>
 
                                     </td>

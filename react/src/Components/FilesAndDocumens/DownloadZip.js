@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
 import FileSaver from "file-saver";
-
+import '../../App.css'
 
 class DownloadZip extends Component {
     state = {
@@ -40,7 +40,7 @@ class DownloadZip extends Component {
     render() {
         return (
         <React.Fragment>
-        < button className="btn btn-danger btn-sm"
+        < button className="btn button1"
         onClick={this.downloadZip}>Zippo
         </button>
         </React.Fragment>

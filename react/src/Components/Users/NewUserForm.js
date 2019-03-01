@@ -100,9 +100,9 @@ class NewUserForm extends Component {
         return (
             <React.Fragment>
                 <div>
-                    <h4 className="my-4" align="center">
-                        {this.props.editmode ? "Naudotojo redagavimas" : "Naujo naudotojo registravimas"}
-                    </h4>
+                    {/*<h4 className="my-4" align="center">*/}
+                        {/*{this.props.editmode ? "Naudotojo redagavimas" : "Naujo naudotojo registravimas"}*/}
+                    {/*</h4>*/}
                     <div className="row">
                         <div className="col-md-1"></div>
                         <div className="col-md-10">
@@ -161,16 +161,16 @@ class NewUserForm extends Component {
                                 </div>
                                 }
 
-                                {this.props.editmode ? '' :
-                                <div className="form-group">
-                                    <label>Identifikatorius</label>
-                                    <input type="text" className="form-control" id={uuid()}
-                                           placeholder="Įveskite vartotojo identifikatorių" name="userIdentifier"
-                                           value={this.state.userIdentifier}
-                                           onChange={this.handleChangeInput}
-                                           autoComplete="off"
-                                           required/>
-                                </div>}
+                                {/*{this.props.editmode ? '' :*/}
+                                {/*<div className="form-group">*/}
+                                    {/*<label>Identifikatorius</label>*/}
+                                    {/*<input type="text" className="form-control" id={uuid()}*/}
+                                           {/*placeholder="Įveskite vartotojo identifikatorių" name="userIdentifier"*/}
+                                           {/*value={this.state.userIdentifier}*/}
+                                           {/*onChange={this.handleChangeInput}*/}
+                                           {/*autoComplete="off"*/}
+                                           {/*required/>*/}
+                                {/*</div>}*/}
 
                                 {/*<div className="form-group">*/}
                                 {/*<label htmlFor="exampleFormControlSelect2">Darbuotojų grupės</label>*/}

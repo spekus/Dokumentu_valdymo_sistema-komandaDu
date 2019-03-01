@@ -5,6 +5,7 @@ import $ from 'jquery';
 import ModalContainer from "../UI/ModalContainer";
 import SettingsEditGroupTypes from "./SettingsEditGroupTypes";
 import uuid from "uuid";
+import "../../App.css"
 
 class SettingsUserGroups extends Component {
     state = {
@@ -143,8 +144,8 @@ class SettingsUserGroups extends Component {
 
     render() {
         return (
-            <div className='p-3 mb-5 bg-white rounded'>
-                <h5>Naudotojų grupės</h5>
+            <div className='p-3 mb-5 bg-white rounded borderMain'>
+                {/*<h5>Naudotojų grupės</h5>*/}
                 <div className="row">
                     <div className="col-md-8">
                         <div>
@@ -198,11 +199,11 @@ class SettingsUserGroups extends Component {
 
 
                                             </td>
-                                            <td>
-                                                <i className="fas fa-edit mr-3" title="Koreguoti grupės pavadinimą"
+                                            <td className='settingstd'>
+                                                <i className="fas fa-edit mr-3 " title="Koreguoti grupės pavadinimą"
                                                    onClick={() => this.editGroupTitle(group)}> </i>
 
-                                                <i className="fas fa-tasks mr-3" title="Redaguoti tipus"
+                                                <i className="fas fa-tasks mr-3 "  title="Redaguoti tipus"
                                                    onClick={() => this.editGroup(group)}
                                                    group={group}></i>
 
@@ -261,7 +262,7 @@ class SettingsUserGroups extends Component {
                                        value={this.state.newUserGroupInputField}
                                        name="newUserGroupInputField"
                                        onChange={this.handleChangeInput}/>
-                                <button type="submit" className="btn btn-info mt-2">Sukurti</button>
+                                <button type="submit" className="btn button1 mt-2">Sukurti</button>
                             </div>
 
                         </form>

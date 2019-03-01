@@ -8,7 +8,8 @@ const AugustasDocumentsList = (props) => {
 
 
         <React.Fragment>
-            <table className="table">
+            <div className="">
+            <table className="table mainelement">
                 <thead style={{backgroundColor: '#EEEEEE'}}>
                 <tr>
                     <th>Dokumento pavadinimas</th>
@@ -37,6 +38,7 @@ const AugustasDocumentsList = (props) => {
 
 
             </table>
+            </div>
         </React.Fragment>
     );
 };

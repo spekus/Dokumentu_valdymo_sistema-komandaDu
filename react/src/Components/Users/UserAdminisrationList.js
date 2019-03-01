@@ -4,6 +4,8 @@ import axios from "axios";
 import $ from "jquery";
 import ModalContainer from "../UI/ModalContainer";
 import EditUserGroups from "./EditUserGroups";
+// import "../Styles/UserAdministrationList.css"
+import '../../App.css'
 
 class UserAdminisrationList extends Component {
     state = {
@@ -98,83 +100,89 @@ class UserAdminisrationList extends Component {
     render() {
         return (
             <React.Fragment>
-                <div className="container-fluid">
-                    <h4 className="my-4" align="center">
-                        Naudotojų administravimas
-                    </h4>
+                <div className="container">
+                    {/*<h4 className="my-4 mainUA">*/}
+                        {/*Naudotojų administravimas*/}
+                    {/*</h4>*/}
+                    <div className='mainelement borderMain' style={{'width': '100%'}}>
 
 
-                    <div className="form-group col-md-8 my-5">
-                        <label>Naudotojo paieška</label>
-                        <div className="row">
-                            <div className="col-md-8 input-group">
-                                <div className="input-group-prepend">
-                                    <span className="input-group-text" id="basic-addon1" role="img"  aria-label="Search">🔎</span>
+                        <div className="form-group col-md-8 my-3">
+                            <label>Naudotojo paieška</label>
+                            <div className="row">
+                                <div className="col-md-8 input-group">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" id="basic-addon1" role="img"
+                                              aria-label="Search">🔎</span>
+                                    </div>
+                                    <input className="form-control mr-sm-2" type="search"
+                                           placeholder="Įveskite naudotojo vardą, pavardę arba reg. vardą (username)"
+                                           // onFocus="Įveskite naudotojo vardą, pavardę arba reg. vardą (username)"
+                                           aria-label="Search" aria-describedby="basic-addon1"
+                                           value={this.state.searchField}
+                                           name="searchField"
+                                           onChange={this.handleChangeInput}/>
                                 </div>
-                                <input className="form-control mr-sm-2" type="search"
-                                       placeholder="Įveskite naudotojo vardą, pavardę arba registracijos vardą (username)"
-                                       aria-label="Search" aria-describedby="basic-addon1"
-                                       value={this.state.searchField}
-                                       name="searchField"
-                                       onChange={this.handleChangeInput}/>
-                            </div>
-                            <div className="col-md-2">
-                                <button className="btn btn-info my-2 my-sm-0" type="submit"
-                                        onClick={this.getFilteredUsers}>Ieškoti
-                                </button>
-                            </div>
-                            <div className="col-md-2">
-                                <button className="btn btn-outline-info my-2 my-sm-0 buttonXL" type="submit"
-                                        onClick={() => {
-                                            // this.props.history.push("/user-registration")
-                                            $('#newUserModal').modal('show');
-                                        }}>Registruoti naują naudotoją
-                                </button>
+                                <div className="col-md-2">
+                                    <button className="btn button2 my-2 my-sm-0 button1" type="submit"
+                                            onClick={this.getFilteredUsers}>Ieškoti
+                                    </button>
+                                </div>
+                                <div className="col-md-2">
+                                    <button className="btn btn-outline-info my-2 my-sm-0 buttonXL button1"
+                                            type="submit"
+                                            onClick={() => {
+                                                // this.props.history.push("/user-registration")
+                                                $('#newUserModal').modal('show');
+                                            }}>Registruoti naują naudotoją
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-
-                    <table className="table table-bordered table-hover table-sm" id="userListTable"
-                           style={{'visibility': 'hidden'}}>
-                        <thead>
-                        <tr>
-                            <th>Naudotojo vardas</th>
-                            <th>Vardas</th>
-                            <th>Pavardė</th>
-                            <th>Naudotojo&nbsp;grupės</th>
-                            <th>Veiksmai</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        {this.state.userlist.map(user => (
-                            <tr key={user.username}>
-                                <td>{user.username}</td>
-                                <td>{user.firstname}</td>
-                                <td>{user.lastname}</td>
-                                <td>
-                                    {user.userGroups.map((group, index) =>
-                                        <span
-                                            key={index}>{group.title} {index < user.userGroups.length - 1 ? '|' : ''} </span>)}
-                                </td>
-                                <td>
-                                    <button className="btn btn-info btn-sm"
-                                            onClick={() => this.handleChangeUser(user)}>Redaguoti
-                                    </button>
-                                    <button className="btn btn-info btn-sm ml-2"
-                                            onClick={() => this.handleChangeUserGroup(user)}>Grupes
-                                    </button>
-                                    <button className="btn btn-secondary btn-sm ml-2"
-                                            onClick={() => this.deleteUser(user)}>Trinti
-                                    </button>
-                                </td>
+                    <div className="my-4 borderMain mainelement" id="userListTable"
+                               style={{'visibility': 'hidden'}}>
+                        <table className="table table-bordered table-hover table-sm" >
+                            <thead>
+                            <tr>
+                                <th>Naudotojo vardas</th>
+                                <th>Vardas</th>
+                                <th>Pavardė</th>
+                                <th>Naudotojo&nbsp;grupės</th>
+                                <th>Veiksmai</th>
                             </tr>
-                        ))}
-                        <tr>
-                        </tr>
+                            </thead>
+                            <tbody>
+                            {this.state.userlist.map(user => (
+                                <tr key={user.username}>
+                                    <td>{user.username}</td>
+                                    <td>{user.firstname}</td>
+                                    <td>{user.lastname}</td>
+                                    <td>
+                                        {user.userGroups.map((group, index) =>
+                                            <span
+                                                key={index}>{group.title} {index < user.userGroups.length - 1 ? '|' : ''} </span>)}
+                                    </td>
+                                    <td>
+                                        <button className="btn button1 btn-sm"
+                                                onClick={() => this.handleChangeUser(user)}>Redaguoti
+                                        </button>
+                                        <button className="btn button1 btn-sm ml-2"
+                                                onClick={() => this.handleChangeUserGroup(user)}>Grupės
+                                        </button>
+                                        <button className="btn button1 btn-sm ml-2"
+                                                onClick={() => this.deleteUser(user)}>Blokuoti
+                                        </button>
+                                    </td>
+                                </tr>
+                            ))}
+                            <tr>
+                            </tr>
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
 
                     <ModalContainer id='userEditModal' title="Naudotojo redagavimas">
                         <NewUserForm editmode={true}
@@ -202,7 +210,7 @@ class UserAdminisrationList extends Component {
                     </ModalContainer>
 
 
-                    <ModalContainer id='editUserGroupsModal' title="Naudotojo grupes">
+                    <ModalContainer id='editUserGroupsModal' title="Naudotojo grupės">
                         <EditUserGroups user={this.state.userBeingEdited}
                                         allgroups={this.state.allgroups}
                                         onGroupsChanged={this.handleGroupsChanged}/>
