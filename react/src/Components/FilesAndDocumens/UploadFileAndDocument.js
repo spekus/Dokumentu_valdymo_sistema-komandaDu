@@ -20,6 +20,7 @@ export default class FileUploader extends Component {
         availableTypes: [],
 
     }
+    
 
 
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
@@ -107,6 +108,7 @@ export default class FileUploader extends Component {
 
 
     }
+    
 
     // Metodas prideda naudotojui dokumento specifikacija (DocumentDetails) ir susieja su failu,
     // kuris jau buvo ikeltas anksciau.
@@ -174,6 +176,7 @@ export default class FileUploader extends Component {
         arrayCopy.splice(index, 1);
         this.setState({files: arrayCopy});
     }
+    
 
     render() {
         return (
@@ -184,7 +187,7 @@ export default class FileUploader extends Component {
                     {/*</h4>*/}
                     <div className="page1 p-3 mb-5 bg-white mainelement borderMain">
 
-                        <form classname="form1 col-md-9" onSubmit={this.handleSubmit}>
+                        <form className="form1 col-md-9" onSubmit={this.handleSubmit}>
                             <div className="row">
                                 <div className="col-md-2"></div>
                                 <div className="col-md-9">
@@ -222,8 +225,15 @@ export default class FileUploader extends Component {
                                     </div>
 
                                     <div className="form-group col-md-9 mt-4">
-                                        <input  onChange={this.onFileChange} multiple type="file"></input><br/>
+                            
+                                        <input onChange={this.onFileChange} 
+                                        multiple type="file"
+                                        //to hide unwanted text
+                                        style={{color: 'white'}}
+                                        ></input><br/>
+                          
                                         <label
+                                        
                                             style={{marginTop: '20px'}}> {this.state.files.length > 0 ? 'Pridėti failai:' : ''}  </label>
                                         <ul>
                                             {
