@@ -1,47 +1,62 @@
+/*MAIN COMPONENT*/
 main {
     margin-left: 64px;
     margin-top: 50px;
-    /*background-color: rgba(218,218,213,0.2)*/
+    /*background-color: rgba(218, 218, 213, 0.2);*/
+    font-family: "Helvetica Neue";
 }
 
-.page1{
-
+body {
+    background-color: rgba(218, 218, 213, 0.2);
 }
 
-main.open{
+main.open {
     margin-left: 240px;
 }
 
-#main-content
-{
+#main-content {
     padding: 10px;
 }
 
+
+.mainelement {
+    font-family: "Helvetica Neue";
+    background-color: white;
+    padding-bottom: 50px;
+}
+
+.page-header {
+    color: #003366;
+}
+
+.myhr {
+    border: none;
+    height: 2px;
+    /* Set the hr color */
+    background-color: #003366;
+}
+
+.borderMain {
+    border-style: solid;
+    border-radius: 10px;
+    border-width: 1px;
+    border-color: lightgrey;
+}
+
+
+/*NAVBAR*/
+
 .navbar {
-    background-color: #D5D5D5 !important;
+    background-color: #10C8CD !important;
+    color: white;
+    font-family: "Helvetica Neue";
 }
 
-td.lastColumn,th.lastColumn {
-    text-align: right;
-}
+/*.navform {*/
+/*background-color: #54A4DE !important;*/
+/*}*/
 
-.form1{
-  border-color: cornflowerblue;
-}
-
-.buttonXL{
-
-    font-size: 16px;
-
-    width:400%;
-}
-
-#mysidenav{
-    background: #0c9dc3 !important;
-    position: fixed;
-}
-
-#mainnavbar{
+#mainnavbar {
     position: fixed;
     top: 0;
     right: 0;
@@ -49,30 +64,74 @@ td.lastColumn,th.lastColumn {
     z-index: 10;
 }
 
-#mainnavbar.open{
+#mainnavbar.open {
     left: 240px;
 }
+#appbarText{
+    color: white;
+    border: 2px solid white;
+    background-color: #10C8CD;
+    border-radius: 5px 5px 5px 5px;
+    font-family: "Helvetica Neue";
+    width: 60px;
+    text-align: center;
+    font-weight: bold;
+}
 
-/* .pagination {
-    display: inline-block;
-    padding-left: 15px;
-    padding-right: 15px;
-    background-color: black;
-    color: violet;
-    /* background: #0c9dc3 !important; */
-/* }
+/*BUTTONS*/
 
-.pagesPagination  {
-    display: inline-block;
-    background-color: yellow !important;
-    
-} */ 
-/* .pagination  {
-    display: inline-block;
-    padding-left: 15px;
-    padding-right: 15px;
-} */
-.pagination{
+.buttonXL {
+    font-size: 16px;
+    width: 400%;
+}
+
+.button1 {
+    background-color: #10C8CD;
+    color: white;
+    border: 2px solid #003366;
+}
+
+.button1:hover {
+    background-color: #10C8CD;
+    color: black;
+}
+
+.buttonTransparent {
+    /*border: solid;*/
+    /*border-color: #003366;*/
+    /*background-color: white;*/
+
+    background-color: #10C8CD;
+    color: white;
+    border: 2px solid #003366;
+}
+.buttonTransparent:hover {
+    /*border: solid;*/
+    /*border-color: #003366;*/
+    /*background-color: white;*/
+
+    background-color: #003366;
+    color: white;
+    border: 2px solid #003366;
+}
+
+/*.mybutton {*/
+/*background-color: #f38b2e;*/
+/*border-color: #f38b2e;*/
+/*color: white;*/
+/*}*/
+
+/*SIDENAV*/
+
+#mysidenav {
+    background: #003366 !important;
+    position: fixed;
+    color: white;
+
+}
+
+/*PAGINATION*/
+.pagination {
     display: contents;
     /* neveikia */
     /* position: fixed!important;
@@ -84,9 +143,9 @@ td.lastColumn,th.lastColumn {
     display: inline-block;
     margin-left: 20px;
     padding-left: 0;
- }
- 
- .pagination li {
+}
+
+.pagination li {
     display: inline-block;
     border: 1px solid rgb(224, 224, 224);
     color: #000;
@@ -94,34 +153,60 @@ td.lastColumn,th.lastColumn {
     margin-right: 3px;
     border-radius: 5px;
     margin-bottom: 5px;
- }
- 
- .pagination li a {
-      padding: 2px 5px;
-      display: inline-block;
-      color: #000;
-      outline: none;
-  }
- 
- .pagination li.active {
+}
+
+.pagination li a {
+    padding: 2px 5px;
+    display: inline-block;
+    color: #000;
+    outline: none;
+}
+
+.pagination li.active {
     background: rgb(224, 224, 224);
     outline: none;
- }
-
- #mybutton{
-     background-color: #f38b2e;
-     border-color: #f38b2e;
-     color: white;
- }
-
- .footer {
-   position: fixed;
-   left: 0;
-   bottom: 0;
-   width: 100%;
-   background-color: black;
-   color: white;
-   text-align: center;
 }
 
 
+.footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+/*SHADOW*/
+.myshadow {
+    width: 700px;
+    box-shadow: 0 3px 5px 0 rgba(0, 0, 0, 0.2), 0 6px 10px 0 rgba(0, 0, 0, 0.19);
+    text-align: left;
+}
+
+/*ICONS*/
+i {
+    color: white;
+}
+
+.settingstd i {
+    color: black;
+}
+
+
+td.lastColumn, th.lastColumn {
+    text-align: right;
+}
+
+/*body {*/
+/*background-color: rgba(218, 218, 213, 0.2);*/
+/*}*/
+
+.tableUA {
+    background-color: white;
+    font-family: "Helvetica Neue";
+    border-style: solid;
+    border-color: lightgrey;
+    border-radius: 10px;
+}

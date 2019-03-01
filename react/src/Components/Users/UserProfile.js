@@ -1,11 +1,14 @@
 import React from 'react';
-import DownloadZip from "../FilesAndDocumens/DownloadZip"
+import DownloadZip from "../FilesAndDocumens/DownloadZip";
+// import '../Styles/DownloadZip.css'
+// import '../Styles/UserProfile.css'
+import '../../App.css'
 
 const UserProfile = (props) => {
     return (
         <div className="container">
-            <h2 className="text-center">Mano profilis:</h2>
-            <div className="page1 p-3 mb-5 bg-white rounded">
+            {/*<h2 className="textUP">Mano profilis:</h2>*/}
+            <div className="p-3 mb-5 bg-white mainelement borderMain">
                     <table className="table">
                         <tbody>
                         <tr>
@@ -31,7 +34,7 @@ const UserProfile = (props) => {
                             </td>
                         </tr>
                         <tr>
-                            <th>Duomenys apie mane:</th>
+                            <th>Sukurtų dokumentų archyvas:</th>
                             <td>
                             
                                 <DownloadZip/>

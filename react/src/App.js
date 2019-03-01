@@ -20,6 +20,7 @@ import {Redirect} from "react-router";
 // import DownloadZip from "./Components/FilesAndDocumens/DownloadZip"
 import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
 import Spinner from "./Components/UI/Spinner";
+import LocationToText from "./Components/UI/LocationToText";
 
 
 class App extends React.Component {
@@ -36,8 +37,8 @@ class App extends React.Component {
         {iconClass: 'fa fw fa-list', path: 'dashboard/documents/all', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
         // {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
-        {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai '},
-        {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai',admin:true},
+        {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai', admin:true},
+        {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai', admin:true},
     ];
 
     sideBarToggled = (isOpen) => {
@@ -102,6 +103,7 @@ class App extends React.Component {
         this.getWhoAmI();
     }
 
+
     render() {
         return (
             <div>
@@ -119,6 +121,7 @@ class App extends React.Component {
                                 <SideNav.Toggle/>
 
                                 <SideNav.Nav defaultSelected="">
+
                                     {this.menuItems.map((item) =>
                                         this.state.user.isAdmin || !item.admin ?
                                         <NavItem key={item.path} eventKey={item.path} id={item.path}>
@@ -129,14 +132,18 @@ class App extends React.Component {
                                                 {item.text}
                                             </NavText>
                                         </NavItem> : '' )}
+
                                 </SideNav.Nav>
                             </SideNav>
+
+
 
                             <nav id="mainnavbar" className={this.state.sideBarIsOpen ?
                                 'navbar navbar-expand-sm bg-light navbar-light justify-content-between open'
                                 :
                                 'navbar navbar-expand-sm bg-light navbar-light justify-content-between'}>
-                                <NavLink to='/' className="navbar-brand">{this.state.appBarText}</NavLink>
+                                <NavLink to='/' className="navbar-brand" id="appbarText">{this.state.appBarText}</NavLink>
+
 
                                 <LoginLogoutLink user={this.state.user}/>
                             </nav>
@@ -145,6 +152,14 @@ class App extends React.Component {
 
 
                                 <div id='main-content'>
+
+                                    <div className="container">
+                                        <div className="page-header">
+                                            <h3><LocationToText location={location}/></h3>
+                                        </div>
+                                        <hr className="myhr"/>
+                                    </div>
+
                                     {this.state.user === "" ?
                                         // Parodom uzsikrovimo spinner jeigu mes dar nezinome, ar esam prisijunge
                                         // jeigu ateis atsakymas is /whoAmI kad nesam prisijunge

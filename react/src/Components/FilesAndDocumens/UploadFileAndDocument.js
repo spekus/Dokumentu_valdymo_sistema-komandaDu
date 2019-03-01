@@ -1,6 +1,8 @@
 import React, {Component} from 'react';
 // import FileSaver from 'file-saver';
 import axios from 'axios';
+import '../../App.css';
+
 
 
 // run npm install file-saver --save
@@ -27,7 +29,7 @@ export default class FileUploader extends Component {
         this.getAllowedTypes();
     }
 
-    validation(){
+    validation() {
 
     }
 
@@ -49,47 +51,46 @@ export default class FileUploader extends Component {
         // this.getAllowedTypes();
         event.preventDefault();
         this.setState({error: '', msg: ''});
-        this.setState({files:[]})
+        this.setState({files: []})
         // {this.state.files.map(file => (
         //     <h6>{file.name}<span><i onClick={this.removeFile} className="fas fa-minus-circle" style={{fontSize: '0.5em'}}/></span></h6>
         // ))}
 
         var fileIdentifiers = [];
 
-        if (this.state.files.length === 0 || this.state.files ===undefined) {
+        if (this.state.files.length === 0 || this.state.files === undefined) {
             this.setState({error: 'Pasirinkite failą'})
             return;
         }
 
-        this.state.files.forEach(file=> {
+        this.state.files.forEach(file => {
 
-        if (file.size >= 2000000) {
-            this.setState({error: 'Failo dydis viršija 2MB'})
-            return;
-        }
-
-
-        let data = new FormData();
-        data.append('file', file);
-        data.append('name', file.name);
+            if (file.size >= 2000000) {
+                this.setState({error: 'Failo dydis viršija 2MB'})
+                return;
+            }
 
 
-        axios.post('/api/files', data)
-            .then(response => {
-                // this.getAllowedTypes();
-                this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
-                if (response.data.text) {
-                    var fileId = response.data.text;
-                    fileIdentifiers.push(fileId);
+            let data = new FormData();
+            data.append('file', file);
+            data.append('name', file.name);
 
 
-                    
-                }
-            })
-            .catch(err => {
-                this.setState({error: err.message})
-                console.log("Error from /api/files - " + err)
-            });
+            axios.post('/api/files', data)
+                .then(response => {
+                    // this.getAllowedTypes();
+                    this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
+                    if (response.data.text) {
+                        var fileId = response.data.text;
+                        fileIdentifiers.push(fileId);
+
+
+                    }
+                })
+                .catch(err => {
+                    this.setState({error: err.message})
+                    console.log("Error from /api/files - " + err)
+                });
 
         })
 
@@ -103,7 +104,6 @@ export default class FileUploader extends Component {
         // sukurti dokumento specifikacija
         // ir suristi sukelta faila su juo
         this.addDocument(documentDetails, fileIdentifiers);
-
 
 
     }
@@ -127,7 +127,7 @@ export default class FileUploader extends Component {
                     fileIdentifiers.forEach(fileId => {
                         this.addFileToDocument(docId, fileId);
                     })
-                
+
                     console.log("Document has been created with identifier - "
                         + docId);
                 }
@@ -165,13 +165,13 @@ export default class FileUploader extends Component {
     }
 
     onFileChange = (event) => {
-  
-        this.setState({ files: [...this.state.files, event.target.files[0]] })    
+
+        this.setState({files: [...this.state.files, event.target.files[0]]})
     }
 
     removeFile = (index) => {
         var arrayCopy = [...this.state.files];
-        arrayCopy.splice(index,1);
+        arrayCopy.splice(index, 1);
         this.setState({files: arrayCopy});
     }
 
@@ -179,10 +179,11 @@ export default class FileUploader extends Component {
         return (
             <React.Fragment>
                 <div className="container">
-                    <div className="page1 p-3 mb-5 bg-white rounded">
-                        <h4 className="my-4" align="center">
-                            Naujo dokumento sukūrimas
-                        </h4>
+                    {/*<h4 className="my-4 page-header">*/}
+                        {/*Naujo dokumento kūrimas*/}
+                    {/*</h4>*/}
+                    <div className="page1 p-3 mb-5 bg-white mainelement borderMain">
+
                         <form classname="form1 col-md-9" onSubmit={this.handleSubmit}>
                             <div className="row">
                                 <div className="col-md-2"></div>
@@ -222,29 +223,34 @@ export default class FileUploader extends Component {
 
                                     <div className="form-group col-md-9 mt-4">
                                         <input onChange={this.onFileChange} multiple type="file"></input><br/>
-                                        <h4 style={{marginTop:'20px'}}> {this.state.files.length>0 ? 'Pridėti failai:' : ''}  </h4>
-                                            <ul>
+                                        <label
+                                            style={{marginTop: '20px'}}> {this.state.files.length > 0 ? 'Pridėti failai:' : ''}  </label>
+                                        <ul>
                                             {
-                                                this.state.files.map((file,index) => (
-                                                <li style={{fontSize:'1.5em'}}>
-                                                {file===undefined?'':file.name}
-                                                <span>
-                                                    <i onClick={()=> this.removeFile(index)} className="fas fa-minus-circle"
-                                                    style={{fontSize: '1.0em', color:'red', marginLeft:'8px'}}/>
-                                                    </span>
-                                                </li>
-                                            ))}
+                                                this.state.files.map((file, index) => (
+                                                    <li key={index}>
+                                                        {file === undefined ? '' : file.name}
+                                                        <span onClick={() => this.removeFile(index)}
 
-                                            </ul>
+                                                              style={{color: 'red', marginLeft: '8px', fontWeight: 'bold'}}>
+                                                    {/*<i onClick={() => this.removeFile(index)}*/}
+                                                            {/*className="fas fa-minus-circle"*/}
+                                                            {/*style={{marginLeft: '8px'}}/>*/}
+                                                            X
+                                                    </span>
+                                                    </li>
+                                                ))}
+
+                                        </ul>
                                         <h4 style={{color: 'red'}}>{this.state.error}</h4>
                                         <h4 style={{color: 'green'}}>{this.state.msg}</h4>
 
                                     </div>
-                                    
+
                                 </div>
                             </div>
                             <div className="text-center">
-                                <button type="submit" className="btn btn-info my-4">Išsaugoti
+                                <button type="submit" className="btn button1 my-4">Išsaugoti
                                 </button>
                             </div>
                         </form>

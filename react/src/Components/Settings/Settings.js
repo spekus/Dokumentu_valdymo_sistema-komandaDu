@@ -8,9 +8,10 @@ class Settings extends Component {
             <React.Fragment>
                 {this.props.user.isAdmin ?
                     <div className="container">
-                        <h3>Dokumentai</h3>
+
+                        <h5>Dokumentų tipų nustatymas</h5>
                         <SettingsDocumentTypes/>
-                        <h3>Naudotojai</h3>
+                        <h5>Naudotojų grupės</h5>
                         <SettingsUserGroups/>
                     </div>
                     :

@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from "axios";
 
+
 const SettingsEditGroupTypes = (props) => {
 
     const handleChangeUpload = (group, type, event) => {

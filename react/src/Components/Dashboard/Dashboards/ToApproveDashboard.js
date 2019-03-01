@@ -119,11 +119,12 @@ class ToApproveDashboard extends Component {
 
         return (
             <React.Fragment>
+                <div className='container'>
                 {/* Dokumentu {this.state.nameOfWindow} */}
                 <div className="row mt-2">
                     <DashboardNavigation/>
 
-                    <div className='col-lg-12 mt-3 container'>
+                    <div className='col-lg-12 container mt-3 p-3 mb-5 bg-white rounded mainelement borderMain'>
                           {/*{this.state.userDocuments.map(item => (*/}
                                                 {/*<p value={item.title}>{item.title}</p>*/}
                                             {/*))}*/}
@@ -149,6 +150,7 @@ class ToApproveDashboard extends Component {
                 subContainerClassName={'pagesPagination'}
                 activeClassName={'active'}
                 />
+                </div>
                 </div>
                 </div>
                 </div>

@@ -67,7 +67,7 @@ class GenericDashBoard extends Component {
                     return ({
                         ...document,
                         postedDate: new Date(document.postedDate),
-                        approvedDate: new Date(document.approvedDate),
+                        approvedDate: new Date(document.approvalDate),
                         rejectedDate: new Date(document.rejectedDate)
                     })
                 });
@@ -101,7 +101,7 @@ class GenericDashBoard extends Component {
                 <div className="row mt-2">
                     <DashboardNavigation/>
                     
-                    <div className='col-lg-12 mt-3 p-3 mb-5 bg-white rounded'>
+                    <div className='col-lg-12 mt-3 p-3 mb-5 bg-white rounded borderMain'>
                         <DocumentsList list={this.state.userDocuments}/>
                     </div>
                 </div>

@@ -3,6 +3,7 @@ import axios from 'axios'
 import $ from "jquery";
 import ModalError from "../UI/ModalError";
 import uuid from "uuid";
+import "../../App.css"
 
 class SettingsDocumentTypes extends Component {
     state = {
@@ -60,8 +61,8 @@ class SettingsDocumentTypes extends Component {
 
     render() {
         return (
-            <div className='p-3 mb-5 bg-white rounded'>
-                <h5>Dokumentų tipų nustatymas</h5>
+            <div className='p-3 mb-5 bg-white rounded borderMain'>
+                {/*<h5>Dokumentų tipų nustatymas</h5>*/}
                 <div className="row">
                     <div className="col-md-8">
                         <table className="table table-bordered table-hover">
@@ -96,7 +97,7 @@ class SettingsDocumentTypes extends Component {
                                        value={this.state.newDocumentTypeInputField}
                                        name="newDocumentTypeInputField"
                                        onChange={this.handleChangeInput}/>
-                                <button type="submit" className="btn btn-info mt-2">Sukurti</button>
+                                <button type="submit" className="btn button1 mt-2">Sukurti</button>
                             </div>
 
                         </form>
