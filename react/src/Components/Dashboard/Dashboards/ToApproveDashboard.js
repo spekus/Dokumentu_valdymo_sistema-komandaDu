@@ -111,6 +111,7 @@ class ToApproveDashboard extends Component {
         this.setState({ offset: offset }, () => {
           this.getDocumentsToApprove();
         });
+        console.log(this.state.offset);
     };
 
 
@@ -137,13 +138,13 @@ class ToApproveDashboard extends Component {
                 <div className="row">
                 <div className="col-lg-12 my-auto center-block text-center">
                 <ReactPaginate 
-                previousLabel={'previous'}
-                nextLabel={'next'}
+                previousLabel={'ankstesnis puslapis'}
+                nextLabel={'kitas puslapis'}
                 breakLabel={'...'}
                 breakClassName={'break-me'}
                 pageCount={this.state.pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
+                marginPagesDisplayed={3}
+                pageRangeDisplayed={7}
                 onPageChange={this.handlePageClick}
                 containerClassName={'pagination'}
                 subContainerClassName={'pagesPagination'}

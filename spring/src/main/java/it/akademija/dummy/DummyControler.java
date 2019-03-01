@@ -21,6 +21,7 @@ public class DummyControler {
 
     @RequestMapping(value = "/dummy/{title}", method = RequestMethod.POST)
 //    @RequestMapping( method = RequestMethod.DELETE)
+
     @ApiOperation(value="Delete document type", notes="Deletes document type")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void augisTestuoja (@PathVariable("title")  @NotNull @Length(min=1) String title) {

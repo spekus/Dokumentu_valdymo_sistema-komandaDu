@@ -15,7 +15,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+
 @Entity
+@Table(indexes = {
+        @Index(columnList = "username"),
+
+})
 public class UserEntity {
 
     @Id
@@ -23,6 +28,7 @@ public class UserEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
+    @Column(name="username", unique=true)
     private String username;
     private String firstname;
     private String lastname;
@@ -31,11 +37,10 @@ public class UserEntity {
 
 
     @OneToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @LazyCollection(LazyCollectionOption.TRUE)
     private Set<DocumentEntity> documentEntities = new HashSet<>();
 
-    @ManyToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
             name = "user_usergroup",
             joinColumns = @JoinColumn(name = "userEntity_id"),

@@ -16,43 +16,63 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "DOCUMENTS")
+@Table(name = "DOCUMENTS", indexes = {
+        @Index(columnList = "documentIdentifier"),
+        @Index(columnList = "documentState")
+})
+@NamedQueries({
+        @NamedQuery(name = "DocumentEntity.getDocumentsToApprove",
+                query = "select dta From DocumentEntity dta " +
+                        "where dta.documentState='SUBMITTED' AND dta.type IN:types"),
+        @NamedQuery(name = "DocumentEntity.getDocumentsToApproveSize",
+                query = "select count(id) From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types")
+})
+
 public class DocumentEntity implements Serializable {
 
     @Id
 //    @GeneratedValue(strategy = GenerationType.AUTO)
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(name = "documentIdentifier", unique = true, nullable = false)
     //@GeneratedValue(strategy=GenerationType.IDENTITY) //CIA DEL DUOMBAZES
     private String documentIdentifier = UUID.randomUUID().toString().replace("-", "");
 
-
+    @Column(name = "author", nullable = false)
     private String author;
 
+    @Column(name = "title", nullable = false)
     private String title;
 
+    @Column(name = "description", nullable = false)
     private String description;
 
+    @Column(name = "type", nullable = false)
     private String type;
 
+    @Column(name = "documentState", nullable = false)
     @Enumerated(EnumType.STRING)
     private DocumentState documentState = DocumentState.CREATED;
 
+    //    @Column(name = "filesAttachedToDocument", nullable = false)
+    @OneToMany(fetch = FetchType.LAZY)
+//    @LazyCollection(LazyCollectionOption.FALSE)
+    private Set<FileEntity> filesAttachedToDocument = new HashSet<>();
 
-
-    @OneToMany
-    @LazyCollection(LazyCollectionOption.FALSE)
-    private Set<FileEntity> filesAttachedToDocument=new HashSet<>();
-
+    @Column(name = "postedDate")
     private LocalDateTime postedDate;
 
-
+    @Column(name = "approvalDate")
     private LocalDateTime approvalDate;
 
+    @Column(name = "rejectedDate")
     private LocalDateTime rejectedDate;
+
+    @Column(name = "approver")
     private String approver;
+
+    @Column(name = "rejectionReason")
     private String rejectionReason;
 
 
@@ -165,7 +185,8 @@ public class DocumentEntity implements Serializable {
     public void setFileSet(Set<FileEntity> filesAttachedToDocument) {
         this.filesAttachedToDocument = filesAttachedToDocument;
     }
-    public void addFileToDocument(FileEntity fileEntity){
+
+    public void addFileToDocument(FileEntity fileEntity) {
         filesAttachedToDocument.add(fileEntity);
     }
 
@@ -190,24 +211,25 @@ public class DocumentEntity implements Serializable {
         //using this for csv generation
         return
                 documentIdentifier + ',' +
-                author + ',' +
-                title + ',' +
-                description + ',' +
-                type + ',' +
-                postedDate +  ',' +
+                        author + ',' +
+                        title + ',' +
+                        description + ',' +
+                        type + ',' +
+                        postedDate + ',' +
                         approvalDate + ',' +
-                rejectedDate + ',' +
-                 approver + ',' +
-                rejectionReason
+                        rejectedDate + ',' +
+                        approver + ',' +
+                        rejectionReason
                 ;
     }
-    public String getFieldNames(){
+
+    public String getFieldNames() {
         return "documentIdentifier" + ',' +
                 "author" + ',' +
                 "title" + ',' +
                 "description" + ',' +
                 "type" + ',' +
-                "postedDate" +  ',' +
+                "postedDate" + ',' +
                 "approvalDate" + ',' +
                 "rejectedDate" + ',' +
                 "approver" + ',' +

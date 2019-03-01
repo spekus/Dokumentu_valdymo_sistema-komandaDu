@@ -13,10 +13,15 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
+@Table(indexes = {
+        @Index(columnList = "title"),
+
+})
 public class UserGroupEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected long id;
+    @Column(name="title", unique=true)
     private String title;
 
     @ManyToMany
