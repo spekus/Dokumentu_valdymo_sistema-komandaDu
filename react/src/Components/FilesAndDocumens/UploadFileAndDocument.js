@@ -222,7 +222,7 @@ export default class FileUploader extends Component {
                                     </div>
 
                                     <div className="form-group col-md-9 mt-4">
-                                        <input onChange={this.onFileChange} multiple type="file"></input><br/>
+                                        <input  onChange={this.onFileChange} multiple type="file"></input><br/>
                                         <label
                                             style={{marginTop: '20px'}}> {this.state.files.length > 0 ? 'Pridėti failai:' : ''}  </label>
                                         <ul>
