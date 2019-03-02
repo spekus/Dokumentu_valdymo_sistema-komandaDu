@@ -43,10 +43,12 @@ class Charts extends Component {
     //
     // }
 
+
+
     approvedData=()=>{
         this.state.mappedApproved=[["Element", "Skaičius", { role: "style" }]];
             this.state.approvedStatistics.map(item => {
-                let obj = [item.type, parseInt(item.count), "blue"];
+                let obj = [item.type, parseInt(item.count), "#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6)];
                 this.state.mappedApproved.push(obj)
                 console.log("pushed this:" + obj);
             });
@@ -55,7 +57,7 @@ class Charts extends Component {
     rejectedData=()=>{
         this.state.mappedRejected=[["Element", "Skaičius", { role: "style" }]];
         this.state.rejectedStatistics.map(item => {
-            let obj = [item.type, parseInt(item.count), "blue"];
+            let obj = [item.type, parseInt(item.count), "#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6)];
             this.state.mappedRejected.push(obj)
             console.log("pushed this:" + obj);
         });
@@ -64,7 +66,7 @@ class Charts extends Component {
     postedData=()=>{
         this.state.mappedPosted=[["Element", "Skaičius", { role: "style" }]];
         this.state.postedStatistics.map(item => {
-            let obj = [item.type, parseInt(item.count), "blue"];
+            let obj = [item.type, parseInt(item.count), "#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6)];
             this.state.mappedPosted.push(obj)
             console.log("pushed this:" + obj);
         });
@@ -73,9 +75,9 @@ class Charts extends Component {
     userListData=()=>{
         this.state.mappedUserList=[["Element", "Skaičius", { role: "style" }]];
         this.state.userListByPostedDocs.map(item => {
-            let obj = [item.type, parseInt(item.count), "blue"];
-            this.state.mappedUserList.push(obj)
-            console.log("pushed this:" + obj);
+                    let obj = [item.type, parseInt(item.count), "#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6)];
+                    this.state.mappedUserList.push(obj)
+                    console.log("pushed this:" + obj);
         });
     }
 
