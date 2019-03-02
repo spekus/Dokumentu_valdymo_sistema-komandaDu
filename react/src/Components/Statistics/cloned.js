@@ -4,6 +4,7 @@ import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import Chart from "react-google-charts";
 
 
+
 class Charts extends Component {
 
     state = {
@@ -12,10 +13,11 @@ class Charts extends Component {
         rejectedStatistics: [],              //Atmestų dokumentų statistika per nustatytą laikotarpį
         postedStatistics: [],                //Pateiktų dokumentų statistika per nustatytą laikotarpį
         userListByPostedDocs:[],            //Vartotojų sąrašas, surikiuotas pagal daugiausiai pateiktų dokumentų skaičių
-            mappedApproved:[],                   //sumapintas approvedStatistics
-            mappedRejected:[],                   //sumapintas rejectedStatistics
-            mappedPosted:[],                   //sumapintas postedStatistics
-            mappedUserList:[]                  //sumapintas userList
+        mappedApproved:[],                   //sumapintas approvedStatistics
+        mappedRejected:[],                   //sumapintas rejectedStatistics
+        mappedPosted:[],                   //sumapintas postedStatistics
+        mappedUserList:[]                  //sumapintas userList
+
     }
 
 
@@ -39,17 +41,13 @@ class Charts extends Component {
 
     //########## Metodai, ateinančių duomenų iš BACKENDO apdorojimui ir sukišimui į statistikos masyvą##########
 
-    // componentDidMount=()=>{
-    //
-    // }
-
     approvedData=()=>{
         this.state.mappedApproved=[["Element", "Skaičius", { role: "style" }]];
-            this.state.approvedStatistics.map(item => {
-                let obj = [item.type, parseInt(item.count), "blue"];
-                this.state.mappedApproved.push(obj)
-                console.log("pushed this:" + obj);
-            });
+        this.state.approvedStatistics.map(item => {
+            let obj = [item.type, parseInt(item.count), "blue"];
+            this.state.mappedApproved.push(obj)
+            console.log("pushed this:" + obj);
+        });
     }
 
     rejectedData=()=>{
@@ -164,36 +162,36 @@ class Charts extends Component {
         let chartRejected='';
         let chartPosted='';
         let chartUserList='';
-           if(this.state.mappedApproved[1]&&this.state.mappedRejected[1]&&this.state.mappedPosted[1]){
-               chartApproved=<Chart
-                   chartType="ColumnChart"
-                   color="red"
-                   width="100%"
-                   height="240px"
-                   data={this.state.mappedApproved}
-               />
-               chartRejected=<Chart
-                   chartType="ColumnChart"
-                   color="red"
-                   width="100%"
-                   height="240px"
-                   data={this.state.mappedRejected}
-               />
-               chartPosted=<Chart
-                   chartType="ColumnChart"
-                   color="red"
-                   width="100%"
-                   height="240px"
-                   data={this.state.mappedPosted}
-               />
-               chartUserList=<Chart
-                   chartType="ColumnChart"
-                   color="red"
-                   width="100%"
-                   height="240px"
-                   data={this.state.mappedUserList}
-               />
-           }
+        if(this.state.mappedApproved[1]&&this.state.mappedRejected[1]&&this.state.mappedPosted[1]){
+            chartApproved=<Chart
+                chartType="ColumnChart"
+                color="red"
+                width="100%"
+                height="240px"
+                data={this.state.mappedApproved}
+            />
+            chartRejected=<Chart
+                chartType="ColumnChart"
+                color="red"
+                width="100%"
+                height="240px"
+                data={this.state.mappedRejected}
+            />
+            chartPosted=<Chart
+                chartType="ColumnChart"
+                color="red"
+                width="100%"
+                height="240px"
+                data={this.state.mappedPosted}
+            />
+            chartUserList=<Chart
+                chartType="ColumnChart"
+                color="red"
+                width="100%"
+                height="240px"
+                data={this.state.mappedUserList}
+            />
+        }
 
         return(
             <div>
@@ -201,19 +199,19 @@ class Charts extends Component {
                     <h5>Dokumentų tipų statistika</h5>
                     <div className="row">
                         <div className="col-md-8">
-                                <DateRangePicker onChange={this.onChange} value={this.state.date}/>
-                                <button onClick={this.getStatistics}>Išvesti statistiką</button>
+                            <DateRangePicker onChange={this.onChange} value={this.state.date}/>
+                            <button onClick={this.getStatistics}>Išvesti statistiką</button>
                         </div>
                     </div>
 
-                 </div>
+                </div>
                 <div className='shadow p-3 mb-5 bg-white rounded'>
                     <div className="row">
-                            <div className="col-md-6">
-                                <br />
-                                <h5>Patvirtintų dokumentų statistika</h5>
-                                {chartApproved}
-                            </div>
+                        <div className="col-md-6">
+                            <br />
+                            <h5>Patvirtintų dokumentų statistika</h5>
+                            {chartApproved}
+                        </div>
                     </div>
                 </div>
                 <div className='shadow p-3 mb-5 bg-white rounded'>
