@@ -1,6 +1,7 @@
 package it.akademija;
 
 import it.akademija.auth.AppRoleEnum;
+import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.repository.DocumentTypeRepository;
@@ -22,6 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
 
 @Component
 public class DemoData implements ApplicationRunner {
@@ -102,6 +105,7 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToApprove("Administratoriai", "Paraiška");
         userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis");
         userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas");
+//        addDummydata();
 
 
     }
@@ -141,12 +145,14 @@ public class DemoData implements ApplicationRunner {
 
     }
 
+
     private void addDummydata() throws NoApproverAvailableException {
         //patikrina ar jau buvo prideta data
-//        if(userRepository.findUserByUsername("testuser1") ==  null) {
+        ArrayList documentsForAprooval = new ArrayList();
+        if(userRepository.findUserByUsername("testuser1") ==  null) {
 
             // jei dar neiko nebuvo prideta  x skaiciu useriu
-            for (int userNumber = 0; userNumber < 2; userNumber++) {
+            for (int userNumber = 0; userNumber < 10; userNumber++) {
                 createUserIfNotExists("name" + userNumber, "surename" + userNumber,
                         "testuser" + userNumber, "testuser" + userNumber);
                 userGroupService.addGroupToUser("Vadybininkai", "testuser" + userNumber);
@@ -158,9 +164,26 @@ public class DemoData implements ApplicationRunner {
                     if(documentNumber>5 && documentNumber <20){
                         documentService.submitDocument(documentEntity.getDocumentIdentifier());
                     }
+                    //document aprooval
+                    if(documentNumber>5 && documentNumber <8) {
+                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "admin",
+                                DocumentState.APPROVED, "");
+                    }
+                    if(documentNumber>8 && documentNumber <10) {
+                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "id123",
+                                DocumentState.APPROVED, "");
+                    }
+                    if(documentNumber>10 && documentNumber <12) {
+                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "id123",
+                                DocumentState.REJECTED, "not valid");
+                    }
+                    if(documentNumber>12 && documentNumber <14) {
+                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "admin",
+                                DocumentState.REJECTED, "not in a mood approvals");
+                    }
 
                 }
-//            }
+            }
         }
 
 
