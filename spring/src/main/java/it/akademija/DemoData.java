@@ -117,7 +117,7 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToApprove("Administratoriai", "Paraiška");
         userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis");
         userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas");
-//        addDummydata2();
+        addDummydata2();
         createUserIfNotExists( "dummy", "dummy", "dummy", "dummy");
 
 
@@ -206,7 +206,7 @@ public class DemoData implements ApplicationRunner {
 
 //    }
     private void addDummydata2() throws NoApproverAvailableException {
-        Set<DocumentEntity> documentSet = new HashSet<>();
+
         Faker faker = new Faker();
         //setting user group
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle("Vadybininkai");
@@ -216,6 +216,7 @@ public class DemoData implements ApplicationRunner {
 
             // jei dar neiko nebuvo prideta  x skaiciu useriu
             for (int userNumber = 0; userNumber < 10; userNumber++) {
+                Set<DocumentEntity> documentSet = new HashSet<>();
 //                String userName =  "testuser" + userNumber;
                 String firstname = faker.name().firstName();
                 String lastname = faker.name().lastName();

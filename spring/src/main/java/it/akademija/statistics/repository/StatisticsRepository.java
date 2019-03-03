@@ -22,20 +22,20 @@ public interface StatisticsRepository extends JpaRepository<DocumentEntity, Long
 
     @Query("SELECT new it.akademija.statistics.repository.Statistics(COUNT(de), de.type) " +
             "FROM DocumentEntity de " +
-            "WHERE de.approver=:approver AND de.documentState=:state " +
+            "WHERE de.type IN :types AND de.documentState=:state " +
             "AND de.approvalDate BETWEEN :startDate AND :endDate " +
             "GROUP BY de.type")
-    List<Statistics> countApprovementsByState(@Param("approver") String approver,
+    List<Statistics> countApprovementsByState(@Param("types") Set<String> types,
                                               @Param("startDate") LocalDateTime startDate,
                                               @Param("endDate") LocalDateTime endDate,
                                               @Param("state") DocumentState state);
 
     @Query("SELECT new it.akademija.statistics.repository.Statistics(COUNT(de), de.type) " +
             "FROM DocumentEntity de " +
-            "WHERE de.approver=:approver AND de.documentState=:state " +
+            "WHERE de.type IN :types AND de.documentState=:state " +
             "AND de.rejectedDate BETWEEN :startDate AND :endDate " +
             "GROUP BY de.type")
-    List<Statistics> countRejectionsByState(@Param("approver") String approver,
+    List<Statistics> countRejectionsByState(@Param("types") Set<String> types,
                                             @Param("startDate") LocalDateTime startDate,
                                             @Param("endDate") LocalDateTime endDate,
                                             @Param("state") DocumentState state);
@@ -49,14 +49,6 @@ public interface StatisticsRepository extends JpaRepository<DocumentEntity, Long
                                             @Param("startDate") LocalDateTime startDate,
                                             @Param("endDate") LocalDateTime endDate);
 
-    //Dažniausiai pateikiančių dokumentus vartotojų sąrašas, surikiotas pagal pateiktų dok.skaičių.
-    @Query("SELECT COUNT(de), de.author " +
-            "FROM DocumentEntity de " +
-            "WHERE de.type IN :types AND " +
-            "de.postedDate is NOT NULL " +
-            "GROUP BY de.author " +
-            "ORDER BY COUNT(de) desc")
-    List<DocumentEntity> userListByPostedDocs(@Param("types") Set<String> types);
 }
 
 

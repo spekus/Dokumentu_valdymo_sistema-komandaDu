@@ -36,7 +36,8 @@ public class UserEntity {
     private String password;
 
 
-    @OneToMany
+//    @OneToMany
+    @ManyToMany
     @LazyCollection(LazyCollectionOption.TRUE)
     private Set<DocumentEntity> documentEntities = new HashSet<>();
 
