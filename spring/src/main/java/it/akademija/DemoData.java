@@ -1,6 +1,7 @@
 package it.akademija;
 
 import com.github.javafaker.Faker;
+import com.google.common.collect.Sets;
 import it.akademija.auth.AppRoleEnum;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
@@ -28,9 +29,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 @Component
 public class DemoData implements ApplicationRunner {
@@ -83,6 +82,10 @@ public class DemoData implements ApplicationRunner {
         createUserGroupIfNotExists("Suspenduoti vartotojai", AppRoleEnum.ROLE_SUSPENDED);
 
         createDocumentTypeIfNotExists("Paraiška");
+        createDocumentTypeIfNotExists("Paraiška2");
+        createDocumentTypeIfNotExists("Paraiška3");
+        createDocumentTypeIfNotExists("Paraiška4");
+        createDocumentTypeIfNotExists("Paraiška5");
         createDocumentTypeIfNotExists("Darbo sutartis");
         createDocumentTypeIfNotExists("Registruotas laiškas");
         createDocumentTypeIfNotExists("Receptas");
@@ -98,6 +101,10 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Darbo sutartis");
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Registruotas laiškas");
         userGroupService.addDocumentTypeToUpload("Vadybininkai","Receptas");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška2");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška3");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška4");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška5");
 
 
         userGroupService.addGroupToUser("Administratoriai","admin");
@@ -109,12 +116,20 @@ public class DemoData implements ApplicationRunner {
 
 
         userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška");
+        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška2");
+        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška3");
+        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška4");
+        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška5");
         userGroupService.addDocumentTypeToUpload("Administratoriai","Darbo sutartis");
         userGroupService.addDocumentTypeToUpload("Administratoriai","Registruotas laiškas");
 
 
 
         userGroupService.addDocumentTypeToApprove("Administratoriai", "Paraiška");
+        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška2");
+        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška3");
+        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška4");
+        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška5");
         userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis");
         userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas");
         addDummydata2();
@@ -206,12 +221,17 @@ public class DemoData implements ApplicationRunner {
 
 //    }
     private void addDummydata2() throws NoApproverAvailableException {
-
+        //for generating random realistic fiels
         Faker faker = new Faker();
         //setting user group
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle("Vadybininkai");
+        // document types to be used for generation
+        List<String> documentTypes = new ArrayList<>( Arrays.asList(
+                "Paraiška", "Paraiška2", "Paraiška3", "Paraiška4", "Paraiška5"));
         Set<UserGroupEntity> allUserGroups = new HashSet<>();
         allUserGroups.add(userGroupEntity);
+        //for random integer generations
+        Random randomGenerator = new Random();
         if(userRepository.findUserByUsername("dummy") ==  null) {
 
             // jei dar neiko nebuvo prideta  x skaiciu useriu
@@ -242,7 +262,9 @@ public class DemoData implements ApplicationRunner {
                     documentEntity.setAuthor(userName);
                     documentEntity.setDescription(description);
                     documentEntity.setTitle(title);
-                    documentEntity.setType("Paraiška"); // static for now
+                    //documentEntity.setType("Paraiška"); // static for now
+                    // randomly chooses one of 5 document types
+                    documentEntity.setType(documentTypes.get(randomGenerator.nextInt(5)));
                     if(documentNumber>5 && documentNumber <20){
                         //documentService.submitDocument(documentEntity.getDocumentIdentifier());
                         documentEntity.setDocumentState(DocumentState.SUBMITTED);
