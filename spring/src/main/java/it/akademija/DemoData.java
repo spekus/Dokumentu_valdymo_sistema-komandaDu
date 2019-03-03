@@ -1,8 +1,10 @@
 package it.akademija;
 
+import com.github.javafaker.Faker;
 import it.akademija.auth.AppRoleEnum;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
+import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.documents.service.DocumentService;
@@ -22,9 +24,13 @@ import it.akademija.users.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 @Component
 public class DemoData implements ApplicationRunner {
@@ -51,6 +57,12 @@ public class DemoData implements ApplicationRunner {
     private  DocumentService documentService;
     @Autowired
     private FileService fileService;
+
+    @Autowired
+    private DocumentRepository documentRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
 
     public DemoData(UserRepository userRepository, UserService userService, UserGroupRepository userGroupRepository, UserGroupService userGroupService, DocumentTypeRepository documentTypeRepository, DocumentTypeService documentTypeService) {
         this.userRepository = userRepository;
@@ -105,7 +117,8 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToApprove("Administratoriai", "Paraiška");
         userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis");
         userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas");
-//        addDummydata();
+//        addDummydata2();
+        createUserIfNotExists( "dummy", "dummy", "dummy", "dummy");
 
 
     }
@@ -146,43 +159,147 @@ public class DemoData implements ApplicationRunner {
     }
 
 
-    private void addDummydata() throws NoApproverAvailableException {
-        //patikrina ar jau buvo prideta data
-        ArrayList documentsForAprooval = new ArrayList();
-        if(userRepository.findUserByUsername("testuser1") ==  null) {
+//    private void addDummydata() throws NoApproverAvailableException {
+//        //patikrina ar jau buvo prideta data
+//        ArrayList documentsForAprooval = new ArrayList();
+//        if(userRepository.findUserByUsername("testuser1") ==  null) {
+//
+//            // jei dar neiko nebuvo prideta  x skaiciu useriu
+//            for (int userNumber = 0; userNumber < 10; userNumber++) {
+//                createUserIfNotExists("name" + userNumber, "surename" + userNumber,
+//                        "testuser" + userNumber, "testuser" + userNumber);
+//                userGroupService.addGroupToUser("Vadybininkai", "testuser" + userNumber);
+//
+//                //kiekvienam useriui pridada po tusciu dokumentu
+//                for (int documentNumber = 0; documentNumber < 25; documentNumber++) {
+//                    DocumentEntity documentEntity =addDocumentToUser("testuser" + userNumber, documentNumber);
+//                    //submits part of documents
+//                    if(documentNumber>5 && documentNumber <20){
+//                        documentService.submitDocument(documentEntity.getDocumentIdentifier());
+////                        documentEntity.setDocumentState(DocumentState.SUBMITTED);
+////                        documentEntity.setPostedDate(LocalDateTime.now());
+////                        documentRepository.save(documents);
+//                    }
+//                    //document aprooval
+//                    if(documentNumber>5 && documentNumber <8) {
+//                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "admin",
+//                                DocumentState.APPROVED, "");
+//                    }
+//                    if(documentNumber>8 && documentNumber <10) {
+//                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "id123",
+//                                DocumentState.APPROVED, "");
+//                    }
+//                    if(documentNumber>10 && documentNumber <12) {
+//                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "id123",
+//                                DocumentState.REJECTED, "not valid");
+//                    }
+//                    if(documentNumber>12 && documentNumber <14) {
+//                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "admin",
+//                                DocumentState.REJECTED, "not in a mood approvals");
+//                    }
+//
+//                }
+//            }
+//        }
+
+
+
+//    }
+    private void addDummydata2() throws NoApproverAvailableException {
+        Set<DocumentEntity> documentSet = new HashSet<>();
+        Faker faker = new Faker();
+        //setting user group
+        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle("Vadybininkai");
+        Set<UserGroupEntity> allUserGroups = new HashSet<>();
+        allUserGroups.add(userGroupEntity);
+        if(userRepository.findUserByUsername("dummy") ==  null) {
 
             // jei dar neiko nebuvo prideta  x skaiciu useriu
             for (int userNumber = 0; userNumber < 10; userNumber++) {
-                createUserIfNotExists("name" + userNumber, "surename" + userNumber,
-                        "testuser" + userNumber, "testuser" + userNumber);
-                userGroupService.addGroupToUser("Vadybininkai", "testuser" + userNumber);
+//                String userName =  "testuser" + userNumber;
+                String firstname = faker.name().firstName();
+                String lastname = faker.name().lastName();
+                String userName = firstname + userNumber;
+                //creating user
+                UserEntity userEntity = new UserEntity(firstname, lastname, userName, passwordEncoder.encode(userName));
+                //adding user group vadybininkas
+                userEntity.setUserGroups(allUserGroups);
+                userRepository.save(userEntity);
+
+//                createUserIfNotExists("name" + userNumber, "surename" + userNumber,
+//                        userName, userName);
+//                userGroupService.addGroupToUser("Vadybininkai", userName);
 
                 //kiekvienam useriui pridada po tusciu dokumentu
                 for (int documentNumber = 0; documentNumber < 25; documentNumber++) {
-                    DocumentEntity documentEntity =addDocumentToUser("testuser" + userNumber, documentNumber);
+
+//                    DocumentEntity documentEntity =addDocumentToUser("testuser" + userNumber, documentNumber);
                     //submits part of documents
+                    DocumentEntity documentEntity =  new DocumentEntity();
+                    String title = faker.ancient().primordial();
+                    String description = faker.chuckNorris().fact();
+                    documentEntity.setAuthor(userName);
+                    documentEntity.setDescription(description);
+                    documentEntity.setTitle(title);
+                    documentEntity.setType("Paraiška"); // static for now
                     if(documentNumber>5 && documentNumber <20){
-                        documentService.submitDocument(documentEntity.getDocumentIdentifier());
+                        //documentService.submitDocument(documentEntity.getDocumentIdentifier());
+                        documentEntity.setDocumentState(DocumentState.SUBMITTED);
+                        documentEntity.setPostedDate(LocalDateTime.now());
+                      //  documentRepository.saveAll(documents);
                     }
                     //document aprooval
+
                     if(documentNumber>5 && documentNumber <8) {
-                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "admin",
-                                DocumentState.APPROVED, "");
-                    }
-                    if(documentNumber>8 && documentNumber <10) {
-                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "id123",
-                                DocumentState.APPROVED, "");
-                    }
-                    if(documentNumber>10 && documentNumber <12) {
-                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "id123",
-                                DocumentState.REJECTED, "not valid");
-                    }
-                    if(documentNumber>12 && documentNumber <14) {
-                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "admin",
-                                DocumentState.REJECTED, "not in a mood approvals");
+//                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "admin",
+//                                DocumentState.APPROVED, "");
+
+                        //surandame prisiloginusi useri
+                        UserEntity user = userRepository.findUserByUsername("admin");
+                        documentEntity.setDocumentState(DocumentState.APPROVED);
+                        documentEntity.setApprovalDate(LocalDateTime.now());
+
+                        documentEntity.setApprover(user.getFirstname() + " " + user.getLastname());
+//                        documentRepository.save(document);
                     }
 
+                    if(documentNumber>8 && documentNumber <10) {
+                        //documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "id123",
+                         //       DocumentState.APPROVED, "");
+                        UserEntity user = userRepository.findUserByUsername("id123");
+                        documentEntity.setDocumentState(DocumentState.APPROVED);
+                        documentEntity.setApprovalDate(LocalDateTime.now());
+
+                        documentEntity.setApprover(user.getFirstname() + " " + user.getLastname());
+                    }
+
+                    String rejectionReason = faker.shakespeare().hamletQuote();
+                    if(documentNumber>10 && documentNumber <12) {
+//                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "id123",
+//                                DocumentState.REJECTED, "not valid");
+                        UserEntity user = userRepository.findUserByUsername("id123");
+                        documentEntity.setDocumentState(DocumentState.REJECTED);
+                        documentEntity.setRejectedDate(LocalDateTime.now());
+                        documentEntity.setApprover(user.getFirstname() + " " + user.getLastname());
+                        documentEntity.setRejectionReason(rejectionReason);
+//                        documentRepository.save(document);
+
+
+                    }
+                    if(documentNumber>12 && documentNumber <14) {
+//                        documentService.approveOrRejectDocument(documentEntity.getDocumentIdentifier(), "admin",
+//       Gerardo2                         DocumentState.REJECTED, "not in a mood approvals");
+                        UserEntity user = userRepository.findUserByUsername("admin");
+                        documentEntity.setDocumentState(DocumentState.REJECTED);
+                        documentEntity.setRejectedDate(LocalDateTime.now());
+                        documentEntity.setApprover(user.getFirstname() + " " + user.getLastname());
+                        documentEntity.setRejectionReason(rejectionReason);
+                    }
+                    documentSet.add(documentEntity);
                 }
+                userEntity.setDocuments(documentSet);
+                documentRepository.saveAll(documentSet);
+                userRepository.save(userEntity);
             }
         }
 
