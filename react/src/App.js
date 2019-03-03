@@ -21,7 +21,7 @@ import {Redirect} from "react-router";
 import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
 import Spinner from "./Components/UI/Spinner";
 import LocationToText from "./Components/UI/LocationToText";
-import Charts from "./Components/Statistics/Charts"
+import Charts from "./Components/Statistics/polarChart"
 
 class App extends React.Component {
     state = {

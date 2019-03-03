@@ -10,7 +10,7 @@ const DashboardNavigation = (props) => {
                    <div className='col-lg-2'>
                         <Link className="btn btn-lg btn-block buttonTransparent" to=
                         {"/dashboard/documents/all/"}>
-                        Visi dokumentai 
+                        Visi dokumentai
                         </Link>
                     </div>
                     <div className='col-lg-2'> 
