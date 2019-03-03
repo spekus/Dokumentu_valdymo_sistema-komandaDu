@@ -323,7 +323,7 @@ public class UserService implements UserDetailsService {
 //
 //    }
 
-
+    @Transactional
     public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {
         // pasitikrinam ar yra toks naudotojas
         UserEntity userEntity = userRepository.findUserByUsername(userName);

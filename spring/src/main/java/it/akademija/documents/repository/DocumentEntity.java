@@ -53,8 +53,9 @@ public class DocumentEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private DocumentState documentState = DocumentState.CREATED;
 
-    //    @Column(name = "filesAttachedToDocument", nullable = false)
+        @Column(name = "filesAttachedToDocument", nullable = false)
     @OneToMany(fetch = FetchType.LAZY)
+//    @OneToMany
 //    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<FileEntity> filesAttachedToDocument = new HashSet<>();
 
