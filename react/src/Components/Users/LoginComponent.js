@@ -4,6 +4,8 @@ import axios from 'axios';
 import "../../App.css"
 import "./LoginComponent.css"
 // import * as uuid from "uuid";
+import $ from 'jquery';
+// import
 
 
 export default class Login extends Component {
