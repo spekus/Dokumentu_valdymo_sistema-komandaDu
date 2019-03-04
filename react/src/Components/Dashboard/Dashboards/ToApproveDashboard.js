@@ -9,31 +9,19 @@ class ToApproveDashboard extends Component {
         nameOfWindow: 'default',
         userIdentifier: '',
         userDocuments: [],
+        searchField: '',
 
         // used for paging
         pageCount : 3,
         perPage : 7,
-        offset: 0 //identifies which page is used
+        offset: 0,        
     }
 
 
     componentDidMount = () => {
         this.getWhoAmI();
-        // this.getDocumentsToApprove();
-        // this.setState({userId: this.props.user.userIdentifier});
         console.log("userID" + this.state.userIdentifier)
     }
-
-    // componentDidUpdate =(props) =>{
-    //     console.log("window did update");
-    //      console.log("userID" + this.state.userId)
-    //     if(!(this.state.nameOfWindow == this.props.match.params.id)){
-    //     this.setState({nameOfWindow : this.props.match.params.id})
-    //     console.log("state of name of the window was set to - " +
-    //     this.state.nameOfWindow);
-    //     this.getDocumentsToApprove();
-    //     }
-    // }
 
     getWhoAmI = () => {
         axios.get('/api/users/whoami')
@@ -41,7 +29,12 @@ class ToApproveDashboard extends Component {
                 if (response.data.username !== null) {
                     this.setState({userIdentifier: response.data.userIdentifier});
                     console.log("getWhoAmI - " + this.state.userIdentifier);
-                    this.getDocumentsToApprove();
+                    if (this.state.searchField.length===0) {
+                        this.getDocumentsToApprove();
+                    } else {
+                        this.getFilteredDocumentsToApprove();
+                    }
+                    
                 }
 
             })
@@ -51,24 +44,35 @@ class ToApproveDashboard extends Component {
             })
     }
 
+    handleSearch = () => {
+        
+        if (this.state.searchField.length===0) {
+            this.setState({userDocuments:[]})
+            this.setState({ offset: 0 }, () => {
+                this.getDocumentsToApprove();
+                console.log(this.state.offset);
+                console.log(this.state.searchField)
+              
+              })
 
-    // getDocumentsToApprove = () => {
-    //     axios.get('/api/users/user/get-documents-to-approve')
-    //         .then(response => {
-    //             this.setState({userDocuments: response.data});
-    //         })
-    //         .catch(error => {
-    //             console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
-    //         })
-    // }
+        } else {
+            this.setState({userDocuments:[]})
+            this.setState({ offset: 0 }, () => {
+                this.getFilteredDocumentsToApprove();
+                console.log(this.state.offset);
+                console.log(this.state.searchField)
+              
+              })
 
+        }
+    }
 
     getDocumentsToApprove = () => {
         axios({
             method: 'get',
             url: '/api/users/user/get-documents-to-approve',
             params: {
-                page: this.state.offset ,
+                page: this.state.offset,
                 size: this.state.perPage
     },
         headers: {'Content-Type': 'application/json;charset=utf-8'}
@@ -82,54 +86,98 @@ class ToApproveDashboard extends Component {
                     Math.ceil(response.data.totalElements 
                         / this.state.perPage)})
                         console.log("totalElements - = " + response.data.totalElements)
+                        console.log(this.state.pageCount);
             })
             .catch(error => {
                 console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
             })
     }
 
-
-
-
-    // getDocumentsToApprove = (props) => {
-    //     // this.setState({userIdentifier: this.props.user.userIdentifier});
-    //     var params = new URLSearchParams();
-    //     params.append('userIdentifier', this.props.user.userIdentifier);
-    //     console.log("running getAllDocuments");
-    //     axios.get('/api/usergroup/getDocumentsToApprove', params)
-    //         .then(response => {
-    //             this.setState({userDocuments: response.data});
-    //         })
-    //         .catch(error => {
-    //             console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
-    //         })
+    getFilteredDocumentsToApprove = () => {            
+        axios({
+            method: 'get',
+            url: '/api/users/user/get-documents-to-approve-filtered',
+            params: {
+                page: this.state.offset,
+                size: this.state.perPage,
+                criteria: this.state.searchField
+    },
+        headers: {'Content-Type': 'application/json;charset=utf-8'}
+    
+    })
+                .then(response => {
+                this.setState({userDocuments: response.data.content});
+                this.setState({pageCount: 
+                    Math.ceil(response.data.totalElements 
+                        / this.state.perPage)})
+                        console.log("totalElements - = " + response.data.totalElements)   
+                       
+            })
+            .catch(error => {
+                console.log("Klaida is getDocumentsToApproveFiltered metodo - " + error.message)
+            })
     // }
+}
+
     handlePageClick = data => {
         let selected = data.selected;
         let offset = Math.ceil(selected);
     
-        this.setState({ offset: offset }, () => {
+        if (this.state.searchField.length===0) {
+        this.setState({ offset: offset}, () => {
           this.getDocumentsToApprove();
-        });
-        console.log(this.state.offset);
-    };
+          console.log(this.state.offset);
+          console.log(this.state.searchField)
+        
+        })
+        
+    } else {
+        this.setState({ offset: offset }, () => {
+            this.getFilteredDocumentsToApprove();  
+            console.log(this.state.offset)  
+            console.log(this.state.searchField)
+    })
+   
+    }
+}
 
+    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
 
     render() {
 
         return (
             <React.Fragment>
                 <div className='container'>
-                {/* Dokumentu {this.state.nameOfWindow} */}
                 <div className="row mt-2">
                     <DashboardNavigation/>
 
                     <div className='col-lg-12 container mt-3 p-3 mb-5 bg-white rounded mainelement borderMain'>
-                          {/*{this.state.userDocuments.map(item => (*/}
-                                                {/*<p value={item.title}>{item.title}</p>*/}
-                                            {/*))}*/}
-                        {/*/!*<p>Hello {this.state.userDocuments[0]}</p>*!/*/}
-                        <DocumentsListSimple list={this.state.userDocuments}/>
+                        <div className="form-group col-md-8 my-3">
+                            <label>Dokumento tvirtinimui paieška</label>
+                            <div className="row">
+                                <div className="col-md-10 input-group">
+                                    <div className="input-group-prepend">
+                                        <span className="input-group-text" id="basic-addon1" role="img"
+                                              aria-label="Search">🔎</span>
+                                    </div>
+                                    <input className="form-control mr-sm-2" type="search"
+                                           placeholder="Įveskite dokumento tipą arba autoriaus naudotojo vardą"
+                                           aria-label="Search" aria-describedby="basic-addon1"
+                                          
+                                           value={this.state.searchField}
+                                           name="searchField"
+                                           onChange={this.handleChangeInput}/>
+                                </div>
+                                <div className="col-md-2">
+                                    <button className="btn button2 my-2 my-sm-0 button1" type="submit"
+                                            onClick={this.handleSearch}>Ieškoti
+                                    </button>
+                                </div>
+                                </div>
+                                </div>
+                                
+                                <DocumentsListSimple list={this.state.userDocuments}/>
+                        
                     </div>
                 </div>
 
@@ -138,6 +186,7 @@ class ToApproveDashboard extends Component {
                 <div className="row">
                 <div className="col-lg-12 my-auto center-block text-center">
                 <ReactPaginate 
+                forcePage={this.state.offset}
                 previousLabel={'ankstesnis puslapis'}
                 nextLabel={'kitas puslapis'}
                 breakLabel={'...'}
@@ -159,5 +208,6 @@ class ToApproveDashboard extends Component {
         );
     }
 }
+
 
 export default ToApproveDashboard;

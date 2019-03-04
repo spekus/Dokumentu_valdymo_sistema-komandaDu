@@ -173,6 +173,32 @@ public class UserService implements UserDetailsService {
     }
 
     @Transactional
+    public Page<DocumentServiceObject> getDocumentsToApproveFiltered(String username, Integer page, Integer size, String criteria) {
+        List<DocumentTypeEntity> documentTypeEntityList =
+                documentTypeRepository.getDocumentTypesToApproveByUsername(username);
+        List<String> documentTypesForAproval = documentTypeEntityList.stream().map((documentTypeEntity) ->
+                documentTypeEntity.getTitle()).collect(Collectors.toList());
+        Pageable sortedByTitleDesc =
+                PageRequest.of(page, size, Sort.by("title").ascending());
+
+        List<DocumentEntity> documentsToApproveFiltered = documentRepository.getDocumentsToApproveByCriteria(documentTypesForAproval,
+                sortedByTitleDesc, criteria);
+
+        List<DocumentServiceObject> listOfDocumentServiceObject =
+                documentsToApproveFiltered
+                        .stream()
+                        .map(documentEntity -> SOfromEntityWithoutFiles(documentEntity))
+                        .collect(Collectors.toList());
+
+        long filteredDocumentsSize=documentRepository.getDocumentsToApproveFilteredSize(documentTypesForAproval,criteria);
+
+        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
+                sortedByTitleDesc, filteredDocumentsSize);
+
+        return pageData;
+    }
+
+    @Transactional
     public void addNewUser(String firstname, String lastname, String username, String password) {
         UserEntity userEntityFromDataBase1 = userRepository.findUserByUsername(username);
         UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
@@ -324,6 +350,7 @@ public class UserService implements UserDetailsService {
 //    }
 
 
+    @Transactional
     public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {
         // pasitikrinam ar yra toks naudotojas
         UserEntity userEntity = userRepository.findUserByUsername(userName);
@@ -342,6 +369,8 @@ public class UserService implements UserDetailsService {
                 sortedByTitleDesc, documentRepository.findByDocumentStateAndAuthor(state, userName).size());
         return pageData;
     }
+
+
 }
 
 
