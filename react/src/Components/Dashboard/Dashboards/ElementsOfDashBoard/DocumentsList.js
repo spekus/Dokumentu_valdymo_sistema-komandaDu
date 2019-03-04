@@ -27,7 +27,7 @@ const AugustasDocumentsList = (props) => {
                     <td><DateWithTooltip date={item.postedDate}/></td>
                     <td>{item.type}</td>
 
-                    <td><Link className="btn btn-outline-info btn-block" to=
+                    <td><Link className="btn buttonTransparent btn-block" to=
                     {"/documents/" + item.documentIdentifier}>Detaliau</Link></td>
 
                     </tr>
