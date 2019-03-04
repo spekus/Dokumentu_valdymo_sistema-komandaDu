@@ -71,22 +71,12 @@ class Charts extends Component {
 
 //########## Metodai, ateinančių duomenų iš BACKENDO apdorojimui ir sukišimui į statistikos masyvus ##########
     approvedData=()=>{  
-        // var hsv6 = hsv_rainbow(6)  
-        // // var pal_for_queries = palette(['sequential'], 10, 0);
-        var seq = palette('cb-GnBu', 5);
-         console.log(seq[0]);
-        // Sort colors by differenciation first
-        //colors = paletteGenerator.diffSort(colors, 'Default');
-
+        // choose colors here http://google.github.io/palette.js/
+        var seq = palette('tol-dv', 5);
         var skaicius =0;
-        // var scaless = chroma.scale(['black', 'Aqua']);
         this.resetState();
         this.state.approvedStatistics.map(item => {
             this.dataApproved.push(parseInt(item.count));
-            //this.backgroundColorApproved.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
-            // this.backgroundColorApproved.push(scaless(skaicius).hex() );
-            // skaicius = skaicius + 0.1;
-            // console.log(seq);
             this.backgroundColorApproved.push("#" + seq[skaicius]);
              skaicius = skaicius + 1;
             this.labelsApproved.push(item.type)
@@ -106,10 +96,15 @@ class Charts extends Component {
     }
 
     rejectedData=()=>{
+        var seq = palette('cb-GnBu', 5);
+        var skaicius =0;
         this.resetState();
         this.state.rejectedStatistics.map(item => {
             this.dataRejected.push(parseInt(item.count));
-            this.backgroundColorRejected.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
+ 
+            // this.backgroundColorRejected.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
+            this.backgroundColorRejected.push("#" + seq[skaicius]);
+            skaicius = skaicius + 1;
             this.labelsRejected.push(item.type)
         });
         let mydata={
@@ -127,10 +122,15 @@ class Charts extends Component {
     }
 
     postedData=()=>{
+        var seq2 = palette('tol-dv', 10);
+        var skaicius = 0;
         this.resetState();
         this.state.postedStatistics.map(item => {
             this.dataPosted.push(parseInt(item.count));
-            this.backgroundColorPosted.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
+
+            // this.backgroundColorPosted.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
+            this.backgroundColorPosted.push("#" + seq2[skaicius]);
+            skaicius = skaicius + 1;
             this.labelsPosted.push(item.type)
         });
         let mydata={
@@ -148,10 +148,14 @@ class Charts extends Component {
     }
 
     userListData=()=>{
+        var seq = palette('cb-GnBu', 7);
+        var skaicius =0;
         this.resetState();
         this.state.userListByPostedDocs.map(item => {
             this.dataUserList.push(parseInt(item.count));
-            this.backgroundColorUserList.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
+            // this.backgroundColorUserList.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
+            this.backgroundColorUserList.push("#" + seq[skaicius]);
+            skaicius = skaicius + 1;
             this.labelsUserList.push(item.type)
         });
        let mydata={
