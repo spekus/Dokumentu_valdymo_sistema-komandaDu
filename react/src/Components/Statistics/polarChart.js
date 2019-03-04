@@ -15,7 +15,16 @@ class Charts extends Component {
             dataPolarApproved:{},           //Grafikų duomenų masyvai
             dataPolarRejected:{},
             dataPolarPosted:{},
-            dataPolarUserlist:{}
+            dataPolarUserlist:{},
+        dropDownValue:1
+    }
+
+
+    handleChangeSelect = (event) => {
+        this.state.dropDownValue=event.target.value;
+        console.log("eventas "+event.target.value)
+        console.log("handle change "+this.state.dropDownValue)
+
     }
 
 //########## kalendorius ##########
@@ -28,11 +37,27 @@ class Charts extends Component {
 
 //########## mygtuko paspaudimas "Rodyti statistiką" iškviečia AXIOS duomenų gavimui iš back'endo ##########
     getStatistics=()=>{
-        this.getApprovedData();
-        this.getRejectedData();
-        this.getPostedData();
-        this.getUserListByPostedDocs();
-    }
+        console.log("metode "+this.state.dropDownValue)
+         if(this.state.dropDownValue==1){
+             console.log("patvirtinti")
+             this.getApprovedData();
+         }
+
+        if(this.state.dropDownValue==2){
+             console.log("atmesti")
+            this.getRejectedData();
+        }
+
+        if(this.state.dropDownValue==3){
+            console.log("postinti")
+            this.getPostedData();
+        }
+
+        if(this.state.dropDownValue==4){
+            console.log("useriai")
+            this.getUserListByPostedDocs();
+        }
+     }
 
 //########## Graikų duomenų masyvai, kurie užpildomi gaunant data iš BACKendo ##########
     dataApproved=[];
@@ -83,7 +108,7 @@ class Charts extends Component {
             labels:this.labelsApproved
         }
         this.state.dataPolarApproved=mydata;
-        this.setState({state:this.state});
+        this.setState({state:this.state.dataPolarApproved});
     }
 
     rejectedData=()=>{
@@ -104,7 +129,7 @@ class Charts extends Component {
             labels:this.labelsRejected
         }
         this.state.dataPolarRejected=mydata;
-        this.setState({state:this.state});
+        this.setState({state:this.state.dataPolarRejected});
     }
 
     postedData=()=>{
@@ -125,7 +150,7 @@ class Charts extends Component {
             labels:this.labelsPosted
         }
         this.state.dataPolarPosted=mydata;
-        this.setState({state:this.state});
+        this.setState({state:this.state.dataPolarPosted});
     }
 
     userListData=()=>{
@@ -146,7 +171,7 @@ class Charts extends Component {
                 labels:this.labelsUserList
         }
         this.state.dataPolarUserlist=mydata;
-        this.setState({state:this.state});
+        this.setState({state:this.state.dataPolarUserlist});
     }
 
 //########## Duomenų gavimas iš BACKENDO ##########
@@ -228,18 +253,35 @@ class Charts extends Component {
     }
 
     render(){
-        let chartApproved=<MDBContainer>
-            <Polar data={this.state.dataPolarApproved} options={{ responsive: true }} />
-        </MDBContainer>
-        let chartRejected=<MDBContainer>
-            <Polar data={this.state.dataPolarRejected} options={{ responsive: true }} />
-        </MDBContainer>
-        let chartPosted=<MDBContainer>
+        console.log("renderio "+this.state.dropDownValue)
+        if(this.state.dropDownValue==1) {
+            var chartApproved = <MDBContainer>
+                <h5>Patvirtintų dokumentų sąrašas</h5>
+                <Polar data={this.state.dataPolarApproved} options={{responsive: true}}/>
+            </MDBContainer>
+        }
+
+        if(this.state.dropDownValue==2) {
+            var chartRejected = <MDBContainer>
+                <h5>Atmestų dokumentų sąrašas</h5>
+                <Polar data={this.state.dataPolarRejected} options={{responsive: true}}/>
+            </MDBContainer>
+        }
+
+        if(this.state.dropDownValue==3){
+        var chartPosted=<MDBContainer>
+            <h5>Pateiktų dokumentų sąrašas</h5>
             <Polar data={this.state.dataPolarPosted} options={{ responsive: true }} />
         </MDBContainer>
-        let userList=<MDBContainer>
-            <Polar data={this.state.dataPolarUserlist} options={{ responsive: true }} />
-        </MDBContainer>
+        }
+
+         if(this.state.dropDownValue==4) {
+            var userList = <MDBContainer>
+                <h5>Dažniausiai pateikiančių dokumentų vartotojų sąrašas</h5>
+                <Polar data={this.state.dataPolarUserlist} options={{responsive: true}}/>
+            </MDBContainer>
+        }
+
         return(
             <div className="container">
                 <h5>Laiko intervalas</h5>
@@ -251,29 +293,23 @@ class Charts extends Component {
                         <div className="col-md-4">
                             <button className="btn button1 btn-sm" onClick={this.getStatistics}>Išvesti statistiką</button>
                         </div>
+                        <div className="col-md-4">
+                            <select className="form-control" value={this.state.dropDownValue} onChange={this.handleChangeSelect} >
+                                <option value="1">Patvirtinti dokumentai</option>
+                                <option value="2">Atmesti dokumentai</option>
+                                <option value="3">Pateikti dokumentai</option>
+                                <option value="4">Vartotojų sąrašas</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
 
                 <div className='shadow p-3 mb-5 bg-white rounded'>
                     <div className="row">
-                        <div className="col-md-6">
-                            <h5>Patvirtintų dokumentų sąrašas</h5>
+                        <div className="col-md-12">
                             {chartApproved}
-                        </div>
-
-                        <div className="col-md-6">
-                            <h5>Atmestų dokumentų sąrašas</h5>
                             {chartRejected}
-                        </div>
-                    </div>
-                    <div className="row">
-                        <div className="col-md-6">
-                            <h5>Pateiktų dokumentų sąrašas</h5>
                             {chartPosted}
-                        </div>
-
-                        <div className="col-md-6">
-                            <h5>Dažniausiai pateikiančių dokumentus vartotojų sąrašas</h5>
                             {userList}
                         </div>
                     </div>

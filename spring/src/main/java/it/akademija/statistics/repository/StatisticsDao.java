@@ -25,7 +25,7 @@ public class StatisticsDao {
                 "GROUP BY de.author " +
                 "ORDER BY COUNT(de) desc")
                 .setParameter("types", types)
-                .setMaxResults(5);
+                .setMaxResults(7);
         return query.getResultList();
     }
 }
