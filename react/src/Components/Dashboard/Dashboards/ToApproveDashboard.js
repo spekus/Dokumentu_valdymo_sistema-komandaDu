@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import DocumentsListSimple from "./ElementsOfDashBoard/DocumentsList";
+import DocumentsList from "./ElementsOfDashBoard/DocumentsList";
 import axios from 'axios';
 import ReactPaginate from 'react-paginate';
 import DashboardNavigation from './ElementsOfDashBoard/DashboardNavigation';
@@ -129,7 +129,7 @@ class ToApproveDashboard extends Component {
                                                 {/*<p value={item.title}>{item.title}</p>*/}
                                             {/*))}*/}
                         {/*/!*<p>Hello {this.state.userDocuments[0]}</p>*!/*/}
-                        <DocumentsListSimple list={this.state.userDocuments}/>
+                        <DocumentsList list={this.state.userDocuments}/>
                     </div>
                 </div>
 

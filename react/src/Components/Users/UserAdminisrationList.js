@@ -70,6 +70,17 @@ class UserAdminisrationList extends Component {
 
     }
 
+
+    suspendUser = (user) => {
+        axios.put('/api/usergroups/suspend-user', null, {params:{username: user.username}})
+            .then(response =>{
+                this.getFilteredUsers();
+            })
+            .catch(error =>{
+                console.log("Error from suspendUser - " + error)
+            })
+    }
+
     handleChangeUser = (user) => {
         this.loadUserToEdit(user.username);
         // document.getElementById('editUserForm').style.visibility = 'visible';
@@ -102,7 +113,7 @@ class UserAdminisrationList extends Component {
             <React.Fragment>
                 <div className="container">
                     {/*<h4 className="my-4 mainUA">*/}
-                        {/*Naudotojų administravimas*/}
+                    {/*Naudotojų administravimas*/}
                     {/*</h4>*/}
                     <div className='mainelement borderMain' style={{'width': '100%'}}>
 
@@ -117,7 +128,7 @@ class UserAdminisrationList extends Component {
                                     </div>
                                     <input className="form-control mr-sm-2" type="search"
                                            placeholder="Įveskite naudotojo vardą, pavardę arba reg. vardą (username)"
-                                           // onFocus="Įveskite naudotojo vardą, pavardę arba reg. vardą (username)"
+                                        // onFocus="Įveskite naudotojo vardą, pavardę arba reg. vardą (username)"
                                            aria-label="Search" aria-describedby="basic-addon1"
                                            value={this.state.searchField}
                                            name="searchField"
@@ -142,8 +153,8 @@ class UserAdminisrationList extends Component {
                     </div>
 
                     <div className="my-4 borderMain mainelement" id="userListTable"
-                               style={{'visibility': 'hidden'}}>
-                        <table className="table table-bordered table-hover table-sm" >
+                         style={{'visibility': 'hidden'}}>
+                        <table className="table table-bordered table-hover table-sm">
                             <thead>
                             <tr>
                                 <th>Naudotojo vardas</th>
@@ -172,7 +183,7 @@ class UserAdminisrationList extends Component {
                                                 onClick={() => this.handleChangeUserGroup(user)}>Grupės
                                         </button>
                                         <button className="btn button1 btn-sm ml-2"
-                                                onClick={() => this.deleteUser(user)}>Blokuoti
+                                                onClick={() => this.suspendUser(user)}>Blokuoti
                                         </button>
                                     </td>
                                 </tr>

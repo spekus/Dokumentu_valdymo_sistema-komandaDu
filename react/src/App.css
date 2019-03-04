@@ -47,9 +47,14 @@ main.open {
 /*NAVBAR*/
 
 .navbar {
-    background-color: #10C8CD !important;
+    /*background-color: #10C8CD !important;*/
     color: white;
     font-family: "Helvetica Neue";
+    background-color: #6699CC !important;
+    /*background-color: #83AE84 !important;*/
+    /*color: black;*/
+
+
 }
 
 /*.navform {*/
@@ -70,7 +75,8 @@ main.open {
 #appbarText{
     color: white;
     border: 2px solid white;
-    background-color: #10C8CD;
+    /*background-color: #10C8CD;*/
+    background-color: #6699CC;
     border-radius: 5px 5px 5px 5px;
     font-family: "Helvetica Neue";
     width: 60px;
@@ -80,19 +86,25 @@ main.open {
 
 /*BUTTONS*/
 
+.buttonLogin{
+  width: 70%;
+}
+
 .buttonXL {
     font-size: 16px;
     width: 400%;
 }
 
 .button1 {
-    background-color: #10C8CD;
+    /*background-color: #10C8CD;*/
+    background-color: #6699CC;
     color: white;
     border: 2px solid #003366;
 }
 
 .button1:hover {
-    background-color: #10C8CD;
+    /*background-color: #10C8CD;*/
+    background-color: #6699CC;
     color: black;
 }
 
@@ -101,8 +113,9 @@ main.open {
     /*border-color: #003366;*/
     /*background-color: white;*/
 
-    background-color: #10C8CD;
-    color: white;
+    /*background-color: #10C8CD;*/
+    /*background-color: #6699CC;*/
+    color: #003366;
     border: 2px solid #003366;
 }
 .buttonTransparent:hover {
@@ -110,9 +123,17 @@ main.open {
     /*border-color: #003366;*/
     /*background-color: white;*/
 
-    background-color: #003366;
+    background-color: #6699CC;
     color: white;
     border: 2px solid #003366;
+}
+
+.buttonReject{
+    border: 2px solid darkred;
+}
+
+.buttonReject:hover{
+    color: #003366;
 }
 
 /*.mybutton {*/
@@ -125,6 +146,7 @@ main.open {
 
 #mysidenav {
     background: #003366 !important;
+    /*background: #5F021F !important;*/
     position: fixed;
     color: white;
 
