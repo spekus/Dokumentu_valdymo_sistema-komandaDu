@@ -3,9 +3,6 @@ import axios from "axios/index";
 import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import { Polar } from "react-chartjs-2";
 import { MDBContainer } from "mdbreact";
-import chroma from "chroma-js";
-import scale from "chroma-js";
-import {hsv_rainbow} from "google-palette";
 import palette from "google-palette";
 
 
@@ -73,12 +70,12 @@ class Charts extends Component {
     approvedData=()=>{  
         // choose colors here http://google.github.io/palette.js/
         var seq = palette('tol-dv', 5);
-        var skaicius =0;
+        var counter =0;
         this.resetState();
         this.state.approvedStatistics.map(item => {
             this.dataApproved.push(parseInt(item.count));
-            this.backgroundColorApproved.push("#" + seq[skaicius]);
-             skaicius = skaicius + 1;
+            this.backgroundColorApproved.push("#" + seq[counter]);
+             counter = counter + 1;
             this.labelsApproved.push(item.type)
         });
         let mydata={
@@ -97,14 +94,14 @@ class Charts extends Component {
 
     rejectedData=()=>{
         var seq = palette('cb-GnBu', 5);
-        var skaicius =0;
+        var counter =0;
         this.resetState();
         this.state.rejectedStatistics.map(item => {
             this.dataRejected.push(parseInt(item.count));
  
             // this.backgroundColorRejected.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
-            this.backgroundColorRejected.push("#" + seq[skaicius]);
-            skaicius = skaicius + 1;
+            this.backgroundColorRejected.push("#" + seq[counter]);
+            counter = counter + 1;
             this.labelsRejected.push(item.type)
         });
         let mydata={
@@ -123,14 +120,14 @@ class Charts extends Component {
 
     postedData=()=>{
         var seq2 = palette('tol-dv', 10);
-        var skaicius = 0;
+        var counter = 0;
         this.resetState();
         this.state.postedStatistics.map(item => {
             this.dataPosted.push(parseInt(item.count));
 
             // this.backgroundColorPosted.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
-            this.backgroundColorPosted.push("#" + seq2[skaicius]);
-            skaicius = skaicius + 1;
+            this.backgroundColorPosted.push("#" + seq2[counter]);
+            counter = counter + 1;
             this.labelsPosted.push(item.type)
         });
         let mydata={
@@ -149,13 +146,13 @@ class Charts extends Component {
 
     userListData=()=>{
         var seq = palette('cb-GnBu', 7);
-        var skaicius =0;
+        var counter =0;
         this.resetState();
         this.state.userListByPostedDocs.map(item => {
             this.dataUserList.push(parseInt(item.count));
             // this.backgroundColorUserList.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
-            this.backgroundColorUserList.push("#" + seq[skaicius]);
-            skaicius = skaicius + 1;
+            this.backgroundColorUserList.push("#" + seq[counter]);
+            counter = counter + 1;
             this.labelsUserList.push(item.type)
         });
        let mydata={
