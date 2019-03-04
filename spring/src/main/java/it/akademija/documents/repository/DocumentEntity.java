@@ -11,9 +11,7 @@ import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 @Entity
 @Table(name = "DOCUMENTS", indexes = {
@@ -61,8 +59,9 @@ public class DocumentEntity implements Serializable {
     @Enumerated(EnumType.STRING)
     private DocumentState documentState = DocumentState.CREATED;
 
-    //    @Column(name = "filesAttachedToDocument", nullable = false)
+        @Column(name = "filesAttachedToDocument", nullable = false)
     @OneToMany(fetch = FetchType.LAZY)
+//    @OneToMany
 //    @LazyCollection(LazyCollectionOption.FALSE)
     private Set<FileEntity> filesAttachedToDocument = new HashSet<>();
 
@@ -213,19 +212,29 @@ public class DocumentEntity implements Serializable {
     }
 
     @Override
+    //using this for csv generation
     public String toString() {
-        //using this for csv generation
+
+        List<String> listOfFiles = new ArrayList<>();
+        //get all file names attached this the documents
+        for (FileEntity FileEntity: filesAttachedToDocument
+             ) {
+            listOfFiles.add(FileEntity.getFileName());
+        }
+        //converts file list to one string
+        String fileNames = String.join("   ", listOfFiles);
         return
-                documentIdentifier + ',' +
-                        author + ',' +
-                        title + ',' +
-                        description + ',' +
-                        type + ',' +
-                        postedDate + ',' +
-                        approvalDate + ',' +
-                        rejectedDate + ',' +
-                        approver + ',' +
-                        rejectionReason
+                documentIdentifier + "/,/" +
+                        author + "/,/" +
+                        title + "/,/" +
+                        description + "/,/" +
+                        type + "/,/" +
+                        postedDate + "/,/" +
+                        approvalDate + "/,/" +
+                        rejectedDate + "/,/" +
+                        approver + "/,/" +
+                        rejectionReason + "/,/" +
+                        fileNames
                 ;
     }
 
@@ -239,7 +248,9 @@ public class DocumentEntity implements Serializable {
                 "approvalDate" + ',' +
                 "rejectedDate" + ',' +
                 "approver" + ',' +
-                "rejectionReason";
+                "rejectionReason" + ',' +
+                "Attached file(s)"
+                ;
     }
 
 }

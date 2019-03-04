@@ -7,6 +7,7 @@ import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.statistics.repository.Statistics;
+import it.akademija.statistics.repository.StatisticsDao;
 import it.akademija.statistics.repository.StatisticsRepository;
 import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
@@ -15,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
@@ -34,13 +36,17 @@ public class StatisticsService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private StatisticsDao statisticsDao;
+
     public StatisticsService() {
     }
 
-    public StatisticsService(StatisticsRepository statisticsRepository, DocumentRepository documentRepository, UserRepository userRepository) {
+    public StatisticsService(StatisticsRepository statisticsRepository, DocumentRepository documentRepository, UserRepository userRepository, StatisticsDao statisticsDao) {
         this.statisticsRepository = statisticsRepository;
         this.documentRepository = documentRepository;
         this.userRepository = userRepository;
+        this.statisticsDao = statisticsDao;
     }
 
     public StatisticsRepository getStatisticsRepository() {
@@ -67,16 +73,24 @@ public class StatisticsService {
         this.userRepository = userRepository;
     }
 
+    public StatisticsDao getStatisticsDao() {
+        return statisticsDao;
+    }
+
+    public void setStatisticsDao(StatisticsDao statisticsDao) {
+        this.statisticsDao = statisticsDao;
+    }
+
     //Gauname prisijungusio userio, patvirtintų dokumentų statistiką
     @Transactional
     public Collection<Statistics> getApprovedDocsStatistics(String username, LocalDateTime startDate, LocalDateTime endDate) {
-        return statisticsRepository.countApprovementsByState(getUserInitialsByUsername(username), startDate, endDate, DocumentState.APPROVED);
+        return statisticsRepository.countApprovementsByState(getDocTypesToApprove(username), startDate, endDate, DocumentState.APPROVED);
     }
 
     //Gauname prisijungusio userio, atmestų dokumentų statistiką
     @Transactional
     public Collection<Statistics> getRejectedDocsStatistics(String username, LocalDateTime startDate, LocalDateTime endDate) {
-        return statisticsRepository.countRejectionsByState(getUserInitialsByUsername(username), startDate, endDate, DocumentState.REJECTED);
+        return statisticsRepository.countRejectionsByState(getDocTypesToApprove(username), startDate, endDate, DocumentState.REJECTED);
     }
 
     //Gauname prisijungusio userio, gautų peržiūrai dokumentų statistiką
@@ -87,19 +101,8 @@ public class StatisticsService {
 
     //Gauname surikiotą vartotojų sąrašą, kurie pateikė daugiausiai dokumentų user'ui, kuris gali tvirtinti to tipo dokumentus.
     @Transactional
-    public Collection<DocumentEntity> getUserListByPostedDocs(String username) {
-        return statisticsRepository.userListByPostedDocs(getDocTypesToApprove(username));
-    }
-
-    //Ištraukiame iš userio kitus fieldus, pagal username(nežinau gal galima paprasčiau tiesiogiai iš security, neradau
-    @Transactional
-    private String getUserInitialsByUsername(String username) {
-        UserEntity userEntity = userRepository.findUserByUsername(username);
-        if (userEntity != null) {
-            String initials = userEntity.getFirstname() + " " + userEntity.getLastname();
-            return initials;
-        }
-        return null;
+    public Collection<Statistics> getUserListByPostedDocs(String username) {
+        return statisticsDao.userListByPostedDocs(getDocTypesToApprove(username));
     }
 
     //Ištraukiame iš userio kokius dokumentų tipus jis gali tvirtinti, tam kad išfiltruoti pateiktų dokumentų sąrašą šitam useriui
@@ -117,4 +120,15 @@ public class StatisticsService {
         }
         return null;
     }
+
+    //Ištraukiame iš userio kitus fieldus, pagal username(nežinau gal galima paprasčiau tiesiogiai iš security, neradau
+//    @Transactional
+//    private String getUserInitialsByUsername(String username) {
+//        UserEntity userEntity = userRepository.findUserByUsername(username);
+//        if (userEntity != null) {
+//            String initials = userEntity.getFirstname() + " " + userEntity.getLastname();
+//            return initials;
+//        }
+//        return null;
+//    }
 }

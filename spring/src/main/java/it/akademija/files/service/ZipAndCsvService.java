@@ -146,7 +146,7 @@ public class ZipAndCsvService {
             String currentUsersHomeDir = System.getProperty("user.home");
             path = Paths.get(currentUsersHomeDir + "/tmpDocs/"+ userName +"/UserInformation.csv");
         } catch (Exception ex) {
-            throw new IOException("we are not able to creatr directory - " + path.toString() + ex);
+            throw new IOException("we are not able to create directory - " + path.toString() + ex);
         }
 
         //where file will be written
@@ -161,10 +161,10 @@ public class ZipAndCsvService {
         for (DocumentEntity documentEntity: documents
         ) {
             String stringas = documentEntity.toString();
-            String[] entries = stringas.split(",");
+            String[] entries = stringas.split("/,/");
             stringList.add(entries);
         }
-        //writes fenerated arrays in csv, one sting array is one line in csv
+        //writes generated arrays in csv, one sting array is one line in csv
         for (String[] stringEntries:stringList
         ) {
             writer.writeNext(stringEntries);
