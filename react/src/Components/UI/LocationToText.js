@@ -48,6 +48,9 @@ const LocationToText = (props) => {
         case '/settings':
             name = "Nustatymai";
             break;
+        case '/statistics':
+            name = "Statistika";
+            break;
         default:
             return name = ""
     }

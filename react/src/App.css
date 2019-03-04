@@ -232,3 +232,7 @@ td.lastColumn, th.lastColumn {
     border-color: lightgrey;
     border-radius: 10px;
 }
+
+.modal-backdrop {
+    opacity:0.5 !important;
+}

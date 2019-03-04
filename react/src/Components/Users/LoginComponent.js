@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import axios from 'axios';
-import $ from 'jquery';
+// import $ from 'jquery';
 import "../../App.css"
 import "./LoginComponent.css"
-import * as uuid from "uuid";
-// import
+// import * as uuid from "uuid";
+
 
 export default class Login extends Component {
     state = {

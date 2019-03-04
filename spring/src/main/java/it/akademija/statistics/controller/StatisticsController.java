@@ -77,7 +77,7 @@ public class StatisticsController {
     @RequestMapping(value = "/userlist-by-posted-docs", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "statistics", notes = "Returns statistics by date interval")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public Collection<DocumentEntity> getUserListByPostedDocs(@ApiIgnore Authentication authentication) {
+    public Collection<Statistics> getUserListByPostedDocs(@ApiIgnore Authentication authentication) {
         return statisticsService.getUserListByPostedDocs(authentication.getName());
 
     }
