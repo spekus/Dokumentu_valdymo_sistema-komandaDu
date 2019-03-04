@@ -3,6 +3,11 @@ import axios from "axios/index";
 import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import { Polar } from "react-chartjs-2";
 import { MDBContainer } from "mdbreact";
+import chroma from "chroma-js";
+import scale from "chroma-js";
+import {hsv_rainbow} from "google-palette";
+import palette from "google-palette";
+
 
 class Charts extends Component {
 
@@ -65,11 +70,25 @@ class Charts extends Component {
     }
 
 //########## Metodai, ateinančių duomenų iš BACKENDO apdorojimui ir sukišimui į statistikos masyvus ##########
-    approvedData=()=>{
+    approvedData=()=>{  
+        // var hsv6 = hsv_rainbow(6)  
+        // // var pal_for_queries = palette(['sequential'], 10, 0);
+        var seq = palette('cb-GnBu', 5);
+         console.log(seq[0]);
+        // Sort colors by differenciation first
+        //colors = paletteGenerator.diffSort(colors, 'Default');
+
+        var skaicius =0;
+        // var scaless = chroma.scale(['black', 'Aqua']);
         this.resetState();
         this.state.approvedStatistics.map(item => {
             this.dataApproved.push(parseInt(item.count));
-            this.backgroundColorApproved.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
+            //this.backgroundColorApproved.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
+            // this.backgroundColorApproved.push(scaless(skaicius).hex() );
+            // skaicius = skaicius + 0.1;
+            // console.log(seq);
+            this.backgroundColorApproved.push("#" + seq[skaicius]);
+             skaicius = skaicius + 1;
             this.labelsApproved.push(item.type)
         });
         let mydata={
