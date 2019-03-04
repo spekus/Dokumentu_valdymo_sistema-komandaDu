@@ -23,7 +23,13 @@ import java.util.*;
                 query = "select dta From DocumentEntity dta " +
                         "where dta.documentState='SUBMITTED' AND dta.type IN:types"),
         @NamedQuery(name = "DocumentEntity.getDocumentsToApproveSize",
-                query = "select count(id) From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types")
+                query = "select count(id) From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types"),
+        @NamedQuery(name="DocumentEntity.getDocumentsToApproveByCriteria",
+        query="select dta From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types " +
+                "AND (dta.author=:criteria OR dta.type=:criteria)"),
+        @NamedQuery(name="DocumentEntity.getDocumentsToApproveFilteredSize",
+        query="select count(id) From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types " +
+        "AND (dta.author=:criteria OR dta.type=:criteria)")
 })
 
 public class DocumentEntity implements Serializable {

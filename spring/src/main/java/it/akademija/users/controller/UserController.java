@@ -140,6 +140,18 @@ public class UserController {
         }
     }
 
+    @RequestMapping(value = "user/get-documents-to-approve-filtered", method = RequestMethod.GET)
+    public Page<DocumentServiceObject> getDocumentsToApprove(@ApiIgnore Authentication authentication,
+                                                             @RequestParam("page") int page,
+                                                             @RequestParam("size") int size,
+                                                             @RequestParam("criteria") String criteria) {
+        try {
+            return userService.getDocumentsToApproveFiltered(authentication.getName(), page, size, criteria);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+    }
+
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ApiOperation(value = "Create user", notes = "Creates new user")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")

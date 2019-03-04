@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 import FileSaver from "file-saver";
 import axios from 'axios';
 import DateWithTime from "../UI/DateWithTime";
+import "../../App.css"
 
 class AugisDokumentas extends Component {
     state = {
@@ -174,7 +175,7 @@ class AugisDokumentas extends Component {
         return (
             <React.Fragment>
                 <div className='container'>
-                    <div className='p-3 mb-5 bg-white rounded' align="center">
+                    <div className='p-3 mb-5 bg-white rounded borderMain' align="center">
                         <table className='table table-bordered col-md-7'>
                             <thead>
                             <tr>
@@ -261,16 +262,16 @@ class AugisDokumentas extends Component {
 
                         {/*Dokumentui kuris yra CREATED parodysima "Pateikti"*/}
                         {this.state.documentInfo.documentState === 'CREATED' && this.props.user.username === this.state.documentInfo.author ?
-                            <button className="btn mr-4" id='mybutton' onClick={this.submitDocument}>Pateikti</button>
+                            <button className="btn mr-4 button1" onClick={this.submitDocument}>Pateikti</button>
                             : ''}
 
                         {/*Dokumentui kuris yra SUBMITTED parodysime "Patvirtinti" ir "Atmesti"*/}
                         {this.state.documentInfo.documentState === 'SUBMITTED' && this.props.user.username !== this.state.documentInfo.author ?
                             <React.Fragment>
-                                <button className="btn btn-success mr-4"
+                                <button className="btn button1 mr-5"
                                         onClick={this.approveDocument}>Patvirtinti
                                 </button>
-                                <button className="btn btn-danger mr-4" onClick={this.rejectDocument}>Atmesti
+                                <button className="btn btn-danger buttonReject mr-5" onClick={this.rejectDocument}>Atmesti
                                 </button>
                             </React.Fragment>
                             : ''}

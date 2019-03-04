@@ -168,7 +168,9 @@ class SettingsUserGroups extends Component {
                                             <td>
 
 
-                                                {group.typesToUpload.map(type => (
+                                                {group.typesToUpload
+                                                    .sort((a, b) => a.title.localeCompare(b.title))
+                                                    .map(type => (
                                                     <div className="row" key={uuid()}>
                                                         <div className="col-md-10">
                                                             <li>{type.title}</li>
@@ -184,7 +186,9 @@ class SettingsUserGroups extends Component {
                                             <td>
 
 
-                                                {group.typesToApprove.map(type => (
+                                                {group.typesToApprove
+                                                    .sort((a, b) => a.title.localeCompare(b.title))
+                                                    .map(type => (
                                                     <div className="row" key={uuid()}>
                                                         <div className="col-md-9">
                                                             <li>{type.title}</li>
@@ -208,8 +212,8 @@ class SettingsUserGroups extends Component {
                                                    group={group}></i>
 
 
-                                                <i className="fas fa-trash-alt" title="Ištrinti grupę"
-                                                   onClick={() => this.deleteGroup(group)}></i>
+                                                {/*<i className="fas fa-trash-alt" title="Ištrinti grupę"*/}
+                                                   {/*onClick={() => this.deleteGroup(group)}></i>*/}
 
                                             </td>
                                         </tr>
@@ -230,28 +234,7 @@ class SettingsUserGroups extends Component {
 
                             {/*</div>*/}
                         </div>
-                        {/*<table className="table table-bordered table-hover">*/}
-                        {/*<thead>*/}
-                        {/*<tr>*/}
-                        {/*<th>Pavadinimas</th>*/}
-                        {/*<th>Trinti</th>*/}
-                        {/*</tr>*/}
-                        {/*</thead>*/}
-                        {/*<tbody>*/}
-                        {/*{this.state.allUserGroups.map(group => (*/}
-                        {/*<tr>*/}
-                        {/*<td>{group.title}</td>*/}
-                        {/*<td>*/}
-                        {/*<a href="#" className="text-danger" onClick={() => {*/}
-                        {/*this.deleteUserGroup(group.title)*/}
-                        {/*}}>*/}
-                        {/*X*/}
-                        {/*</a></td>*/}
-                        {/*</tr>*/}
-                        {/*))*/}
-                        {/*}*/}
-                        {/*</tbody>*/}
-                        {/*</table>*/}
+
                     </div>
                     <div className="col-md-4">
                         <form onSubmit={this.createUserGroup}>
