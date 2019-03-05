@@ -21,7 +21,8 @@ import {Redirect} from "react-router";
 import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
 import Spinner from "./Components/UI/Spinner";
 import LocationToText from "./Components/UI/LocationToText";
-import Charts from "./Components/Statistics/polarChart"
+import Charts from "./Components/Statistics/polarChart";
+import MainModalError from './Components/UI/MainModalError'
 
 class App extends React.Component {
     state = {
@@ -108,6 +109,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
+                <MainModalError/>
                 <Router>
                     <Route render={({location, history}) => (
                         this.state.user === "" ?
