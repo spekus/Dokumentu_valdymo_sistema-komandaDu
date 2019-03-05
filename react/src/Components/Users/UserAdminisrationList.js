@@ -72,11 +72,11 @@ class UserAdminisrationList extends Component {
 
 
     suspendUser = (user) => {
-        axios.put('/api/usergroups/suspend-user', null, {params:{username: user.username}})
-            .then(response =>{
+        axios.put('/api/usergroups/suspend-user', null, {params: {username: user.username}})
+            .then(response => {
                 this.getFilteredUsers();
             })
-            .catch(error =>{
+            .catch(error => {
                 console.log("Error from suspendUser - " + error)
             })
     }
@@ -108,6 +108,13 @@ class UserAdminisrationList extends Component {
         this.getFilteredUsers();
     }
 
+    handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            this.setState({[event.target.name]: event.target.value});
+            this.getFilteredUsers();
+        }
+    }
+
     render() {
         return (
             <React.Fragment>
@@ -132,11 +139,13 @@ class UserAdminisrationList extends Component {
                                            aria-label="Search" aria-describedby="basic-addon1"
                                            value={this.state.searchField}
                                            name="searchField"
-                                           onChange={this.handleChangeInput}/>
+                                           onChange={this.handleChangeInput}
+                                           onKeyPress={this.handleKeyPress}/>
                                 </div>
                                 <div className="col-md-2">
                                     <button className="btn button2 my-2 my-sm-0 button1" type="submit"
-                                            onClick={this.getFilteredUsers}>Ieškoti
+                                            onClick={this.getFilteredUsers}
+                                    >Ieškoti
                                     </button>
                                 </div>
                                 <div className="col-md-2">
