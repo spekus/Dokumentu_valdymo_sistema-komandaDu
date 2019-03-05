@@ -90,18 +90,22 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     @Transactional
     public List<UserServiceObject> getAllUsers() {
+        LOGGER.info("getAllUsers");
         List<UserEntity> users = userRepository.findAll();
         List<UserServiceObject> list = users.stream()
                 .map(userEntity ->
                         SOfromEntity(userEntity))
                 .collect(Collectors.toList());
+        LOGGER.info("returning all users");
         return list;
     }
 
     @Transactional
     public UserServiceObject getUserByUsername(String username) {
+        LOGGER.info("getUserByUsername");
         UserEntity userEntity = userRepository.findUserByUsername(username);
         if (userEntity != null) {
+            LOGGER.info("returning user with username - "  + username);
             return SOfromEntity(userEntity);
         }
         return null;
@@ -109,17 +113,21 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     @Transactional
     public List<UserGroupServiceObject> getUserGroups(String username) {
+        LOGGER.info("getUserGroups");
         UserEntity userEntity = userRepository.findUserByUsername(username);
         Set<UserGroupEntity> groupsUserBelongsTo = userEntity.getUserGroups();
 
-        return groupsUserBelongsTo.stream().map(userGroupEntity -> UserGroupService.SOfromEntity(userGroupEntity))
+        List<UserGroupServiceObject> userGroups =  groupsUserBelongsTo.stream().map(userGroupEntity -> UserGroupService.SOfromEntity(userGroupEntity))
                 .collect(Collectors.toList());
+        LOGGER.info("returning user groups of user - " + username);
+        return userGroups;
     }
 
 
     //Gets all user's document types that he can create documents
     @Transactional
     public Set<DocumentTypeServiceObject> getUserDocumentTypesHeCanCreate(String username) {
+        LOGGER.info("getUserDocumentTypesHeCanCreate");
         UserEntity userEntity = userRepository.findUserByUsername(username);
 
         if (userEntity != null) {
@@ -129,9 +137,11 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
             for (UserGroupEntity userGroupEntity : groupsUserBelongsTo) {
                 allDocTypesUserCanCreate.addAll(userGroupEntity.getAvailableDocumentTypesToUpload());
             }
-
-            return allDocTypesUserCanCreate.stream().map((documentTypeEntity) ->
-                    new DocumentTypeServiceObject(documentTypeEntity.getTitle())).collect(Collectors.toSet());
+            Set<DocumentTypeServiceObject> returningDocumentTypesUserCanCreate =
+                    allDocTypesUserCanCreate.stream().map((documentTypeEntity) ->
+                            new DocumentTypeServiceObject(documentTypeEntity.getTitle())).collect(Collectors.toSet());
+            LOGGER.info("returning user documents user - " +username + " can create");
+            return returningDocumentTypesUserCanCreate;
         }
 
         return null;
@@ -140,11 +150,14 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     @Transactional
     public List<UserServiceObject> getUserByCriteria(String criteria) {
+        LOGGER.info("getUserByCriteria");
         if (userRepository.findByUsernameOrLastname(criteria) != null) {
-            return userRepository.findByUsernameOrLastname(criteria)
+            List<UserServiceObject> userList = userRepository.findByUsernameOrLastname(criteria)
                     .stream()
                     .map(userEntity -> SOfromEntity(userEntity))
                     .collect(Collectors.toList());
+            LOGGER.info("returning users according to criteria - " + criteria);
+            return userList;
         }
         return null;
 
@@ -178,15 +191,18 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
         PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
                 sortedByTitleDesc, getTotalSize);
+        LOGGER.info(" documents for approval of user - " +username + " are being returned "+
+                " , returning page - " +page +"\n" + " size of page is " + size + " size of total data points  is - " + pageData.getTotalElements());
+
         return pageData;
     }
 
     @Transactional
-    public Page<DocumentServiceObject> getDocumentsToApproveFiltered(String username, Integer page, Integer size, String criteria) {
+    public Page<DocumentServiceObject> getDocumentsToApproveFiltered(String userName, Integer page, Integer size, String criteria) {
         LOGGER.info("getDocumentsToApproveFiltered");
-        LOGGER.info("TESTTESTTEST");
+
         List<DocumentTypeEntity> documentTypeEntityList =
-                documentTypeRepository.getDocumentTypesToApproveByUsername(username);
+                documentTypeRepository.getDocumentTypesToApproveByUsername(userName);
         List<String> documentTypesForAproval = documentTypeEntityList.stream().map((documentTypeEntity) ->
                 documentTypeEntity.getTitle()).collect(Collectors.toList());
         Pageable sortedByTitleDesc =
@@ -205,45 +221,60 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
         PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
                 sortedByTitleDesc, filteredDocumentsSize);
+        LOGGER.info(" filtering document of user - " +userName + " according to criteria - " + criteria +" search results are being returned "+
+                " , page - " +page +"\n" + " size of page is " + size + " size of total data points  is - " + pageData.getTotalElements());
 
         return pageData;
     }
 
     @Transactional
     public void addNewUser(String firstname, String lastname, String username, String password) {
+        LOGGER.info("addNewUser");
         UserEntity userEntityFromDataBase1 = userRepository.findUserByUsername(username);
         UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
         if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
             UserEntity userEntity = new UserEntity(firstname, lastname, username, passwordEncoder.encode(password));
             userRepository.save(userEntity);
+            LOGGER.info("new user has been added, name - " + firstname + " lastname - "
+                    + lastname + " username - " +username);
         }
 
     }
 
     @Transactional
     public void updateUserPassword(String username, String password) {
+        LOGGER.info("updateUserPassword");
         UserEntity savedUserEntity = userRepository.findUserByUsername(username);
         savedUserEntity.setPassword(passwordEncoder.encode(password));
         UserEntity updateUserEntity = userRepository.save(savedUserEntity);
+        LOGGER.info("password has been updated of user - " + username);
     }
 
     @Transactional
     public void updateUserInformation(String username, String newFirstname, String newLastname) {
+        LOGGER.info("updateUserInformation");
         UserEntity savedUserEntity = userRepository.findUserByUsername(username);
         savedUserEntity.setFirstname(newFirstname);
         savedUserEntity.setLastname(newLastname);
         UserEntity updateUserEntity = userRepository.save(savedUserEntity);
+        LOGGER.info("user information chanfed of user with username - " + username + " to : firstname - "
+                + newFirstname + " lastname - " +newLastname);
 
     }
 
     @Transactional
     @Modifying
     public void deleteUserByUsername(String username) {
-        userRepository.deleteUserByUsername(username);
+
+        LOGGER.info("deleteUserByUsername has been involved and is carried away");
+            userRepository.deleteUserByUsername(username);
+
+
     }
 
     @Transactional
     public UserServiceObject getUserByLastname(String lastname) {
+        LOGGER.info("getUserByLastname, returning user by lastname");
         UserEntity userEntity = userRepository.findUserByLastname(lastname);
         if (userEntity != null) {
             return SOfromEntity(userEntity);
@@ -253,6 +284,7 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     @Transactional
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
+        LOGGER.info("loadUserByUsername");
         UserEntity user = userRepository.findByUsername(s);
 
         if (user == null) {
@@ -266,7 +298,7 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
         UserDetails userDetails = new org.springframework.security.core.userdetails.
                 User(user.getUsername(), user.getPassword(), authorities);
-
+        LOGGER.info("user with username - " + s + " details and security information is being returned");
         return userDetails;
     }
 
@@ -280,6 +312,7 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
                 .map(ug ->
                         UserGroupService.SOfromEntity(ug))
                 .collect(Collectors.toSet()));
+
         return so;
     }
 
@@ -334,15 +367,18 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
                 .stream()
                 .map(documentEntity -> SOfromEntity(documentEntity))
                 .collect(Collectors.toList());
+        LOGGER.info("second query");
         PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
                 sortedByTitleDesc, documentRepository.findByAuthor(userIdentifier).size());
+        LOGGER.info("All documents of user - " +userIdentifier + " are being returned"+
+                " , returning page - " +page +"\n" + " size of page is " + size + " size of total data points is - " + pageData.getTotalElements());
         return pageData;
 
     }
 
     @Transactional
     public List<DocumentEntity> getAllUserDocuments(String userName) {
-        LOGGER.info("getAllUserDocuments");
+        LOGGER.info("getAllUserDocuments, THIS METHOD SHOULD NOT BE USED");
 
 
         return documentRepository.findByAuthor(userName);
@@ -381,6 +417,8 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
                 .collect(Collectors.toList());
         PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
                 sortedByTitleDesc, documentRepository.findByDocumentStateAndAuthor(state, userName).size());
+        LOGGER.info(" documents of user - " +userName + " with document state - " + state +" are being returned "+
+                " , returning page - " +page +  "\n" + " size of page is " + size + " size of total data points  is - " + pageData.getTotalElements());
         return pageData;
     }
 

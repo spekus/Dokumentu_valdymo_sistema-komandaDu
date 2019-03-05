@@ -64,6 +64,7 @@ public class DocumentService {
         if (documentFromDatabase == null) {
             throw new NullPointerException("Dokumentas su id '" + documentIdentifier + "'nerastas");
         }
+        LOGGER.debug("ducument - " + documentIdentifier + " is being returned ");
         return SOfromEntity(documentFromDatabase);
     }
 
