@@ -164,6 +164,8 @@ class App extends React.Component {
                                             <Route path="/dashboard/documents/to_aproove"
                                                    render={(props) => <ToApproveDashboard
                                                        user={this.state.user} {...props}/>}/>
+                                            <Route path="/dashboard/documents/:id" render={(props) => <GenericDashBoard
+                                                user={this.state.user} {...props}/>}/>
                                             {/*// component={ToApproveDashboard}/>*/}
                                             {/*<Route path="/dashboard/documents/test" render={(props) => <ToApproveDashboard*/}
                                                 {/*user={this.state.user} {...props}/>}/>*/}
