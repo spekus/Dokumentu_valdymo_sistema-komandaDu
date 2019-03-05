@@ -29,6 +29,9 @@
             <AppenderRef ref="Console" />
             <AppenderRef ref="RollingFile" />
         </Root>
+        <!--<Root level="WARN">-->
+            <!--<AppenderRef ref="Console" />-->
+        <!--</Root>-->
 
         <!-- LOG "com.baeldung*" at TRACE level -->
         <Logger name="com.baeldung" level="trace"></Logger>
