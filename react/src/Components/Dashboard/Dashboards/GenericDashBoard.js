@@ -3,6 +3,8 @@ import DocumentsList from "./ElementsOfDashBoard/DocumentsList";
 import axios from 'axios';
 import DashboardNavigation from './ElementsOfDashBoard/DashboardNavigation';
 import ReactPaginate from 'react-paginate';
+import {showErrorObject} from "../../UI/MainModalError";
+
 
 class GenericDashBoard extends Component {
     state = { 
@@ -54,7 +56,7 @@ class GenericDashBoard extends Component {
              requestPath = '/api/users/user/documents/' + this.props.match.params.id.toUpperCase();
         }
 
-        console.log("getFileList is being run")
+        console.log("getFileList is being run");
         axios.get(requestPath,{params: {
                 page: this.state.offset ,
                 size: this.state.perPage
@@ -79,7 +81,8 @@ class GenericDashBoard extends Component {
             })
             .catch(error => {
                 this.setState({error: error.message})
-                console.log("error message " + error)
+                console.log("error message " + error);
+                showErrorObject(error);
             })
     }
     handlePageClick = data => {

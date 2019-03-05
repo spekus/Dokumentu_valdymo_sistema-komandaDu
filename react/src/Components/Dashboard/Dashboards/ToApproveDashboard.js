@@ -48,12 +48,17 @@ class ToApproveDashboard extends Component {
         axios({
             method: 'get',
             url: '/api/users/user/get-documents-to-approve',
+
             params: {
                 page: this.state.offset,
-                size: this.state.perPage
+                size:
+                this.state.perPage
+            }
+            ,
+            headers: {
+                'Content-Type':
+                    'application/json;charset=utf-8'
             },
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
-
         })
             .then(response => {
                 //we use response.data.content, becouse files re under content

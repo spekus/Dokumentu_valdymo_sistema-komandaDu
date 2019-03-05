@@ -4,8 +4,8 @@ import axios from "axios";
 import $ from "jquery";
 import ModalContainer from "../UI/ModalContainer";
 import EditUserGroups from "./EditUserGroups";
-// import "../Styles/UserAdministrationList.css"
 import '../../App.css'
+import {showErrorObject} from "../UI/MainModalError";
 
 class UserAdminisrationList extends Component {
     state = {
@@ -43,7 +43,8 @@ class UserAdminisrationList extends Component {
                 } else (window.alert("Pagal paiešką nerasta "))
             })
             .catch(error => {
-                console.log("Atsakymas is getFilteredUsers: " + error)
+                console.log("Atsakymas is getFilteredUsers: " + error);
+                showErrorObject(error);
             });
     }
 
@@ -55,6 +56,9 @@ class UserAdminisrationList extends Component {
                     }
                 }
             )
+            .catch (error =>{
+                showErrorObject(error);
+            })
     }
 
 
@@ -65,7 +69,8 @@ class UserAdminisrationList extends Component {
                 this.setState({userlist: newUserlist});
             })
             .catch(error => {
-                console.log("Error from deleteUser - " + error)
+                console.log("Error from deleteUser - " + error);
+                showErrorObject(error);
             })
 
     }
@@ -78,6 +83,7 @@ class UserAdminisrationList extends Component {
             })
             .catch(error => {
                 console.log("Error from suspendUser - " + error)
+                showErrorObject(error);
             })
     }
 
@@ -100,6 +106,9 @@ class UserAdminisrationList extends Component {
                         this.setState({userBeingEdited: response.data});
                     }
                 )
+                .catch(error =>{
+                showErrorObject(error);
+            })
         }
     }
 
