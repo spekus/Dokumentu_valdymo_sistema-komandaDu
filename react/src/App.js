@@ -36,9 +36,8 @@ class App extends React.Component {
     menuItems = [
         {iconClass: 'fa fw fa-home', path: '', text: 'Pradžia'},
         {iconClass: 'fa fw fa-id-card', path: 'profile', text: 'Profilis'},
-        {iconClass: 'fa fw fa-list', path: 'dashboard/documents/test', text: 'Dokumentai'},
+        {iconClass: 'fa fw fa-list', path: 'dashboard/documents/all', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
-        // {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
         {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai', admin:true},
         {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai', admin:true},
         {iconClass: 'far fa-chart-bar', path: 'statistics', text: 'Statistika'}
