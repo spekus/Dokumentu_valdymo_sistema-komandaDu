@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout
+                    pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />
+        </Console>
+
+        <RollingFile name="RollingFile"
+                     fileName="./logs/spring-boot-logger-log4j2.log"
+                     filePattern="./logs/$${date:yyyy-MM}/spring-boot-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">
+            <PatternLayout>
+                <pattern>%d %p %C{1.} [%t] %m%n</pattern>
+            </PatternLayout>
+            <Policies>
+                <!-- rollover on startup, daily and when the file reaches
+                    10 MegaBytes -->
+                <OnStartupTriggeringPolicy />
+                <SizeBasedTriggeringPolicy
+                        size="10 MB" />
+                <TimeBasedTriggeringPolicy />
+            </Policies>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <!-- LOG everything at INFO level -->
+        <Root level="info">
+            <AppenderRef ref="Console" />
+            <AppenderRef ref="RollingFile" />
+        </Root>
+        <!--<Root level="WARN">-->
+            <!--<AppenderRef ref="Console" />-->
+        <!--</Root>-->
+
+        <!-- LOG "com.baeldung*" at TRACE level -->
+        <Logger name="com.baeldung" level="trace"></Logger>
+    </Loggers>
+
+</Configuration>
+
+
+<!--<?xml version="1.0" encoding="UTF-8"?>-->
+<!--<Configuration status="warn">-->
+    <!--<Properties>-->
+        <!--<Property name="basePath">logs</Property>-->
+    <!--</Properties>-->
+
+    <!--<Appenders>-->
+        <!--<RollingFile name="fileLogger" fileName="${basePath}/appinfo.log" filePattern="${basePath}/app-info-%d{yyyy-MM-dd}.log">-->
+            <!--<PatternLayout>-->
+                <!--<pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</pattern>-->
+            <!--</PatternLayout>-->
+            <!--<Policies>-->
+                <!--<TimeBasedTriggeringPolicy interval="1" modulate="true" />-->
+            <!--</Policies>-->
+        <!--</RollingFile>-->
+
+        <!--<Console name="console" target="SYSTEM_OUT">-->
+            <!--<PatternLayout   pattern="[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n" />-->
+        <!--</Console>-->
+    <!--</Appenders>-->
+    <!--<Loggers>-->
+        <!--<Logger name="com.howtodoinjava" level="debug" additivity="true">-->
+            <!--<appender-ref ref="fileLogger" level="debug" />-->
+        <!--</Logger>-->
+        <!--<Root level="ERROR" additivity="false">-->
+            <!--<appender-ref ref="console" />-->
+        <!--</Root>-->
+    <!--</Loggers>-->
+<!--</Configuration>-->
+
+
+
+<!--&lt;!&ndash;<?xml version="1.0" encoding="UTF-8"?>&ndash;&gt;-->
+<!--&lt;!&ndash;<Configuration>&ndash;&gt;-->
+    <!--&lt;!&ndash;<Appenders>&ndash;&gt;-->
+        <!--&lt;!&ndash;<Console name="Console" target="SYSTEM_OUT">&ndash;&gt;-->
+            <!--&lt;!&ndash;<PatternLayout&ndash;&gt;-->
+                    <!--&lt;!&ndash;pattern="%style{%d{ISO8601}}{black} %highlight{%-5level }[%style{%t}{bright,blue}] %style{%C{1.}}{bright,yellow}: %msg%n%throwable" />&ndash;&gt;-->
+        <!--&lt;!&ndash;</Console>&ndash;&gt;-->
+
+        <!--&lt;!&ndash;<RollingFile name="RollingFile"&ndash;&gt;-->
+                     <!--&lt;!&ndash;fileName="./logs/spring-boot-logger-log4j2.log"&ndash;&gt;-->
+                     <!--&lt;!&ndash;filePattern="./logs/$${date:yyyy-MM}/spring-boot-logger-log4j2-%d{-dd-MMMM-yyyy}-%i.log.gz">&ndash;&gt;-->
+            <!--&lt;!&ndash;<PatternLayout>&ndash;&gt;-->
+                <!--&lt;!&ndash;<pattern>%d %p %C{1.} [%t] %m%n</pattern>&ndash;&gt;-->
+            <!--&lt;!&ndash;</PatternLayout>&ndash;&gt;-->
+            <!--&lt;!&ndash;<Policies>&ndash;&gt;-->
+                <!--&lt;!&ndash;&lt;!&ndash; rollover on startup, daily and when the file reaches&ndash;&gt;-->
+                    <!--&lt;!&ndash;10 MegaBytes &ndash;&gt;&ndash;&gt;-->
+                <!--&lt;!&ndash;<OnStartupTriggeringPolicy />&ndash;&gt;-->
+                <!--&lt;!&ndash;<SizeBasedTriggeringPolicy&ndash;&gt;-->
+                        <!--&lt;!&ndash;size="100 MB" />&ndash;&gt;-->
+                <!--&lt;!&ndash;<TimeBasedTriggeringPolicy />&ndash;&gt;-->
+            <!--&lt;!&ndash;</Policies>&ndash;&gt;-->
+        <!--&lt;!&ndash;</RollingFile>&ndash;&gt;-->
+    <!--&lt;!&ndash;</Appenders>&ndash;&gt;-->
+
+    <!--&lt;!&ndash;<Loggers>&ndash;&gt;-->
+        <!--&lt;!&ndash;&lt;!&ndash; LOG everything at INFO level &ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;<Root level="INFO">&ndash;&gt;-->
+            <!--&lt;!&ndash;<AppenderRef ref="RollingFile" />&ndash;&gt;-->
+        <!--&lt;!&ndash;</Root>&ndash;&gt;-->
+        <!--&lt;!&ndash;<Root level="INFO">&ndash;&gt;-->
+            <!--&lt;!&ndash;<AppenderRef ref="Console" />&ndash;&gt;-->
+        <!--&lt;!&ndash;</Root>&ndash;&gt;-->
+
+        <!--&lt;!&ndash;&lt;!&ndash; LOG "com.baeldung*" at TRACE level &ndash;&gt;&ndash;&gt;-->
+        <!--&lt;!&ndash;<Logger name="com.baeldung" level="trace"></Logger>&ndash;&gt;-->
+    <!--&lt;!&ndash;</Loggers>&ndash;&gt;-->
+
+<!--&lt;!&ndash;</Configuration>&ndash;&gt;-->

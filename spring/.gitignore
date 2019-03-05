@@ -27,3 +27,5 @@
 
 /C:/
 application.properties
+*.log
+/logs/

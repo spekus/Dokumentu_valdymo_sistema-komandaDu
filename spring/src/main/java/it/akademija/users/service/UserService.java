@@ -1,5 +1,6 @@
 package it.akademija.users.service;
 
+import it.akademija.LoggingController;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
@@ -14,6 +15,8 @@ import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
 
 import it.akademija.users.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.*;
 import org.springframework.data.jpa.repository.Modifying;
@@ -51,6 +54,12 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+//
+//    @Autowired
+//    private Logger LOGGER;
+//
+//    Logger LOGGER = LoggerFactory.getLogger(LoggingController.class);
+private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     public UserService() {
     }
@@ -143,7 +152,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Page<DocumentServiceObject> getDocumentsToApprove(String username, Integer page, Integer size) {
-
+        LOGGER.info("getDocumentsToApprove");
         List<DocumentTypeEntity> documentTypeEntityList =
                 documentTypeRepository.getDocumentTypesToApproveByUsername(username);
         //take all document types which this particular user can aprove
@@ -174,6 +183,8 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Page<DocumentServiceObject> getDocumentsToApproveFiltered(String username, Integer page, Integer size, String criteria) {
+        LOGGER.info("getDocumentsToApproveFiltered");
+        LOGGER.info("TESTTESTTEST");
         List<DocumentTypeEntity> documentTypeEntityList =
                 documentTypeRepository.getDocumentTypesToApproveByUsername(username);
         List<String> documentTypesForAproval = documentTypeEntityList.stream().map((documentTypeEntity) ->
@@ -314,7 +325,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Page<DocumentServiceObject> getAllUserDocuments(String userIdentifier, int page, int size) {
-
+        LOGGER.info("getAllUserDocuments");
 
         Pageable sortedByTitleDesc =
                 PageRequest.of(page, size, Sort.by("title").ascending());
@@ -331,6 +342,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public List<DocumentEntity> getAllUserDocuments(String userName) {
+        LOGGER.info("getAllUserDocuments");
 
 
         return documentRepository.findByAuthor(userName);
@@ -351,6 +363,9 @@ public class UserService implements UserDetailsService {
 
     @Transactional
     public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {
+        LOGGER.info("getUserDocumentsByState");
+
+
         // pasitikrinam ar yra toks naudotojas
         UserEntity userEntity = userRepository.findUserByUsername(userName);
 

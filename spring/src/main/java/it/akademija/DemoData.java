@@ -132,7 +132,7 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška5");
         userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis");
         userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas");
-//        addDummydata2();
+        addDummydata2();
         createUserIfNotExists( "dummy", "dummy", "dummy", "dummy");
 
 
@@ -235,7 +235,7 @@ public class DemoData implements ApplicationRunner {
         if(userRepository.findUserByUsername("dummy") ==  null) {
 
             // jei dar neiko nebuvo prideta  x skaiciu useriu
-            for (int userNumber = 0; userNumber < 20000; userNumber++) {
+            for (int userNumber = 0; userNumber < 10000; userNumber++) {
                 Set<DocumentEntity> documentSet = new HashSet<>();
 //                String userName =  "testuser" + userNumber;
                 String firstname = faker.name().firstName();
@@ -252,7 +252,7 @@ public class DemoData implements ApplicationRunner {
 //                userGroupService.addGroupToUser("Vadybininkai", userName);
 
                 //kiekvienam useriui pridada po tusciu dokumentu
-                for (int documentNumber = 0; documentNumber < 25; documentNumber++) {
+                for (int documentNumber = 0; documentNumber < 30; documentNumber++) {
 
 //                    DocumentEntity documentEntity =addDocumentToUser("testuser" + userNumber, documentNumber);
                     //submits part of documents
@@ -265,7 +265,7 @@ public class DemoData implements ApplicationRunner {
                     //documentEntity.setType("Paraiška"); // static for now
                     // randomly chooses one of 5 document types
                     documentEntity.setType(documentTypes.get(randomGenerator.nextInt(5)));
-                    if(documentNumber>5 && documentNumber <20){
+                    if(documentNumber>0 && documentNumber <26){
                         //documentService.submitDocument(documentEntity.getDocumentIdentifier());
                         documentEntity.setDocumentState(DocumentState.SUBMITTED);
                         documentEntity.setPostedDate(LocalDateTime.now());

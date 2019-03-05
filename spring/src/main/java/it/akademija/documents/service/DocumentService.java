@@ -1,6 +1,7 @@
 package it.akademija.documents.service;
 
 
+import it.akademija.LoggingController;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
@@ -11,9 +12,10 @@ import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileServiceObject;
 import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
-
+import org.slf4j.Logger;
 import it.akademija.users.repository.UserGroupRepository;
 import it.akademija.users.repository.UserRepository;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -41,8 +43,14 @@ public class DocumentService {
     @Autowired
     private DocumentTypeRepository documentTypeRepository;
 
+//    @Autowired
+//    private Logger LOGGER;
+
+//    private static Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
+    Logger LOGGER = LoggerFactory.getLogger(LoggingController.class);
     @Transactional
     public Set<DocumentServiceObject> getDocumentsByState(DocumentState state) {
+        LOGGER.debug("getDocumentsByState");
         return documentRepository.findByDocumentState(state)
                 .stream()
                 .map(documentEntity -> SOfromEntity(documentEntity))
@@ -51,9 +59,10 @@ public class DocumentService {
 
     @Transactional
     public DocumentServiceObject getDocument(String documentIdentifier) {
+        LOGGER.debug("getDocument");
         DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
         if (documentFromDatabase == null) {
-            throw new IllegalArgumentException("Dokuments su id '" + documentIdentifier + "'nerastas");
+            throw new NullPointerException("Dokumentas su id '" + documentIdentifier + "'nerastas");
         }
         return SOfromEntity(documentFromDatabase);
     }
@@ -62,6 +71,7 @@ public class DocumentService {
     @Transactional
     public DocumentEntity createDocument(String username, String title, String type, String description)
             throws IllegalArgumentException, SecurityException {
+        LOGGER.debug("createDocument");
         //Pasiimam useri is DB
         UserEntity user = userRepository.findUserByUsername(username);
         if (user == null) {
@@ -97,6 +107,7 @@ public class DocumentService {
     @Transactional
     public void submitDocument(String documentIdentifier)
             throws IllegalArgumentException, NoApproverAvailableException {
+        LOGGER.debug("submitDocument");
         DocumentEntity document = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
 
         if (document == null) {
@@ -149,6 +160,7 @@ public class DocumentService {
                                         DocumentState newState,
                                         String rejectedReason) throws IllegalArgumentException, SecurityException {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
+            LOGGER.debug("approveOrRejectDocument");
             //surandamas dokumentas
             DocumentEntity document = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             if (document == null) {
@@ -235,6 +247,7 @@ public class DocumentService {
     }
 
     public void addFileToDocument(String documentIdentifier, FileEntity fileEntity) {
+        LOGGER.debug("addFileToDocument");
         // adds file to document. the search was done by unique identifiers
         getDocumentEntityByDocumentIdentifier(documentIdentifier).addFileToDocument(fileEntity);
     }
@@ -242,6 +255,7 @@ public class DocumentService {
     @Transactional
     public DocumentServiceObject getDocumentByDocumentIdentifier(String documentIdentifier) {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
+            LOGGER.debug("getDocumentByDocumentIdentifier");
             //converting from database object to normal one
             DocumentServiceObject documentServiceObject = SOfromEntity
                     (documentRepository.findDocumentByDocumentIdentifier(documentIdentifier));
@@ -254,6 +268,7 @@ public class DocumentService {
     @Transactional
     public DocumentEntity getDocumentEntityByDocumentIdentifier(String documentIdentifier) {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
+            LOGGER.debug("getDocumentEntityByDocumentIdentifier");
             //converting from database object to normal one
             DocumentEntity documentEntity =
                     documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
@@ -284,6 +299,7 @@ public class DocumentService {
 
     @Transactional
     public void deleteDocument(String documentIdentifier) {
+        LOGGER.debug("deleteDocument");
         DocumentEntity documentEntity = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
         if (documentEntity.getDocumentState().equals(DocumentState.CREATED) ||
                 documentEntity.getDocumentState().equals(DocumentState.REJECTED)) {
@@ -293,6 +309,7 @@ public class DocumentService {
     }
 
     private DocumentServiceObject SOfromEntity(DocumentEntity entity) {
+        LOGGER.debug("SOfromEntity");
         DocumentServiceObject so = new DocumentServiceObject();
 
         so.setApprovalDate(entity.getApprovalDate());
