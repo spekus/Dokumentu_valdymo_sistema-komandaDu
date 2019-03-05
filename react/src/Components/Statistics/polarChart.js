@@ -23,7 +23,7 @@ class Charts extends Component {
 
 
     handleChangeSelect = (event) => {
-        this.state.dropDownValue=event.target.value;
+        this.setState({dropDownValue:event.target.value})
         console.log("eventas "+event.target.value)
         console.log("handle change "+this.state.dropDownValue)
 
