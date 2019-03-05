@@ -4,8 +4,8 @@ import axios from "axios";
 import $ from "jquery";
 import ModalContainer from "../UI/ModalContainer";
 import EditUserGroups from "./EditUserGroups";
-// import "../Styles/UserAdministrationList.css"
 import '../../App.css'
+import {showErrorObject} from "../UI/MainModalError";
 
 class UserAdminisrationList extends Component {
     state = {
@@ -43,7 +43,8 @@ class UserAdminisrationList extends Component {
                 } else (window.alert("Pagal paiešką nerasta "))
             })
             .catch(error => {
-                console.log("Atsakymas is getFilteredUsers: " + error)
+                console.log("Atsakymas is getFilteredUsers: " + error);
+                showErrorObject(error);
             });
     }
 
@@ -55,6 +56,9 @@ class UserAdminisrationList extends Component {
                     }
                 }
             )
+            .catch (error =>{
+                showErrorObject(error);
+            })
     }
 
 
@@ -65,19 +69,21 @@ class UserAdminisrationList extends Component {
                 this.setState({userlist: newUserlist});
             })
             .catch(error => {
-                console.log("Error from deleteUser - " + error)
+                console.log("Error from deleteUser - " + error);
+                showErrorObject(error);
             })
 
     }
 
 
     suspendUser = (user) => {
-        axios.put('/api/usergroups/suspend-user', null, {params:{username: user.username}})
-            .then(response =>{
+        axios.put('/api/usergroups/suspend-user', null, {params: {username: user.username}})
+            .then(response => {
                 this.getFilteredUsers();
             })
-            .catch(error =>{
+            .catch(error => {
                 console.log("Error from suspendUser - " + error)
+                showErrorObject(error);
             })
     }
 
@@ -100,12 +106,22 @@ class UserAdminisrationList extends Component {
                         this.setState({userBeingEdited: response.data});
                     }
                 )
+                .catch(error =>{
+                showErrorObject(error);
+            })
         }
     }
 
     handleGroupsChanged = () => {
         this.loadUserToEdit(this.state.userBeingEdited.username);
         this.getFilteredUsers();
+    }
+
+    handleKeyPress = (event) => {
+        if (event.key === 'Enter') {
+            this.setState({[event.target.name]: event.target.value});
+            this.getFilteredUsers();
+        }
     }
 
     render() {
@@ -132,11 +148,13 @@ class UserAdminisrationList extends Component {
                                            aria-label="Search" aria-describedby="basic-addon1"
                                            value={this.state.searchField}
                                            name="searchField"
-                                           onChange={this.handleChangeInput}/>
+                                           onChange={this.handleChangeInput}
+                                           onKeyPress={this.handleKeyPress}/>
                                 </div>
                                 <div className="col-md-2">
                                     <button className="btn button2 my-2 my-sm-0 button1" type="submit"
-                                            onClick={this.getFilteredUsers}>Ieškoti
+                                            onClick={this.getFilteredUsers}
+                                    >Ieškoti
                                     </button>
                                 </div>
                                 <div className="col-md-2">

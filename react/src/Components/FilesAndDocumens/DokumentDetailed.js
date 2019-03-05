@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import FileSaver from "file-saver";
 import axios from 'axios';
 import DateWithTime from "../UI/DateWithTime";
-import "../../App.css"
+import "../../App.css";
+import {showErrorObject} from "../UI/MainModalError";
 
 class AugisDokumentas extends Component {
     state = {
@@ -133,12 +134,13 @@ class AugisDokumentas extends Component {
 
             })
             .catch(error => {
-                if (error.response.data.message) {
-                    window.alert("Klaida: " + error.response.data.message);
-                    console.log(error.response);
-                } else {
-                    window.alert("Klaida is submitDocument - " + error.message);
-                }
+                // if (error.response.data.message) {
+                //     window.alert("Klaida: " + error.response.data.message);
+                //     console.log(error.response);
+                // } else {
+                //     window.alert("Klaida is submitDocument - " + error.message);
+                // }
+                showErrorObject(error);
             })
     }
 
@@ -269,7 +271,9 @@ class AugisDokumentas extends Component {
                         {this.state.documentInfo.documentState === 'SUBMITTED' && this.props.user.username !== this.state.documentInfo.author ?
                             <React.Fragment>
                                 <button className="btn button1 mr-5"
-                                        onClick={this.approveDocument}>Patvirtinti
+                                        onClick={this.approveDocument}
+                                // showErrorObject={this.showErrorObject}
+                                >Patvirtinti
                                 </button>
                                 <button className="btn btn-danger buttonReject mr-5" onClick={this.rejectDocument}>Atmesti
                                 </button>

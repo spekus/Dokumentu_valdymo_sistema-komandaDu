@@ -21,7 +21,9 @@ import {Redirect} from "react-router";
 import SettingsGroupsTypes from "./Components/Settings/SettingsGroupsTypes"
 import Spinner from "./Components/UI/Spinner";
 import LocationToText from "./Components/UI/LocationToText";
-import Charts from "./Components/Statistics/polarChart"
+import Charts from "./Components/Statistics/polarChart";
+import MainModalError from './Components/UI/MainModalError';
+
 
 class App extends React.Component {
     state = {
@@ -34,7 +36,7 @@ class App extends React.Component {
     menuItems = [
         {iconClass: 'fa fw fa-home', path: '', text: 'Pradžia'},
         {iconClass: 'fa fw fa-id-card', path: 'profile', text: 'Profilis'},
-        {iconClass: 'fa fw fa-list', path: 'dashboard/documents/all', text: 'Dokumentai'},
+        {iconClass: 'fa fw fa-list', path: 'dashboard/documents/test', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
         // {iconClass: 'fa fw fa-users', path: 'user-administration', text: 'Naudotojai'},
         {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai', admin:true},
@@ -108,6 +110,7 @@ class App extends React.Component {
     render() {
         return (
             <div>
+                <MainModalError/>
                 <Router>
                     <Route render={({location, history}) => (
                         this.state.user === "" ?
@@ -162,8 +165,8 @@ class App extends React.Component {
                                                    render={(props) => <ToApproveDashboard
                                                        user={this.state.user} {...props}/>}/>
                                             {/*// component={ToApproveDashboard}/>*/}
-                                            <Route path="/dashboard/documents/:id" render={(props) => <GenericDashBoard
-                                                user={this.state.user} {...props}/>}/>
+                                            {/*<Route path="/dashboard/documents/test" render={(props) => <ToApproveDashboard*/}
+                                                {/*user={this.state.user} {...props}/>}/>*/}
                                             <Route exact path="/documents/:id" render={(props) => <DocumentDetailed
                                                 user={this.state.user} {...props}/>}/>
                                             {/* <Route path="/documents" component={DocumentsHome}/> */}
