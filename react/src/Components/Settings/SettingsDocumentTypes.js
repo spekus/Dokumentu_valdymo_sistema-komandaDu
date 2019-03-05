@@ -73,7 +73,9 @@ class SettingsDocumentTypes extends Component {
                             </tr>
                             </thead>
                             <tbody>
-                            {this.state.allDocumentTypes.map(item => (
+                            {this.state.allDocumentTypes
+                                .sort((a, b) => a.title.localeCompare(b.title))
+                                .map(item => (
                                 <tr key={uuid()}>
                                     <td>{item.title}</td>
                                     <td>

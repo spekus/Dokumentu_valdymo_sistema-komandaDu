@@ -110,8 +110,9 @@ class App extends React.Component {
             <div>
                 <Router>
                     <Route render={({location, history}) => (
+                        this.state.user === "" ?
+                            this.state.loading ? <Spinner/> : <LoginComponent onLogin={this.getWhoAmI}/> :
                         <React.Fragment>
-
                             <SideNav id="mysidenav"
                                      onSelect={(selected) => {
                                          this.sideBarClicked(selected, location, history)
@@ -133,7 +134,6 @@ class App extends React.Component {
                                                 {item.text}
                                             </NavText>
                                         </NavItem> : '' )}
-
                                 </SideNav.Nav>
                             </SideNav>
 
@@ -144,29 +144,17 @@ class App extends React.Component {
                                 :
                                 'navbar navbar-expand-sm bg-light navbar-light justify-content-between'}>
                                 <NavLink to='/' className="navbar-brand" id="appbarText">{this.state.appBarText}</NavLink>
-
-
                                 <LoginLogoutLink user={this.state.user}/>
                             </nav>
 
                             <main className={this.state.sideBarIsOpen ? 'open' : ''}>
-
-
-                                <div id='main-content'>
-
+                                <div id='main-content' id="pageContent">
                                     <div className="container">
-                                        <div className="page-header">
+                                        <div className="page-header pt-5">
                                             <h3><LocationToText location={location}/></h3>
                                         </div>
                                         <hr className="myhr"/>
                                     </div>
-
-                                    {this.state.user === "" ?
-                                        // Parodom uzsikrovimo spinner jeigu mes dar nezinome, ar esam prisijunge
-                                        // jeigu ateis atsakymas is /whoAmI kad nesam prisijunge
-                                        // parodysim login langa, o jeigu esam prisijunge, prades veikti <Switch>
-                                        this.state.loading ? <Spinner/> : <LoginComponent onLogin={this.getWhoAmI}/>
-                                        :
                                         <Switch>
                                             {/* <Route exact path="/" component={AugisDashBoard}/> */}
                                             <Redirect exact from='/' to='/dashboard/documents/all'/>
@@ -210,7 +198,7 @@ class App extends React.Component {
 
 
                                         </Switch>
-                                    }
+
                                 </div>
                             </main>
 

@@ -206,7 +206,9 @@ export default class FileUploader extends Component {
                                         <label htmlFor="typeInput">Dokumento tipas</label>
                                         <select className="form-control" id="typeInput"
                                                 value={this.state.type} onChange={this.handleChangeSelect} name="type">
-                                            {this.state.availableTypes.map(item => (
+                                            {this.state.availableTypes
+                                                .sort((a, b) => a.title.localeCompare(b.title))
+                                                .map(item => (
                                                 <option value={item.title}>{item.title}</option>
                                             ))}
 

@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import DocumentsListSimple from "./ElementsOfDashBoard/DocumentsList";
+import DocumentsList from "./ElementsOfDashBoard/DocumentsList";
 import axios from 'axios';
 import ReactPaginate from 'react-paginate';
 import DashboardNavigation from './ElementsOfDashBoard/DashboardNavigation';
@@ -7,7 +7,6 @@ import DashboardNavigation from './ElementsOfDashBoard/DashboardNavigation';
 class ToApproveDashboard extends Component {
     state = {
         nameOfWindow: 'default',
-        userIdentifier: '',
         userDocuments: [],
         searchField: '',
 
@@ -19,29 +18,7 @@ class ToApproveDashboard extends Component {
 
 
     componentDidMount = () => {
-        this.getWhoAmI();
-        console.log("userID" + this.state.userIdentifier)
-    }
-
-    getWhoAmI = () => {
-        axios.get('/api/users/whoami')
-            .then(response => {
-                if (response.data.username !== null) {
-                    this.setState({userIdentifier: response.data.userIdentifier});
-                    console.log("getWhoAmI - " + this.state.userIdentifier);
-                    if (this.state.searchField.length===0) {
-                        this.getDocumentsToApprove();
-                    } else {
-                        this.getFilteredDocumentsToApprove();
-                    }
-                    
-                }
-
-            })
-            .catch(error => {
-                console.log("Error from getWhoAmI");
-                console.log(error);
-            })
+        this.getDocumentsToApprove();
     }
 
     handleSearch = () => {
@@ -81,7 +58,17 @@ class ToApproveDashboard extends Component {
                 .then(response => {
                     //we use response.data.content, becouse files re under content
                     //data. allso holds paging information
-                this.setState({userDocuments: response.data.content});
+
+                     let userDocuments = response.data.content.map(document => {
+                        return ({
+                            ...document,
+                            postedDate: new Date(document.postedDate),
+                            approvedDate: new Date(document.approvalDate),
+                            rejectedDate: new Date(document.rejectedDate)
+                        })
+                    });
+
+                this.setState({userDocuments: userDocuments});
                 this.setState({pageCount: 
                     Math.ceil(response.data.totalElements 
                         / this.state.perPage)})
@@ -106,7 +93,17 @@ class ToApproveDashboard extends Component {
     
     })
                 .then(response => {
-                this.setState({userDocuments: response.data.content});
+
+                     let userDocuments = response.data.content.map(document => {
+                        return ({
+                            ...document,
+                            postedDate: new Date(document.postedDate),
+                            approvedDate: new Date(document.approvalDate),
+                            rejectedDate: new Date(document.rejectedDate)
+                        })
+                     });
+
+                this.setState({userDocuments: userDocuments});
                 this.setState({pageCount: 
                     Math.ceil(response.data.totalElements 
                         / this.state.perPage)})
@@ -152,6 +149,12 @@ class ToApproveDashboard extends Component {
                     <DashboardNavigation/>
 
                     <div className='col-lg-12 container mt-3 p-3 mb-5 bg-white rounded mainelement borderMain'>
+
+                          {/*{this.state.userDocuments.map(item => (*/}
+                                                {/*<p value={item.title}>{item.title}</p>*/}
+                                            {/*))}*/}
+                        {/*/!*<p>Hello {this.state.userDocuments[0]}</p>*!/*/}
+
                         <div className="form-group col-md-8 my-3">
                             <label>Dokumento tvirtinimui paieška</label>
                             <div className="row">
@@ -176,8 +179,9 @@ class ToApproveDashboard extends Component {
                                 </div>
                                 </div>
                                 
-                                <DocumentsListSimple list={this.state.userDocuments}/>
+                                <DocumentsList list={this.state.userDocuments}/>
                         
+
                     </div>
                 </div>
 
