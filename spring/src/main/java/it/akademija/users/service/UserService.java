@@ -1,5 +1,7 @@
 package it.akademija.users.service;
 
+
+
 import it.akademija.LoggingController;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
@@ -317,6 +319,7 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     }
 
     private DocumentServiceObject SOfromEntity(DocumentEntity entity) {
+        LOGGER.info("SOfromEntity");
         DocumentServiceObject so = new DocumentServiceObject();
 
         so.setApprovalDate(entity.getApprovalDate());
@@ -356,23 +359,36 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
         return so;
     }
 
+//    @Transactional
+//    public Page<DocumentServiceObject> getAllUserDocuments(String userIdentifier, int page, int size) {
+//        LOGGER.info("getAllUserDocuments");
+//
+//        Pageable sortedByTitleDesc =
+//                PageRequest.of(page, size, Sort.by("title").ascending());
+//
+//        List<DocumentServiceObject> listOfDocumentServiceObject = documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc)
+//                .stream()
+//                .map(documentEntity -> SOfromEntity(documentEntity))
+//                .collect(Collectors.toList());
+//        LOGGER.info("second query inside getAllUserDocuments, to find out total number of documents for user - " + userIdentifier);
+//        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
+//                sortedByTitleDesc, documentRepository.countByAuthor(userIdentifier));
+//        LOGGER.info("All documents of user - " +userIdentifier + " are being returned"+
+//                " , returning page - " +page +"\n" + " size of page is " + size + " size of total data points is - " + pageData.getTotalElements());
+//        return pageData;
+//
+//    }
     @Transactional
     public Page<DocumentServiceObject> getAllUserDocuments(String userIdentifier, int page, int size) {
         LOGGER.info("getAllUserDocuments");
 
         Pageable sortedByTitleDesc =
                 PageRequest.of(page, size, Sort.by("title").ascending());
-
-        List<DocumentServiceObject> listOfDocumentServiceObject = documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc)
-                .stream()
-                .map(documentEntity -> SOfromEntity(documentEntity))
-                .collect(Collectors.toList());
-        LOGGER.info("second query");
-        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
-                sortedByTitleDesc, documentRepository.findByAuthor(userIdentifier).size());
+        Page<DocumentEntity> pageData = documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc);
+        Page<DocumentServiceObject> documentServiceObjects = pageData.map(this::SOfromEntity);
         LOGGER.info("All documents of user - " +userIdentifier + " are being returned"+
                 " , returning page - " +page +"\n" + " size of page is " + size + " size of total data points is - " + pageData.getTotalElements());
-        return pageData;
+        return documentServiceObjects;
 
     }
 
