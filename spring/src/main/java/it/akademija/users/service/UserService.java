@@ -32,11 +32,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-import java.util.Set;
+import java.util.*;
 
 import java.util.stream.Collectors;
 
@@ -319,7 +315,7 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     }
 
     private DocumentServiceObject SOfromEntity(DocumentEntity entity) {
-        LOGGER.info("SOfromEntity");
+//        LOGGER.info("SOfromEntity");
         DocumentServiceObject so = new DocumentServiceObject();
 
         so.setApprovalDate(entity.getApprovalDate());
@@ -382,16 +378,37 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     public Page<DocumentServiceObject> getAllUserDocuments(String userIdentifier, int page, int size) {
         LOGGER.info("getAllUserDocuments");
 
-        Pageable sortedByTitleDesc =
-                PageRequest.of(page, size, Sort.by("title").ascending());
+        //perasyta viskas i java, nes listas prisegtas prie userio yra
+        // daug mazesnis nei duombazeje esanciu visu dokumentu kiekis.
+        // pirma surandam useri ir istraukiam prie jo prisegtus dokumentus
         Set<DocumentEntity> documentEntitySet = userRepository.findByUsername(userIdentifier).getDocumentEntities();
+
+        // konvertuojam dokumentu entity i objektus. deje reik konveruot visus, nes kitaip neveiks rikiavimas
         List<DocumentServiceObject> documentServiceObjects = documentEntitySet.stream()
                 .map(documentEntity -> SOfromEntity(documentEntity))
                 .collect(Collectors.toList());
+        // sortinam pagal title, kad galetume rikiuoti
+        Collections.sort(documentServiceObjects);
+
+        //paginimo logika
+        List<DocumentServiceObject> filteredList= new ArrayList<>();
+        int possition = page * size;
+        int limit = possition + size;
+        if(limit > documentServiceObjects.size()){
+            // checks that limit set by paging is not bigger than total element count
+            limit = documentServiceObjects.size();
+        }
+        for(; possition < (limit); possition++){
+            filteredList.add(documentServiceObjects.get(possition));
+        }
+
 //        Page<DocumentEntity> pageData = documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc);
 //        Page<DocumentServiceObject> documentServiceObjects = pageData.map(this::SOfromEntity);
+        //sitas realiai neveikia
+        Pageable sortedByTitleDesc =
+                PageRequest.of(page, size, Sort.by("title").ascending());
 
-                PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(documentServiceObjects,
+        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(filteredList,
                 sortedByTitleDesc, documentServiceObjects.size());
         LOGGER.info("All documents of user - " +userIdentifier + " are being returned"+
                 " , returning page - " +page +"\n" + " size of page is " + size + " Full ammount of elements is - " + documentServiceObjects.size());

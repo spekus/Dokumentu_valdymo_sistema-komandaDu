@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DocumentServiceObject {
+public class DocumentServiceObject implements Comparable  {
 
     private String documentIdentifier;
     private String author;
@@ -214,5 +214,14 @@ public class DocumentServiceObject {
     public void setFilesAttachedToDocument(Set<FileServiceObject> filesAttachedToDocument) {
         this.filesAttachedToDocument = filesAttachedToDocument;
     }
+    @Override
+    public int compareTo(Object o) {
+        DocumentServiceObject compareTo =(DocumentServiceObject) o;
+        return this.getTitle().compareTo(compareTo.getTitle());
+    }
 
+//    @Override
+//    public int compareTo(Object o) {
+//        return 0;
+//    }
 }
