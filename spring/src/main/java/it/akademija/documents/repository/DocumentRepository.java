@@ -62,6 +62,7 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
             ,@Param("AUTHOR") String author
             ,@Param("STATE") String state);
 
+
 //    @Query( //THIS IS NATIVE query which can be used to generate CSV file more efficiently
 //            value = "CALL CSVWRITE('test.csv', 'SELECT * FROM DOCUMENTS ', 'charset=UTF-8 fieldSeparator=' || CHAR(9));",
 //            nativeQuery = true)

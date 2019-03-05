@@ -62,7 +62,7 @@ public class DocumentService {
         LOGGER.debug("getDocument");
         DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
         if (documentFromDatabase == null) {
-            throw new IllegalArgumentException("Dokuments su id '" + documentIdentifier + "'nerastas");
+            throw new NullPointerException("Dokumentas su id '" + documentIdentifier + "'nerastas");
         }
         return SOfromEntity(documentFromDatabase);
     }

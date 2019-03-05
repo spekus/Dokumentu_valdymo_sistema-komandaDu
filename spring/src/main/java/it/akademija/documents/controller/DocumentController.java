@@ -56,7 +56,7 @@ public class DocumentController {
         try {
 
             return documentService.getDocument(documentIdentifier);
-        } catch (IllegalArgumentException e) {
+        } catch (NullPointerException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
         }
 
