@@ -8,7 +8,7 @@ class GenericDashBoard extends Component {
     state = { 
         nameOfWindow : 'default',
         userDocuments : [],
-        
+        firstOpen : true,
         // used for paging
         pageCount : 3,
         perPage : 7,
@@ -20,20 +20,25 @@ class GenericDashBoard extends Component {
     }
 
     componentDidUpdate(){
+        // LABAI LABAI LABAI BLOGAS KODAS, bet lyk veikia
         // these are just to make sure new data is leaded when going between dashboards
         console.log("window did update");
         if(!(this.state.nameOfWindow === this.props.match.params.id))
         {
         this.setState({nameOfWindow : this.props.match.params.id})
-        // console.log("state of name of the window was set to - " +
-        // this.state.nameOfWindow);
+            // this is just for performance, to make sure that there would be double 
+            // calling of axios then you first update page
+        if(this.state.firstOpen === false){
         this.getAllDocuments();
+            }
+            this.setState({firstOpen : false})
         }
         if (this.state.nameOfWindow === '') {
             this.setState({nameOfWindow : this.props.match.params.id})
-            // console.log("state of name of the window was set to - " +
-            // this.state.nameOfWindow);
-            this.getAllDocuments();
+            if(this.state.firstOpen === false){
+                this.getAllDocuments();
+                    }
+            this.setState({firstOpen : false})
         }
         
     }

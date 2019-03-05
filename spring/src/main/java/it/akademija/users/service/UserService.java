@@ -384,11 +384,18 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
         Pageable sortedByTitleDesc =
                 PageRequest.of(page, size, Sort.by("title").ascending());
-        Page<DocumentEntity> pageData = documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc);
-        Page<DocumentServiceObject> documentServiceObjects = pageData.map(this::SOfromEntity);
+        Set<DocumentEntity> documentEntitySet = userRepository.findByUsername(userIdentifier).getDocumentEntities();
+        List<DocumentServiceObject> documentServiceObjects = documentEntitySet.stream()
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toList());
+//        Page<DocumentEntity> pageData = documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc);
+//        Page<DocumentServiceObject> documentServiceObjects = pageData.map(this::SOfromEntity);
+
+                PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(documentServiceObjects,
+                sortedByTitleDesc, documentServiceObjects.size());
         LOGGER.info("All documents of user - " +userIdentifier + " are being returned"+
-                " , returning page - " +page +"\n" + " size of page is " + size + " size of total data points is - " + pageData.getTotalElements());
-        return documentServiceObjects;
+                " , returning page - " +page +"\n" + " size of page is " + size + " Full ammount of elements is - " + documentServiceObjects.size());
+        return pageData;
 
     }
 
