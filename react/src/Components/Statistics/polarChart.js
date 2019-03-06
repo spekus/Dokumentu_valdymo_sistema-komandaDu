@@ -23,7 +23,7 @@ class Charts extends Component {
 
 
     handleChangeSelect = (event) => {
-        this.setState({dropDownValue:event.target.value})
+        this.setState({dropDownValue:parseInt(event.target.value)})
         console.log("eventas "+event.target.value)
         console.log("handle change "+this.state.dropDownValue)
 
@@ -40,22 +40,22 @@ class Charts extends Component {
 //########## mygtuko paspaudimas "Rodyti statistiką" iškviečia AXIOS duomenų gavimui iš back'endo ##########
     getStatistics=()=>{
         console.log("metode "+this.state.dropDownValue)
-         if(this.state.dropDownValue==1){
+         if(this.state.dropDownValue===1){
              console.log("patvirtinti")
              this.getApprovedData();
          }
 
-        if(this.state.dropDownValue==2){
+        if(this.state.dropDownValue===2){
              console.log("atmesti")
             this.getRejectedData();
         }
 
-        if(this.state.dropDownValue==3){
+        if(this.state.dropDownValue===3){
             console.log("postinti")
             this.getPostedData();
         }
 
-        if(this.state.dropDownValue==4){
+        if(this.state.dropDownValue===4){
             console.log("useriai")
             this.getUserListByPostedDocs();
         }
@@ -97,7 +97,7 @@ class Charts extends Component {
         var seq = palette('tol-dv', 5);
         var counter =0;
         this.resetState();
-        this.state.approvedStatistics.map(item => {
+        this.state.approvedStatistics.forEach(item => {
             this.dataApproved.push(parseInt(item.count));
             this.backgroundColorApproved.push("#" + seq[counter]);
              counter = counter + 1;
@@ -113,7 +113,8 @@ class Charts extends Component {
             ],
             labels:this.labelsApproved
         }
-        this.state.dataPolarApproved=mydata;
+
+        this.setState({dataPolarApproved:mydata})
         this.setState({state:this.state.dataPolarApproved});
     }
 
@@ -121,7 +122,7 @@ class Charts extends Component {
         var seq = palette('cb-GnBu', 5);
         var counter =0;
         this.resetState();
-        this.state.rejectedStatistics.map(item => {
+        this.state.rejectedStatistics.forEach(item => {
             this.dataRejected.push(parseInt(item.count));
  
             // this.backgroundColorRejected.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
@@ -139,7 +140,8 @@ class Charts extends Component {
             ],
             labels:this.labelsRejected
         }
-        this.state.dataPolarRejected=mydata;
+
+        this.setState({dataPolarRejected:mydata})
         this.setState({state:this.state.dataPolarRejected});
     }
 
@@ -147,7 +149,7 @@ class Charts extends Component {
         var seq2 = palette('tol-dv', 10);
         var counter = 0;
         this.resetState();
-        this.state.postedStatistics.map(item => {
+        this.state.postedStatistics.forEach(item => {
             this.dataPosted.push(parseInt(item.count));
 
             // this.backgroundColorPosted.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
@@ -165,7 +167,8 @@ class Charts extends Component {
             ],
             labels:this.labelsPosted
         }
-        this.state.dataPolarPosted=mydata;
+
+        this.setState({dataPolarPosted:mydata})
         this.setState({state:this.state.dataPolarPosted});
     }
 
@@ -173,7 +176,7 @@ class Charts extends Component {
         var seq = palette('cb-GnBu', 7);
         var counter =0;
         this.resetState();
-        this.state.userListByPostedDocs.map(item => {
+        this.state.userListByPostedDocs.forEach(item => {
             this.dataUserList.push(parseInt(item.count));
             // this.backgroundColorUserList.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
             this.backgroundColorUserList.push("#" + seq[counter]);
@@ -190,7 +193,8 @@ class Charts extends Component {
             ],
                 labels:this.labelsUserList
         }
-        this.state.dataPolarUserlist=mydata;
+
+        this.setState({dataPolarUserlist:mydata})
         this.setState({state:this.state.dataPolarUserlist});
     }
 
@@ -274,28 +278,28 @@ class Charts extends Component {
 
     render(){
         console.log("renderio "+this.state.dropDownValue)
-        if(this.state.dropDownValue==1) {
+        if(this.state.dropDownValue===1) {
             var chartApproved = <MDBContainer>
                 <h5>Patvirtintų dokumentų sąrašas</h5>
                 <Polar data={this.state.dataPolarApproved} options={{responsive: true}}/>
             </MDBContainer>
         }
 
-        if(this.state.dropDownValue==2) {
+        if(this.state.dropDownValue===2) {
             var chartRejected = <MDBContainer>
                 <h5>Atmestų dokumentų sąrašas</h5>
                 <Polar data={this.state.dataPolarRejected} options={{responsive: true}}/>
             </MDBContainer>
         }
 
-        if(this.state.dropDownValue==3){
+        if(this.state.dropDownValue===3){
         var chartPosted=<MDBContainer>
             <h5>Pateiktų dokumentų sąrašas</h5>
             <Polar data={this.state.dataPolarPosted} options={{ responsive: true }} />
         </MDBContainer>
         }
 
-         if(this.state.dropDownValue==4) {
+         if(this.state.dropDownValue===4) {
             var userList = <MDBContainer>
                 <h5>Dažniausiai pateikiančių dokumentų vartotojų sąrašas</h5>
                 <Polar data={this.state.dataPolarUserlist} options={{responsive: true}}/>
@@ -310,9 +314,7 @@ class Charts extends Component {
                         <div className="col-md-4">
                             <DateRangePicker onChange={this.onChange} value={this.state.date}/>
                         </div>
-                        <div className="col-md-4">
-                            <button className="btn button1 btn-sm" onClick={this.getStatistics}>Išvesti statistiką</button>
-                        </div>
+
                         <div className="col-md-4">
                             <select className="form-control" value={this.state.dropDownValue} onChange={this.handleChangeSelect} >
                                 <option value="1">Patvirtinti dokumentai</option>
@@ -320,6 +322,9 @@ class Charts extends Component {
                                 <option value="3">Pateikti dokumentai</option>
                                 <option value="4">Vartotojų sąrašas</option>
                             </select>
+                        </div>
+                        <div className="col-md-4">
+                            <button className="btn button1" onClick={this.getStatistics}>Rodyti</button>
                         </div>
                     </div>
                 </div>
