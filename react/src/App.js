@@ -109,12 +109,13 @@ class App extends React.Component {
     render() {
         return (
             <div>
-                <MainModalError/>
+
                 <Router>
                     <Route render={({location, history}) => (
                         this.state.user === "" ?
                             this.state.loading ? <Spinner/> : <LoginComponent onLogin={this.getWhoAmI}/> :
                         <React.Fragment>
+                             {/*<MainModalError/>*/}
                             <SideNav id="mysidenav"
                                      onSelect={(selected) => {
                                          this.sideBarClicked(selected, location, history)
