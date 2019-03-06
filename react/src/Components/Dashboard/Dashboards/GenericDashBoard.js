@@ -8,7 +8,7 @@ class GenericDashBoard extends Component {
     state = { 
         nameOfWindow : 'default',
         userDocuments : [],
-        firstOpen : true,
+
         // used for paging
         pageCount : 3,
         perPage : 7,
@@ -20,25 +20,22 @@ class GenericDashBoard extends Component {
     }
 
     componentDidUpdate(){
-        // LABAI LABAI LABAI BLOGAS KODAS, bet lyk veikia
+         
         // these are just to make sure new data is leaded when going between dashboards
         console.log("window did update");
         if(!(this.state.nameOfWindow === this.props.match.params.id))
         {
         this.setState({nameOfWindow : this.props.match.params.id})
-            // this is just for performance, to make sure that there would be double 
-            // calling of axios then you first update page
-        if(this.state.firstOpen === false){
+        //  this.setState({offset : 0})
+        // console.log("state of name of the window was set to - " +
+        // this.state.nameOfWindow);
         this.getAllDocuments();
-            }
-            this.setState({firstOpen : false})
         }
         if (this.state.nameOfWindow === '') {
             this.setState({nameOfWindow : this.props.match.params.id})
-            if(this.state.firstOpen === false){
-                this.getAllDocuments();
-                    }
-            this.setState({firstOpen : false})
+            // console.log("state of name of the window was set to - " +
+            // this.state.nameOfWindow);
+            this.getAllDocuments();
         }
         
     }
@@ -47,7 +44,7 @@ class GenericDashBoard extends Component {
     getAllDocuments() {
         // console.log("running getAllDocuments");
         // console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
-        
+        this.setState({offset:0})
         let requestPath = "";
 
         if (this.props.match.params.id.toLowerCase() === "all")
@@ -76,14 +73,13 @@ class GenericDashBoard extends Component {
                         rejectedDate: new Date(document.rejectedDate)
                     })
                 });
-
                 this.setState({userDocuments : userDocuments})
                 this.setState({pageCount: 
                     Math.ceil(response.data.totalElements 
                         / this.state.perPage)})
             })
             .catch(error => {
-                this.setState({error: error.message})
+                this.setState({error: error.message,})
                 console.log("error message " + error)
             })
     }
@@ -116,6 +112,7 @@ class GenericDashBoard extends Component {
                 <div className="row">
                 <div className="col-lg-12 my-auto center-block text-center">
                 <ReactPaginate 
+                forcePage={this.state.offset}
                 previousLabel={'ankstesnis puslapis'}
                 nextLabel={'kitas puslapis'}
                 breakLabel={'...'}
