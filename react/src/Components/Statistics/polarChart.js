@@ -94,7 +94,7 @@ class Charts extends Component {
 //########## Metodai, ateinančių duomenų iš BACKENDO apdorojimui ir sukišimui į statistikos masyvus ##########
     approvedData=()=>{  
         // choose colors here http://google.github.io/palette.js/
-        var seq = palette('tol-dv', 5);
+        var seq = palette('cb-Set2', 7);
         var counter =0;
         this.resetState();
         this.state.approvedStatistics.forEach(item => {
@@ -119,7 +119,7 @@ class Charts extends Component {
     }
 
     rejectedData=()=>{
-        var seq = palette('cb-GnBu', 5);
+        var seq = palette('cb-Set2', 7);
         var counter =0;
         this.resetState();
         this.state.rejectedStatistics.forEach(item => {
@@ -146,7 +146,7 @@ class Charts extends Component {
     }
 
     postedData=()=>{
-        var seq2 = palette('tol-dv', 10);
+        var seq2 = palette('cb-Set2', 7);
         var counter = 0;
         this.resetState();
         this.state.postedStatistics.forEach(item => {
@@ -173,7 +173,7 @@ class Charts extends Component {
     }
 
     userListData=()=>{
-        var seq = palette('cb-GnBu', 7);
+        var seq = palette('cb-Set2', 7);
         var counter =0;
         this.resetState();
         this.state.userListByPostedDocs.forEach(item => {
