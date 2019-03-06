@@ -3,7 +3,8 @@ import axios from 'axios'
 import $ from "jquery";
 import ModalError from "../UI/ModalError";
 import uuid from "uuid";
-import "../../App.css"
+import "../../App.css";
+import {showErrorObject} from "../../Components/UI/MainModalError";
 
 class SettingsDocumentTypes extends Component {
     state = {
@@ -31,6 +32,7 @@ class SettingsDocumentTypes extends Component {
             })
             .catch(error => {
                 console.log("Klaida is createDocumentType: " + error);
+                showErrorObject(error);
             })
 
     }
@@ -42,7 +44,7 @@ class SettingsDocumentTypes extends Component {
             })
             .catch(error => {
                 console.log("Klaida is getAllDocumentTypes: " + error.response.data.message);
-
+                showErrorObject(error);
             })
     }
 
@@ -53,7 +55,8 @@ class SettingsDocumentTypes extends Component {
             })
             .catch(error => {
                 console.log("Klaida is getAllDocumentTypes: " + error);
-                $("#modalError").modal('show');
+                // $("#modalError").modal('show');
+                showErrorObject(error);
             })
 
     }
@@ -76,16 +79,17 @@ class SettingsDocumentTypes extends Component {
                             {this.state.allDocumentTypes
                                 .sort((a, b) => a.title.localeCompare(b.title))
                                 .map(item => (
-                                <tr key={uuid()}>
-                                    <td>{item.title}</td>
-                                    <td>
-                                        <button className="buttonlink text-danger" onClick={() => {
-                                            this.deleteDocumentType(item.title)
-                                        }}>
-                                            X
-                                        </button></td>
-                                </tr>
-                            ))
+                                    <tr key={uuid()}>
+                                        <td>{item.title}</td>
+                                        <td>
+                                            <button className="buttonlink text-danger" onClick={() => {
+                                                this.deleteDocumentType(item.title)
+                                            }}>
+                                                X
+                                            </button>
+                                        </td>
+                                    </tr>
+                                ))
                             }
                             </tbody>
                         </table>

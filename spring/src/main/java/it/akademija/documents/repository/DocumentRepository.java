@@ -1,6 +1,7 @@
 package it.akademija.documents.repository;
 
 import it.akademija.documents.DocumentState;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -26,9 +27,10 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
     //we can choose to return either a Page<T>, a Slice<T> or a List<T>
     // from any of our custom methods returning a paginated data.
     // so no Set. Otherwise server will crash
-    public List<DocumentEntity> findByAuthor(String Author, Pageable pageable);
+    public Page<DocumentEntity> findByAuthor(String Author, Pageable pageable);
 
     public List<DocumentEntity> findByAuthor(String Author);
+   public Long countByAuthor(String Author);
 
 //    @Query("select dta From DocumentEntity dta " +
 //            "where dta.documentState='SUBMITTED' AND dta.type IN:types")
