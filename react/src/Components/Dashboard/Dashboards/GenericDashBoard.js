@@ -37,6 +37,7 @@ class GenericDashBoard extends Component {
             this.setState({nameOfWindow : this.props.match.params.id})
             // console.log("state of name of the window was set to - " +
             // this.state.nameOfWindow);
+            
             this.getAllDocuments();
         }
         
@@ -46,7 +47,7 @@ class GenericDashBoard extends Component {
     getAllDocuments() {
         // console.log("running getAllDocuments");
         // console.log("adreso pabaiga " + this.props.match.params.id.toUpperCase());
-        // this.setState({offset:0})
+        this.setState({offset:0})
         let requestPath = "";
 
         if (this.props.match.params.id.toLowerCase() === "all")
