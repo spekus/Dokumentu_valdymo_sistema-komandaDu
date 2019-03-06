@@ -1,3 +1,7 @@
 .idea
 application.properties
+<<<<<<< HEAD
 *.log
+=======
+spring/logs
+>>>>>>> 97c0a1a1fde351bb7edcf361df9bd9cdd70d5367
