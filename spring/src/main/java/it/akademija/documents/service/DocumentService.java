@@ -140,6 +140,9 @@ public class DocumentService {
                     }
                 }
 
+        }
+
+
             if (!groupWhichCanApproveDocumentTypeFound) {
                 throw new NoApproverAvailableException("Nėra grupės, kuri galėtų tvirtinti šį dokumentą");
             }
@@ -148,12 +151,13 @@ public class DocumentService {
                 throw new NoApproverAvailableException("Yra grupė(-s), bet nėra naudotojų, kurie galėtų tvirtinti šį dokumentą");
             }
 
+
             document.setDocumentState(DocumentState.SUBMITTED);
             document.setPostedDate(LocalDateTime.now());
             documentRepository.save(document);
 
         }
-    }
+
 
     @Transactional
     public void approveOrRejectDocument(String documentIdentifier,
