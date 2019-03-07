@@ -95,6 +95,12 @@ main.open {
     width: 400%;
 }
 
+.buttonXL1 {
+    font-size: 16px;
+    width: 280%;
+    margin-left: 30px;
+}
+
 .button1 {
     /*background-color: #10C8CD;*/
     background-color: #6699CC;

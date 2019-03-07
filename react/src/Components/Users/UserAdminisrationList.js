@@ -148,6 +148,8 @@ class UserAdminisrationList extends Component {
         }
     }
 
+
+
     render() {
         return (
             <React.Fragment>
@@ -158,7 +160,7 @@ class UserAdminisrationList extends Component {
                     <div className='mainelement borderMain' style={{'width': '100%'}}>
 
 
-                        <div className="form-group col-md-8 my-3">
+                        <div className="form-group col-md-10 my-3">
                             <label>Naudotojo paieška</label>
                             <div className="row">
                                 <div className="col-md-8 input-group">
@@ -175,14 +177,14 @@ class UserAdminisrationList extends Component {
                                            onChange={this.handleChangeInput}
                                            onKeyPress={this.handleKeyPress}/>
                                 </div>
-                                <div className="col-md-2">
+                                <div className="col-md-1">
                                     <button className="btn button2 my-2 my-sm-0 button1" type="submit"
                                             onClick={this.getFilteredUsers}
                                     >Ieškoti
                                     </button>
                                 </div>
                                 <div className="col-md-2">
-                                    <button className="btn btn-outline-info my-2 my-sm-0 buttonXL button1"
+                                    <button className="btn btn-outline-info my--2 my-sm-0 buttonXL1 button1"
                                             type="submit"
                                             onClick={() => {
                                                 // this.props.history.push("/user-registration")
@@ -249,10 +251,9 @@ class UserAdminisrationList extends Component {
                                      lastname={this.state.userBeingEdited.lastname}
                                      username={this.state.userBeingEdited.username}
 
-                                     onSubmit={() => {
+                                     afterSubmit={() => {
                                          $('#userEditModal').modal('hide');
                                          this.getFilteredUsers();
-                                         console.log('on submit')
                                      }}
                         />
                     </ModalContainer>

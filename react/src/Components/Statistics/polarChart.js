@@ -311,11 +311,11 @@ class Charts extends Component {
                 <h5>Laiko intervalas</h5>
                 <div className='shadow p-3 mb-5 bg-white rounded'>
                     <div className="row">
-                        <div className="col-md-4">
+                        <div className="col-md-3 mr-5">
                             <DateRangePicker onChange={this.onChange} value={this.state.date}/>
                         </div>
 
-                        <div className="col-md-4">
+                        <div className="col-md-3 mr-5">
                             <select className="form-control" value={this.state.dropDownValue} onChange={this.handleChangeSelect} >
                                 <option value="1">Patvirtinti dokumentai</option>
                                 <option value="2">Atmesti dokumentai</option>
@@ -323,7 +323,7 @@ class Charts extends Component {
                                 <option value="4">Vartotojų sąrašas</option>
                             </select>
                         </div>
-                        <div className="col-md-4">
+                        <div className="col-md-3">
                             <button className="btn button1" onClick={this.getStatistics}>Rodyti</button>
                         </div>
                     </div>
