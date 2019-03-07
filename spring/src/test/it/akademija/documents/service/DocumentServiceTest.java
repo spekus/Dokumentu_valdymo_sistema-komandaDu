@@ -1,27 +1,16 @@
 package it.akademija.documents.service;
 
-import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.users.repository.UserRepository;
-import net.bytebuddy.pool.TypePool;
 import org.junit.Before;
 import org.junit.Test;
-import org.junit.jupiter.api.Assertions;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.MockitoJUnitRunner;
-
-import java.util.List;
-import java.util.Set;
-
-import static junit.framework.TestCase.assertTrue;
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.assertj.core.api.Java6Assertions.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -52,15 +41,15 @@ public class DocumentServiceTest {
         assertEquals("test1", documentEntity.getDocumentIdentifier());
     }
 
-    @Test
-    public void shouldGetIllegalArgumentExceptionIfNullIsReturnWhileGettingUnknownDocument () {
-        DocumentEntity doc = new DocumentEntity();
-        doc.setDocumentIdentifier("test1");
-        when(documentRepository.findDocumentByDocumentIdentifier("test1")).thenReturn(doc);
-        DocumentServiceObject documentEntity=documentService.getDocumentByDocumentIdentifier("test1");
-        verify(documentRepository).findDocumentByDocumentIdentifier("test1");
-        assertThatThrownBy(()->documentService.getDocumentByDocumentIdentifier("test2")).isInstanceOf(NullPointerException.class);
-    }
+//    @Test
+//    public void shouldGetIllegalArgumentExceptionIfNullIsReturnWhileGettingUnknownDocument () {
+//        DocumentEntity doc = new DocumentEntity();
+//        doc.setDocumentIdentifier("test1");
+//        when(documentRepository.findDocumentByDocumentIdentifier("test1")).thenReturn(doc);
+//        DocumentServiceObject documentEntity=documentService.getDocumentByDocumentIdentifier("test1");
+//        verify(documentRepository).findDocumentByDocumentIdentifier("test1");
+//        assertThat(()->documentService.getDocumentByDocumentIdentifier("test2")).isInstanceOf(NullPointerException.class);
+//    }
 
 //    @Test
 //    public void shouldReturnDocumentsByState() {

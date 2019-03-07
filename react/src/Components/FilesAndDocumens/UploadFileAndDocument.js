@@ -49,6 +49,7 @@ export default class FileUploader extends Component {
 
 
     handleSubmit = (event) => {
+
         // this.getAllowedTypes();
         event.preventDefault();
         console.log("0 file_state: " + this.state.files.length);
@@ -68,24 +69,27 @@ export default class FileUploader extends Component {
 
         this.state.files.forEach(file => {
 
-            if (file.size >= 1000000) {
-                this.setState({error: 'Failo dydis viršija 1MB'})
-                return;
-            }
+            // if (file.size >= 2000000) {
+            //     this.setState({error: 'Failo dydis viršija 2MB'})
+            //     return;
+            // }
 
 
             let data = new FormData();
             data.append('file', file);
             data.append('name', file.name);
+           
 
 
             axios.post('/api/files', data)
                 .then(response => {
+                    
                     // this.getAllowedTypes();
                     this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
                     if (response.data.text) {
                         var fileId = response.data.text;
                         fileIdentifiers.push(fileId);
+                        
 
 
                     }
@@ -97,19 +101,18 @@ export default class FileUploader extends Component {
 
         })
 
+        
+        
         let documentDetails = {
             title: this.state.title,
             type: this.state.type,
             description: this.state.description
         };
 
-        // Jeigu pavyko sukelti faila, mes bandome vartotojo vardu
-        // sukurti dokumento specifikacija
-        // ir suristi sukelta faila su juo
         this.addDocument(documentDetails, fileIdentifiers);
         console.log("2 file_state: " + this.state.files.length);
 
-
+    
     }
     
 
@@ -171,7 +174,12 @@ export default class FileUploader extends Component {
 
     onFileChange = (event) => {
 
+        if (event.target.files[0].size <= 2000000) {
+
         this.setState({files: [...this.state.files, event.target.files[0]]})
+        } else {
+            this.setState({error: 'Failo dydis viršija 2MB'})
+        }
     }
 
     removeFile = (index) => {
