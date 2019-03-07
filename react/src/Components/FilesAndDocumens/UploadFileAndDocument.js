@@ -55,13 +55,10 @@ export default class FileUploader extends Component {
         console.log("0 file_state: " + this.state.files.length);
         this.setState({error: '', msg: ''});
         this.setState({files: []})
-<<<<<<< HEAD
-=======
         console.log("1 file_state: " + this.state.files.length);
         // {this.state.files.map(file => (
         //     <h6>{file.name}<span><i onClick={this.removeFile} className="fas fa-minus-circle" style={{fontSize: '0.5em'}}/></span></h6>
         // ))}
->>>>>>> master
 
         var fileIdentifiers = [];
 
@@ -72,17 +69,10 @@ export default class FileUploader extends Component {
 
         this.state.files.forEach(file => {
 
-<<<<<<< HEAD
             // if (file.size >= 2000000) {
             //     this.setState({error: 'Failo dydis viršija 2MB'})
             //     return;
             // }
-=======
-            if (file.size >= 1000000) {
-                this.setState({error: 'Failo dydis viršija 1MB'})
-                return;
-            }
->>>>>>> master
 
 
             let data = new FormData();
