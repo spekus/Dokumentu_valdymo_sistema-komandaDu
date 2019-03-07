@@ -27,7 +27,6 @@ class NewUserForm extends Component {
         event.preventDefault();
         console.log(this.state);
         var newUser = {
-            userIdentifier: this.state.userIdentifier,
             username: this.state.username,
             firstname: this.state.firstname,
             lastname: this.state.lastname,
@@ -49,7 +48,7 @@ class NewUserForm extends Component {
 
             })
                 .then(response => {
-                    this.props.afterSubmit();
+                    this.props.afterSubmit(newUser.username);
                 })
 
         } else if (this.state.editmode && this.state.password.length > 0) {
@@ -84,7 +83,7 @@ class NewUserForm extends Component {
                 .then(response => {
                     console.log(response);
                     this.setState(this.emptyState);
-                    this.props.afterSubmit();
+                    this.props.afterSubmit(newUser.username);
 
                 })
                 .catch(error => {

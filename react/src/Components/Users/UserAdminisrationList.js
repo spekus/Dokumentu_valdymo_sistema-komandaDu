@@ -17,6 +17,7 @@ class UserAdminisrationList extends Component {
         }, // naudotojo, kuri siuo metu redaguojame, duomenys
         userlist: [], // masyvas visu surastu pagal paieska naudotoju
         searchField: '',
+        lastSearchCriteria: '',
         allgroups: [],
         modalMessageText: ''
     }
@@ -30,11 +31,16 @@ class UserAdminisrationList extends Component {
     }
 
     getFilteredUsers = () => {
-        document.getElementById('userListTable').style.visibility = 'visible';
-        axios.get(
+        this.getFilteredUsersByCriteria(this.state.searchField);
+    }
+
+    getFilteredUsersByCriteria = (criteria) => {
+    this.setState({lastSearchCriteria:criteria}) ;
+    document.getElementById('userListTable').style.visibility = 'visible';
+    axios.get(
             '/api/users/criteria', {
                 params: {
-                    criteria: this.state.searchField
+                    criteria: criteria
                 }
             })
             .then(response => {
@@ -47,7 +53,6 @@ class UserAdminisrationList extends Component {
                 showErrorObject(error);
             });
     }
-
 
     getAllGroupsfromServer = () => {
         axios.get("/api/usergroups")
@@ -251,9 +256,9 @@ class UserAdminisrationList extends Component {
                                      lastname={this.state.userBeingEdited.lastname}
                                      username={this.state.userBeingEdited.username}
 
-                                     afterSubmit={() => {
+                                     afterSubmit={(username) => {
                                          $('#userEditModal').modal('hide');
-                                         this.getFilteredUsers();
+                                         this.getFilteredUsersByCriteria(this.state.lastSearchCriteria);
                                      }}
                         />
                     </ModalContainer>
@@ -262,8 +267,9 @@ class UserAdminisrationList extends Component {
                     <ModalContainer id='newUserModal' title="Naudotojo registravimas">
                         <NewUserForm editmode={false}
 
-                                     onSubmit={() => {
+                                     afterSubmit={(username) => {
                                          $('#newUserModal').modal('hide');
+                                         this.getFilteredUsersByCriteria(username);
                                      }}
                         />
                     </ModalContainer>
