@@ -87,7 +87,7 @@ class GenericDashBoard extends Component {
             .catch(error => {
                 this.setState({error: error.message})
                 console.log("error message " + error);
-                showErrorObject(error);
+                // showErrorObject(error);
             })
     }
     handlePageClick = data => {

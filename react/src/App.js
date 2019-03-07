@@ -115,7 +115,7 @@ class App extends React.Component {
                         this.state.user === "" ?
                             this.state.loading ? <Spinner/> : <LoginComponent onLogin={this.getWhoAmI}/> :
                         <React.Fragment>
-                             {/*<MainModalError/>*/}
+                             <MainModalError/>
                             <SideNav id="mysidenav"
                                      onSelect={(selected) => {
                                          this.sideBarClicked(selected, location, history)
