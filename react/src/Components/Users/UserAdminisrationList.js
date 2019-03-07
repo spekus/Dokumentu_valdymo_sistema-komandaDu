@@ -48,6 +48,7 @@ class UserAdminisrationList extends Component {
             });
     }
 
+
     getAllGroupsfromServer = () => {
         axios.get("/api/usergroups")
             .then(response => {
@@ -56,7 +57,7 @@ class UserAdminisrationList extends Component {
                     }
                 }
             )
-            .catch (error =>{
+            .catch(error => {
                 showErrorObject(error);
             })
     }
@@ -87,6 +88,29 @@ class UserAdminisrationList extends Component {
             })
     }
 
+
+    removeUserFromGroup = (user) => {
+        if (user.userGroups.length > 0) {
+            let grouptitle = user.userGroups
+                .filter(group => group.role === 'ROLE_SUSPENDED')
+                .map(group => group.title);
+            console.log("grouptitle" + grouptitle);
+            axios.put('/api/usergroups/'+ grouptitle +'/remove-person', null, {
+                params: {
+                    username: user.username
+                }
+            })
+                .then(response => {
+                    this.getFilteredUsers();
+                })
+                .catch(error => {
+                    console.log("Error from removeUserFromGroup - " + error);
+                    showErrorObject(error);
+                })
+        }
+    }
+
+
     handleChangeUser = (user) => {
         this.loadUserToEdit(user.username);
         // document.getElementById('editUserForm').style.visibility = 'visible';
@@ -106,9 +130,9 @@ class UserAdminisrationList extends Component {
                         this.setState({userBeingEdited: response.data});
                     }
                 )
-                .catch(error =>{
-                showErrorObject(error);
-            })
+                .catch(error => {
+                    showErrorObject(error);
+                })
         }
     }
 
@@ -189,9 +213,10 @@ class UserAdminisrationList extends Component {
                                     <td>{user.firstname}</td>
                                     <td>{user.lastname}</td>
                                     <td>
-                                        {user.userGroups.map((group, index) =>
-                                            <span
-                                                key={index}>{group.title} {index < user.userGroups.length - 1 ? '|' : ''} </span>)}
+                                        {user.userGroups
+                                            .map((group, index) =>
+                                                <span
+                                                    key={index}>{group.title} {index < user.userGroups.length - 1 ? '|' : ''} </span>)}
                                     </td>
                                     <td>
                                         <button className="btn button1 btn-sm"
@@ -202,6 +227,9 @@ class UserAdminisrationList extends Component {
                                         </button>
                                         <button className="btn button1 btn-sm ml-2"
                                                 onClick={() => this.suspendUser(user)}>Blokuoti
+                                        </button>
+                                        <button className="btn button1 btn-sm ml-2"
+                                                onClick={() => this.removeUserFromGroup(user)}>Atblokuoti
                                         </button>
                                     </td>
                                 </tr>
@@ -224,6 +252,7 @@ class UserAdminisrationList extends Component {
                                      onSubmit={() => {
                                          $('#userEditModal').modal('hide');
                                          this.getFilteredUsers();
+                                         console.log('on submit')
                                      }}
                         />
                     </ModalContainer>
