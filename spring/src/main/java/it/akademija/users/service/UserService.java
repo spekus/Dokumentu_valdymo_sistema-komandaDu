@@ -415,6 +415,48 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
         return pageData;
 
     }
+    @Transactional
+    public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {
+        LOGGER.info("getUserDocumentsByState");
+        Set<DocumentEntity> documentEntitySet = userRepository.findByUsername(userName).getDocumentEntities();
+
+//        if (userEntity == null) {
+//            throw new IllegalArgumentException("User with username '" + userName + "' does not exits.");
+//        }
+
+        // konvertuojam dokumentu entity i objektus. deje reik konveruot visus, nes kitaip neveiks rikiavimas
+        List<DocumentServiceObject> documentServiceObjects = documentEntitySet.stream()
+                .filter(p -> p.getDocumentState().equals(state))
+                .map(documentEntity -> SOfromEntity(documentEntity))
+                .collect(Collectors.toList());
+        // sortinam pagal title, kad galetume rikiuoti
+        Collections.sort(documentServiceObjects);
+
+        //paginimo logika
+        List<DocumentServiceObject> filteredList= new ArrayList<>();
+        int possition = page * size;
+        int limit = possition + size;
+        if(limit > documentServiceObjects.size()){
+            // checks that limit set by paging is not bigger than total element count
+            limit = documentServiceObjects.size();
+        }
+        for(; possition < (limit); possition++){
+            filteredList.add(documentServiceObjects.get(possition));
+        }
+
+//        Page<DocumentEntity> pageData = documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc);
+//        Page<DocumentServiceObject> documentServiceObjects = pageData.map(this::SOfromEntity);
+        //sitas realiai neveikia
+        Pageable sortedByTitleDesc =
+                PageRequest.of(page, size, Sort.by("title").ascending());
+
+        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(filteredList,
+                sortedByTitleDesc, documentServiceObjects.size());
+
+        LOGGER.info(" documents of user - " +userName + " with document state - " + state +" are being returned "+
+                " , returning page - " +page +  "\n" + " size of page is " + size + " size of total data points  is - " + pageData.getTotalElements());
+        return pageData;
+    }
 
     @Transactional
     public List<DocumentEntity> getAllUserDocuments(String userName) {
@@ -437,30 +479,30 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 //
 //    }
 
-    @Transactional
-    public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {
-        LOGGER.info("getUserDocumentsByState");
-
-
-        // pasitikrinam ar yra toks naudotojas
-        UserEntity userEntity = userRepository.findUserByUsername(userName);
-
-        if (userEntity == null) {
-            throw new IllegalArgumentException("User with username '" + userName + "' does not exits.");
-        }
-        Pageable sortedByTitleDesc =
-                PageRequest.of(page, size, Sort.by("title").ascending());
-
-        List<DocumentServiceObject> listOfDocumentServiceObject = documentRepository.findByDocumentStateAndAuthor(state, userName, sortedByTitleDesc)
-                .stream()
-                .map(documentEntity -> SOfromEntity(documentEntity))
-                .collect(Collectors.toList());
-        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
-                sortedByTitleDesc, documentRepository.findByDocumentStateAndAuthor(state, userName).size());
-        LOGGER.info(" documents of user - " +userName + " with document state - " + state +" are being returned "+
-                " , returning page - " +page +  "\n" + " size of page is " + size + " size of total data points  is - " + pageData.getTotalElements());
-        return pageData;
-    }
+//    @Transactional
+//    public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {
+//        LOGGER.info("getUserDocumentsByState");
+//
+//
+//        // pasitikrinam ar yra toks naudotojas
+//        UserEntity userEntity = userRepository.findUserByUsername(userName);
+//
+//        if (userEntity == null) {
+//            throw new IllegalArgumentException("User with username '" + userName + "' does not exits.");
+//        }
+//        Pageable sortedByTitleDesc =
+//                PageRequest.of(page, size, Sort.by("title").ascending());
+//
+//        List<DocumentServiceObject> listOfDocumentServiceObject = documentRepository.findByDocumentStateAndAuthor(state, userName, sortedByTitleDesc)
+//                .stream()
+//                .map(documentEntity -> SOfromEntity(documentEntity))
+//                .collect(Collectors.toList());
+//        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
+//                sortedByTitleDesc, documentRepository.findByDocumentStateAndAuthor(state, userName).size());
+//        LOGGER.info(" documents of user - " +userName + " with document state - " + state +" are being returned "+
+//                " , returning page - " +page +  "\n" + " size of page is " + size + " size of total data points  is - " + pageData.getTotalElements());
+//        return pageData;
+//    }
 
 
 }

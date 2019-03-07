@@ -68,8 +68,8 @@ export default class FileUploader extends Component {
 
         this.state.files.forEach(file => {
 
-            if (file.size >= 2000000) {
-                this.setState({error: 'Failo dydis viršija 2MB'})
+            if (file.size >= 1000000) {
+                this.setState({error: 'Failo dydis viršija 1MB'})
                 return;
             }
 
