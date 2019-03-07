@@ -52,8 +52,16 @@ export default class FileUploader extends Component {
 
         // this.getAllowedTypes();
         event.preventDefault();
+        console.log("0 file_state: " + this.state.files.length);
         this.setState({error: '', msg: ''});
         this.setState({files: []})
+<<<<<<< HEAD
+=======
+        console.log("1 file_state: " + this.state.files.length);
+        // {this.state.files.map(file => (
+        //     <h6>{file.name}<span><i onClick={this.removeFile} className="fas fa-minus-circle" style={{fontSize: '0.5em'}}/></span></h6>
+        // ))}
+>>>>>>> master
 
         var fileIdentifiers = [];
 
@@ -64,10 +72,17 @@ export default class FileUploader extends Component {
 
         this.state.files.forEach(file => {
 
+<<<<<<< HEAD
             // if (file.size >= 2000000) {
             //     this.setState({error: 'Failo dydis viršija 2MB'})
             //     return;
             // }
+=======
+            if (file.size >= 1000000) {
+                this.setState({error: 'Failo dydis viršija 1MB'})
+                return;
+            }
+>>>>>>> master
 
 
             let data = new FormData();
@@ -105,6 +120,7 @@ export default class FileUploader extends Component {
         };
 
         this.addDocument(documentDetails, fileIdentifiers);
+        console.log("2 file_state: " + this.state.files.length);
 
     
     }
@@ -210,7 +226,7 @@ export default class FileUploader extends Component {
                                     <div className="form-group col-md-10">
                                         <label htmlFor="typeInput">Dokumento tipas</label>
                                         <select className="form-control" id="typeInput"
-                                                value={this.state.type} onChange={this.handleChangeSelect} name="type">
+                                                value={this.state.type} onChange={this.handleChangeSelect} name="type" required>
                                             {this.state.availableTypes
                                                 .sort((a, b) => a.title.localeCompare(b.title))
                                                 .map(item => (
@@ -247,14 +263,14 @@ export default class FileUploader extends Component {
                                                 this.state.files.map((file, index) => (
                                                     <li key={index}>
                                                         {file === undefined ? '' : file.name}
-                                                        <span onClick={() => this.removeFile(index)}
+                                                        <button className="border-0" onClick={() => this.removeFile(index)}
 
                                                               style={{color: 'red', marginLeft: '8px', fontWeight: 'bold'}}>
                                                     {/*<i onClick={() => this.removeFile(index)}*/}
                                                             {/*className="fas fa-minus-circle"*/}
                                                             {/*style={{marginLeft: '8px'}}/>*/}
                                                             X
-                                                    </span>
+                                                    </button>
                                                     </li>
                                                 ))}
 
