@@ -203,14 +203,14 @@ public class DocumentService {
                 case REJECTED:
                     document.setDocumentState(newState);
                     document.setRejectedDate(LocalDateTime.now());
-                    document.setApprover(user.getFirstname() + " " + user.getLastname());
+                    document.setApprover(user.getUsername());
                     document.setRejectionReason(rejectedReason);
                     documentRepository.save(document);
                     break;
                 case APPROVED:
                     document.setDocumentState(newState);
                     document.setApprovalDate(LocalDateTime.now());
-                    document.setApprover(user.getFirstname() + " " + user.getLastname());
+                    document.setApprover(user.getUsername());
                     documentRepository.save(document);
                     break;
                 default:

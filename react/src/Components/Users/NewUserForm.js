@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import axios from 'axios'
 import uuid from 'uuid';
+import $ from "jquery";
 
 class NewUserForm extends Component {
 
@@ -47,7 +48,9 @@ class NewUserForm extends Component {
 
 
             })
-            .then() 
+            .then(response =>{
+                $('#userEditModal').modal('hide');
+            })
            
         } else if (this.state.editmode && this.state.password.length>0) {
              
@@ -81,6 +84,7 @@ class NewUserForm extends Component {
                 .then(response => {
                     console.log(response);
                     this.setState(this.emptyState);
+                    $('#newUserModal').modal('hide');
 
                 })
                 .catch(error => {

@@ -42,7 +42,9 @@ const EditUserGroups = (props) => {
                     </tr>
                     </thead>
                     <tbody>
-                    {props.allgroups.map((group, index) =>
+                    {props.allgroups
+                        .filter((group) => group.title !== 'Suspenduoti vartotojai')
+                        .map((group, index) =>
                         props.user.userGroups.map(group => group.title).indexOf(group.title) > -1 ?
                             <tr key={uuid()}>
                                 <td>{group.title}</td>
