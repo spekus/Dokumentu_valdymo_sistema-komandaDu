@@ -11,6 +11,7 @@ class GenericDashBoard extends Component {
         nameOfWindow : 'default',
         userDocuments : [],
 
+        paginationIncarnation: 1, // used to reset pagination
         // used for paging
         pageCount : 3,
         perPage : 7,
@@ -22,17 +23,21 @@ class GenericDashBoard extends Component {
     }
 
     componentDidUpdate(){
-         
+
         // these are just to make sure new data is leaded when going between dashboards
         console.log("window did update");
         if(!(this.state.nameOfWindow === this.props.match.params.id))
         {
+
+        // increment paginationIncarnation so our pagination resets
+        this.setState({paginationIncarnation: this.state.paginationIncarnation + 1});
         this.setState({nameOfWindow : this.props.match.params.id})
         //  this.setState({offset : 0})
         // console.log("state of name of the window was set to - " +
         // this.state.nameOfWindow);
         this.getAllDocuments();
         }
+
         if (this.state.nameOfWindow === '') {
             this.setState({nameOfWindow : this.props.match.params.id})
             // console.log("state of name of the window was set to - " +
@@ -115,8 +120,8 @@ class GenericDashBoard extends Component {
                 <div className='container-fluid mt-2'>
                 <div className="row">
                 <div className="col-lg-12 my-auto center-block text-center">
-                <ReactPaginate 
-                forcePage={this.state.offset}
+                <div key={this.state.paginationIncarnation}>
+                <ReactPaginate
                 previousLabel={'ankstesnis puslapis'}
                 nextLabel={'kitas puslapis'}
                 breakLabel={'...'}
@@ -129,6 +134,7 @@ class GenericDashBoard extends Component {
                 subContainerClassName={'pagesPagination'}
                 activeClassName={'active'}
                 />
+                </div>
                 </div>
                 </div>
                 </div>
