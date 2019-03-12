@@ -132,7 +132,7 @@ public class DemoData implements ApplicationRunner {
         userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška5");
         userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis");
         userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas");
-        addDummydata2();
+//        addDummydata2();
         createUserIfNotExists( "dummy", "dummy", "dummy", "dummy");
 
 

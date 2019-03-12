@@ -18,8 +18,10 @@ class DownloadZip extends Component {
     downloadZip = () => {
         // neparasius pilno adreso su localhostu programa atsiuncia nesamone.
         //speju cia kazkas susije su security,
-        fetch("http://localhost:8181/api/files/zip/")
+        fetch("http://localhost:8181/api/files/zip")
             .then(response => {
+                console.log(response)
+                console.log(response.url)
                 // const fileNameHeader = "x-suggested-filename";
                 // const suggestedFileName = response.headers[fileNameHeader];
                 // const effectiveFileName = (suggestedFileName === undefined
@@ -28,12 +30,18 @@ class DownloadZip extends Component {
                 // console.log("Received header [" + fileNameHeader + "]: " + suggestedFileName
                 //     + ", effective fileName: " + effectiveFileName);
                 // Let the user save the file.
-                const suggestedFileName = "duomenys.zip";
-                FileSaver.saveAs(response.url, suggestedFileName);
+
+                // const suggestedFileName = "duomenys.zip";
+
+                // var blob = new Blob([response.url], {type: "zip"});
+                //  FileSaver.saveAs("http://localhost:8181/api/files/zip", "suggestedFileName");
+                 FileSaver.saveAs(response.url, "suggestedFileName");
+                // FileSaver.saveAs(response.url, "suggestedFileName");
+              
 
 
             }).catch((response) => {
-            console.error("Could not Download the Excel report from the backend.", response);
+            console.error("Could not Download zip file from the server.", response);
         });
     }
 

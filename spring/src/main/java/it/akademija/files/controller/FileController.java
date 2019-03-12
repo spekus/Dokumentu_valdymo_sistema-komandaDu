@@ -44,6 +44,9 @@ public class FileController {
     @Autowired
     private ZipAndCsvService zipAndCsvService;
 
+    @Autowired
+    private  FileHelper fileHelper;
+
 
 
 
@@ -74,21 +77,23 @@ public class FileController {
                 .body(resource);
     }
     // creates a zip from user files and CSV file with user document information
-    @RequestMapping(value = "/zip", method = RequestMethod.GET)
+    @RequestMapping(value = "/zip", method = RequestMethod.GET, produces="application/zip")
     public ResponseEntity<Resource> makeZip(
-            @ApiIgnore Authentication authentication) throws IOException {
-        // first action is to write csv file in location
-        zipAndCsvService.writeCsv(authentication.getName());
+            @ApiIgnore Authentication authentication) throws Exception {
+        if(authentication.isAuthenticated()){
+            // first action is to write csv file in location
+            zipAndCsvService.writeCsv(authentication.getName());
 
-        //zips files
-        File file = zipAndCsvService.zip(authentication.getName());
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
+            //zips files
+            File file = zipAndCsvService.zip(authentication.getName());
+            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
 
-        //returns zip as a stream
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-        return new ResponseEntity<>(resource, headers, HttpStatus.OK);
-
+            //returns zip as a stream
+            HttpHeaders headers = new HttpHeaders();
+//            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+        }
+        throw new Exception("User - " + authentication.getName() + " does not have access");
     }
 
 
@@ -99,27 +104,21 @@ public class FileController {
     // create a file and upload it. return unique identifier.
     public ResponseTransfer uploadNewFile(
                         @ApiIgnore Authentication authentication,
-                        @NotNull @RequestParam("file") MultipartFile multipartFile) throws Exception{
-        String uniqueIdentifier = fileService.addFileToDataBase(multipartFile, authentication.getName());
-        //just sends identifier for a file as a JSON fi private Set<FileEntity> filesAttachedToDocument=le, visible on swager and react.
-        FileServiceObject fileServiceObject = fileService.findFile(uniqueIdentifier);
-        return new ResponseTransfer(fileServiceObject.getIdentifier());
+                        @NotNull @RequestParam("file") MultipartFile fileSentForUploading) throws Exception{
+        if(fileHelper.IsFilePDF(fileSentForUploading)) {
+            String uniqueIdentifier = fileService.addFileToDataBase(fileSentForUploading, authentication.getName());
+            FileServiceObject fileServiceObject = fileService.findFile(uniqueIdentifier);
+            return new ResponseTransfer(fileServiceObject.getIdentifier());
+        }
+        throw new Exception("error during initial uploading");
     }
 
     // this is used to add file to document, can beused for multiple file
     @RequestMapping(value = "/addFileToDocument", method = RequestMethod.POST)
     public ResponseEntity < String >  addFileToDocument(@NotNull @RequestBody FileDocumentCommand fileDocumentComand){
-
-//            @NotNull @RequestParam("FileIdentifier") String fileIdentifier,
-//                                  @NotNull @RequestParam("DocumentIdentifier") String documentIdentifier)
-//    {        fileService.addFileToDocument(fileIdentifier, documentIdentifier);
-//        return ResponseEntity.status(HttpStatus.CREATED).build();}
-
         fileService.addFileToDocument(fileDocumentComand.getFileIdentifier()
                 , fileDocumentComand.getDocumentIdentifier());
         return ResponseEntity.status(HttpStatus.CREATED).build();
-
-
     }
 
 
