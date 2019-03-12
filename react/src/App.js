@@ -40,7 +40,7 @@ class App extends React.Component {
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
         {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai', admin:true},
         {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai', admin:true},
-        {iconClass: 'far fa-chart-bar', path: 'statistics', text: 'Statistika', admin:true}
+        {iconClass: 'far fa-chart-bar', path: 'statistics', text: 'Statistika'}
     ];
 
     sideBarToggled = (isOpen) => {
