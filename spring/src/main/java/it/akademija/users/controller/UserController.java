@@ -123,7 +123,7 @@ public class UserController {
 
     @RequestMapping(value = "/whoami", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "whoami", notes = "Returns user which is currently logged in")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
+    //@PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public UserServiceObject getCurrentUser(@ApiIgnore Authentication authentication) {
         return userService.getUserByUsername(authentication.getName());
 

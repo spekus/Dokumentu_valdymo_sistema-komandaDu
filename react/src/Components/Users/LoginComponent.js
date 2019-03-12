@@ -5,7 +5,7 @@ import "../../App.css"
 import "./LoginComponent.css"
 // import * as uuid from "uuid";
 import $ from 'jquery';
-// import
+
 
 
 export default class Login extends Component {
@@ -54,6 +54,11 @@ export default class Login extends Component {
                             <h5>Klaida!</h5>{this.state.errorText}
                         </div>
                     }
+                    {this.props.loginError ?
+                        <div className='loginAlert'>
+                            <h5>Prisijungimo klaida!</h5>{this.props.loginError}
+                        </div>
+                    :null}
                     <form>
                         <div className="form-group">
                             <input type="text"
