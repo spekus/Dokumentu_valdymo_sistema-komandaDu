@@ -2,6 +2,7 @@ import React, {Component} from 'react';
 // import FileSaver from 'file-saver';
 import axios from 'axios';
 import '../../App.css';
+import {showErrorObject} from "../../Components/UI/MainModalError";
 
 
 
@@ -18,6 +19,7 @@ export default class FileUploader extends Component {
         title: '',
         description: '',
         availableTypes: [],
+        isFileValid: ''
 
     }
     
@@ -66,15 +68,8 @@ export default class FileUploader extends Component {
             this.setState({error: 'Pasirinkite failą'})
             return;
         }
-
+        this.setState({isFileValid: true})
         this.state.files.forEach(file => {
-
-            // if (file.size >= 2000000) {
-            //     this.setState({error: 'Failo dydis viršija 2MB'})
-            //     return;
-            // }
-
-
             let data = new FormData();
             data.append('file', file);
             data.append('name', file.name);
@@ -95,22 +90,26 @@ export default class FileUploader extends Component {
                     }
                 })
                 .catch(err => {
-                    this.setState({error: err.message})
-                    console.log("Error from /api/files - " + err)
+                    this.setState({error: "",
+                    isFileValid: false
+                })
+                    showErrorObject(err);
                 });
 
         })
 
         
-        
-        let documentDetails = {
-            title: this.state.title,
-            type: this.state.type,
-            description: this.state.description
-        };
+        if(this.state.isFileValid){
+            let documentDetails = {
+                title: this.state.title,
+                type: this.state.type,
+                description: this.state.description
+            };
+            this.addDocument(documentDetails, fileIdentifiers);
+            console.log("2 file_state: " + this.state.files.length);
+        }
+        this.setState({'title': '', 'description': ''});
 
-        this.addDocument(documentDetails, fileIdentifiers);
-        console.log("2 file_state: " + this.state.files.length);
 
     
     }
@@ -174,7 +173,8 @@ export default class FileUploader extends Component {
 
     onFileChange = (event) => {
 
-        if (event.target.files[0].size <= 2000000) {
+        if (event.target.files[0].size <= 2000000 
+            ) {
 
         this.setState({files: [...this.state.files, event.target.files[0]]})
         } else {
@@ -240,7 +240,7 @@ export default class FileUploader extends Component {
                                     <div className="form-group col-md-9 mt-4">
                             
                                         <input onChange={this.onFileChange} 
-                                        multiple type="file"
+                                          multiple type="file" accept=".pdf"
                                         //to hide unwanted text
                                         style={{color: 'white'}}
                                         ></input><br/>

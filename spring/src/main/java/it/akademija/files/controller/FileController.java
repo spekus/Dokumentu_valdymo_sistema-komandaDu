@@ -44,6 +44,9 @@ public class FileController {
     @Autowired
     private ZipAndCsvService zipAndCsvService;
 
+    @Autowired
+    private  FileHelper fileHelper;
+
 
 
 
@@ -99,21 +102,21 @@ public class FileController {
     // create a file and upload it. return unique identifier.
     public ResponseTransfer uploadNewFile(
                         @ApiIgnore Authentication authentication,
-                        @NotNull @RequestParam("file") MultipartFile multipartFile) throws Exception{
-        String uniqueIdentifier = fileService.addFileToDataBase(multipartFile, authentication.getName());
-        //just sends identifier for a file as a JSON fi private Set<FileEntity> filesAttachedToDocument=le, visible on swager and react.
-        FileServiceObject fileServiceObject = fileService.findFile(uniqueIdentifier);
-        return new ResponseTransfer(fileServiceObject.getIdentifier());
+                        @NotNull @RequestParam("file") MultipartFile fileSentForUploading) throws Exception{
+        if(fileHelper.IsFilePDF(fileSentForUploading)) {
+            String uniqueIdentifier = fileService.addFileToDataBase(fileSentForUploading, authentication.getName());
+            //just sends identifier for a file as a JSON fi private Set<FileEntity> filesAttachedToDocument=le, visible on swager and react.
+
+            FileServiceObject fileServiceObject = fileService.findFile(uniqueIdentifier);
+            return new ResponseTransfer(fileServiceObject.getIdentifier());
+        }
+        throw new Exception("error during initial uploading");
     }
 
     // this is used to add file to document, can beused for multiple file
     @RequestMapping(value = "/addFileToDocument", method = RequestMethod.POST)
     public ResponseEntity < String >  addFileToDocument(@NotNull @RequestBody FileDocumentCommand fileDocumentComand){
 
-//            @NotNull @RequestParam("FileIdentifier") String fileIdentifier,
-//                                  @NotNull @RequestParam("DocumentIdentifier") String documentIdentifier)
-//    {        fileService.addFileToDocument(fileIdentifier, documentIdentifier);
-//        return ResponseEntity.status(HttpStatus.CREATED).build();}
 
         fileService.addFileToDocument(fileDocumentComand.getFileIdentifier()
                 , fileDocumentComand.getDocumentIdentifier());
