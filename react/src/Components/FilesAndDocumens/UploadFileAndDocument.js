@@ -47,19 +47,51 @@ export default class FileUploader extends Component {
             })
     }
 
+//     async uploadFiles(fileIdentifiers,files) {
 
-    handleSubmit = (event) => {
+//         files.forEach(file => {
 
-        // this.getAllowedTypes();
+//             let data = new FormData();
+//             data.append('file', file);
+//             data.append('name', file.name);
+
+        
+//         try {
+//         axios.post('/api/files', data)
+        
+//         .then(response => {
+            
+//             console.log("Uploadina faila");
+//             // this.getAllowedTypes();
+//             this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
+//             if (response.data.text) {
+//                 var fileId = response.data.text;
+//                 fileIdentifiers.push(fileId);
+//                 console.log("laba diena");
+//                 console.log("File identifiers length" + fileIdentifiers.length);
+//             }
+        
+//         }) }
+//         catch(err) {
+//             this.setState({error: err.message})
+//             console.log("Error from /api/files - " + err)
+//         };
+//     })
+
+// }
+
+sleep=(ms) => {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+
+    handleSubmit= async (event) => {
+
         event.preventDefault();
         console.log("0 file_state: " + this.state.files.length);
         this.setState({error: '', msg: ''});
         this.setState({files: []})
         console.log("1 file_state: " + this.state.files.length);
-        // {this.state.files.map(file => (
-        //     <h6>{file.name}<span><i onClick={this.removeFile} className="fas fa-minus-circle" style={{fontSize: '0.5em'}}/></span></h6>
-        // ))}
-
+     
         var fileIdentifiers = [];
 
         if (this.state.files.length === 0 || this.state.files === undefined) {
@@ -67,31 +99,25 @@ export default class FileUploader extends Component {
             return;
         }
 
+        console.log("Pries for eacha failu handleSubmit");
         this.state.files.forEach(file => {
-
-            // if (file.size >= 2000000) {
-            //     this.setState({error: 'Failo dydis viršija 2MB'})
-            //     return;
-            // }
-
 
             let data = new FormData();
             data.append('file', file);
             data.append('name', file.name);
-           
+
 
 
             axios.post('/api/files', data)
                 .then(response => {
-                    
-                    // this.getAllowedTypes();
+
                     this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
                     if (response.data.text) {
                         var fileId = response.data.text;
                         fileIdentifiers.push(fileId);
+
+                        console.log("File identifiers length" + fileIdentifiers.length);
                         
-
-
                     }
                 })
                 .catch(err => {
@@ -99,20 +125,23 @@ export default class FileUploader extends Component {
                     console.log("Error from /api/files - " + err)
                 });
 
+
+
         })
 
-        
-        
         let documentDetails = {
             title: this.state.title,
             type: this.state.type,
             description: this.state.description
         };
 
-        this.addDocument(documentDetails, fileIdentifiers);
-        console.log("2 file_state: " + this.state.files.length);
+    while(fileIdentifiers.length===0) {
+        await this.sleep(1);
+        console.log("While cikle: " + fileIdentifiers.length);
+    }
+    this.addDocument(documentDetails,fileIdentifiers);
 
-    
+        
     }
     
 
@@ -132,8 +161,13 @@ export default class FileUploader extends Component {
                 // this.getAllowedTypes()
                 if (response.data.text) {
                     var docId = response.data.text;
+                    console.log("doc ID" + docId);
                     fileIdentifiers.forEach(fileId => {
+
+                        console.log(fileId + " is add Document");
+                        
                         this.addFileToDocument(docId, fileId);
+                        console.log("FileIdentifiersForEach");
                     })
 
                     console.log("Document has been created with identifier - "
@@ -149,10 +183,13 @@ export default class FileUploader extends Component {
     // Sis metodas kvieciamas, kai turime dokumento ID ir failo ID
     // Jis surisa backende esanti faila su naudotojo dokumento specifikacija
     addFileToDocument(docId, fileID) {
+  
+        console.log("addFileToDocument running");
         let fileDocumentCommand = {
             documentIdentifier: docId,
             fileIdentifier: fileID
         }
+        console.log("addFileToDocument");
         console.log("docId" + docId);
         console.log("fileID" + fileID);
 
@@ -174,11 +211,11 @@ export default class FileUploader extends Component {
 
     onFileChange = (event) => {
 
-        if (event.target.files[0].size <= 2000000) {
+        if (event.target.files[0].size <= 10000000) {
 
         this.setState({files: [...this.state.files, event.target.files[0]]})
         } else {
-            this.setState({error: 'Failo dydis viršija 2MB'})
+            this.setState({error: 'Failo dydis viršija 10MB'})
         }
     }
 
