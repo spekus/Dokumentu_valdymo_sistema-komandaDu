@@ -157,8 +157,8 @@ class SettingsGroupsTypes extends Component {
                                            group={group}></i>
 
 
-                                        <i className="fas fa-trash-alt isettings" title="Ištrinti grupę"
-                                           onClick={() => this.deleteGroup(group)}></i>
+                                        {/*<i className="fas fa-trash-alt isettings" title="Ištrinti grupę"*/}
+                                           {/*onClick={() => this.deleteGroup(group)}></i>*/}
 
                                     </td>
                                 </tr>
