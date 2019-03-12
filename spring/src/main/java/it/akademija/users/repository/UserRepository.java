@@ -1,6 +1,7 @@
 package it.akademija.users.repository;
 
 import it.akademija.documents.DocumentState;
+import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.statistics.repository.Statistics;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -19,6 +20,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findUserByUsernameAndPassword(String username, String password);
 
+
     UserEntity findByUsername(String username);
 
     @Query("select u from UserEntity u where u.firstname=:criteria OR u.lastname=:criteria OR u.username=:criteria")
@@ -32,6 +34,8 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     @Query(value= "insert into USER_ENTITY (FIRSTNAME, LASTNAME, PASSWORD, USERNAME) VALUES (:NAME, :SURENAME, :userInput, :userInput)", nativeQuery = true)
 //    @Query(value = "select id,name,roll_no from USER_INFO_TEST where rollNo = ?1", nativeQuery = true)
     void makeDummyUsers(@Param("userInput")String userInput, @Param("NAME")String name, @Param("SURENAME")String surename);
+
+
 }
 
 
