@@ -38,10 +38,14 @@ class App extends React.Component {
         {iconClass: 'fa fw fa-id-card', path: 'profile', text: 'Profilis'},
         // {iconClass: 'fa fw fa-list', path: 'dashboard/documents/all', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
-        {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai', admin:true},
-        {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai', admin:true},
-        {iconClass: 'far fa-chart-bar', path: 'statistics', text: 'Statistika', admin:true}
+        {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai', admin: true},
+        {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai', admin: true}
+
     ];
+
+    menuItemsStatistics = [
+        {iconClass: 'far fa-chart-bar', path: 'statistics', text: 'Statistika'}
+    ]
 
     sideBarToggled = (isOpen) => {
         this.setState({sideBarIsOpen: isOpen});
@@ -63,13 +67,37 @@ class App extends React.Component {
 
                     let user = response.data;
                     let isAdmin = false;
+                    let isUser = false;
+                    let isSuspended = false;
 
                     user.userGroups.forEach(group => {
                         if (group.role === "ROLE_ADMIN") {
                             isAdmin = true;
+                            isUser = true;
+                        }
+                        if (group.role === "ROLE_USER") {
+                            isUser = true;
+                        }
+                        if (group.role === "ROLE_SUSPENDED")
+                        {
+                            isSuspended = true;
+                        }
+                        if (group.typesToApprove.length > 0) {
+                             this.menuItems = this.menuItems.concat(this.menuItemsStatistics)
                         }
                     })
-                    user = {...user, isAdmin: isAdmin}
+
+
+                    user = {...user, isAdmin: isAdmin, isUser: isUser}
+                    if (!isUser) {
+                        let loginError = "Prisijungimo duomenys (" + user.username + ") teisingi, bet neturite priskirtų grupių"
+                        user = {...user, loginError: loginError};
+                    }
+                    if (isSuspended) {
+                        isUser = false;
+                        let loginError = "Prisijungimo duomenys (" + user.username + ") teisingi, bet jus greičiausiai atleido"
+                        user = {...user, loginError: loginError};
+                    }
                     this.setState({user: user});
                 }
             })
@@ -114,104 +142,111 @@ class App extends React.Component {
                     <Route render={({location, history}) => (
                         this.state.user === "" ?
                             this.state.loading ? <Spinner/> : <LoginComponent onLogin={this.getWhoAmI}/> :
-                        <React.Fragment>
-                             <MainModalError/>
-                            <SideNav id="mysidenav"
-                                     onSelect={(selected) => {
-                                         this.sideBarClicked(selected, location, history)
-                                     }}
-                                     onToggle={this.sideBarToggled}
-                                     expanded={this.state.sideBarIsOpen}
-                            >
-                                <SideNav.Toggle/>
+                            this.state.user.isUser === false ?
+                                <LoginComponent onLogin={this.getWhoAmI} loginError={this.state.user.loginError}/> :
+                                <React.Fragment>
+                                    <MainModalError/>
+                                    <SideNav id="mysidenav"
+                                             onSelect={(selected) => {
+                                                 this.sideBarClicked(selected, location, history)
+                                             }}
+                                             onToggle={this.sideBarToggled}
+                                             expanded={this.state.sideBarIsOpen}
+                                    >
+                                        <SideNav.Toggle/>
 
-                                <SideNav.Nav defaultSelected="">
+                                        <SideNav.Nav defaultSelected="">
 
-                                    {this.menuItems.map((item) =>
-                                        this.state.user.isAdmin || !item.admin ?
-                                        <NavItem key={item.path} eventKey={item.path} id={item.path}>
-                                            <NavIcon>
-                                                <i className={item.iconClass} style={{fontSize: '1.75em'}}/>
-                                            </NavIcon>
-                                            <NavText>
-                                                {item.text}
-                                            </NavText>
-                                        </NavItem> : '' )}
-                                </SideNav.Nav>
-                            </SideNav>
+                                            {this.menuItems
+                                                .map((item) =>
+                                                    this.state.user.isAdmin || !item.admin ?
+                                                        <NavItem key={item.path} eventKey={item.path} id={item.path}>
+                                                            <NavIcon>
+                                                                <i className={item.iconClass}
+                                                                   style={{fontSize: '1.75em'}}/>
+                                                            </NavIcon>
+                                                            <NavText>
+                                                                {item.text}
+                                                            </NavText>
+                                                        </NavItem> : '')}
+
+                                        </SideNav.Nav>
+                                    </SideNav>
 
 
+                                    <nav id="mainnavbar" className={this.state.sideBarIsOpen ?
+                                        'navbar navbar-expand-sm bg-light navbar-light justify-content-between open'
+                                        :
+                                        'navbar navbar-expand-sm bg-light navbar-light justify-content-between'}>
+                                        <NavLink to='/' className="navbar-brand"
+                                                 id="appbarText">{this.state.appBarText}</NavLink>
+                                        <LoginLogoutLink user={this.state.user}/>
+                                    </nav>
 
-                            <nav id="mainnavbar" className={this.state.sideBarIsOpen ?
-                                'navbar navbar-expand-sm bg-light navbar-light justify-content-between open'
-                                :
-                                'navbar navbar-expand-sm bg-light navbar-light justify-content-between'}>
-                                <NavLink to='/' className="navbar-brand" id="appbarText">{this.state.appBarText}</NavLink>
-                                <LoginLogoutLink user={this.state.user}/>
-                            </nav>
-
-                            <main className={this.state.sideBarIsOpen ? 'open' : ''}>
-                                <div id='main-content' id="pageContent">
-                                    <div className="container">
-                                        <div className="page-header pt-5">
-                                            <h3><LocationToText location={location}/></h3>
-                                        </div>
-                                        <hr className="myhr"/>
-                                    </div>
-                                        <Switch>
-                                            {/* <Route exact path="/" component={AugisDashBoard}/> */}
-                                            <Redirect exact from='/' to='/dashboard/documents/all'/>
-                                            <Route path="/dashboard/documents/to_aproove"
-                                                   render={(props) => <ToApproveDashboard
-                                                       user={this.state.user} {...props}/>}/>
-                                            <Route path="/dashboard/documents/:id" render={(props) => <GenericDashBoard
-                                                user={this.state.user} {...props}/>}/>
-                                            {/*// component={ToApproveDashboard}/>*/}
-                                            {/*<Route path="/dashboard/documents/test" render={(props) => <ToApproveDashboard*/}
+                                    <main className={this.state.sideBarIsOpen ? 'open' : ''}>
+                                        <div id='main-content' id="pageContent">
+                                            <div className="container">
+                                                <div className="page-header pt-5">
+                                                    <h3><LocationToText location={location}/></h3>
+                                                </div>
+                                                <hr className="myhr"/>
+                                            </div>
+                                            <Switch>
+                                                {/* <Route exact path="/" component={AugisDashBoard}/> */}
+                                                <Redirect exact from='/' to='/dashboard/documents/all'/>
+                                                <Route path="/dashboard/documents/to_aproove"
+                                                       render={(props) => <ToApproveDashboard
+                                                           user={this.state.user} {...props}/>}/>
+                                                <Route path="/dashboard/documents/:id"
+                                                       render={(props) => <GenericDashBoard
+                                                           user={this.state.user} {...props}/>}/>
+                                                {/*// component={ToApproveDashboard}/>*/}
+                                                {/*<Route path="/dashboard/documents/test" render={(props) => <ToApproveDashboard*/}
                                                 {/*user={this.state.user} {...props}/>}/>*/}
-                                            <Route exact path="/documents/:id" render={(props) => <DocumentDetailed
-                                                user={this.state.user} {...props}/>}/>
-                                            {/* <Route path="/documents" component={DocumentsHome}/> */}
-                                            <Route path="/profile" render={(props) => <UserProfile
-                                                user={this.state.user} {...props}/>}/>
-                                            <Route path="/users" component={UsersList}/>
-                                            <Route exact path="/upload-file" render={(props) => <FileUploader
-                                                user={this.state.user} {...props}/>}/>
-                                            {/* <Route exact path="/download-file" component={FileDownloader}/> */}
-                                            {/*<Route exact path="/user-administration" component={UserAdministration}/>*/}
-                                            <Route exact path="/user-administration-list"
-                                                   component={UserAdminisrationList}/>
-                                            <Route path="/settings"
-                                                   render={(props) => <Settings user={this.state.user} {...props}/>}/>
-                                            {/*<Route exact path="/user-administration"*/}
-                                            {/*render={(props) => <UserAdministration {...props}  />}/>*/}
-                                            <Route exact path="/settings-test"
-                                                   render={(props) => <SettingsGroupsTypes
-                                                       user={this.state.user} {...props}/>}/>
+                                                <Route exact path="/documents/:id" render={(props) => <DocumentDetailed
+                                                    user={this.state.user} {...props}/>}/>
+                                                {/* <Route path="/documents" component={DocumentsHome}/> */}
+                                                <Route path="/profile" render={(props) => <UserProfile
+                                                    user={this.state.user} {...props}/>}/>
+                                                <Route path="/users" component={UsersList}/>
+                                                <Route exact path="/upload-file" render={(props) => <FileUploader
+                                                    user={this.state.user} {...props}/>}/>
+                                                {/* <Route exact path="/download-file" component={FileDownloader}/> */}
+                                                {/*<Route exact path="/user-administration" component={UserAdministration}/>*/}
+                                                <Route exact path="/user-administration-list"
+                                                       component={UserAdminisrationList}/>
+                                                <Route path="/settings"
+                                                       render={(props) => <Settings
+                                                           user={this.state.user} {...props}/>}/>
+                                                {/*<Route exact path="/user-administration"*/}
+                                                {/*render={(props) => <UserAdministration {...props}  />}/>*/}
+                                                <Route exact path="/settings-test"
+                                                       render={(props) => <SettingsGroupsTypes
+                                                           user={this.state.user} {...props}/>}/>
 
-                                            <Route exact path="/user-registration" component={NewUserForm}/>
-                                            <Route exact path="/logout" render={() => this.handleLogOut()}/>
-                                            <Route exact path="/statistics" component={Charts}/>
-                                            {/* <Route exact path="/zip"
+                                                <Route exact path="/user-registration" component={NewUserForm}/>
+                                                <Route exact path="/logout" render={() => this.handleLogOut()}/>
+                                                <Route exact path="/statistics" component={Charts}/>
+                                                {/* <Route exact path="/zip"
                                                    render={(props) => <DownloadZip 
                                                    user={this.state.user} {...props}/>}/>
                                              */}
-                                            <Route component={NotFound}/>
+                                                <Route component={NotFound}/>
 
-                                            {/*<Route  exact path="/settings-test"*/}
-                                            {/*render={(props) => <SettingsGroupsTypes user={this.state.user} {...props}/>}/>*/}
+                                                {/*<Route  exact path="/settings-test"*/}
+                                                {/*render={(props) => <SettingsGroupsTypes user={this.state.user} {...props}/>}/>*/}
 
 
-                                        </Switch>
+                                            </Switch>
 
-                                </div>
-                            </main>
+                                        </div>
+                                    </main>
 
-                            {/*<div className="footer">*/}
-                            {/*<p>Footer</p>*/}
-                            {/*</div>*/}
+                                    {/*<div className="footer">*/}
+                                    {/*<p>Footer</p>*/}
+                                    {/*</div>*/}
 
-                        </React.Fragment>
+                                </React.Fragment>
                     )}
                     />
                 </Router>
