@@ -21,6 +21,7 @@ class DownloadZip extends Component {
         fetch("http://localhost:8181/api/files/zip")
             .then(response => {
                 console.log(response)
+                console.log(response.url)
                 // const fileNameHeader = "x-suggested-filename";
                 // const suggestedFileName = response.headers[fileNameHeader];
                 // const effectiveFileName = (suggestedFileName === undefined
@@ -31,7 +32,12 @@ class DownloadZip extends Component {
                 // Let the user save the file.
 
                 // const suggestedFileName = "duomenys.zip";
-                FileSaver.saveAs(response.url, "suggestedFileName");
+
+                // var blob = new Blob([response.url], {type: "zip"});
+                //  FileSaver.saveAs("http://localhost:8181/api/files/zip", "suggestedFileName");
+                 FileSaver.saveAs(response.url, "suggestedFileName");
+                // FileSaver.saveAs(response.url, "suggestedFileName");
+              
 
 
             }).catch((response) => {
