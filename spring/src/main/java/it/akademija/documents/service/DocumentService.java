@@ -1,7 +1,6 @@
 package it.akademija.documents.service;
 
 
-import it.akademija.LoggingController;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
@@ -47,7 +46,7 @@ public class DocumentService {
 //    private Logger LOGGER;
 
 //    private static Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
-    Logger LOGGER = LoggerFactory.getLogger(LoggingController.class);
+    Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
     @Transactional
     public Set<DocumentServiceObject> getDocumentsByState(DocumentState state) {
         LOGGER.debug("getDocumentsByState");

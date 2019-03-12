@@ -2,7 +2,6 @@ package it.akademija.users.service;
 
 
 
-import it.akademija.LoggingController;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
@@ -56,7 +55,6 @@ public class UserService implements UserDetailsService {
 //    @Autowired
 //    private Logger LOGGER;
 //
-//    Logger LOGGER = LoggerFactory.getLogger(LoggingController.class);
 private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     public UserService() {
