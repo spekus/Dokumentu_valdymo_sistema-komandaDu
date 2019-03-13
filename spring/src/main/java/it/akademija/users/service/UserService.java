@@ -201,16 +201,6 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
             userRepository.deleteUserByUsername(username);
     }
 
-//    @Transactional
-//    public UserServiceObject getUserByLastname(String lastname) {
-//        LOGGER.info("getUserByLastname, returning user by lastname");
-//        UserEntity userEntity = userRepository.findUserByLastname(lastname);
-//        if (userEntity != null) {
-//            return SOfromEntity(userEntity);
-//        }
-//        return null;
-//    }
-
     @Transactional
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         LOGGER.info("loadUserByUsername");
@@ -252,104 +242,64 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
 
     @Transactional
-    public Page<DocumentServiceObject> getAllUserDocuments(String userName, Pageable pageFormatInfo) {
+    public Page<DocumentServiceObject> getAllUserDocuments(String userName, Pageable pageFormatDetails) {
         LOGGER.info("getAllUserDocuments");
         List<DocumentServiceObject> allUserDocuments = document.getDocumentsBy(userName);
-
-        //paginimo logika
-        List<DocumentServiceObject> filteredList= new ArrayList<>();
-        int possition = pageFormatInfo.getPageNumber() * pageFormatInfo.getPageSize();
-        int limit = possition + pageFormatInfo.getPageSize();
-        if(limit > allUserDocuments.size()){
-            // checks that limit set by paging is not bigger than total element count
-            limit = allUserDocuments.size();
-        }
-        for(; possition < (limit); possition++){
-            filteredList.add(allUserDocuments.get(possition));
-        }
-        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(filteredList,
-                pageFormatInfo, allUserDocuments.size());
+        PageImpl<DocumentServiceObject> pagedData = document.getPage(pageFormatDetails, allUserDocuments);
         LOGGER.info("All documents of user - " +userName + " are being returned"+
-                " , returning page - " +pageFormatInfo.getPageNumber() +"\n" + " size of page is "
-                + pageFormatInfo.getPageSize() + " Full ammount of elements is - " + allUserDocuments.size());
-        return pageData;
+                " , returning page - " +pageFormatDetails.getPageNumber() +"\n" + " size of page is "
+                + pageFormatDetails.getPageSize() + " Full ammount of elements is - " + allUserDocuments.size());
+        return pagedData;
 
     }
     @Transactional
-    public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {
+    public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState documentState, Pageable pageFormatDetails) {
         LOGGER.info("getUserDocumentsByState");
-        Set<DocumentEntity> documentEntitySet = userRepository.findByUsername(userName).getDocumentEntities();
-
-
-        // konvertuojam dokumentu entity i objektus. deje reik konveruot visus, nes kitaip neveiks rikiavimas
-        List<DocumentServiceObject> documentServiceObjects = documentEntitySet.stream()
-                .filter(p -> p.getDocumentState().equals(state))
-                .map(documentEntity -> document.SOfromEntity(documentEntity))
-                .collect(Collectors.toList());
-        // sortinam pagal title, kad galetume rikiuoti
-        Collections.sort(documentServiceObjects);
-
-
-        //paginimo logika
-        List<DocumentServiceObject> filteredList= new ArrayList<>();
-        int possition = page * size;
-        int limit = possition + size;
-        if(limit > documentServiceObjects.size()){
-            // checks that limit set by paging is not bigger than total element count
-            limit = documentServiceObjects.size();
-        }
-        for(; possition < (limit); possition++){
-            filteredList.add(documentServiceObjects.get(possition));
-        }
-
-        Pageable pageInformation =
-                PageRequest.of(page, size);
-
-        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(filteredList,
-                pageInformation, documentServiceObjects.size());
-
-        LOGGER.info(" documents of user - " +userName + " with document state - " + state +" are being returned "+
-                " , returning page - " +page +  "\n" + " size of page is " + size + " size of total data points  is - " + pageData.getTotalElements());
-        return pageData;
+        List<DocumentServiceObject> filteredDocuments = document.getDocumentsBy(userName , documentState);
+        PageImpl<DocumentServiceObject> pagedData = document.getPage(pageFormatDetails, filteredDocuments);
+        LOGGER.info(" documents of user - " +userName + " with document state - " + documentState +" are being returned "+
+                " , returning page - " +pageFormatDetails.getPageNumber() +  "\n" + " size of page is "
+                + pageFormatDetails.getPageSize() + " size of total data points  is - " + pagedData.getTotalElements());
+        return pagedData;
     }
 
 
 
     @Transactional
-    public Page<DocumentServiceObject> getDocumentsToApprove(String userName, Pageable sortByTitle) {
+    public Page<DocumentServiceObject> getDocumentsToApprove(String userName, Pageable pageFormatDetails) {
         LOGGER.info("getDocumentsToApprove");
 
         List<String> documentTypesUserCanAproove =
                 document.getDocumentTypesUserCanAprooveBy(userName);
         List<DocumentServiceObject> documentsUserCanAproove =
-                document.getDocumentsBy(documentTypesUserCanAproove, sortByTitle);
+                document.getDocumentsBy(documentTypesUserCanAproove, pageFormatDetails);
         // we need total ammount of documents to be displayed for pagination to work, thus we need second query.
         long documentCount = documentRepository.getDocumentsToApproveSize(documentTypesUserCanAproove);
 
         PageImpl<DocumentServiceObject> pagedData = new PageImpl<>(documentsUserCanAproove,
-                sortByTitle, documentCount);
+                pageFormatDetails, documentCount);
         LOGGER.info(" documents for approval of user - " +userName + " are being returned "+
-                " , returning page - " +sortByTitle.getPageNumber() +"\n" + " size of page is "
-                + sortByTitle.getPageSize() + " size of total data points  is - " + pagedData.getTotalElements());
+                " , returning page - " +pageFormatDetails.getPageNumber() +"\n" + " size of page is "
+                + pageFormatDetails.getPageSize() + " size of total data points  is - " + pagedData.getTotalElements());
 
         return pagedData;
     }
 
     @Transactional
-    public Page<DocumentServiceObject> getDocumentsToApprove(String userName,Pageable sortByTitle, String filteringCriteria) {
+    public Page<DocumentServiceObject> getDocumentsToApprove(String userName,Pageable pageFormatDetails, String filteringCriteria) {
         LOGGER.info("getDocumentsToApproveFiltered");
 
-        List<String> documentTypesUserCanAproove =
-                document.getDocumentTypesUserCanAprooveBy(userName);
-        List<DocumentServiceObject> documentsUserCanAproove =
-                document.getDocumentsBy(documentTypesUserCanAproove, sortByTitle, filteringCriteria);
-        long filteredDocumentCount = documentRepository.getDocumentsToApproveFilteredSize(documentTypesUserCanAproove
+        List<String> documentTypesUserCanAproove = document.getDocumentTypesUserCanAprooveBy(userName);
+        List<DocumentServiceObject> documentsUserCanAproove = document.getDocumentsBy(documentTypesUserCanAproove
+                , pageFormatDetails, filteringCriteria);
+        long filteredDocumentsCount = documentRepository.getDocumentsToApproveFilteredSize(documentTypesUserCanAproove
                 ,filteringCriteria);
-        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(documentsUserCanAproove,
-                sortByTitle, filteredDocumentCount);
-        LOGGER.info(" filtering document of user - " +userName + " according to filteringCriteria - " + filteringCriteria +" search results are being returned "+
-                " , page - " +sortByTitle.getPageNumber() +"\n" + " size of page is "
-                + sortByTitle.getPageSize() + " size of total data points  is - " + pageData.getTotalElements());
+        PageImpl<DocumentServiceObject> pageData = new PageImpl<>(documentsUserCanAproove,
+                pageFormatDetails, filteredDocumentsCount);
+        LOGGER.info(" filtering document of user - " +userName + " according to filteringCriteria - "
+                + filteringCriteria +" search results are being returned "+
+                " , page - " +pageFormatDetails.getPageNumber() +"\n" + " size of page is "
+                + pageFormatDetails.getPageSize() + " size of total data points  is - " + pageData.getTotalElements());
 
         return pageData;
     }

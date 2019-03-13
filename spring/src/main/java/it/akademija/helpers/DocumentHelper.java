@@ -1,5 +1,6 @@
 package it.akademija.helpers;
 
+import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
@@ -8,13 +9,11 @@ import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.files.service.FileServiceObject;
 import it.akademija.users.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -92,9 +91,9 @@ public class DocumentHelper {
     }
 
 
-    public List<DocumentServiceObject> getDocumentsBy(List<String> documentTypesForAproval, Pageable sortByTitle) {
+    public List<DocumentServiceObject> getDocumentsBy(List<String> documentTypesForAproval, Pageable pageFormatDetails) {
         List<DocumentEntity> documentsByType =
-                documentRepository.getDocumentsToApprove(documentTypesForAproval, sortByTitle);
+                documentRepository.getDocumentsToApprove(documentTypesForAproval, pageFormatDetails);
         return ConvertToServiceObjListWithoutFiles(documentsByType);
     }
     //use this if you want to get all documents of the type and filter them by username or document type
@@ -105,9 +104,39 @@ public class DocumentHelper {
         return ConvertToServiceObjListWithoutFiles(documentsByTypeAndCriteria);
     }
     public List<DocumentServiceObject> getDocumentsBy(String userName) {
-        Set<DocumentEntity> documentEntitySet = userRepository.findByUsername(userName).getDocumentEntities();
-        List<DocumentServiceObject> documentServiceObjects = ConvertToServiceObjList(documentEntitySet);
-        Collections.sort(documentServiceObjects);
-        return documentServiceObjects;
+        Set<DocumentEntity> allUserDocuments = userRepository.findByUsername(userName).getDocumentEntities();
+        List<DocumentServiceObject> convertedUserDocuments = ConvertToServiceObjList(allUserDocuments);
+        Collections.sort(convertedUserDocuments);
+        return convertedUserDocuments;
+    }
+    public List<DocumentServiceObject> getDocumentsBy(String userName, DocumentState documentState) {
+        Set<DocumentEntity> allUserDocuments = userRepository.findByUsername(userName).getDocumentEntities();
+        List<DocumentServiceObject> filteredDocuments = filterDocumentsByState(allUserDocuments, documentState);
+        Collections.sort(filteredDocuments);
+        return filteredDocuments;
+    }
+
+    private List<DocumentServiceObject> filterDocumentsByState(Set<DocumentEntity> userDocuments, DocumentState documentState) {
+        return userDocuments.stream()
+                .filter(p -> p.getDocumentState().equals(documentState))
+                .map(this::SOfromEntity).sorted().collect(Collectors.toList());
+    }
+    //TO BE REWORKED
+    public PageImpl<DocumentServiceObject> getPage(Pageable pageFormatDetails, List<DocumentServiceObject> documentServiceObjects) {
+        List<DocumentServiceObject> filteredList= new ArrayList<>();
+        int possition = pageFormatDetails.getPageNumber() * pageFormatDetails.getPageSize();
+        int limit = possition + pageFormatDetails.getPageSize();
+        if(limit > documentServiceObjects.size()){
+            // checks that limit set by paging is not bigger than total element count
+            limit = documentServiceObjects.size();
+        }
+        for(; possition < (limit); possition++){
+            filteredList.add(documentServiceObjects.get(possition));
+        }
+        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(filteredList,
+                pageFormatDetails, documentServiceObjects.size());
+        return pageData;
+
+
     }
 }

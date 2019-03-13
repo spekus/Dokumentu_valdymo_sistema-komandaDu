@@ -55,10 +55,11 @@ public class UserController {
                                                    @Valid @PathVariable DocumentState state,
                                                    @RequestParam("page") int page,
                                                    @RequestParam("size") int size )throws IllegalArgumentException {
-
+        Pageable pagingInformation =
+                PageRequest.of(page, size);
         try {
 //            return userService.getUserDocumentsByState(authentication.getName(), state);
-            return userService.getUserDocumentsByState(authentication.getName(), state, page, size);
+            return userService.getUserDocumentsByState(authentication.getName(), state, pagingInformation);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
