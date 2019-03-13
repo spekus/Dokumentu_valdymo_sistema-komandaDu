@@ -77,8 +77,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .authenticationEntryPoint(restAuthenticationEntryPoint)
                     .and()
                 .authorizeRequests()
-                    .antMatchers("/api/**")
-                    .authenticated();
+                .antMatchers("/api/**")
+                .access("not(hasRole('SUSPENDED'))");
     }
 
     @Primary
