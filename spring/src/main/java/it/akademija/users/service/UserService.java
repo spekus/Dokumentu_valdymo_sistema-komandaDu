@@ -390,8 +390,6 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
                 .sorted(Comparator.comparing(DocumentServiceObject::getType))
                 .collect(Collectors.toList());
 
-        // sortinam pagal title, kad galetume rikiuoti
-
 
         //paginimo logika
         List<DocumentServiceObject> filteredList= new ArrayList<>();
@@ -431,9 +429,11 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
         List<DocumentServiceObject> documentServiceObjects = documentEntitySet.stream()
                 .filter(p -> p.getDocumentState().equals(state))
                 .map(documentEntity -> SOfromEntity(documentEntity))
+                .sorted(Comparator.comparing(DocumentServiceObject::getTitle))
+                .sorted(Comparator.comparing(DocumentServiceObject::getType))
                 .collect(Collectors.toList());
         // sortinam pagal title, kad galetume rikiuoti
-        Collections.sort(documentServiceObjects);
+
 
         //paginimo logika
         List<DocumentServiceObject> filteredList= new ArrayList<>();

@@ -9,7 +9,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DocumentServiceObject implements Comparable<DocumentServiceObject>  {
+public class DocumentServiceObject  {
 
     private String documentIdentifier;
     private String author;
@@ -216,11 +216,6 @@ public class DocumentServiceObject implements Comparable<DocumentServiceObject> 
         this.filesAttachedToDocument = filesAttachedToDocument;
     }
 
-
-    @Override
-    public int compareTo(DocumentServiceObject o) {
-        return this.getTitle().compareTo(o.getTitle());
-    }
 
 }
 
