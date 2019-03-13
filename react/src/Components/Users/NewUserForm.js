@@ -223,7 +223,7 @@ class NewUserForm extends Component {
                                     Slaptažodis privalo būti 8-20 simbolių ilgio.
                                 </small>
                                 <div className="text-center">
-                                    <button type="submit" className="btn btn-info my-4">Išsaugoti</button>
+                                    <button type="submit" className="btn button1 my-4">Išsaugoti</button>
                                 </div>
                             </form>
 

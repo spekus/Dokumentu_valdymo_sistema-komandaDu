@@ -178,7 +178,7 @@ class AugisDokumentas extends Component {
             <React.Fragment>
                 <div className='container'>
                     <div className='p-3 mb-5 bg-white rounded borderMain' align="center">
-                        <table className='table table-bordered col-md-7'>
+                        <table className='table table-bordered col-md-12 table-hover'>
                             <thead>
                             <tr>
                                 <th colSpan='2' className="text-center table-secondary">DOKUMENTO DETALĖS</th>

@@ -32,8 +32,7 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
     public List<DocumentEntity> findByAuthor(String Author);
    public Long countByAuthor(String Author);
 
-//    @Query("select dta From DocumentEntity dta " +
-//            "where dta.documentState='SUBMITTED' AND dta.type IN:types")
+
     List<DocumentEntity> getDocumentsToApprove(@Param("types") List<String> types, Pageable pageable);
 
     //    @Query("select count(id) From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types")

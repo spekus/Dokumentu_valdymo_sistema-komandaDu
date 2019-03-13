@@ -9,10 +9,15 @@ import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
+import org.springframework.data.domain.Sort;
 
 import javax.swing.text.Document;
 
-import static org.apache.commons.lang3.Range.is;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -92,6 +97,20 @@ public class DocumentTypeServiceTest {
         documentTypeService.deleteDocumentType(anyString());
         //then
         verify(documentTypeRepository, times(1)).deleteDocumentTypeByTitle(anyString());
+    }
+
+    @Test
+    public void findAll() {
+        //given
+        List<DocumentTypeEntity> types = new ArrayList<>();
+        types.add(new DocumentTypeEntity("1"));
+        when(documentTypeRepository.findAll()).thenReturn(types);
+        //when
+        Set result=documentTypeService.getAllDocumentTypes();
+        //then
+        assertTrue(result.iterator().next() instanceof DocumentTypeServiceObject);
+
+        verify(documentTypeRepository, atLeastOnce()).findAll();
     }
 }
 

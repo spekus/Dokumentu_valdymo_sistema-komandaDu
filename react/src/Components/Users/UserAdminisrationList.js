@@ -35,9 +35,10 @@ class UserAdminisrationList extends Component {
     }
 
     getFilteredUsersByCriteria = (criteria) => {
-    this.setState({lastSearchCriteria:criteria}) ;
-    document.getElementById('userListTable').style.visibility = 'visible';
-    axios.get(
+        this.setState({searchField: ''});
+        this.setState({lastSearchCriteria: criteria});
+        document.getElementById('userListTable').style.visibility = 'visible';
+        axios.get(
             '/api/users/criteria', {
                 params: {
                     criteria: criteria
@@ -100,7 +101,7 @@ class UserAdminisrationList extends Component {
                 .filter(group => group.role === 'ROLE_SUSPENDED')
                 .map(group => group.title);
             console.log("grouptitle" + grouptitle);
-            axios.put('/api/usergroups/'+ grouptitle +'/remove-person', null, {
+            axios.put('/api/usergroups/' + grouptitle + '/remove-person', null, {
                 params: {
                     username: user.username
                 }
@@ -143,7 +144,8 @@ class UserAdminisrationList extends Component {
 
     handleGroupsChanged = () => {
         this.loadUserToEdit(this.state.userBeingEdited.username);
-        this.getFilteredUsers();
+        // this.getFilteredUsers();
+        this.getFilteredUsersByCriteria(this.state.lastSearchCriteria);
     }
 
     handleKeyPress = (event) => {
@@ -154,14 +156,11 @@ class UserAdminisrationList extends Component {
     }
 
 
-
     render() {
         return (
             <React.Fragment>
                 <div className="container">
-                    {/*<h4 className="my-4 mainUA">*/}
-                    {/*Naudotojų administravimas*/}
-                    {/*</h4>*/}
+
                     <div className='mainelement borderMain' style={{'width': '100%'}}>
 
 
@@ -232,12 +231,18 @@ class UserAdminisrationList extends Component {
                                         <button className="btn button1 btn-sm ml-2"
                                                 onClick={() => this.handleChangeUserGroup(user)}>Grupės
                                         </button>
-                                        <button className="btn button1 btn-sm ml-2"
-                                                onClick={() => this.suspendUser(user)}>Blokuoti
-                                        </button>
-                                        <button className="btn button1 btn-sm ml-2"
-                                                onClick={() => this.removeUserFromGroup(user)}>Atblokuoti
-                                        </button>
+
+                                        {user.userGroups.map(group =>
+                                            group.role === 'ROLE_SUSPENDED'?
+                                                <button className="btn button1 btn-sm ml-2"
+                                                        onClick={() => this.removeUserFromGroup(user)}>Atblokuoti
+                                                </button>
+                                                :
+                                                <button className="btn button1 btn-sm ml-2"
+                                                        onClick={() => this.suspendUser(user)}>Blokuoti
+                                                </button>
+                                        )}
+
                                     </td>
                                 </tr>
                             ))}
