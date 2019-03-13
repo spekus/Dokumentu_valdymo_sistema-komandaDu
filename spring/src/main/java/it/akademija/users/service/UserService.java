@@ -236,14 +236,14 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     }
     @Transactional
     public List<DocumentEntity> getAllUserDocuments(String userName) {
-        LOGGER.info("getAllUserDocuments, THIS METHOD SHOULD NOT BE USED");
+        LOGGER.info("getAllUserDocuments, with one constructor");
         return documentRepository.findByAuthor(userName);
     }
 
 
     @Transactional
     public Page<DocumentServiceObject> getAllUserDocuments(String userName, Pageable pageFormatDetails) {
-        LOGGER.info("getAllUserDocuments");
+        LOGGER.info("getAllUserDocuments with 2 constructors");
         List<DocumentServiceObject> allUserDocuments = document.getDocumentsBy(userName);
         PageImpl<DocumentServiceObject> pagedData = document.getPage(pageFormatDetails, allUserDocuments);
         LOGGER.info("All documents of user - " +userName + " are being returned"+
