@@ -5,10 +5,11 @@ import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileServiceObject;
 
 import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DocumentServiceObject implements Comparable  {
+public class DocumentServiceObject implements Comparable<DocumentServiceObject>  {
 
     private String documentIdentifier;
     private String author;
@@ -214,14 +215,12 @@ public class DocumentServiceObject implements Comparable  {
     public void setFilesAttachedToDocument(Set<FileServiceObject> filesAttachedToDocument) {
         this.filesAttachedToDocument = filesAttachedToDocument;
     }
+
+
     @Override
-    public int compareTo(Object o) {
-        DocumentServiceObject compareTo =(DocumentServiceObject) o;
-        return this.getTitle().compareTo(compareTo.getTitle());
+    public int compareTo(DocumentServiceObject o) {
+        return this.getTitle().compareTo(o.getTitle());
     }
 
-//    @Override
-//    public int compareTo(Object o) {
-//        return 0;
-//    }
 }
+

@@ -169,18 +169,19 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
                 documentTypeEntity.getTitle()).collect(Collectors.toList());
         // create pageable settings, so that later query knows which part of database to search
         Pageable sortedByTitleDesc =
-                PageRequest.of(page, size, Sort.by("title").ascending());
+                PageRequest.of(page, size, Sort.by("title").descending());
 
         //send query to get all needed document
         List<DocumentEntity> allDocumentsToApprove =
                 documentRepository.getDocumentsToApprove(documentTypesForAproval, sortedByTitleDesc);
+
+
         // we need total ammount of documents to be displayed for pagination to work, thus we need second query.
         // this part is not efficient, would anyone know how to replace?
         long getTotalSize = documentRepository.getDocumentsToApproveSize(documentTypesForAproval);
 
         //conversion from one type to another
-        List<DocumentServiceObject> listOfDocumentServiceObject =
-                allDocumentsToApprove
+        List<DocumentServiceObject> listOfDocumentServiceObject =allDocumentsToApprove
                         .stream()
                         .map(documentEntity -> SOfromEntityWithoutFiles(documentEntity))
                         .collect(Collectors.toList());
@@ -380,13 +381,17 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
         // daug mazesnis nei duombazeje esanciu visu dokumentu kiekis.
         // pirma surandam useri ir istraukiam prie jo prisegtus dokumentus
         Set<DocumentEntity> documentEntitySet = userRepository.findByUsername(userIdentifier).getDocumentEntities();
+        //Set<DocumentEntity> documentEntitySet = userRepository.findDocsByUsername(userIdentifier);
 
         // konvertuojam dokumentu entity i objektus. deje reik konveruot visus, nes kitaip neveiks rikiavimas
         List<DocumentServiceObject> documentServiceObjects = documentEntitySet.stream()
                 .map(documentEntity -> SOfromEntity(documentEntity))
+                .sorted(Comparator.comparing(DocumentServiceObject::getTitle))
+                .sorted(Comparator.comparing(DocumentServiceObject::getType))
                 .collect(Collectors.toList());
+
         // sortinam pagal title, kad galetume rikiuoti
-        Collections.sort(documentServiceObjects);
+
 
         //paginimo logika
         List<DocumentServiceObject> filteredList= new ArrayList<>();
