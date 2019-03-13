@@ -99,8 +99,9 @@ public class DocumentHelper {
     //use this if you want to get all documents of the type and filter them by username or document type
     public List<DocumentServiceObject> getDocumentsBy(List<String> documentTypesForAproval
             , Pageable sortByTitle , String filteringCriteria) {
-                List<DocumentEntity> documentsByTypeAndCriteria = documentRepository.getDocumentsToApproveByCriteria(
-                documentTypesForAproval, sortByTitle, filteringCriteria);
+        String criteriaInLowerCase = filteringCriteria.toLowerCase();
+        List<DocumentEntity> documentsByTypeAndCriteria = documentRepository.getDocumentsToApproveByCriteria(
+                documentTypesForAproval, sortByTitle, criteriaInLowerCase);
         return ConvertToServiceObjListWithoutFiles(documentsByTypeAndCriteria);
     }
     public List<DocumentServiceObject> getDocumentsBy(String userName) {
