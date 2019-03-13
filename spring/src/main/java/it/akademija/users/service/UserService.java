@@ -148,8 +148,9 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     @Transactional
     public List<UserServiceObject> getUserByCriteria(String criteria) {
         LOGGER.info("getUserByCriteria");
-        if (userRepository.findByUsernameOrLastname(criteria) != null) {
-            List<UserServiceObject> userList = userRepository.findByUsernameOrLastname(criteria)
+        String criteriaInLowerCaps=criteria.toLowerCase();
+        if (userRepository.findByUsernameOrLastname(criteriaInLowerCaps) != null) {
+            List<UserServiceObject> userList = userRepository.findByUsernameOrLastname(criteriaInLowerCaps)
                     .stream()
                     .map(userEntity -> SOfromEntity(userEntity))
                     .collect(Collectors.toList());
@@ -158,6 +159,7 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
         }
         throw new IllegalArgumentException("No Users with criteria - " + criteria + " have been found");
     }
+
 
 
     @Transactional

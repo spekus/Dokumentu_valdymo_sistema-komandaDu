@@ -107,16 +107,6 @@ public class DocumentServiceObject implements Comparable<DocumentServiceObject> 
         this.approver = approver;
     }
 
-    //    //What information document approver gets from database when he already approved/rejected the document. ??
-//    public DocumentServiceObject(String author, String title, String type, String description, LocalDateTime postedDate
-//    ) {
-//        this.author=author;
-//        this.title = title;
-//        this.type = type;
-//        this.description = description;
-//        this.postedDate=postedDate;
-//
-//    }
 
 
     public String getAuthor() {
@@ -215,12 +205,11 @@ public class DocumentServiceObject implements Comparable<DocumentServiceObject> 
     public void setFilesAttachedToDocument(Set<FileServiceObject> filesAttachedToDocument) {
         this.filesAttachedToDocument = filesAttachedToDocument;
     }
-
-
     @Override
     public int compareTo(DocumentServiceObject o) {
         return this.getTitle().compareTo(o.getTitle());
     }
+
 
 }
 

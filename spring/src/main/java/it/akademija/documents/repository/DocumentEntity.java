@@ -26,7 +26,7 @@ import java.util.*;
                 query = "select count(id) From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types"),
         @NamedQuery(name="DocumentEntity.getDocumentsToApproveByCriteria",
         query="select dta From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types " +
-                "AND (dta.author=:criteria OR dta.type=:criteria)"),
+                "AND (lower(dta.author)=:criteria OR lower(dta.type)=:criteria)"),
         @NamedQuery(name="DocumentEntity.getDocumentsToApproveFilteredSize",
         query="select count(id) From DocumentEntity dta where dta.documentState='SUBMITTED' AND dta.type IN:types " +
         "AND (dta.author=:criteria OR dta.type=:criteria)")
