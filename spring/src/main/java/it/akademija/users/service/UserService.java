@@ -147,8 +147,9 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     @Transactional
     public List<UserServiceObject> getUserByCriteria(String criteria) {
         LOGGER.info("getUserByCriteria");
-        if (userRepository.findByUsernameOrLastname(criteria) != null) {
-            List<UserServiceObject> userList = userRepository.findByUsernameOrLastname(criteria)
+        String criteriaInLowerCaps=criteria.toLowerCase();
+        if (userRepository.findByUsernameOrLastname(criteriaInLowerCaps) != null) {
+            List<UserServiceObject> userList = userRepository.findByUsernameOrLastname(criteriaInLowerCaps)
                     .stream()
                     .map(userEntity -> SOfromEntity(userEntity))
                     .collect(Collectors.toList());
@@ -198,6 +199,8 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     public Page<DocumentServiceObject> getDocumentsToApproveFiltered(String userName, Integer page, Integer size, String criteria) {
         LOGGER.info("getDocumentsToApproveFiltered");
 
+        String criteriaInLowerCase=criteria.toLowerCase();
+
         List<DocumentTypeEntity> documentTypeEntityList =
                 documentTypeRepository.getDocumentTypesToApproveByUsername(userName);
         List<String> documentTypesForAproval = documentTypeEntityList.stream().map((documentTypeEntity) ->
@@ -206,7 +209,7 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
                 PageRequest.of(page, size, Sort.by("title").ascending());
 
         List<DocumentEntity> documentsToApproveFiltered = documentRepository.getDocumentsToApproveByCriteria(documentTypesForAproval,
-                sortedByTitleDesc, criteria);
+                sortedByTitleDesc, criteriaInLowerCase);
 
         List<DocumentServiceObject> listOfDocumentServiceObject =
                 documentsToApproveFiltered
@@ -214,7 +217,7 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
                         .map(documentEntity -> SOfromEntityWithoutFiles(documentEntity))
                         .collect(Collectors.toList());
 
-        long filteredDocumentsSize=documentRepository.getDocumentsToApproveFilteredSize(documentTypesForAproval,criteria);
+        long filteredDocumentsSize=documentRepository.getDocumentsToApproveFilteredSize(documentTypesForAproval,criteriaInLowerCase);
 
         PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
                 sortedByTitleDesc, filteredDocumentsSize);
