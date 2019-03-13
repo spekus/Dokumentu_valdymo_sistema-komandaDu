@@ -33,7 +33,7 @@ class App extends React.Component {
         loading: true // reiskia kad reikia rodyti Spinner elementa
     };
 
-    menuItems = [
+    menuItemsDefault = [
         {iconClass: 'fa fw fa-home', path: '', text: 'Pradžia'},
         {iconClass: 'fa fw fa-id-card', path: 'profile', text: 'Profilis'},
         // {iconClass: 'fa fw fa-list', path: 'dashboard/documents/all', text: 'Dokumentai'},
@@ -46,6 +46,8 @@ class App extends React.Component {
     menuItemsStatistics = [
         {iconClass: 'far fa-chart-bar', path: 'statistics', text: 'Statistika'}
     ]
+
+    menuItems = [];
 
     sideBarToggled = (isOpen) => {
         this.setState({sideBarIsOpen: isOpen});
@@ -69,6 +71,7 @@ class App extends React.Component {
                     let isAdmin = false;
                     let isUser = false;
                     let isSuspended = false;
+                    this.menuItems = this.menuItemsDefault;
 
                     user.userGroups.forEach(group => {
                         if (group.role === "ROLE_ADMIN") {
@@ -83,7 +86,7 @@ class App extends React.Component {
                             isSuspended = true;
                         }
                         if (group.typesToApprove.length > 0) {
-                             this.menuItems = this.menuItems.concat(this.menuItemsStatistics)
+                             this.menuItems = this.menuItemsDefault.concat(this.menuItemsStatistics)
                         }
                     })
 
