@@ -86,7 +86,7 @@ class UserAdminisrationList extends Component {
     suspendUser = (user) => {
         axios.put('/api/usergroups/suspend-user', null, {params: {username: user.username}})
             .then(response => {
-                this.getFilteredUsers();
+                this.getFilteredUsersByCriteria(this.state.lastSearchCriteria);
             })
             .catch(error => {
                 console.log("Error from suspendUser - " + error)
@@ -107,7 +107,7 @@ class UserAdminisrationList extends Component {
                 }
             })
                 .then(response => {
-                    this.getFilteredUsers();
+                    this.getFilteredUsersByCriteria(this.state.lastSearchCriteria);
                 })
                 .catch(error => {
                     console.log("Error from removeUserFromGroup - " + error);
@@ -214,6 +214,7 @@ class UserAdminisrationList extends Component {
                             </thead>
                             <tbody>
                             {this.state.userlist.map(user => (
+
                                 <tr key={user.username}>
                                     <td>{user.username}</td>
                                     <td>{user.firstname}</td>
@@ -232,16 +233,20 @@ class UserAdminisrationList extends Component {
                                                 onClick={() => this.handleChangeUserGroup(user)}>Grupės
                                         </button>
 
-                                        {user.userGroups.map(group =>
-                                            group.role === 'ROLE_SUSPENDED'?
-                                                <button className="btn button1 btn-sm ml-2"
-                                                        onClick={() => this.removeUserFromGroup(user)}>Atblokuoti
-                                                </button>
-                                                :
+
+
+                                        {user.userGroups.map((group, index) => (group.role === 'ROLE_SUSPENDED') ?
+                                            <button className="btn button1 btn-sm ml-2"
+                                                    onClick={() => this.removeUserFromGroup(user)}>Atblokuoti
+                                            </button>
+                                            :
+                                            ((index === 0) ?
                                                 <button className="btn button1 btn-sm ml-2"
                                                         onClick={() => this.suspendUser(user)}>Blokuoti
                                                 </button>
-                                        )}
+                                            : '' ))
+                                        }
+
 
                                     </td>
                                 </tr>
