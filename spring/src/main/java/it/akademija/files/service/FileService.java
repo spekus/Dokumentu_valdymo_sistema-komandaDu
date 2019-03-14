@@ -80,9 +80,9 @@ public class FileService {
     //Finds file in database and converts it to object
     public FileServiceObject findFile(String identifier) {
 
-        if (identifier.isEmpty() || identifier == null || fileRepository.getFileByIdentifier(identifier) == null) {
-            throw new IllegalArgumentException("ERROR no valid File identifier provided!!");
-        }
+//        if (identifier.isEmpty() || identifier == null || fileRepository.getFileByIdentifier(identifier) == null) {
+//            throw new IllegalArgumentException("ERROR no valid File identifier provided!!");
+//        }
         if (identifier != null && !identifier.isEmpty()) {
             FileEntity fileEntity = fileRepository.getFileByIdentifier(identifier);
             FileServiceObject fileServiceObject = new FileServiceObject();
@@ -113,11 +113,6 @@ public class FileService {
         FileEntity fileEntity =
                 findFileEntity(fileIdentifier);
         documentService.addFileToDocument(documentIdentifier, fileEntity);
-    }
-
-
-    public ArrayList<String> getAllFileIdentifiers(String documentIdentifier) {
-        return null;
     }
 
 

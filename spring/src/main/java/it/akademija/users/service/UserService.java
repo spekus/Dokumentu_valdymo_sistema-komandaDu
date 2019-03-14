@@ -2,6 +2,7 @@ package it.akademija.users.service;
 
 
 
+import it.akademija.auth.AppRoleEnum;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
@@ -292,9 +293,13 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
         user.getUserGroups().forEach(group -> {
             authorities.add(new SimpleGrantedAuthority(group.getRole().toString()));
         });
+        boolean suspended=false;
+        if(user.getUserGroups().contains(userGroupRepository.findGroupByRole(AppRoleEnum.ROLE_SUSPENDED))){
+            suspended=true;
 
+        }
         UserDetails userDetails = new org.springframework.security.core.userdetails.
-                User(user.getUsername(), user.getPassword(), authorities);
+                User(user.getUsername(), user.getPassword(), true, true,true,!suspended,authorities);
         LOGGER.info("user with username - " + s + " details and security information is being returned");
         return userDetails;
     }

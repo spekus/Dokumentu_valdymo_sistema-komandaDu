@@ -280,28 +280,28 @@ class Charts extends Component {
         console.log("renderio "+this.state.dropDownValue)
         if(this.state.dropDownValue===1) {
             var chartApproved = <MDBContainer>
-                <h5>Patvirtintų dokumentų sąrašas</h5>
+                <h5>Patvirtintų dokumentų statistika</h5>
                 <Polar data={this.state.dataPolarApproved} options={{responsive: true}}/>
             </MDBContainer>
         }
 
         if(this.state.dropDownValue===2) {
             var chartRejected = <MDBContainer>
-                <h5>Atmestų dokumentų sąrašas</h5>
+                <h5>Atmestų dokumentų statistika</h5>
                 <Polar data={this.state.dataPolarRejected} options={{responsive: true}}/>
             </MDBContainer>
         }
 
         if(this.state.dropDownValue===3){
         var chartPosted=<MDBContainer>
-            <h5>Pateiktų dokumentų sąrašas</h5>
+            <h5>Pateiktų dokumentų statistika</h5>
             <Polar data={this.state.dataPolarPosted} options={{ responsive: true }} />
         </MDBContainer>
         }
 
          if(this.state.dropDownValue===4) {
             var userList = <MDBContainer>
-                <h5>Dažniausiai pateikiančių dokumentų vartotojų sąrašas</h5>
+                <h5>Pateiktų dokumentų pagal vartotojų skaičių statistika</h5>
                 <Polar data={this.state.dataPolarUserlist} options={{responsive: true}}/>
             </MDBContainer>
         }
@@ -315,12 +315,12 @@ class Charts extends Component {
                             <DateRangePicker onChange={this.onChange} value={this.state.date}/>
                         </div>
 
-                        <div className="col-md-3 mr-5">
+                        <div className="col-md-4 mr-5">
                             <select className="form-control" value={this.state.dropDownValue} onChange={this.handleChangeSelect} >
-                                <option value="1">Patvirtinti dokumentai</option>
-                                <option value="2">Atmesti dokumentai</option>
-                                <option value="3">Pateikti dokumentai</option>
-                                <option value="4">Vartotojų sąrašas</option>
+                                <option value="1">Patvirtintų dokumentų statistika</option>
+                                <option value="2">Atmestų dokumentų statistika</option>
+                                <option value="3">Pateiktų dokumentų statistika</option>
+                                <option value="4">Pateiktų dokumentų pagal vartotojų skaičių statistika</option>
                             </select>
                         </div>
                         <div className="col-md-3">
