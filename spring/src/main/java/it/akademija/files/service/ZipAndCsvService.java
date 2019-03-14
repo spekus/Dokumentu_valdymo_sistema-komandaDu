@@ -3,7 +3,11 @@ package it.akademija.files.service;
 
 import com.opencsv.CSVWriter;
 import it.akademija.documents.repository.DocumentEntity;
+import it.akademija.files.FolderAndFileNames;
+import it.akademija.helpers.FileHelper;
 import it.akademija.users.service.UserService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -20,92 +24,47 @@ import java.util.zip.ZipOutputStream;
 @Service
 //BAISUS KODAS, KOL KAS NEZIURET :D
 public class ZipAndCsvService {
+    private static Logger LOGGER = LoggerFactory.getLogger(FileHelper.class);
     @Autowired
     UserService userService;
-
-
-    //THIS NEEED TOTAL REMAKING
-    private File createFolder(String userName, String fileName){
-        //user file location
-        String currentUsersHomeDir = System.getProperty("user.home");
-        File fileLocationDirectory = new File(currentUsersHomeDir + File.separator
-                + "tmpDocs" + File.separator  + userName);
-
-        //ZIP saving locations
-        File zipGeneralDirectory = new File(currentUsersHomeDir + File.separator
-                + "tmpDocs" + File.separator + "zipFiles");
-        File zipSavingLocation = new File(currentUsersHomeDir + File.separator
-                + "tmpDocs" + File.separator + "zipFiles" + File.separator + userName);
-        // makes sure that previous zip is deleted.
-        if(!fileLocationDirectory.isDirectory()){
-            System.out.println(fileLocationDirectory.mkdir());
-            System.out.println(fileLocationDirectory.setWritable(true));
-        }
-        if(!zipSavingLocation.isDirectory()){
-            System.out.println(zipGeneralDirectory.mkdir());
-            System.out.println(zipGeneralDirectory.setWritable(true));
-//                zipSavingLocation.delete();
-            System.out.println(zipSavingLocation.mkdir());
-            System.out.println(zipSavingLocation.setWritable(true));
-        }
-        File filePath = new File(zipSavingLocation + File.separator  + fileName);
-
-        //makes sure old file is delted
-        if(filePath.exists()){
-            filePath.delete();
-        }
-        return filePath;
-
-    }
+    
+    @Autowired
+    FileHelper fileHelper;
 
     @Transactional
-    public File zip(String userName) throws IOException {
-
-        String currentUsersHomeDir = System.getProperty("user.home");
-
-        //user file location
-        File fileLocationDirectory = new File(currentUsersHomeDir + File.separator
-                + "tmpDocs" + File.separator  + userName);
-
+    public File zipUserFolder(String userName) throws IOException {
         //ZIP saving locations
-        File zipGeneralDirectory = new File(currentUsersHomeDir + File.separator
-                + "tmpDocs" + File.separator + "zipFiles");
-        File zipSavingLocation = new File(currentUsersHomeDir + File.separator
-                + "tmpDocs" + File.separator + "zipFiles" + File.separator + userName);
-        // makes sure that previous zip is deleted.
-        if(!fileLocationDirectory.isDirectory()){
-            System.out.println(fileLocationDirectory.mkdir());
-            System.out.println(fileLocationDirectory.setWritable(true));
+        LOGGER.info("user - " + userName + "is zipping its folder" );
+        File zipFileLocation = prepareZipFileLocation(userName);
+        initiateZiping(zipFileLocation, userName);
+        return zipFileLocation;
+    }
+    @Transactional
+    private File prepareZipFileLocation(String userName) {
+        File zipFolderLocation = fileHelper.getUserZIPFolderLocation(userName);
+        File zipFileLocation = new File(zipFolderLocation + File.separator
+                + FolderAndFileNames.CompressedFile + ".zipUserFolder");
+        if(zipFileLocation.exists()){ // makes sure that old zipUserFolder is deleted.
+            zipFileLocation.delete();
         }
-        if(!zipSavingLocation.isDirectory()){
-            System.out.println(zipGeneralDirectory.mkdir());
-            System.out.println(zipGeneralDirectory.setWritable(true));
-//                zipSavingLocation.delete();
-            System.out.println(zipSavingLocation.mkdir());
-            System.out.println(zipSavingLocation.setWritable(true));
-        }
-        File zipName = new File(zipSavingLocation + File.separator  + "Compressed.zip");
-
-        if(zipName.exists()){
-            zipName.delete();
-        }
-
-//            String sourceFile = "zipTest";
-        String sourceFile = fileLocationDirectory.toString();
-
-        //location of new file
-        FileOutputStream fos = new FileOutputStream(zipName);
+        return zipFileLocation;
+    }
+    @Transactional
+    private void initiateZiping(File zipFileLocation, String userName)throws IOException {
+        FileOutputStream fos = new FileOutputStream(zipFileLocation);
         //creates output stream
         ZipOutputStream zipOut = new ZipOutputStream(fos);
+        String sourceFile = fileHelper.getUserPDFAndCSVFolderLocation(userName).toString();
         File fileToZip = new File(sourceFile);
 
         zipFile(fileToZip, fileToZip.getName(), zipOut);
         zipOut.close();
         fos.close();
-        return zipName;
+        LOGGER.info("user - " + userName + "has finished zipping its data, the data is stored at - "
+                + zipFileLocation.toString());
     }
 
-    @Transactional
+
     private void zipFile(File fileToZip, String fileName, ZipOutputStream zipOut) throws IOException {
         if (fileToZip.isHidden()) {
             return;
@@ -137,23 +96,12 @@ public class ZipAndCsvService {
 
     @Transactional
     public void writeCsv(String userName) throws IOException {
-        //creates all folder if those do not yet exist
-        createFolder(userName, "test");
-        List<DocumentEntity> documents = userService.getAllUserDocuments(userName);
-        Path path = null;
-        try {
-            //creates path in user computer
-            String currentUsersHomeDir = System.getProperty("user.home");
-            path = Paths.get(currentUsersHomeDir + "/tmpDocs/"+ userName +"/UserInformation.csv");
-        } catch (Exception ex) {
-            throw new IOException("we are not able to create directory - " + path.toString() + ex);
-        }
-
+        Path pathToCSV = Paths.get(fileHelper.getUserPDFAndCSVFolderLocation(userName) + File.separator
+                + FolderAndFileNames.UserInformation + "csv");
         //where file will be written
-        CSVWriter writer = new CSVWriter(new FileWriter(path.toString()));
-
+        CSVWriter writer = new CSVWriter(new FileWriter(pathToCSV.toString()));
         List<String[]> stringList = new ArrayList<>();
-        
+        List<DocumentEntity> documents = userService.getAllUserDocuments(userName);
         //this is simply to get the field names on the top of csv file
         stringList.add(documents.get(0).getFieldNames().split(","));
 
@@ -171,6 +119,7 @@ public class ZipAndCsvService {
         }
         //closing stream
         writer.close();
+        LOGGER.info("user - " + userName + "has finished creating csv File, it is stored at - " + pathToCSV.toString());
     }
 
 }
