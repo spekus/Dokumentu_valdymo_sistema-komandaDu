@@ -96,7 +96,7 @@ public class UserGroupService {
     @Transactional
     public void suspendUser(String username) {
         UserEntity userEntity = userRepository.findUserByUsername(username);
-        userEntity.getUserGroups().clear();
+//        userEntity.getUserGroups().clear();
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByRole(AppRoleEnum.ROLE_SUSPENDED);
         if (userGroupEntity != null) {
             addGroupToUser(userGroupEntity.getTitle(), username);

@@ -1,7 +1,6 @@
 package it.akademija.files.controller;
 
 
-import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.files.ResponseTransfer;
@@ -9,6 +8,7 @@ import it.akademija.files.service.FileDocumentCommand;
 import it.akademija.files.service.FileService;
 import it.akademija.files.service.FileServiceObject;
 import it.akademija.files.service.ZipAndCsvService;
+import it.akademija.helpers.FileHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
@@ -45,55 +45,38 @@ public class FileController {
     private ZipAndCsvService zipAndCsvService;
 
     @Autowired
-    private  FileHelper fileHelper;
-
-
+    private FileHelper fileHelper;
 
 
     @RequestMapping(value = "/download/{identifier}", method = RequestMethod.GET)
     public ResponseEntity<InputStreamResource> downloadFile(@PathVariable final String identifier)
             throws IOException {
-//        FileServiceObject  = fileService.downloadFileFromLocalServer(identifier);
-//        return data;
         FileServiceObject fileObject = fileService.findFile(identifier);
-        File file = new File(
+        File fileLocation = new File(
                 fileObject.getFileLocation());
-        System.out.println("FILE LOCATION" + file.getAbsolutePath());
-        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-
-        //        HttpHeaders header = new HttpHeaders();
-//
-//        header.setContentType(MediaType.valueOf(fileEntity.getContentType()));
-//        header.setContentLength(fileEntity.getData().length);
-//        header.set("Content-Disposition", "attachment; filename=" + fileEntity.getFileName());
-        System.out.println("File name = " + fileObject.getFileName());
-        System.out.println("File location = " + fileObject.getFileLocation());
-        System.out.println("File type = " + fileObject.getContentType());
-        System.out.println("File size = " + fileObject.getSize());
+        InputStreamResource resource = new InputStreamResource(new FileInputStream(fileLocation));
         return ResponseEntity.ok()
                 .header(HttpHeaders.CONTENT_DISPOSITION,
                         "attachment;filename=" + fileObject.getFileName())
                 .contentType(MediaType.valueOf(fileObject.getContentType())).contentLength(fileObject.getSize())
                 .body(resource);
     }
-    // creates a zip from user files and CSV file with user document information
+
+
+    // creates a zippingUserFolder from user files and CSV file with user document information
     @RequestMapping(value = "/zip", method = RequestMethod.GET, produces="application/zip")
     public ResponseEntity<Resource> makeZip(
             @ApiIgnore Authentication authentication) throws Exception {
-        if(authentication.isAuthenticated()){
-            // first action is to write csv file in location
+        if(authentication.isAuthenticated() && fileHelper.isUserFolderForPDFsCreated(authentication.getName())){
             zipAndCsvService.writeCsv(authentication.getName());
-
-            //zips files
-            File file = zipAndCsvService.zip(authentication.getName());
-            InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-
-            //returns zip as a stream
+            File zipFileLocation = zipAndCsvService.zippingUserFolder(authentication.getName());
+            InputStreamResource zipFileStream = new InputStreamResource(new FileInputStream(zipFileLocation));
+            //returns zippedUserFolder as a stream
             HttpHeaders headers = new HttpHeaders();
-//            headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-            return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+//          headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+            return new ResponseEntity<>(zipFileStream, headers, HttpStatus.OK);
         }
-        throw new Exception("User - " + authentication.getName() + " does not have access");
+        throw new Exception("User - " + authentication.getName() + " does not have access , or User has yet to upload file");
     }
 
 
@@ -106,41 +89,44 @@ public class FileController {
                         @ApiIgnore Authentication authentication,
                         @NotNull @RequestParam("file") MultipartFile fileSentForUploading) throws Exception{
         if(fileHelper.IsFilePDF(fileSentForUploading)) {
-            String uniqueIdentifier = fileService.addFileToDataBase(fileSentForUploading, authentication.getName());
+            String uniqueIdentifier = fileService.uploadFile(fileSentForUploading, authentication.getName());
             FileServiceObject fileServiceObject = fileService.findFile(uniqueIdentifier);
             return new ResponseTransfer(fileServiceObject.getIdentifier());
         }
         throw new Exception("error during initial uploading");
     }
 
-    // this is used to add file to document, can beused for multiple file
+    // this is used to add file to document, can be used for multiple file
     @RequestMapping(value = "/addFileToDocument", method = RequestMethod.POST)
-    public ResponseEntity < String >  addFileToDocument(@NotNull @RequestBody FileDocumentCommand fileDocumentComand){
-        fileService.addFileToDocument(fileDocumentComand.getFileIdentifier()
-                , fileDocumentComand.getDocumentIdentifier());
-        return ResponseEntity.status(HttpStatus.CREATED).build();
-    }
-
-
-    //not working yet
-    @RequestMapping(value = "/findAllFilesByDocumentIdentifier", method = RequestMethod.GET)
-    public List<String> getAllFileIdentifiers(@NotNull @RequestParam("documentIdentifier") String documentIdentifier){
-        ArrayList <String> identifierList = new ArrayList<>();
-//        identifierList = fileService.getAllFileIdentifiers(documentIdentifier);
-        DocumentServiceObject documentServiceObject = null;
-//        Hibernate.initialize(documentService.getDocumentByDocumentIdentifier(documentIdentifier).getFilesAttachedToDocument());
-        documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);
-
-        Set<FileServiceObject> fileList =  documentServiceObject.getFilesAttachedToDocument();
-
-
-        for (FileServiceObject file: fileList
-             ) {
-            System.out.println("identifier " + file.getIdentifier());
-            identifierList.add(file.getIdentifier());
+    public ResponseEntity < String >  addFileToDocument(@NotNull @RequestBody FileDocumentCommand fileDocumentComand) throws Exception {
+        try{
+            fileService.addFileToDocument(fileDocumentComand.getFileIdentifier()
+                    , fileDocumentComand.getDocumentIdentifier());
+            return ResponseEntity.status(HttpStatus.CREATED).build();
+        }catch (Exception e){
+            throw new Exception("Cant add file to document, file identifier - " + fileDocumentComand.getFileIdentifier() +
+                    " Document identifier - " + fileDocumentComand.getDocumentIdentifier() );
         }
-        return identifierList;
+
     }
+
+
+//
+//    @RequestMapping(value = "/findAllFilesByDocumentIdentifier", method = RequestMethod.GET)
+//    public List<String> getAllFileIdentifiers(@NotNull @RequestParam("documentIdentifier") String documentIdentifier){
+//        ArrayList <String> identifierList = new ArrayList<>();
+//        DocumentServiceObject documentServiceObject = null;
+//        documentServiceObject = documentService.getDocumentByDocumentIdentifier(documentIdentifier);
+//
+//        Set<FileServiceObject> fileList =  documentServiceObject.getFilesAttachedToDocument();
+//
+//
+//        for (FileServiceObject file: fileList
+//             ) {
+//            identifierList.add(file.getIdentifier());
+//        }
+//        return identifierList;
+//    }
 
 
 
