@@ -32,7 +32,7 @@ public class ZipAndCsvService {
     FileHelper fileHelper;
 
     @Transactional
-    public File zipUserFolder(String userName) throws IOException {
+    public File zippingUserFolder(String userName) throws IOException {
         //ZIP saving locations
         LOGGER.info("user - " + userName + "is zipping its folder" );
         File zipFileLocation = prepareZipFileLocation(userName);
@@ -43,8 +43,8 @@ public class ZipAndCsvService {
     private File prepareZipFileLocation(String userName) {
         File zipFolderLocation = fileHelper.getUserZIPFolderLocation(userName);
         File zipFileLocation = new File(zipFolderLocation + File.separator
-                + FolderAndFileNames.CompressedFile + ".zipUserFolder");
-        if(zipFileLocation.exists()){ // makes sure that old zipUserFolder is deleted.
+                + FolderAndFileNames.CompressedFile + ".zippingUserFolder");
+        if(zipFileLocation.exists()){ // makes sure that old zippingUserFolder is deleted.
             zipFileLocation.delete();
         }
         return zipFileLocation;
