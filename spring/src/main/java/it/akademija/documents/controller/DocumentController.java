@@ -50,14 +50,17 @@ public class DocumentController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation(value = "Get document", notes = "Returns one document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public DocumentServiceObject getDocument(@ApiParam(value = "DocumentIdentifier", required = true)
+    public DocumentServiceObject getDocument(@ApiIgnore Authentication authentication,
+                                             @ApiParam(value = "DocumentIdentifier", required = true)
 
                                              @RequestParam @Valid @NotNull @Length(min = 1) String documentIdentifier) {
         try {
 
-            return documentService.getDocument(documentIdentifier);
+            return documentService.getDocument(documentIdentifier, authentication.getName());
         } catch (NullPointerException e) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, e.getMessage());
+        } catch (SecurityException e) {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
 
 
