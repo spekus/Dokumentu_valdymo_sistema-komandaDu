@@ -85,13 +85,6 @@ class AugisDokumentas extends Component {
         console.log("downloadOneFile start")
         axios.get('/api/files/download/' + fileIdentifier)
             .then(response => {
-                // console.log(response);
-                // const fileNameHeader = "x-suggested-filename";
-                // let suggestedFileName = response.headers[fileNameHeader];
-                // let effectiveFileName = (suggestedFileName === undefined
-                //     ? "document.txt"
-                //     : suggestedFileName);
-                // FileSaver.saveAs(response.url, suggestedFileName);
                 FileSaver.SaveAs(response.data);
             })
             .catch(error => {
@@ -99,31 +92,31 @@ class AugisDokumentas extends Component {
             })
     }
 
-    downloadFile = () => {
-        // neparasius pilno adreso su localhostu programa atsiuncia nesamone.
-        //speju cia kazkas susije su security,
-        fetch("http://localhost:8181/api/files/download/" + this.state.attachedFileIdentifier)
-            .then(response => {
+    // downloadFile = () => {
+    //     // neparasius pilno adreso su localhostu programa atsiuncia nesamone.
+    //     //speju cia kazkas susije su security,
+    //     fetch("http://localhost:8181/api/files/download/" + this.state.attachedFileIdentifier)
+    //         .then(response => {
 
-                console.log(response);
-                console.log("download " + this.state.attachedFileIdentifier);
-                // Log somewhat to show that the browser actually exposes the custom HTTP header
-                const fileNameHeader = "x-suggested-filename";
-                const suggestedFileName = response.headers[fileNameHeader];
-                const effectiveFileName = (suggestedFileName === undefined
-                    ? "document.txt"
-                    : suggestedFileName);
-                console.log("Received header [" + fileNameHeader + "]: " + suggestedFileName
-                    + ", effective fileName: " + effectiveFileName);
+    //             console.log(response);
+    //             console.log("download " + this.state.attachedFileIdentifier);
+    //             // Log somewhat to show that the browser actually exposes the custom HTTP header
+    //             const fileNameHeader = "x-suggested-filename";
+    //             const suggestedFileName = response.headers[fileNameHeader];
+    //             const effectiveFileName = (suggestedFileName === undefined
+    //                 ? "document.txt"
+    //                 : suggestedFileName);
+    //             console.log("Received header [" + fileNameHeader + "]: " + suggestedFileName
+    //                 + ", effective fileName: " + effectiveFileName);
 
-                // Let the user save the file.
-                FileSaver.saveAs(response.url, suggestedFileName);
+    //             // Let the user save the file.
+    //             FileSaver.saveAs(response.url, suggestedFileName);
 
 
-            }).catch((response) => {
-            console.error("Could not Download the Excel report from the backend.", response);
-        });
-    }
+    //         }).catch((response) => {
+    //         console.error("Could not Download the Excel report from the backend.", response);
+    //     });
+    // }
 
 
     submitDocument = (props) => {

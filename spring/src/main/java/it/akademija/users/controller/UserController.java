@@ -209,22 +209,22 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Delete user", notes = "Deletes user")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void deleteUser(@PathVariable("username") @NotNull @Length(min = 1) String username,
-                           @ApiIgnore HttpServletRequest request) {
-        // neleidziam naudotojui istrinti pati save
-        // kaip nustatyti kitose koks naudotojo vardas kitose vietose, pravers sitas puslapis:
-        // https://www.baeldung.com/get-user-in-spring-security
-        // Galima naudoti "HttpServletRequest request" arba "Authentication authentication"
-        if (request.getRemoteUser().equals(username)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete yourself!");
-            // parodome exception, kuri galima pasiimti axios ... catch (response => ... response.data.message)
-        } else {
-            userService.deleteUserByUsername(username);
-        }
-    }
+//    @RequestMapping(value = "/{username}", method = RequestMethod.DELETE)
+//    @ApiOperation(value = "Delete user", notes = "Deletes user")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    public void deleteUser(@PathVariable("username") @NotNull @Length(min = 1) String username,
+//                           @ApiIgnore HttpServletRequest request) {
+//        // neleidziam naudotojui istrinti pati save
+//        // kaip nustatyti kitose koks naudotojo vardas kitose vietose, pravers sitas puslapis:
+//        // https://www.baeldung.com/get-user-in-spring-security
+//        // Galima naudoti "HttpServletRequest request" arba "Authentication authentication"
+//        if (request.getRemoteUser().equals(username)) {
+//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete yourself!");
+//            // parodome exception, kuri galima pasiimti axios ... catch (response => ... response.data.message)
+//        } else {
+//            userService.deleteUserByUsername(username);
+//        }
+//    }
 
 
 }

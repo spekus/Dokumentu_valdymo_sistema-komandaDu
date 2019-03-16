@@ -43,7 +43,7 @@ public class ZipAndCsvService {
     private File prepareZipFileLocation(String userName) {
         File zipFolderLocation = fileHelper.getUserZIPFolderLocation(userName);
         File zipFileLocation = new File(zipFolderLocation + File.separator
-                + FolderAndFileNames.CompressedFile + ".zippingUserFolder");
+                + FolderAndFileNames.CompressedFile + ".zip");
         if(zipFileLocation.exists()){ // makes sure that old zippingUserFolder is deleted.
             zipFileLocation.delete();
         }
@@ -97,7 +97,7 @@ public class ZipAndCsvService {
     @Transactional
     public void writeCsv(String userName) throws IOException {
         Path pathToCSV = Paths.get(fileHelper.getUserPDFAndCSVFolderLocation(userName) + File.separator
-                + FolderAndFileNames.UserInformation + "csv");
+                + FolderAndFileNames.UserInformation + ".csv");
         //where file will be written
         CSVWriter writer = new CSVWriter(new FileWriter(pathToCSV.toString()));
         List<String[]> stringList = new ArrayList<>();
