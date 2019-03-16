@@ -162,9 +162,14 @@ public class UserController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ApiOperation(value = "Create user", notes = "Creates new user")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void addNewUser(@RequestBody CreateUserCommand cuc) {
-        userService.addNewUser(cuc.getFirstname(), cuc.getLastname(), cuc.getUsername(),
-                cuc.getPassword());
+    public void createNewUser(@RequestBody CreateUserCommand cuc) {
+        try {
+            userService.createNewUser(cuc.getFirstname(), cuc.getLastname(), cuc.getUsername(),
+                    cuc.getPassword(
+                    ));
+        } catch (IllegalArgumentException e){
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{username}", method = RequestMethod.POST)

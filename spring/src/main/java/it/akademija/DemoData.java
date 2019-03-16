@@ -1,7 +1,6 @@
 package it.akademija;
 
 import com.github.javafaker.Faker;
-import com.google.common.collect.Sets;
 import it.akademija.auth.AppRoleEnum;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
@@ -142,7 +141,7 @@ public class DemoData implements ApplicationRunner {
         UserEntity u = userRepository.findUserByUsername(un);
 
         if (u == null) {
-            userService.addNewUser(fn, ln, un, pswd);
+            userService.createNewUser(fn, ln, un, pswd);
         }
     }
 
