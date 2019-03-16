@@ -71,14 +71,18 @@ public class DocumentService {
         List<String> documentTypesUserCanApprove =
                 document.getDocumentTypesUserCanAprooveBy(username);
 
-        if (documentFromDatabase.getAuthor() != username
-                || (documentFromDatabase.getDocumentState() != DocumentState.SUBMITTED
-                && !documentTypesUserCanApprove.contains(documentFromDatabase.getType()))) {
+        boolean isAuthor = documentFromDatabase.getAuthor().equals(username);
+        boolean isApprover = (documentFromDatabase.getDocumentState() == DocumentState.SUBMITTED)
+                && (documentTypesUserCanApprove.contains(documentFromDatabase.getType()));
+
+
+        if (isAuthor || isApprover) {
+            LOGGER.debug("document - " + documentIdentifier + " is being returned ");
+            return SOfromEntity(documentFromDatabase);
+
+        } else {
             throw new SecurityException("Šio dokumento negalite peržiūrėti dėl prieigos teisių");
         }
-
-        LOGGER.debug("ducument - " + documentIdentifier + " is being returned ");
-        return SOfromEntity(documentFromDatabase);
     }
 
 
