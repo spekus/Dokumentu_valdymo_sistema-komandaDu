@@ -20,6 +20,7 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
     UserEntity findUserByUsernameAndPassword(String username, String password);
 
+    UserEntity findByUsernameIgnoreCase(String username);
 
     UserEntity findByUsername(String username);
 
@@ -27,13 +28,14 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     List<UserEntity> findByUsernameOrLastname(@Param("criteria") String criteria);
 
     void deleteUserByUsername(String username);
-//    @Modifying
+
+    //    @Modifying
 //    @Query(value ="insert into DOCUMENT_TYPE_ENTITY (TITLE) VALUES (:TITLE)", nativeQuery = true)
 //    void putDummyDocumentTypes(@Param("TITLE") String title);
     @Modifying
-    @Query(value= "insert into USER_ENTITY (FIRSTNAME, LASTNAME, PASSWORD, USERNAME) VALUES (:NAME, :SURENAME, :userInput, :userInput)", nativeQuery = true)
+    @Query(value = "insert into USER_ENTITY (FIRSTNAME, LASTNAME, PASSWORD, USERNAME) VALUES (:NAME, :SURENAME, :userInput, :userInput)", nativeQuery = true)
 //    @Query(value = "select id,name,roll_no from USER_INFO_TEST where rollNo = ?1", nativeQuery = true)
-    void makeDummyUsers(@Param("userInput")String userInput, @Param("NAME")String name, @Param("SURENAME")String surename);
+    void makeDummyUsers(@Param("userInput") String userInput, @Param("NAME") String name, @Param("SURENAME") String surename);
 
 
 }
