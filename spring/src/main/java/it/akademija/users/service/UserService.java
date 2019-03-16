@@ -1,9 +1,9 @@
 package it.akademija.users.service;
 
 
-
 import it.akademija.App;
 import it.akademija.auth.AppRoleEnum;
+import it.akademija.helpers.DocumentHelper;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
@@ -11,7 +11,6 @@ import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.documents.service.DocumentTypeServiceObject;
-import it.akademija.files.service.FileServiceObject;
 import it.akademija.users.repository.UserEntity;
 
 import it.akademija.users.repository.UserGroupEntity;
@@ -33,6 +32,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.text.CollationElementIterator;
 import java.util.*;
 
 import java.util.stream.Collectors;
@@ -53,10 +53,10 @@ public class UserService implements UserDetailsService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-//
-//    @Autowired
-//    private Logger LOGGER;
-//
+
+    @Autowired
+    private DocumentHelper document;
+
 private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     public UserService() {
@@ -69,22 +69,22 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
         this.passwordEncoder = passwordEncoder;
     }
 
-    public UserRepository getUserRepository() {
-        return userRepository;
-    }
-
-    public void setUserRepository(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
-
-
-    public UserGroupRepository getUserGroupRepository() {
-        return userGroupRepository;
-    }
-
-    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
-        this.userGroupRepository = userGroupRepository;
-    }
+//    public UserRepository getUserRepository() {
+//        return userRepository;
+//    }
+//
+//    public void setUserRepository(UserRepository userRepository) {
+//        this.userRepository = userRepository;
+//    }
+//
+//
+//    public UserGroupRepository getUserGroupRepository() {
+//        return userGroupRepository;
+//    }
+//
+//    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
+//        this.userGroupRepository = userGroupRepository;
+//    }
 
     @Transactional
     public List<UserServiceObject> getAllUsers() {
@@ -106,7 +106,8 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
             LOGGER.info("returning user with username - "  + username);
             return SOfromEntity(userEntity);
         }
-        return null;
+        throw new IllegalArgumentException("User with username -  " + username
+                + " was not found");
     }
 
     @Transactional
@@ -141,9 +142,8 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
             LOGGER.info("returning user documents user - " +username + " can create");
             return returningDocumentTypesUserCanCreate;
         }
-
-        return null;
-
+        throw new IllegalArgumentException("Username -  " + username
+                + " does not have any documents he can create");
     }
 
     @Transactional
@@ -158,76 +158,10 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
             LOGGER.info("returning users according to criteria - " + criteria);
             return userList;
         }
-        return null;
-
+        throw new IllegalArgumentException("No Users with criteria - " + criteria + " have been found");
     }
 
-    @Transactional
-    public Page<DocumentServiceObject> getDocumentsToApprove(String username, Integer page, Integer size) {
-        LOGGER.info("getDocumentsToApprove");
-        List<DocumentTypeEntity> documentTypeEntityList =
-                documentTypeRepository.getDocumentTypesToApproveByUsername(username);
-        //take all document types which this particular user can aprove
-        List<String> documentTypesForAproval = documentTypeEntityList.stream().map((documentTypeEntity) ->
-                documentTypeEntity.getTitle()).collect(Collectors.toList());
-        // create pageable settings, so that later query knows which part of database to search
-        Pageable sortedByTitleDesc =
-                PageRequest.of(page, size, Sort.by("title").descending());
 
-        //send query to get all needed document
-        List<DocumentEntity> allDocumentsToApprove =
-                documentRepository.getDocumentsToApprove(documentTypesForAproval, sortedByTitleDesc);
-
-
-        // we need total ammount of documents to be displayed for pagination to work, thus we need second query.
-        // this part is not efficient, would anyone know how to replace?
-        long getTotalSize = documentRepository.getDocumentsToApproveSize(documentTypesForAproval);
-
-        //conversion from one type to another
-        List<DocumentServiceObject> listOfDocumentServiceObject =allDocumentsToApprove
-                        .stream()
-                        .map(documentEntity -> SOfromEntityWithoutFiles(documentEntity))
-                        .collect(Collectors.toList());
-
-        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
-                sortedByTitleDesc, getTotalSize);
-        LOGGER.info(" documents for approval of user - " +username + " are being returned "+
-                " , returning page - " +page +"\n" + " size of page is " + size + " size of total data points  is - " + pageData.getTotalElements());
-
-        return pageData;
-    }
-
-    @Transactional
-    public Page<DocumentServiceObject> getDocumentsToApproveFiltered(String userName, Integer page, Integer size, String criteria) {
-        LOGGER.info("getDocumentsToApproveFiltered");
-
-        String criteriaInLowerCase=criteria.toLowerCase();
-
-        List<DocumentTypeEntity> documentTypeEntityList =
-                documentTypeRepository.getDocumentTypesToApproveByUsername(userName);
-        List<String> documentTypesForAproval = documentTypeEntityList.stream().map((documentTypeEntity) ->
-                documentTypeEntity.getTitle()).collect(Collectors.toList());
-        Pageable sortedByTitleDesc =
-                PageRequest.of(page, size, Sort.by("title").ascending());
-
-        List<DocumentEntity> documentsToApproveFiltered = documentRepository.getDocumentsToApproveByCriteria(documentTypesForAproval,
-                sortedByTitleDesc, criteriaInLowerCase);
-
-        List<DocumentServiceObject> listOfDocumentServiceObject =
-                documentsToApproveFiltered
-                        .stream()
-                        .map(documentEntity -> SOfromEntityWithoutFiles(documentEntity))
-                        .collect(Collectors.toList());
-
-        long filteredDocumentsSize=documentRepository.getDocumentsToApproveFilteredSize(documentTypesForAproval,criteriaInLowerCase);
-
-        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
-                sortedByTitleDesc, filteredDocumentsSize);
-        LOGGER.info(" filtering document of user - " +userName + " according to criteria - " + criteria +" search results are being returned "+
-                " , page - " +page +"\n" + " size of page is " + size + " size of total data points  is - " + pageData.getTotalElements());
-
-        return pageData;
-    }
 
     @Transactional
     public void createNewUser(String firstname, String lastname, String username, String password) {
@@ -268,27 +202,13 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
         UserEntity updateUserEntity = userRepository.save(savedUserEntity);
         LOGGER.info("user information chanfed of user with username - " + username + " to : firstname - "
                 + newFirstname + " lastname - " +newLastname);
-
     }
 
     @Transactional
     @Modifying
     public void deleteUserByUsername(String username) {
-
         LOGGER.info("deleteUserByUsername has been involved and is carried away");
             userRepository.deleteUserByUsername(username);
-
-
-    }
-
-    @Transactional
-    public UserServiceObject getUserByLastname(String lastname) {
-        LOGGER.info("getUserByLastname, returning user by lastname");
-        UserEntity userEntity = userRepository.findUserByLastname(lastname);
-        if (userEntity != null) {
-            return SOfromEntity(userEntity);
-        }
-        return null;
     }
 
     @Transactional
@@ -342,201 +262,75 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
         return so;
     }
-
-    private DocumentServiceObject SOfromEntity(DocumentEntity entity) {
-//        LOGGER.info("SOfromEntity");
-        DocumentServiceObject so = new DocumentServiceObject();
-
-        so.setApprovalDate(entity.getApprovalDate());
-        so.setApprover(entity.getApprover());
-        so.setAuthor(entity.getAuthor());
-        so.setDescription(entity.getDescription());
-        so.setDocumentIdentifier(entity.getDocumentIdentifier());
-        so.setDocumentState(entity.getDocumentState());
-        so.setPostedDate(entity.getPostedDate());
-        so.setRejectedDate(entity.getRejectedDate());
-        so.setRejectedReason(entity.getRejectionReason());
-        so.setTitle(entity.getTitle());
-        so.setType(entity.getType());
-
-
-        so.setFilesAttachedToDocument(entity.getFileSet()
-                .stream()
-                .map(file -> new FileServiceObject(file.getFileName(), file.getContentType(), file.getSize(), file.getIdentifier()))
-                .collect(Collectors.toSet()));
-        return so;
-    }
-
-    private DocumentServiceObject SOfromEntityWithoutFiles(DocumentEntity entity) {
-        DocumentServiceObject so = new DocumentServiceObject();
-
-        so.setApprovalDate(entity.getApprovalDate());
-        so.setApprover(entity.getApprover());
-        so.setAuthor(entity.getAuthor());
-        so.setDescription(entity.getDescription());
-        so.setDocumentIdentifier(entity.getDocumentIdentifier());
-        so.setDocumentState(entity.getDocumentState());
-        so.setPostedDate(entity.getPostedDate());
-        so.setRejectedDate(entity.getRejectedDate());
-        so.setRejectedReason(entity.getRejectionReason());
-        so.setTitle(entity.getTitle());
-        so.setType(entity.getType());
-        return so;
-    }
-
-//    @Transactional
-//    public Page<DocumentServiceObject> getAllUserDocuments(String userIdentifier, int page, int size) {
-//        LOGGER.info("getAllUserDocuments");
-//
-//        Pageable sortedByTitleDesc =
-//                PageRequest.of(page, size, Sort.by("title").ascending());
-//
-//        List<DocumentServiceObject> listOfDocumentServiceObject = documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc)
-//                .stream()
-//                .map(documentEntity -> SOfromEntity(documentEntity))
-//                .collect(Collectors.toList());
-//        LOGGER.info("second query inside getAllUserDocuments, to find out total number of documents for user - " + userIdentifier);
-//        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
-//                sortedByTitleDesc, documentRepository.countByAuthor(userIdentifier));
-//        LOGGER.info("All documents of user - " +userIdentifier + " are being returned"+
-//                " , returning page - " +page +"\n" + " size of page is " + size + " size of total data points is - " + pageData.getTotalElements());
-//        return pageData;
-//
-//    }
-    @Transactional
-    public Page<DocumentServiceObject> getAllUserDocuments(String userIdentifier, int page, int size) {
-        LOGGER.info("getAllUserDocuments");
-
-        //perasyta viskas i java, nes listas prisegtas prie userio yra
-        // daug mazesnis nei duombazeje esanciu visu dokumentu kiekis.
-        // pirma surandam useri ir istraukiam prie jo prisegtus dokumentus
-        Set<DocumentEntity> documentEntitySet = userRepository.findByUsername(userIdentifier).getDocumentEntities();
-        //Set<DocumentEntity> documentEntitySet = userRepository.findDocsByUsername(userIdentifier);
-
-        // konvertuojam dokumentu entity i objektus. deje reik konveruot visus, nes kitaip neveiks rikiavimas
-        List<DocumentServiceObject> documentServiceObjects = documentEntitySet.stream()
-                .map(documentEntity -> SOfromEntity(documentEntity))
-                .sorted(Comparator.comparing(DocumentServiceObject::getTitle))
-                .sorted(Comparator.comparing(DocumentServiceObject::getType))
-                .collect(Collectors.toList());
-
-
-        //paginimo logika
-        List<DocumentServiceObject> filteredList= new ArrayList<>();
-        int possition = page * size;
-        int limit = possition + size;
-        if(limit > documentServiceObjects.size()){
-            // checks that limit set by paging is not bigger than total element count
-            limit = documentServiceObjects.size();
-        }
-        for(; possition < (limit); possition++){
-            filteredList.add(documentServiceObjects.get(possition));
-        }
-
-//        Page<DocumentEntity> pageData = documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc);
-//        Page<DocumentServiceObject> documentServiceObjects = pageData.map(this::SOfromEntity);
-        //sitas realiai neveikia
-        Pageable sortedByTitleDesc =
-                PageRequest.of(page, size, Sort.by("title").ascending());
-
-        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(filteredList,
-                sortedByTitleDesc, documentServiceObjects.size());
-        LOGGER.info("All documents of user - " +userIdentifier + " are being returned"+
-                " , returning page - " +page +"\n" + " size of page is " + size + " Full ammount of elements is - " + documentServiceObjects.size());
-        return pageData;
-
-    }
-    @Transactional
-    public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {
-        LOGGER.info("getUserDocumentsByState");
-        Set<DocumentEntity> documentEntitySet = userRepository.findByUsername(userName).getDocumentEntities();
-
-//        if (userEntity == null) {
-//            throw new IllegalArgumentException("User with username '" + userName + "' does not exits.");
-//        }
-
-        // konvertuojam dokumentu entity i objektus. deje reik konveruot visus, nes kitaip neveiks rikiavimas
-        List<DocumentServiceObject> documentServiceObjects = documentEntitySet.stream()
-                .filter(p -> p.getDocumentState().equals(state))
-                .map(documentEntity -> SOfromEntity(documentEntity))
-                .sorted(Comparator.comparing(DocumentServiceObject::getTitle))
-                .sorted(Comparator.comparing(DocumentServiceObject::getType))
-                .collect(Collectors.toList());
-        // sortinam pagal title, kad galetume rikiuoti
-
-
-        //paginimo logika
-        List<DocumentServiceObject> filteredList= new ArrayList<>();
-        int possition = page * size;
-        int limit = possition + size;
-        if(limit > documentServiceObjects.size()){
-            // checks that limit set by paging is not bigger than total element count
-            limit = documentServiceObjects.size();
-        }
-        for(; possition < (limit); possition++){
-            filteredList.add(documentServiceObjects.get(possition));
-        }
-
-//        Page<DocumentEntity> pageData = documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc);
-//        Page<DocumentServiceObject> documentServiceObjects = pageData.map(this::SOfromEntity);
-        //sitas realiai neveikia
-        Pageable sortedByTitleDesc =
-                PageRequest.of(page, size, Sort.by("title").ascending());
-
-        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(filteredList,
-                sortedByTitleDesc, documentServiceObjects.size());
-
-        LOGGER.info(" documents of user - " +userName + " with document state - " + state +" are being returned "+
-                " , returning page - " +page +  "\n" + " size of page is " + size + " size of total data points  is - " + pageData.getTotalElements());
-        return pageData;
-    }
-
     @Transactional
     public List<DocumentEntity> getAllUserDocuments(String userName) {
-        LOGGER.info("getAllUserDocuments, THIS METHOD SHOULD NOT BE USED");
-
-
+        LOGGER.info("getAllUserDocuments, with one constructor");
         return documentRepository.findByAuthor(userName);
     }
-////                .stream()
-////                .map(documentEntity -> SOfromEntity(documentEntity))
-////                .collect(Collectors.toSet());
-//
-////        List<DocumentServiceObject>  listOfDocumentServiceObject= documentRepository.findByAuthor(userIdentifier, sortedByTitleDesc)
-////                .stream()
-////                .map(documentEntity -> SOfromEntity(documentEntity))
-////                .collect(Collectors.toList());
-////        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
-////                sortedByTitleDesc, documentRepository.findByAuthor(userIdentifier).size()) ;
-////        return null;
-//
-//    }
 
-//    @Transactional
-//    public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState state, int page, int size) {
-//        LOGGER.info("getUserDocumentsByState");
-//
-//
-//        // pasitikrinam ar yra toks naudotojas
-//        UserEntity userEntity = userRepository.findUserByUsername(userName);
-//
-//        if (userEntity == null) {
-//            throw new IllegalArgumentException("User with username '" + userName + "' does not exits.");
-//        }
-//        Pageable sortedByTitleDesc =
-//                PageRequest.of(page, size, Sort.by("title").ascending());
-//
-//        List<DocumentServiceObject> listOfDocumentServiceObject = documentRepository.findByDocumentStateAndAuthor(state, userName, sortedByTitleDesc)
-//                .stream()
-//                .map(documentEntity -> SOfromEntity(documentEntity))
-//                .collect(Collectors.toList());
-//        PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(listOfDocumentServiceObject,
-//                sortedByTitleDesc, documentRepository.findByDocumentStateAndAuthor(state, userName).size());
-//        LOGGER.info(" documents of user - " +userName + " with document state - " + state +" are being returned "+
-//                " , returning page - " +page +  "\n" + " size of page is " + size + " size of total data points  is - " + pageData.getTotalElements());
-//        return pageData;
-//    }
 
+    @Transactional
+    public Page<DocumentServiceObject> getAllUserDocuments(String userName, Pageable pageFormatDetails) {
+        LOGGER.info("getAllUserDocuments with 2 constructors");
+        List<DocumentServiceObject> allUserDocuments = document.getDocumentsBy(userName);
+        PageImpl<DocumentServiceObject> pagedData = document.getPage(pageFormatDetails, allUserDocuments);
+        LOGGER.info("All documents of user - " +userName + " are being returned"+
+                " , returning page - " +pageFormatDetails.getPageNumber() +"\n" + " size of page is "
+                + pageFormatDetails.getPageSize() + " Full ammount of elements is - " + allUserDocuments.size());
+        return pagedData;
+
+    }
+    @Transactional
+    public Page<DocumentServiceObject> getUserDocumentsByState(String userName, DocumentState documentState, Pageable pageFormatDetails) {
+        LOGGER.info("getUserDocumentsByState");
+        List<DocumentServiceObject> filteredDocuments = document.getDocumentsBy(userName , documentState);
+        PageImpl<DocumentServiceObject> pagedData = document.getPage(pageFormatDetails, filteredDocuments);
+        LOGGER.info(" documents of user - " +userName + " with document state - " + documentState +" are being returned "+
+                " , returning page - " +pageFormatDetails.getPageNumber() +  "\n" + " size of page is "
+                + pageFormatDetails.getPageSize() + " size of total data points  is - " + pagedData.getTotalElements());
+        return pagedData;
+    }
+
+
+
+    @Transactional
+    public Page<DocumentServiceObject> getDocumentsToApprove(String userName, Pageable pageFormatDetails) {
+        LOGGER.info("getDocumentsToApprove");
+
+        List<String> documentTypesUserCanAproove =
+                document.getDocumentTypesUserCanAprooveBy(userName);
+        List<DocumentServiceObject> documentsUserCanAproove =
+                document.getDocumentsBy(documentTypesUserCanAproove, pageFormatDetails);
+        // we need total ammount of documents to be displayed for pagination to work, thus we need second query.
+        long documentCount = documentRepository.getDocumentsToApproveSize(documentTypesUserCanAproove);
+
+        PageImpl<DocumentServiceObject> pagedData = new PageImpl<>(documentsUserCanAproove,
+                pageFormatDetails, documentCount);
+        LOGGER.info(" documents for approval of user - " +userName + " are being returned "+
+                " , returning page - " +pageFormatDetails.getPageNumber() +"\n" + " size of page is "
+                + pageFormatDetails.getPageSize() + " size of total data points  is - " + pagedData.getTotalElements());
+
+        return pagedData;
+    }
+
+    @Transactional
+    public Page<DocumentServiceObject> getDocumentsToApprove(String userName,Pageable pageFormatDetails, String filteringCriteria) {
+        LOGGER.info("getDocumentsToApproveFiltered");
+
+        List<String> documentTypesUserCanAproove = document.getDocumentTypesUserCanAprooveBy(userName);
+        List<DocumentServiceObject> documentsUserCanAproove = document.getDocumentsBy(documentTypesUserCanAproove
+                , pageFormatDetails, filteringCriteria);
+        long filteredDocumentsCount = documentRepository.getDocumentsToApproveFilteredSize(documentTypesUserCanAproove
+                ,filteringCriteria);
+        PageImpl<DocumentServiceObject> pageData = new PageImpl<>(documentsUserCanAproove,
+                pageFormatDetails, filteredDocumentsCount);
+        LOGGER.info(" filtering document of user - " +userName + " according to filteringCriteria - "
+                + filteringCriteria +" search results are being returned "+
+                " , page - " +pageFormatDetails.getPageNumber() +"\n" + " size of page is "
+                + pageFormatDetails.getPageSize() + " size of total data points  is - " + pageData.getTotalElements());
+
+        return pageData;
+    }
 
 }
 

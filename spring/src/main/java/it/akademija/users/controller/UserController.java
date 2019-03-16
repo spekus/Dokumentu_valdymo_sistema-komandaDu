@@ -11,6 +11,9 @@ import it.akademija.users.service.UserServiceObject;
 import org.hibernate.validator.constraints.Length;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -43,6 +46,7 @@ public class UserController {
         this.userService = userService;
     }
 
+
     @RequestMapping(value = "user/documents/{state}", method = RequestMethod.GET)
     @ApiOperation(value = "Get user's documents by state", notes = "Returns wanted user's documents by state")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
@@ -51,9 +55,11 @@ public class UserController {
                                                    @Valid @PathVariable DocumentState state,
                                                    @RequestParam("page") int page,
                                                    @RequestParam("size") int size )throws IllegalArgumentException {
+        Pageable pagingInformation =
+                PageRequest.of(page, size);
         try {
 //            return userService.getUserDocumentsByState(authentication.getName(), state);
-            return userService.getUserDocumentsByState(authentication.getName(), state, page, size);
+            return userService.getUserDocumentsByState(authentication.getName(), state, pagingInformation);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -64,10 +70,10 @@ public class UserController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public Page<DocumentServiceObject> getAllUserDocuments(@ApiIgnore Authentication authentication
             , @RequestParam("page") int page, @RequestParam("size") int size) {
-//previous method, to be deleted
-//return userService.getAllUserDocuments(authentication.getName());
+        Pageable sortedByTitle =
+                PageRequest.of(page, size, Sort.by("title").ascending());
         try {
-        return userService.getAllUserDocuments(authentication.getName(), page, size);
+        return userService.getAllUserDocuments(authentication.getName(), sortedByTitle);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -130,8 +136,10 @@ public class UserController {
     public Page<DocumentServiceObject> getDocumentsToApprove(@ApiIgnore Authentication authentication,
                                                             @RequestParam("page") int page,
                                                             @RequestParam("size") int size) {
+        Pageable sortByTitle =
+                PageRequest.of(page, size, Sort.by("title").ascending());
         try{
-        return userService.getDocumentsToApprove(authentication.getName(), page, size);
+        return userService.getDocumentsToApprove(authentication.getName(), sortByTitle);
         } catch (IllegalArgumentException e) {
         throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -142,8 +150,10 @@ public class UserController {
                                                              @RequestParam("page") int page,
                                                              @RequestParam("size") int size,
                                                              @RequestParam("criteria") String criteria) {
+        Pageable sortByTitle =
+                PageRequest.of(page, size, Sort.by("title").ascending());
         try {
-            return userService.getDocumentsToApproveFiltered(authentication.getName(), page, size, criteria);
+            return userService.getDocumentsToApprove(authentication.getName(), sortByTitle, criteria);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }

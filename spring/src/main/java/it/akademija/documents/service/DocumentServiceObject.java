@@ -9,7 +9,7 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DocumentServiceObject  {
+public class DocumentServiceObject implements Comparable<DocumentServiceObject>  {
 
     private String documentIdentifier;
     private String author;
@@ -107,16 +107,6 @@ public class DocumentServiceObject  {
         this.approver = approver;
     }
 
-    //    //What information document approver gets from database when he already approved/rejected the document. ??
-//    public DocumentServiceObject(String author, String title, String type, String description, LocalDateTime postedDate
-//    ) {
-//        this.author=author;
-//        this.title = title;
-//        this.type = type;
-//        this.description = description;
-//        this.postedDate=postedDate;
-//
-//    }
 
 
     public String getAuthor() {
@@ -214,6 +204,10 @@ public class DocumentServiceObject  {
 
     public void setFilesAttachedToDocument(Set<FileServiceObject> filesAttachedToDocument) {
         this.filesAttachedToDocument = filesAttachedToDocument;
+    }
+    @Override
+    public int compareTo(DocumentServiceObject o) {
+        return this.getTitle().compareTo(o.getTitle());
     }
 
 

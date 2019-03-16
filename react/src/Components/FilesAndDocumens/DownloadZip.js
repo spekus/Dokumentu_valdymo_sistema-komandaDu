@@ -22,6 +22,7 @@ class DownloadZip extends Component {
             .then(response => {
                 console.log(response)
                 console.log(response.url)
+               
                 // const fileNameHeader = "x-suggested-filename";
                 // const suggestedFileName = response.headers[fileNameHeader];
                 // const effectiveFileName = (suggestedFileName === undefined
@@ -49,7 +50,7 @@ class DownloadZip extends Component {
         return (
         <React.Fragment>
         < button className="btn button1"
-        onClick={this.downloadZip}>Zippo
+        onClick={this.downloadZip}>ZippoSS
         </button>
         </React.Fragment>
         );
