@@ -32,6 +32,7 @@ class UserAdminisrationList extends Component {
 
     getFilteredUsers = () => {
         this.getFilteredUsersByCriteria(this.state.searchField);
+
     }
 
     getFilteredUsersByCriteria = (criteria) => {
@@ -47,6 +48,22 @@ class UserAdminisrationList extends Component {
             .then(response => {
                 if (response.data.length > 0) {
                     this.setState({userlist: response.data});
+
+                    let userlistExtended = this.state.userlist.map(user => {
+                        let isSuspended = false;
+                        user.userGroups.map(group => {
+
+                            if (group.role === "ROLE_SUSPENDED") {
+                                isSuspended = true;
+                            }
+                        })
+                        let userExtended = {...user, isSuspended: isSuspended};
+                        return userExtended;
+                        console.log("userextended: " + userExtended);
+                    });
+                    this.setState({userlist: userlistExtended});
+                    console.log("userlistExtended: " + userlistExtended.length);
+
                 } else (window.alert("Pagal paiešką nerasta "))
             })
             .catch(error => {
@@ -215,6 +232,7 @@ class UserAdminisrationList extends Component {
                             <tbody>
                             {this.state.userlist.map(user => (
 
+
                                 <tr key={user.username}>
                                     <td>{user.username}</td>
                                     <td>{user.firstname}</td>
@@ -233,18 +251,14 @@ class UserAdminisrationList extends Component {
                                                 onClick={() => this.handleChangeUserGroup(user)}>Grupės
                                         </button>
 
-
-
-                                        {user.userGroups.map((group, index) => (group.role === 'ROLE_SUSPENDED') ?
+                                        {user.isSuspended ?
                                             <button className="btn button1 btn-sm ml-2"
                                                     onClick={() => this.removeUserFromGroup(user)}>Atblokuoti
                                             </button>
                                             :
-                                            ((index === 0) ?
-                                                <button className="btn button1 btn-sm ml-2"
-                                                        onClick={() => this.suspendUser(user)}>Blokuoti
-                                                </button>
-                                            : '' ))
+                                            <button className="btn button1 btn-sm ml-2"
+                                                    onClick={() => this.suspendUser(user)}>Blokuoti
+                                            </button>
                                         }
 
 
