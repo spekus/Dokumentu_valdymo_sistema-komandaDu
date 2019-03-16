@@ -2,7 +2,6 @@ package it.akademija.users.controller;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import it.akademija.auth.AppRoleEnum;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.documents.service.DocumentTypeServiceObject;
@@ -15,7 +14,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import springfox.documentation.annotations.ApiIgnore;
@@ -23,7 +21,6 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.security.Principal;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
@@ -155,9 +152,14 @@ public class UserController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ApiOperation(value = "Create user", notes = "Creates new user")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void addNewUser(@RequestBody CreateUserCommand cuc) {
-        userService.addNewUser(cuc.getFirstname(), cuc.getLastname(), cuc.getUsername(),
-                cuc.getPassword());
+    public void createNewUser(@RequestBody CreateUserCommand cuc) {
+        try {
+            userService.createNewUser(cuc.getFirstname(), cuc.getLastname(), cuc.getUsername(),
+                    cuc.getPassword(
+                    ));
+        } catch (IllegalArgumentException e){
+            throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{username}", method = RequestMethod.POST)
