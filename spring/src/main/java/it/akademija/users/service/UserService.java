@@ -60,13 +60,13 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     public UserService() {
     }
-
-    public UserService(UserRepository userRepository, DocumentRepository documentRepository, UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.documentRepository = documentRepository;
-        this.userGroupRepository = userGroupRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+//
+//    public UserService(UserRepository userRepository, DocumentRepository documentRepository, UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder) {
+//        this.userRepository = userRepository;
+//        this.documentRepository = documentRepository;
+//        this.userGroupRepository = userGroupRepository;
+//        this.passwordEncoder = passwordEncoder;
+//    }
 
 //    public UserRepository getUserRepository() {
 //        return userRepository;
@@ -195,13 +195,13 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
         LOGGER.info("user information chanfed of user with username - " + username + " to : firstname - "
                 + newFirstname + " lastname - " +newLastname);
     }
-
-    @Transactional
-    @Modifying
-    public void deleteUserByUsername(String username) {
-        LOGGER.info("deleteUserByUsername has been involved and is carried away");
-            userRepository.deleteUserByUsername(username);
-    }
+//
+//    @Transactional
+//    @Modifying
+//    public void deleteUserByUsername(String username) {
+//        LOGGER.info("deleteUserByUsername has been involved and is carried away");
+//            userRepository.deleteUserByUsername(username);
+//    }
 
     @Transactional
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {

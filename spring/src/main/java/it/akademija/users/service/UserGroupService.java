@@ -149,16 +149,16 @@ public class UserGroupService {
         userGroupRepository.deleteGroupByTitle(title);
     }
 
-
-    @Transactional
-    public UserGroupServiceObject getGroupByTitle(String title) {
-        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(title);
-        if (userGroupEntity != null) {
-            UserGroupServiceObject userGroupServiceObject = SOfromEntity(userGroupEntity);
-            return userGroupServiceObject;
-        }
-        return null;
-    }
+//
+//    @Transactional
+//    public UserGroupServiceObject getGroupByTitle(String title) {
+//        UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(title);
+//        if (userGroupEntity != null) {
+//            UserGroupServiceObject userGroupServiceObject = SOfromEntity(userGroupEntity);
+//            return userGroupServiceObject;
+//        }
+//        return null;
+//    }
 
 //    @Transactional
 //    public void addDocumentsToApprove(String userGroupTitle, String documentIdentifier) {
@@ -170,14 +170,14 @@ public class UserGroupService {
 //
 //
 //    }
-
-    public UserGroupRepository getUserGroupRepository() {
-        return userGroupRepository;
-    }
-
-    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
-        this.userGroupRepository = userGroupRepository;
-    }
+//
+//    public UserGroupRepository getUserGroupRepository() {
+//        return userGroupRepository;
+//    }
+//
+//    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
+//        this.userGroupRepository = userGroupRepository;
+//    }
 
 
     static UserGroupServiceObject SOfromEntity(UserGroupEntity entity) {
