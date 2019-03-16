@@ -72,7 +72,9 @@ public class DocumentService {
                 document.getDocumentTypesUserCanAprooveBy(username);
 
         boolean isAuthor = documentFromDatabase.getAuthor().equals(username);
-        boolean isApprover = (documentFromDatabase.getDocumentState() == DocumentState.SUBMITTED)
+        boolean isApprover = (documentFromDatabase.getDocumentState() == DocumentState.SUBMITTED
+        ||documentFromDatabase.getDocumentState() == DocumentState.APPROVED
+        ||documentFromDatabase.getDocumentState() == DocumentState.REJECTED)
                 && (documentTypesUserCanApprove.contains(documentFromDatabase.getType()));
 
 

@@ -49,34 +49,34 @@ class AugisDokumentas extends Component {
                 documentInfo.rejectedDate = new Date(documentInfo.rejectedDate);
 
                 this.setState({documentInfo: documentInfo});
-                this.getFileList();
+                // this.getFileList();
             })
             .catch(error => {
                 console.log("Atsakymas is getDocumentInformation - " + error)
             })
 
     }
-    getFileList = () => {
-        console.log("getFileList is being run")
-        axios.get('/api/files/findAllFilesByDocumentIdentifier', {
-            params: {
-                documentIdentifier: this.props.match.params.id
-            }
-        })
-            .then(result => {
-                this.setState({attachedFileIdentifier: result.data[0].identifier});
-                this.setState({attachedFileName: result.data[0].fileName});
-                console.log("failo Pavadinimas -  "
-                    + result.data[0].fileName)
-                console.log("failo identifier "
-                    + this.state.attachedFileIdentifier)
-                // this.setState({type: result.data[0]});
+    // getFileList = () => {
+    //     console.log("getFileList is being run")
+    //     axios.get('/api/files/findAllFilesByDocumentIdentifier', {
+    //         params: {
+    //             documentIdentifier: this.props.match.params.id
+    //         }
+    //     })
+    //         .then(result => {
+    //             this.setState({attachedFileIdentifier: result.data[0].identifier});
+    //             this.setState({attachedFileName: result.data[0].fileName});
+    //             console.log("failo Pavadinimas -  "
+    //                 + result.data[0].fileName)
+    //             console.log("failo identifier "
+    //                 + this.state.attachedFileIdentifier)
+    //             // this.setState({type: result.data[0]});
 
-            })
-            .catch(error => {
-                console.log("Atsakymas is getFileList - " + error)
-            })
-    }
+    //         })
+    //         .catch(error => {
+    //             console.log("Atsakymas is getFileList - " + error)
+    //         })
+    // }
 
     downloadOneFile = (fileIdentifier) => {
         // cia reiketu susitvarkyti su downloaderiu/filesaveriu
