@@ -17,11 +17,10 @@ class DownloadZip extends Component {
 
 
     downloadZip = () => {
-        const FileDownload = require('js-file-download');
-        console.log("zip run");
-        axios.get(`http://localhost:8181/api/files/zip`)
+        console.log("zip runssss");
+        fetch(`http://localhost:8181/api/files/zip`)
          .then((response) => {
-            FileDownload(response.data, 'report.zip');
+            FileSaver.saveAs(response.url);
             // FileSaver.saveAs(response.url, "suggestedFileName");
             }).catch((response) => {
         console.error("Could not Download zip file from the server.", response);
@@ -47,7 +46,7 @@ class DownloadZip extends Component {
         return (
         <React.Fragment>
         < button className="btn button1"
-        onClick={this.downloadZip}>ZippoSS
+        onClick={this.downloadZip}>Zippo
         </button>
         </React.Fragment>
         );
