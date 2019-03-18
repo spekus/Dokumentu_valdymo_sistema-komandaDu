@@ -9,6 +9,7 @@ import it.akademija.documents.repository.DocumentTypeRepository;
 import it.akademija.exceptions.NoApproverAvailableException;
 import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileServiceObject;
+import it.akademija.helpers.DocumentHelper;
 import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 import org.slf4j.Logger;
@@ -42,6 +43,9 @@ public class DocumentService {
     @Autowired
     private DocumentTypeRepository documentTypeRepository;
 
+    @Autowired
+    private DocumentHelper document;
+
 //    @Autowired
 //    private Logger LOGGER;
 
@@ -57,14 +61,30 @@ public class DocumentService {
     }
 
     @Transactional
-    public DocumentServiceObject getDocument(String documentIdentifier) {
+    public DocumentServiceObject getDocument(String documentIdentifier, String username) {
         LOGGER.debug("getDocument");
         DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
         if (documentFromDatabase == null) {
             throw new NullPointerException("Dokumentas su id '" + documentIdentifier + "'nerastas");
         }
-        LOGGER.debug("ducument - " + documentIdentifier + " is being returned ");
-        return SOfromEntity(documentFromDatabase);
+
+        List<String> documentTypesUserCanApprove =
+                document.getDocumentTypesUserCanAprooveBy(username);
+
+        boolean isAuthor = documentFromDatabase.getAuthor().equals(username);
+        boolean isApprover = (documentFromDatabase.getDocumentState() == DocumentState.SUBMITTED
+        ||documentFromDatabase.getDocumentState() == DocumentState.APPROVED
+        ||documentFromDatabase.getDocumentState() == DocumentState.REJECTED)
+                && (documentTypesUserCanApprove.contains(documentFromDatabase.getType()));
+
+
+        if (isAuthor || isApprover) {
+            LOGGER.debug("document - " + documentIdentifier + " is being returned ");
+            return SOfromEntity(documentFromDatabase);
+
+        } else {
+            throw new SecurityException("Šio dokumento negalite peržiūrėti dėl prieigos teisių");
+        }
     }
 
 

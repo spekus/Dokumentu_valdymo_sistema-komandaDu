@@ -78,7 +78,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                 .authorizeRequests()
                 .antMatchers("/api/**")
-                .access("not(hasRole('SUSPENDED'))");
+//                .access("not(hasRole('SUSPENDED'))");
+                .authenticated();
     }
 
     @Primary

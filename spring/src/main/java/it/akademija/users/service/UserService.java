@@ -1,7 +1,8 @@
 package it.akademija.users.service;
 
 
-
+import it.akademija.App;
+import it.akademija.auth.AppRoleEnum;
 import it.akademija.helpers.DocumentHelper;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
@@ -60,13 +61,13 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     public UserService() {
     }
-
-    public UserService(UserRepository userRepository, DocumentRepository documentRepository, UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.documentRepository = documentRepository;
-        this.userGroupRepository = userGroupRepository;
-        this.passwordEncoder = passwordEncoder;
-    }
+//
+//    public UserService(UserRepository userRepository, DocumentRepository documentRepository, UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder) {
+//        this.userRepository = userRepository;
+//        this.documentRepository = documentRepository;
+//        this.userGroupRepository = userGroupRepository;
+//        this.passwordEncoder = passwordEncoder;
+//    }
 
 //    public UserRepository getUserRepository() {
 //        return userRepository;
@@ -163,16 +164,23 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
 
     @Transactional
-    public void addNewUser(String firstname, String lastname, String username, String password) {
-        LOGGER.info("addNewUser");
-        UserEntity userEntityFromDataBase1 = userRepository.findUserByUsername(username);
-        UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
-        if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
+    public void createNewUser(String firstname, String lastname, String username, String password) {
+        LOGGER.info("createNewUser");
+//        UserEntity userEntityFromDataBase1 = userRepository.findUserByUsername(username);
+//        UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
+
+        UserEntity existingUser = userRepository.findByUsernameIgnoreCase(username);
+
+//        if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
+
+            if (existingUser == null) {
             UserEntity userEntity = new UserEntity(firstname, lastname, username, passwordEncoder.encode(password));
             userRepository.save(userEntity);
             LOGGER.info("new user has been added, name - " + firstname + " lastname - "
                     + lastname + " username - " +username);
-        }
+        } else {
+                throw new IllegalArgumentException("Naudotojo vardas " + username + " jau yra");
+            }
 
     }
 
@@ -195,13 +203,13 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
         LOGGER.info("user information chanfed of user with username - " + username + " to : firstname - "
                 + newFirstname + " lastname - " +newLastname);
     }
-
-    @Transactional
-    @Modifying
-    public void deleteUserByUsername(String username) {
-        LOGGER.info("deleteUserByUsername has been involved and is carried away");
-            userRepository.deleteUserByUsername(username);
-    }
+//
+//    @Transactional
+//    @Modifying
+//    public void deleteUserByUsername(String username) {
+//        LOGGER.info("deleteUserByUsername has been involved and is carried away");
+//            userRepository.deleteUserByUsername(username);
+//    }
 
     @Transactional
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
@@ -213,9 +221,27 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
         }
 
         List<GrantedAuthority> authorities = new ArrayList<>();
-        user.getUserGroups().forEach(group -> {
-            authorities.add(new SimpleGrantedAuthority(group.getRole().toString()));
-        });
+
+        List<AppRoleEnum> userRoles = user.getUserGroups()
+                .stream()
+                .map(group -> group.getRole())
+                .collect(Collectors.toList());
+
+        // jei tarp roliu yra suspended - ji vienintele kuria pridedam
+        if (userRoles.contains(AppRoleEnum.ROLE_SUSPENDED))
+        {
+            authorities.add(new SimpleGrantedAuthority(AppRoleEnum.ROLE_SUSPENDED.toString()));
+        }
+        else // o jei ne - pridedam visas roles.
+        {
+            authorities.addAll(
+                    userRoles
+                            .stream()
+                            .map(role ->
+                                    new SimpleGrantedAuthority(role.toString()))
+                            .collect(Collectors.toList())
+            );
+        }
 
         UserDetails userDetails = new org.springframework.security.core.userdetails.
                 User(user.getUsername(), user.getPassword(), authorities);

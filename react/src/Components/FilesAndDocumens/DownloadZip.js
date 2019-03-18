@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import FileSaver from "file-saver";
 import '../../App.css'
+import axios from 'axios';
 
 class DownloadZip extends Component {
     state = {
@@ -16,41 +17,36 @@ class DownloadZip extends Component {
 
 
     downloadZip = () => {
-        // neparasius pilno adreso su localhostu programa atsiuncia nesamone.
-        //speju cia kazkas susije su security,
-        fetch("http://localhost:8181/api/files/zip")
-            .then(response => {
-                console.log(response)
-                console.log(response.url)
-               
-                // const fileNameHeader = "x-suggested-filename";
-                // const suggestedFileName = response.headers[fileNameHeader];
-                // const effectiveFileName = (suggestedFileName === undefined
-                //     ? "document.zip"
-                //     : "duomenys.zip");
-                // console.log("Received header [" + fileNameHeader + "]: " + suggestedFileName
-                //     + ", effective fileName: " + effectiveFileName);
-                // Let the user save the file.
-
-                // const suggestedFileName = "duomenys.zip";
-
-                // var blob = new Blob([response.url], {type: "zip"});
-                //  FileSaver.saveAs("http://localhost:8181/api/files/zip", "suggestedFileName");
-                 FileSaver.saveAs(response.url, "suggestedFileName");
-                // FileSaver.saveAs(response.url, "suggestedFileName");
-              
-
-
+        console.log("zip runssss");
+        fetch(`http://localhost:8181/api/files/zip`)
+         .then((response) => {
+            FileSaver.saveAs(response.url);
+            // FileSaver.saveAs(response.url, "suggestedFileName");
             }).catch((response) => {
-            console.error("Could not Download zip file from the server.", response);
-        });
+        console.error("Could not Download zip file from the server.", response);
+    });
     }
+//     downloadZip = () => {
+//         // neparasius pilno adreso su localhostu programa atsiuncia nesamone.
+//         //speju cia kazkas susije su security,
+//         const FileDownload = require('js-file-download');
+//         fetch('http://localhost:8181/api/files/zip')
+//             .then(response => {
+//                 // console.log(response)
+//                 // console.log(response.url)
+//                 console.log(response)
+//                 FileDownload(response.data);
+
+//             }).catch((response) => {
+//             console.error("Could not Download zip file from the server.", response);
+// });
+//     }
 
     render() {
         return (
         <React.Fragment>
         < button className="btn button1"
-        onClick={this.downloadZip}>ZippoSS
+        onClick={this.downloadZip}>Zippo
         </button>
         </React.Fragment>
         );
