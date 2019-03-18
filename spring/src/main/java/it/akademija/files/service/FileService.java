@@ -51,13 +51,14 @@ public class FileService {
     //Finds file in database and converts it to object
     public FileServiceObject findFile(String identifier) {
         LOGGER.info("Trying to find file by identifier - " + identifier);
-        if (identifier.isEmpty() || fileRepository.getFileByIdentifier(identifier) == null) {
+        if (identifier==null || identifier.isEmpty() || fileRepository.getFileByIdentifier(identifier) == null) {
             throw new IllegalArgumentException("ERROR no valid File identifier provided!!");
         }else {
             FileEntity fileEntity = fileRepository.getFileByIdentifier(identifier);
             return file.SOfromEntity(fileEntity);
         }
     }
+
     @Transactional
     public void addFileToDocument(String fileIdentifier, String documentIdentifier) {
         LOGGER.info("adding file - " + fileIdentifier + " to Document - " + documentIdentifier);
