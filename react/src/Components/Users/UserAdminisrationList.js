@@ -44,20 +44,20 @@ class UserAdminisrationList extends Component {
         this.setState({offset:0}, () => {
             console.log(this.state.offset);
             this.loadAllUsers();
-        
+
         })
     } else {
         this.setState({userlist:[]})
         this.setState({offset: 0}, () => {
             this.getFilteredUsersByCriteria(this.state.searchField);
         })
-        
+
     }
 }
 
     getFilteredUsersByCriteria = (criteria) => {
         console.log("getFilteredUsersByCriteria");
-      
+
         this.setState({offset:0});
         this.setState({searchField: ''});
         this.setState({lastSearchCriteria: criteria});
@@ -69,7 +69,7 @@ class UserAdminisrationList extends Component {
                     criteria: criteria,
                     page:this.state.offset,
                     size:this.state.perPage,
-                    
+
                 }
             })
             .then(response => {
@@ -77,8 +77,8 @@ class UserAdminisrationList extends Component {
                 if (response.data.content.length > 0) {
                     console.log("bbbbbbbbbbbbbb");
                     this.setState({userlist: response.data.content});
-                    this.setState({pageCount: 
-                        Math.ceil(response.data.totalElements 
+                    this.setState({pageCount:
+                        Math.ceil(response.data.totalElements
                             / this.state.perPage)})
 
                     let userlistExtended = this.state.userlist.map(user => {
@@ -182,7 +182,7 @@ class UserAdminisrationList extends Component {
 
         console.log("selected: " + selected);
         console.log("offset " + offset);
-    
+
         this.setState({ offset: offset }, () => {
           this.loadAllUsers();
         });
@@ -200,7 +200,7 @@ class UserAdminisrationList extends Component {
             headers: {'Content-Type': 'application/json;charset=utf-8'}
 
         })
-   
+
         .then(response => {
             document.getElementById('userListTable').style.visibility = 'visible';
             console.log("Response length " + response.data.length);
@@ -208,8 +208,8 @@ class UserAdminisrationList extends Component {
             this.setState({userlist:response.data.content});
             console.log(this.state.userlist);
             console.log("totalElements " + response.data.totalElements)
-            this.setState({pageCount: 
-                Math.ceil(response.data.totalElements 
+            this.setState({pageCount:
+                Math.ceil(response.data.totalElements
                     / this.state.perPage)})
                     console.log("aaaa" + this.state.pageCount);
         }})
@@ -317,23 +317,23 @@ class UserAdminisrationList extends Component {
                                                     key={index}>{group.title} {index < user.userGroups.length - 1 ? '|' : ''} </span>)}
                                     </td>
                                     <td>
-                                        <button className="btn button1 btn-sm"
+                                        <span style={{ 'white-space' :'nowrap'}}>
+                                        <button className="btn button1 btn-sm mr-2"
                                                 onClick={() => this.handleChangeUser(user)}>Redaguoti
                                         </button>
-                                        <button className="btn button1 btn-sm ml-2"
+                                        <button className="btn button1 btn-sm mr-2"
                                                 onClick={() => this.handleChangeUserGroup(user)}>Grupės
                                         </button>
-
                                         {user.isSuspended ?
-                                            <button className="btn button1 btn-sm ml-2"
+                                            <button className="btn button1 btn-sm"
                                                     onClick={() => this.removeUserFromGroup(user)}>Atblokuoti
                                             </button>
                                             :
-                                            <button className="btn button1 btn-sm ml-2"
+                                            <button className="btn button1 btn-sm"
                                                     onClick={() => this.suspendUser(user)}>Blokuoti
                                             </button>
                                         }
-
+                                        </span>
 
                                     </td>
                                 </tr>
@@ -363,7 +363,7 @@ class UserAdminisrationList extends Component {
                                     //      {this.state.lastSearchCriteria.length === 0 ?
                                         this.getFilteredUsersByCriteria(username);
                                     // :this.getFilteredUsersByCriteria(this.state.lastSearchCriteria) }
-                                         
+
                                      }}
                         />
                     </ModalContainer>
