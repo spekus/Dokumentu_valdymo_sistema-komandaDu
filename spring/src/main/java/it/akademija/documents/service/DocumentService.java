@@ -49,6 +49,7 @@ public class DocumentService {
     @Autowired
     private AuditService auditService;
 
+    @Autowired
     private DocumentHelper document;
 
     //    private static Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
