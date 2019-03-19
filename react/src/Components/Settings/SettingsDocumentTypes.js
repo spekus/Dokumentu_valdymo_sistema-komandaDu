@@ -25,7 +25,7 @@ class SettingsDocumentTypes extends Component {
     createDocumentType = (event) => {
         event.preventDefault();
         var newType = {title: this.state.newDocumentTypeInputField}
-        axios.post('/api/document-types', newType)
+        axios.post('/kodas-spring-1.0-SNAPSHOT/api/document-types', newType)
             .then(response => {
                 this.getAllDocumentTypes();
                 this.setState({newDocumentTypeInputField: ''});
@@ -38,7 +38,7 @@ class SettingsDocumentTypes extends Component {
     }
 
     getAllDocumentTypes = () => {
-        axios.get('/api/document-types')
+        axios.get('/kodas-spring-1.0-SNAPSHOT/api/document-types')
             .then(result => {
                 this.setState({allDocumentTypes: result.data});
             })
@@ -49,7 +49,7 @@ class SettingsDocumentTypes extends Component {
     }
 
     deleteDocumentType = (title) => {
-        axios.delete('/api/document-types/' + title)
+        axios.delete('/kodas-spring-1.0-SNAPSHOT/api/document-types/' + title)
             .then(result => {
                 this.getAllDocumentTypes();
             })

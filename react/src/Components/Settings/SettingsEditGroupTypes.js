@@ -27,7 +27,7 @@ const SettingsEditGroupTypes = (props) => {
     const addTypeForUploadToGroup = (group, type) => {
         console.log("Group for editing - " + group.title);
         let doctype = type.title;
-        axios.put('/api/usergroups/' + group.title + '/add-document-type-to-upload', null, {params: {documentTypeTitle: doctype}})
+        axios.put('/kodas-spring-1.0-SNAPSHOT/api/usergroups/' + group.title + '/add-document-type-to-upload', null, {params: {documentTypeTitle: doctype}})
             .then(response => {
                 props.onChange();
             })
@@ -40,7 +40,7 @@ const SettingsEditGroupTypes = (props) => {
         console.log("Group for editing - " + group.title);
         let doctype = type.title;
         // let doctype = window.prompt("Iveskite dokumento tipą, kurį norite pridėti grupei " + group.title);
-        axios.put('/api/usergroups/' + group.title + '/add-document-type-to-approve', null, {params: {documentTypeTitle: doctype}})
+        axios.put('/kodas-spring-1.0-SNAPSHOT/api/usergroups/' + group.title + '/add-document-type-to-approve', null, {params: {documentTypeTitle: doctype}})
             .then(response => {
                 props.onChange();
             })
@@ -52,7 +52,7 @@ const SettingsEditGroupTypes = (props) => {
 
 
     const removeTypeForUploadfromGroup = (group, type) => {
-        axios.put("/api/usergroups/" + group.title + "/remove-document-type-to-upload", null, {params: {documentTypeTitle: type.title}})
+        axios.put("/kodas-spring-1.0-SNAPSHOT/api/usergroups/" + group.title + "/remove-document-type-to-upload", null, {params: {documentTypeTitle: type.title}})
             .then(response => {
                 props.onChange();
                 console.log(group.title + " group removed")
@@ -64,7 +64,7 @@ const SettingsEditGroupTypes = (props) => {
 
 
     const removeTypeForApprovefromGroup = (group, type) => {
-        axios.put("/api/usergroups/" + group.title + "/remove-document-type-to-approve", null, {params: {documentTypeTitle: type.title}})
+        axios.put("/kodas-spring-1.0-SNAPSHOT/api/usergroups/" + group.title + "/remove-document-type-to-approve", null, {params: {documentTypeTitle: type.title}})
             .then(response => {
                 props.onChange();
                 console.log(group.title + " group removed")

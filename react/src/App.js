@@ -63,7 +63,7 @@ class App extends React.Component {
     // si funkcija kreipiasi o browseris panaudota cookie. tokiu budu naudojant salutini efekta mes
     // suzinosime ar esame prisijunge
     getWhoAmI = () => {
-        axios.get('/api/users/whoami')
+        axios.get('/kodas-spring-1.0-SNAPSHOT/api/users/whoami')
             .then(response => {
                 if (response.data.username !== null) {
 
@@ -117,7 +117,7 @@ class App extends React.Component {
     }
 
     handleLogOut = () => {
-        axios.get('/logout')
+        axios.get('/kodas-spring-1.0-SNAPSHOT/logout')
             .then(response => {
                 console.log("Logout success");
                 console.log(response.data);
@@ -129,7 +129,7 @@ class App extends React.Component {
                 this.setState({user: ""})
             })
 
-        return (<Redirect to='/'/>);
+        return (<Redirect to='/kodas-spring-1.0-SNAPSHOT/'/>);
     }
 
     componentDidMount() {
@@ -196,6 +196,7 @@ class App extends React.Component {
                                             </div>
                                             <Switch>
                                                 {/* <Route exact path="/" component={AugisDashBoard}/> */}
+                                                <Redirect exact from='/kodas-spring-1.0-SNAPSHOT/' to='/dashboard/documents/all'/>
                                                 <Redirect exact from='/' to='/dashboard/documents/all'/>
                                                 <Route path="/dashboard/documents/to_aproove"
                                                        render={(props) => <ToApproveDashboard

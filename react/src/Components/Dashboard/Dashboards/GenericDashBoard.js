@@ -57,11 +57,11 @@ class GenericDashBoard extends Component {
 
         if (this.props.match.params.id.toLowerCase() === "all")
         {
-            requestPath = '/api/users/user/documents';
+            requestPath = '/kodas-spring-1.0-SNAPSHOT/api/users/user/documents';
         }
         else
         {
-             requestPath = '/api/users/user/documents/' + this.props.match.params.id.toUpperCase();
+             requestPath = '/kodas-spring-1.0-SNAPSHOT/api/users/user/documents/' + this.props.match.params.id.toUpperCase();
         }
 
         console.log("getFileList is being run");

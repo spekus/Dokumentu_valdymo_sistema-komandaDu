@@ -32,7 +32,7 @@ class SettingsUserGroups extends Component {
 
     createUserGroup = (event) => {
         event.preventDefault();
-        axios.post('/api/usergroups', {title: this.state.newUserGroupInputField, role: 'ROLE_USER'})
+        axios.post('/kodas-spring-1.0-SNAPSHOT/api/usergroups', {title: this.state.newUserGroupInputField, role: 'ROLE_USER'})
             .then(reponse => {
                     this.getAllGroupsFromServer();
                     this.setState({newUserGroupInputField: ""})
@@ -72,7 +72,7 @@ class SettingsUserGroups extends Component {
     handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
 
     getAllGroupsFromServer = () => {
-        axios.get("/api/usergroups")
+        axios.get("/kodas-spring-1.0-SNAPSHOT/api/usergroups")
             .then(response => {
                 if (response.data.length > 0) {
                     let allgroups = response.data;
@@ -91,7 +91,7 @@ class SettingsUserGroups extends Component {
 
 
     getAllTypes = () => {
-        axios.get('/api/document-types')
+        axios.get('/kodas-spring-1.0-SNAPSHOT/api/document-types')
             .then(response => {
                 if (response.data.length > 0) {
                     let allTypes = response.data;
@@ -110,7 +110,7 @@ class SettingsUserGroups extends Component {
     editGroupTitle = (group) => {
         console.log("Group to edit " + group.title);
         let newTitle = window.prompt("Įveskite naują grupės " + group.title + " pavadinimą");
-        axios.post("/api/usergroups/" + group.title, null, {params: {newTitle: newTitle}})
+        axios.post("/kodas-spring-1.0-SNAPSHOT/api/usergroups/" + group.title, null, {params: {newTitle: newTitle}})
             .then(response => {
                 this.getAllGroupsFromServer();
             })
@@ -122,7 +122,7 @@ class SettingsUserGroups extends Component {
 
     deleteGroup = (group) => {
         console.log("Group to remove " + group.title);
-        axios.delete('/api/usergroups/' + group.title)
+        axios.delete('/kodas-spring-1.0-SNAPSHOT/api/usergroups/' + group.title)
             .then(response => {
                 this.getAllGroupsFromServer();
                 window.alert("Grupė " + group.title + " sėkmingai ištrinta")

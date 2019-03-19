@@ -38,7 +38,7 @@ class NewUserForm extends Component {
         if (this.state.editmode && this.state.password.length === 0) {
             axios({
                 method: 'post',
-                url: '/api/users/' + this.state.username,
+                url: 'kodas-spring-1.0-SNAPSHOT/api/users/' + this.state.username,
                 params: {
                     firstname: newUser.firstname,
                     lastname: newUser.lastname
@@ -55,7 +55,7 @@ class NewUserForm extends Component {
 
             axios({
                 method: 'post',
-                url: '/api/users/' + this.state.username,
+                url: 'kodas-spring-1.0-SNAPSHOT/api/users/' + this.state.username,
                 params: {
                     firstname: newUser.firstname,
                     lastname: newUser.lastname,
@@ -68,7 +68,7 @@ class NewUserForm extends Component {
                 .then(
                     axios({
                         method: 'post',
-                        url: '/api/users/' + this.state.username + "/password",
+                        url: '/kodas-spring-1.0-SNAPSHOT/api/users/' + this.state.username + "/password",
                         params: {
                             password: newUser.password
                         }
@@ -79,7 +79,7 @@ class NewUserForm extends Component {
                     })
                 )
         } else {
-            axios.post('/api/users', newUser)
+            axios.post('/kodas-spring-1.0-SNAPSHOT/api/users', newUser)
                 .then(response => {
                     console.log(response);
                     this.setState(this.emptyState);

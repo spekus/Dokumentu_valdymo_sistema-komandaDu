@@ -32,7 +32,7 @@ class AugisDokumentas extends Component {
 
     getDocumentInformation = () => {
 
-        axios.get('/api/documents', {
+        axios.get('/kodas-spring-1.0-SNAPSHOT/api/documents', {
             params: {
                 documentIdentifier: this.props.match.params.id
             }
@@ -58,7 +58,7 @@ class AugisDokumentas extends Component {
     }
     getFileList = () => {
         console.log("getFileList is being run")
-        axios.get('/api/files/findAllFilesByDocumentIdentifier', {
+        axios.get('/kodas-spring-1.0-SNAPSHOT/api/files/findAllFilesByDocumentIdentifier', {
             params: {
                 documentIdentifier: this.props.match.params.id
             }
@@ -83,7 +83,7 @@ class AugisDokumentas extends Component {
         // atsakymas kuris grizta yra dvejetainis, ir jame yra pats failas kuri norime atsisiusti
         // reikia gauti ji kaip BLOB'a (Binary Large OBject) ir issaugoti
         console.log("downloadOneFile start")
-        axios.get('/api/files/download/' + fileIdentifier)
+        axios.get('http://141.136.44.216:8080/kodas-spring-1.0-SNAPSHOT/api/files/download/' + fileIdentifier)
             .then(response => {
                 FileSaver.SaveAs(response.data);
             })
@@ -121,7 +121,7 @@ class AugisDokumentas extends Component {
 
     submitDocument = (props) => {
         let docID = this.props.match.params.id;
-        axios.post("/api/documents/" + docID + "/submit")
+        axios.post("/kodas-spring-1.0-SNAPSHOT/api/documents/" + docID + "/submit")
             .then(response => {
                 this.getDocumentInformation();
 
@@ -140,7 +140,7 @@ class AugisDokumentas extends Component {
     approveDocument = (props) => {
         let docID = this.props.match.params.id;
         console.log("Dokumento Identifier - " + this.props.match.params.id);
-        axios.post("/api/documents/" + docID + "/approve")
+        axios.post("/kodas-spring-1.0-SNAPSHOT/api/documents/" + docID + "/approve")
             .then(response => {
                 this.getDocumentInformation();
             })
@@ -153,7 +153,7 @@ class AugisDokumentas extends Component {
     rejectDocument = (props) => {
         let reason = window.prompt("Iveskite atmetimo priezasti");
         let docID = this.state.documentInfo.documentIdentifier;
-        axios.post("/api/documents/" + docID + "/reject", null, {
+        axios.post("/kodas-spring-1.0-SNAPSHOT/api/documents/" + docID + "/reject", null, {
             params: {
                 rejectedReason: reason
             }
@@ -231,7 +231,7 @@ class AugisDokumentas extends Component {
                                         {this.state.documentInfo.filesAttachedToDocument ?
                                             this.state.documentInfo.filesAttachedToDocument.map(file => <li
                                                 key={file.identifier}>
-                                                <a href={'http://localhost:8181/api/files/download/' + file.identifier}
+                                                <a href={'http://141.136.44.216:8080/kodas-spring-1.0-SNAPSHOT/api/files/download/' + file.identifier}
                                                    target='_blank' rel="noopener noreferrer">{file.fileName}</a>
                                                 {/* mes naudojame localhost:8181/api  todel, kad react-server proxy nesuveikia kai content tipas yra nustatytas
                                                 */}

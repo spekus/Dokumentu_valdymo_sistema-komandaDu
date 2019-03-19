@@ -5,7 +5,7 @@ import uuid from 'uuid';
 const EditUserGroups = (props) => {
 
     const addUserToGroup = (username, groupTitle) => {
-        axios.put('/api/usergroups/' + groupTitle + '/add-person', null, {
+        axios.put('/kodas-spring-1.0-SNAPSHOT/api/usergroups/' + groupTitle + '/add-person', null, {
             params: {username: username}
         })
             .then(response => {
@@ -17,7 +17,7 @@ const EditUserGroups = (props) => {
     }
 
     const removeUserFromGroup = (username, groupTitle) => {
-        axios.put('/api/usergroups/' + groupTitle + '/remove-person', null, {
+        axios.put('/kodas-spring-1.0-SNAPSHOT/api/usergroups/' + groupTitle + '/remove-person', null, {
             params: {
                 username: username
             }

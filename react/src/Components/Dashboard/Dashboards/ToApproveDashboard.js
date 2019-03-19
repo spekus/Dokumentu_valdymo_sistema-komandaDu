@@ -47,7 +47,7 @@ class ToApproveDashboard extends Component {
     getDocumentsToApprove = () => {
         axios({
             method: 'get',
-            url: '/api/users/user/get-documents-to-approve',
+            url: '/kodas-spring-1.0-SNAPSHOT/api/users/user/get-documents-to-approve',
 
             params: {
                 page: this.state.offset,
@@ -90,7 +90,7 @@ class ToApproveDashboard extends Component {
     getFilteredDocumentsToApprove = () => {
         axios({
             method: 'get',
-            url: '/api/users/user/get-documents-to-approve-filtered',
+            url: '/kodas-spring-1.0-SNAPSHOT/api/users/user/get-documents-to-approve-filtered',
             params: {
                 page: this.state.offset,
                 size: this.state.perPage,

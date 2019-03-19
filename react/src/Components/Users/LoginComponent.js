@@ -17,7 +17,7 @@ export default class Login extends Component {
 
     tryLogin() {
         this.setState({errorText: ''});
-        axios.post('/login', null, {
+        axios.post('/kodas-spring-1.0-SNAPSHOT/login', null, {
             params: {
                 username: this.state.username,
                 password: this.state.password

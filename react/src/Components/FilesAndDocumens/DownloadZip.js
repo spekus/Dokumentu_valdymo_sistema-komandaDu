@@ -18,7 +18,7 @@ class DownloadZip extends Component {
 
     downloadZip = () => {
         console.log("zip runssss");
-        fetch(`http://localhost:8181/api/files/zip`)
+        fetch(`http://141.136.44.216:8080/kodas-spring-1.0-SNAPSHOT/api/files/zip`)
          .then((response) => {
             FileSaver.saveAs(response.url);
             // FileSaver.saveAs(response.url, "suggestedFileName");

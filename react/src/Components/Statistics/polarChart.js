@@ -203,7 +203,7 @@ class Charts extends Component {
     getApprovedData=()=>{
         axios({
             method: 'get',
-            url: '/api/statistics/approved-docs',
+            url: '/kodas-spring-1.0-SNAPSHOT/api/statistics/approved-docs',
             params: {
                 startDate: this.state.date[0],
                 endDate: this.state.date[1]
@@ -223,7 +223,7 @@ class Charts extends Component {
     getRejectedData=()=>{
         axios({
             method: 'get',
-            url: '/api/statistics/rejected-docs',
+            url: '/kodas-spring-1.0-SNAPSHOT/api/statistics/rejected-docs',
             params: {
                 startDate: this.state.date[0],
                 endDate: this.state.date[1]
@@ -243,7 +243,7 @@ class Charts extends Component {
     getPostedData=()=>{
         axios({
             method: 'get',
-            url: '/api/statistics/posted-docs',
+            url: '/kodas-spring-1.0-SNAPSHOT/api/statistics/posted-docs',
             params: {
                 startDate: this.state.date[0],
                 endDate: this.state.date[1]
@@ -263,7 +263,7 @@ class Charts extends Component {
     getUserListByPostedDocs=()=>{
         axios({
             method: 'get',
-            url: '/api/statistics/userlist-by-posted-docs',
+            url: '/kodas-spring-1.0-SNAPSHOT/api/statistics/userlist-by-posted-docs',
             headers: {'Content-Type': 'application/json;charset=utf-8'}
         })
             .then(response => {

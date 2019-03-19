@@ -40,7 +40,7 @@ class UserAdminisrationList extends Component {
         this.setState({lastSearchCriteria: criteria});
         document.getElementById('userListTable').style.visibility = 'visible';
         axios.get(
-            '/api/users/criteria', {
+            'kodas-spring-1.0-SNAPSHOT/api/users/criteria', {
                 params: {
                     criteria: criteria
                 }
@@ -73,7 +73,7 @@ class UserAdminisrationList extends Component {
     }
 
     getAllGroupsfromServer = () => {
-        axios.get("/api/usergroups")
+        axios.get("kodas-spring-1.0-SNAPSHOT/api/usergroups")
             .then(response => {
                     if (response.data.length > 0) {
                         this.setState({allgroups: response.data});
@@ -87,7 +87,7 @@ class UserAdminisrationList extends Component {
 
 
     deleteUser = (user) => {
-        axios.delete('/api/users/' + user.username)
+        axios.delete('kodas-spring-1.0-SNAPSHOT/api/users/' + user.username)
             .then(response => {
                 let newUserlist = this.state.userlist.filter(u => u.username !== user.username)
                 this.setState({userlist: newUserlist});
@@ -101,7 +101,7 @@ class UserAdminisrationList extends Component {
 
 
     suspendUser = (user) => {
-        axios.put('/api/usergroups/suspend-user', null, {params: {username: user.username}})
+        axios.put('kodas-spring-1.0-SNAPSHOT/api/usergroups/suspend-user', null, {params: {username: user.username}})
             .then(response => {
                 this.getFilteredUsersByCriteria(this.state.lastSearchCriteria);
             })
@@ -118,7 +118,7 @@ class UserAdminisrationList extends Component {
                 .filter(group => group.role === 'ROLE_SUSPENDED')
                 .map(group => group.title);
             console.log("grouptitle" + grouptitle);
-            axios.put('/api/usergroups/' + grouptitle + '/remove-person', null, {
+            axios.put('/kodas-spring-1.0-SNAPSHOT/api/usergroups/' + grouptitle + '/remove-person', null, {
                 params: {
                     username: user.username
                 }
@@ -148,7 +148,7 @@ class UserAdminisrationList extends Component {
 
     loadUserToEdit = (username) => {
         if (username !== "") {
-            axios.get('/api/users/' + username)
+            axios.get('/kodas-spring-1.0-SNAPSHOT/api/users/' + username)
                 .then(response => {
                         this.setState({userBeingEdited: response.data});
                     }

@@ -35,7 +35,7 @@ export default class FileUploader extends Component {
     }
 
     getAllowedTypes = () => {
-        axios.get('/api/users/user/document-types')
+        axios.get('/kodas-spring-1.0-SNAPSHOT/api/users/user/document-types')
             .then(result => {
                 if (result.data.length > 0) {
                     this.setState({ availableTypes: result.data });
@@ -51,7 +51,7 @@ export default class FileUploader extends Component {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    handleSubmit = async (event) => {
+    handleSubmit =  (event) => {
 
         event.preventDefault();
         console.log("0 file_state: " + this.state.files.length);
@@ -72,17 +72,27 @@ export default class FileUploader extends Component {
             data.append('file', file);
             data.append('name', file.name);
 
-            axios.post('/api/files', data)
+            axios.post('/kodas-spring-1.0-SNAPSHOT/api/files', data)
                 .then(response => {
-
-                    
+                    console.log("kodas-spring-1.0-SNAPSHOT/api/files', data)")
                     if (response.data.text) {
                         var fileId = response.data.text;
                         fileIdentifiers.push(fileId);
+                        console.log("response.data.text" + response.data.text)
 
                         console.log("File identifiers length" + fileIdentifiers.length);
+                        if(fileId != null){
+                            let documentDetails = {
+                                title: this.state.title,
+                                type: this.state.type,
+                                description: this.state.description
+                            };
+                            this.addDocument(documentDetails, fileIdentifiers);
+                        }
+
 
                     }
+                    
                 })
                 .catch(err => {
                     this.setState({error: err.message})
@@ -94,21 +104,11 @@ export default class FileUploader extends Component {
 
         })
 
-            while (fileIdentifiers.length === 0) {
-                await this.sleep(1);
-                console.log("While cikle: " + fileIdentifiers.length);
-            }
-            let documentDetails = {
-                title: this.state.title,
-                type: this.state.type,
-                description: this.state.description
-            };
+            // while (fileIdentifiers.length === 0) {
+            //     await this.sleep(1);
+            //     console.log("While cikle: " + fileIdentifiers.length);
+            // }
 
-         
-            this.addDocument(documentDetails, fileIdentifiers);
-            
-        
-        this.setState({ 'title': '', 'description': '' });
 
 
     }
@@ -118,7 +118,7 @@ export default class FileUploader extends Component {
     addDocument(documentDetails, fileIdentifiers) {
         console.log("running addDocument");
 
-        axios.post('/api/documents', documentDetails)
+        axios.post('/kodas-spring-1.0-SNAPSHOT/api/documents', documentDetails)
             .then(response => {
                 this.setState({ 'title': '', 'description': '' });
 
@@ -156,7 +156,7 @@ export default class FileUploader extends Component {
         console.log("docId" + docId);
         console.log("fileID" + fileID);
 
-        axios.post('/api/files/addFileToDocument'
+        axios.post('/kodas-spring-1.0-SNAPSHOT/api/files/addFileToDocument'
             , fileDocumentCommand)
             .then(response => {
                 this.setState({ [this.state.name]: '' });
