@@ -90,8 +90,16 @@ public class UserController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation(value = "List all users and all related info", notes = "Lists all users all information")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public Collection<UserServiceObject> getAllUsers() {
-        return userService.getAllUsers();
+    public Page<UserServiceObject> getAllUsers(@RequestParam("page") int page,
+                                               @RequestParam("size") int size) {
+
+        Pageable sortByUsername = PageRequest.of(page,size, Sort.by("username").ascending());
+
+        try {
+            return userService.getAllUsers(sortByUsername);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = "application/json")
@@ -116,13 +124,24 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/criteria", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/criteria", method = RequestMethod.GET)
     @ApiOperation(value = "criteria", notes = "Returns users by criteria")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public Collection<UserServiceObject> getUserByCriteria(@RequestParam("criteria") @NotNull @Length(min = 1) String criteria) {
-        return userService.getUserByCriteria(criteria);
+    public Page<UserServiceObject> getUserByCriteria(@RequestParam("criteria") @NotNull @Length(min = 1) String criteria,
+                                                     @RequestParam("page") int page,
+                                                     @RequestParam("size") int size) {
+
+        Pageable sortByUsername=PageRequest.of(page,size,Sort.by("username").ascending());
+
+        try {
+            return userService.getUserByCriteria(criteria, sortByUsername);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+
 
     }
+
 
     @RequestMapping(value = "/whoami", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "whoami", notes = "Returns user which is currently logged in")

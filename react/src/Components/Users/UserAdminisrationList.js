@@ -6,6 +6,7 @@ import ModalContainer from "../UI/ModalContainer";
 import EditUserGroups from "./EditUserGroups";
 import '../../App.css'
 import {showErrorObject} from "../UI/MainModalError";
+import ReactPaginate from 'react-paginate';
 
 class UserAdminisrationList extends Component {
     state = {
@@ -19,35 +20,66 @@ class UserAdminisrationList extends Component {
         searchField: '',
         lastSearchCriteria: '',
         allgroups: [],
-        modalMessageText: ''
+        modalMessageText: '',
+
+        //pagingInformation
+        pageCount : 3,
+        perPage : 7,
+        offset: 0, //identifies which page is used
+        isPaginationOn:false
     }
 
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
-
-    //handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
 
     componentDidMount() {
         this.getAllGroupsfromServer()
     }
 
     getFilteredUsers = () => {
-        this.getFilteredUsersByCriteria(this.state.searchField);
-
+        this.setState({isPaginationOn:true});
+        console.log("searchfield " + this.state.searchField.length);
+        if (this.state.searchField.length === 0) {
+        this.setState({userlist:[]})
+        console.log(this.state.userlist);
+        this.setState({offset:0}, () => {
+            console.log(this.state.offset);
+            this.loadAllUsers();
+        
+        })
+    } else {
+        this.setState({userlist:[]})
+        this.setState({offset: 0}, () => {
+            this.getFilteredUsersByCriteria(this.state.searchField);
+        })
+        
     }
+}
 
     getFilteredUsersByCriteria = (criteria) => {
+        console.log("getFilteredUsersByCriteria");
+      
+        this.setState({offset:0});
         this.setState({searchField: ''});
         this.setState({lastSearchCriteria: criteria});
+        console.log("criteria" + criteria)
         document.getElementById('userListTable').style.visibility = 'visible';
         axios.get(
             '/api/users/criteria', {
                 params: {
-                    criteria: criteria
+                    criteria: criteria,
+                    page:this.state.offset,
+                    size:this.state.perPage,
+                    
                 }
             })
             .then(response => {
-                if (response.data.length > 0) {
-                    this.setState({userlist: response.data});
+                console.log("response data content length " + response.data.content.length)
+                if (response.data.content.length > 0) {
+                    console.log("bbbbbbbbbbbbbb");
+                    this.setState({userlist: response.data.content});
+                    this.setState({pageCount: 
+                        Math.ceil(response.data.totalElements 
+                            / this.state.perPage)})
 
                     let userlistExtended = this.state.userlist.map(user => {
                         let isSuspended = false;
@@ -59,7 +91,7 @@ class UserAdminisrationList extends Component {
                         })
                         let userExtended = {...user, isSuspended: isSuspended};
                         return userExtended;
-                        console.log("userextended: " + userExtended);
+
                     });
                     this.setState({userlist: userlistExtended});
                     console.log("userlistExtended: " + userlistExtended.length);
@@ -99,11 +131,10 @@ class UserAdminisrationList extends Component {
 
     }
 
-
     suspendUser = (user) => {
         axios.put('/api/usergroups/suspend-user', null, {params: {username: user.username}})
             .then(response => {
-                this.getFilteredUsersByCriteria(this.state.lastSearchCriteria);
+                this.getFilteredUsersByCriteria(user.username);
             })
             .catch(error => {
                 console.log("Error from suspendUser - " + error)
@@ -124,7 +155,7 @@ class UserAdminisrationList extends Component {
                 }
             })
                 .then(response => {
-                    this.getFilteredUsersByCriteria(this.state.lastSearchCriteria);
+                    this.getFilteredUsersByCriteria(user.username);
                 })
                 .catch(error => {
                     console.log("Error from removeUserFromGroup - " + error);
@@ -145,6 +176,48 @@ class UserAdminisrationList extends Component {
         $('#editUserGroupsModal').modal('show');
     }
 
+    handlePageClick = data => {
+        let selected = data.selected;
+        let offset = Math.ceil(selected);
+
+        console.log("selected: " + selected);
+        console.log("offset " + offset);
+    
+        this.setState({ offset: offset }, () => {
+          this.loadAllUsers();
+        });
+    };
+
+    loadAllUsers =() => {
+
+        axios({
+            method: 'get',
+            url: '/api/users',
+            params: {
+                page: this.state.offset,
+                size: this.state.perPage,
+            },
+            headers: {'Content-Type': 'application/json;charset=utf-8'}
+
+        })
+   
+        .then(response => {
+            document.getElementById('userListTable').style.visibility = 'visible';
+            console.log("Response length " + response.data.length);
+            if (response.data.content.length>0) {
+            this.setState({userlist:response.data.content});
+            console.log(this.state.userlist);
+            console.log("totalElements " + response.data.totalElements)
+            this.setState({pageCount: 
+                Math.ceil(response.data.totalElements 
+                    / this.state.perPage)})
+                    console.log("aaaa" + this.state.pageCount);
+        }})
+        .catch(error => {
+            showErrorObject(error);
+        })
+    }
+
 
     loadUserToEdit = (username) => {
         if (username !== "") {
@@ -162,7 +235,7 @@ class UserAdminisrationList extends Component {
     handleGroupsChanged = () => {
         this.loadUserToEdit(this.state.userBeingEdited.username);
         // this.getFilteredUsers();
-        this.getFilteredUsersByCriteria(this.state.lastSearchCriteria);
+        this.getFilteredUsersByCriteria(this.state.userBeingEdited.username);
     }
 
     handleKeyPress = (event) => {
@@ -282,7 +355,15 @@ class UserAdminisrationList extends Component {
 
                                      afterSubmit={(username) => {
                                          $('#userEditModal').modal('hide');
-                                         this.getFilteredUsersByCriteria(this.state.lastSearchCriteria);
+                                         this.setState({searchField:''})
+                                         console.log("searchfield " + this.state.searchField);
+                                         // eslint-disable-next-line no-lone-blocks
+                                         console.log("after submit username  " + username);
+                                         console.log("after submit lastsearchcriteria " + this.state.lastSearchCriteria);
+                                    //      {this.state.lastSearchCriteria.length === 0 ?
+                                        this.getFilteredUsersByCriteria(username);
+                                    // :this.getFilteredUsersByCriteria(this.state.lastSearchCriteria) }
+                                         
                                      }}
                         />
                     </ModalContainer>
@@ -304,7 +385,38 @@ class UserAdminisrationList extends Component {
                                         allgroups={this.state.allgroups}
                                         onGroupsChanged={this.handleGroupsChanged}/>
                     </ModalContainer>
+
+                    {this.state.isPaginationOn?
+                    <div>
+                       {/* pagination */}
+                <div className='container-fluid mt-2'>
+                <div className="row">
+                <div className="col-lg-12 my-auto center-block text-center">
+                {/* <div key={this.state.paginationIncarnation}> */}
+                <ReactPaginate
+                forcePage={this.state.offset}
+                previousLabel={'ankstesnis puslapis'}
+                nextLabel={'kitas puslapis'}
+                breakLabel={'...'}
+                breakClassName={'break-me'}
+                pageCount={this.state.pageCount}
+                marginPagesDisplayed={2}
+                pageRangeDisplayed={5}
+                onPageChange={this.handlePageClick}
+                containerClassName={'pagination'}
+                subContainerClassName={'pagesPagination'}
+                activeClassName={'active'}
+                />
                 </div>
+                </div>
+                </div>
+                </div>
+                :
+                null}
+
+
+                </div>
+                {/* </div> */}
             </React.Fragment>
         );
     }

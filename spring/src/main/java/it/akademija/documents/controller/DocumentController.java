@@ -62,10 +62,6 @@ public class DocumentController {
         } catch (SecurityException e) {
             throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, e.getMessage());
         }
-
-
-
-
     }
 
     @RequestMapping(value = "", method = RequestMethod.POST)

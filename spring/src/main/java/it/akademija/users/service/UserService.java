@@ -61,42 +61,41 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
 
     public UserService() {
     }
-//
-//    public UserService(UserRepository userRepository, DocumentRepository documentRepository, UserGroupRepository userGroupRepository, PasswordEncoder passwordEncoder) {
-//        this.userRepository = userRepository;
-//        this.documentRepository = documentRepository;
-//        this.userGroupRepository = userGroupRepository;
-//        this.passwordEncoder = passwordEncoder;
-//    }
-
-//    public UserRepository getUserRepository() {
-//        return userRepository;
-//    }
-//
-//    public void setUserRepository(UserRepository userRepository) {
-//        this.userRepository = userRepository;
-//    }
-//
-//
-//    public UserGroupRepository getUserGroupRepository() {
-//        return userGroupRepository;
-//    }
-//
-//    public void setUserGroupRepository(UserGroupRepository userGroupRepository) {
-//        this.userGroupRepository = userGroupRepository;
-//    }
 
     @Transactional
-    public List<UserServiceObject> getAllUsers() {
+    public Page<UserServiceObject> getAllUsers(Pageable pageFormatDetails) {
         LOGGER.info("getAllUsers");
-        List<UserEntity> users = userRepository.findAll();
-        List<UserServiceObject> list = users.stream()
+        List<UserEntity> allUsers = userRepository.getAllUsers(pageFormatDetails);
+        List<UserServiceObject> allUsersAsServiceObjects = allUsers.stream()
                 .map(userEntity ->
                         SOfromEntity(userEntity))
                 .collect(Collectors.toList());
+        long userCount = userRepository.getTotalUsersCount();
+
+        PageImpl<UserServiceObject> pagedData=new PageImpl<>(allUsersAsServiceObjects,pageFormatDetails,userCount);
         LOGGER.info("returning all users");
-        return list;
+        return pagedData;
     }
+
+//    @Transactional
+//    public Page<DocumentServiceObject> getDocumentsToApprove(String userName, Pageable pageFormatDetails) {
+//        LOGGER.info("getDocumentsToApprove");
+//
+//        List<String> documentTypesUserCanAproove =
+//                document.getDocumentTypesUserCanAprooveBy(userName);
+//        List<DocumentServiceObject> documentsUserCanAproove =
+//                document.getDocumentsBy(documentTypesUserCanAproove, pageFormatDetails);
+//        // we need total ammount of documents to be displayed for pagination to work, thus we need second query.
+//        long documentCount = documentRepository.getDocumentsToApproveSize(documentTypesUserCanAproove);
+//
+//        PageImpl<DocumentServiceObject> pagedData = new PageImpl<>(documentsUserCanAproove,
+//                pageFormatDetails, documentCount);
+//        LOGGER.info(" documents for approval of user - " +userName + " are being returned "+
+//                " , returning page - " +pageFormatDetails.getPageNumber() +"\n" + " size of page is "
+//                + pageFormatDetails.getPageSize() + " size of total data points  is - " + pagedData.getTotalElements());
+//
+//        return pagedData;
+//    }
 
     @Transactional
     public UserServiceObject getUserByUsername(String username) {
@@ -147,19 +146,39 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
     }
 
     @Transactional
-    public List<UserServiceObject> getUserByCriteria(String criteria) {
+    public Page<UserServiceObject> getUserByCriteria(String criteria, Pageable pageFormatDetails) {
         LOGGER.info("getUserByCriteria");
         String criteriaInLowerCaps=criteria.toLowerCase();
-        if (userRepository.findByUsernameOrLastname(criteriaInLowerCaps) != null) {
-            List<UserServiceObject> userList = userRepository.findByUsernameOrLastname(criteriaInLowerCaps)
+        if (userRepository.findByUsernameOrLastname(criteriaInLowerCaps, pageFormatDetails) != null) {
+            List<UserServiceObject> userList = userRepository.findByUsernameOrLastname(criteriaInLowerCaps, pageFormatDetails)
                     .stream()
                     .map(userEntity -> SOfromEntity(userEntity))
                     .collect(Collectors.toList());
+
+            long usersByCriteriaCount=userRepository.getUsersByCriteriaSize(criteriaInLowerCaps);
+
+            PageImpl <UserServiceObject> pagedData=new PageImpl<>(userList, pageFormatDetails, usersByCriteriaCount);
+
             LOGGER.info("returning users according to criteria - " + criteria);
-            return userList;
+            return pagedData;
         }
         throw new IllegalArgumentException("No Users with criteria - " + criteria + " have been found");
     }
+
+//    @Transactional
+//    public Page<UserServiceObject> getAllUsers(Pageable pageFormatDetails) {
+//        LOGGER.info("getAllUsers");
+//        List<UserEntity> allUsers = userRepository.getAllUsers(pageFormatDetails);
+//        List<UserServiceObject> allUsersAsServiceObjects = allUsers.stream()
+//                .map(userEntity ->
+//                        SOfromEntity(userEntity))
+//                .collect(Collectors.toList());
+//        long userCount = userRepository.getTotalUsersCount();
+//
+//        PageImpl<UserServiceObject> pagedData=new PageImpl<>(allUsersAsServiceObjects,pageFormatDetails,userCount);
+//        LOGGER.info("returning all users");
+//        return pagedData;
+//    }
 
 
 
@@ -290,8 +309,6 @@ private static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
                 + pageFormatDetails.getPageSize() + " size of total data points  is - " + pagedData.getTotalElements());
         return pagedData;
     }
-
-
 
     @Transactional
     public Page<DocumentServiceObject> getDocumentsToApprove(String userName, Pageable pageFormatDetails) {

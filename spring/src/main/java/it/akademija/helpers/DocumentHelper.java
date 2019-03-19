@@ -16,9 +16,6 @@ import org.springframework.stereotype.Component;
 import java.util.*;
 import java.util.stream.Collectors;
 
-
-
-
 @Component("DocumentHelper")
 public class DocumentHelper {
 
@@ -137,7 +134,5 @@ public class DocumentHelper {
         PageImpl<DocumentServiceObject> pageData = new PageImpl<DocumentServiceObject>(filteredList,
                 pageFormatDetails, documentServiceObjects.size());
         return pageData;
-
-
     }
 }
