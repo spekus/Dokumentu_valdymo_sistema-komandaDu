@@ -90,8 +90,16 @@ public class UserController {
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation(value = "List all users and all related info", notes = "Lists all users all information")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public Collection<UserServiceObject> getAllUsers() {
-        return userService.getAllUsers();
+    public Page<UserServiceObject> getAllUsers(@RequestParam("page") int page,
+                                               @RequestParam("size") int size) {
+
+        Pageable sortByUsername = PageRequest.of(page,size, Sort.by("username").ascending());
+
+        try {
+            return userService.getAllUsers(sortByUsername);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
     }
 
     @RequestMapping(value = "/{username}", method = RequestMethod.GET, produces = "application/json")
@@ -116,13 +124,24 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/criteria", method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = "/criteria", method = RequestMethod.GET)
     @ApiOperation(value = "criteria", notes = "Returns users by criteria")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public Collection<UserServiceObject> getUserByCriteria(@RequestParam("criteria") @NotNull @Length(min = 1) String criteria) {
-        return userService.getUserByCriteria(criteria);
+    public Page<UserServiceObject> getUserByCriteria(@RequestParam("criteria") @NotNull @Length(min = 1) String criteria,
+                                                     @RequestParam("page") int page,
+                                                     @RequestParam("size") int size) {
+
+        Pageable sortByUsername=PageRequest.of(page,size,Sort.by("username").ascending());
+
+        try {
+            return userService.getUserByCriteria(criteria, sortByUsername);
+        } catch (IllegalArgumentException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+        }
+
 
     }
+
 
     @RequestMapping(value = "/whoami", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "whoami", notes = "Returns user which is currently logged in")
@@ -210,22 +229,22 @@ public class UserController {
     }
 
 
-    @RequestMapping(value = "/{username}", method = RequestMethod.DELETE)
-    @ApiOperation(value = "Delete user", notes = "Deletes user")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void deleteUser(@PathVariable("username") @NotNull @Length(min = 1) String username,
-                           @ApiIgnore HttpServletRequest request) {
-        // neleidziam naudotojui istrinti pati save
-        // kaip nustatyti kitose koks naudotojo vardas kitose vietose, pravers sitas puslapis:
-        // https://www.baeldung.com/get-user-in-spring-security
-        // Galima naudoti "HttpServletRequest request" arba "Authentication authentication"
-        if (request.getRemoteUser().equals(username)) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete yourself!");
-            // parodome exception, kuri galima pasiimti axios ... catch (response => ... response.data.message)
-        } else {
-            userService.deleteUserByUsername(username);
-        }
-    }
+//    @RequestMapping(value = "/{username}", method = RequestMethod.DELETE)
+//    @ApiOperation(value = "Delete user", notes = "Deletes user")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+//    public void deleteUser(@PathVariable("username") @NotNull @Length(min = 1) String username,
+//                           @ApiIgnore HttpServletRequest request) {
+//        // neleidziam naudotojui istrinti pati save
+//        // kaip nustatyti kitose koks naudotojo vardas kitose vietose, pravers sitas puslapis:
+//        // https://www.baeldung.com/get-user-in-spring-security
+//        // Galima naudoti "HttpServletRequest request" arba "Authentication authentication"
+//        if (request.getRemoteUser().equals(username)) {
+//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete yourself!");
+//            // parodome exception, kuri galima pasiimti axios ... catch (response => ... response.data.message)
+//        } else {
+//            userService.deleteUserByUsername(username);
+//        }
+//    }
 
 
 }
