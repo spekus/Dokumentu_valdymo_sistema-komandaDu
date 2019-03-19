@@ -39,24 +39,24 @@ public class DocumentTypeController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ApiOperation(value="Create new document type", notes="Creates new document type")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void createDocumentType (@RequestBody CreateDocumentTypeCommand p) {
-        documentTypeService.createNewDocumentType(p.getTitle());
+    public void createDocumentType (@RequestBody CreateDocumentTypeCommand p, @ApiIgnore Authentication authentication) {
+        documentTypeService.createNewDocumentType(p.getTitle(), authentication.getName());
     }
 
     @RequestMapping(value="", method = RequestMethod.PUT)
     @ApiOperation(value="Update document type", notes="Updates document type")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void updateDocumentType (@RequestParam ("currentTitle") @NotNull @Length(min=1) String currentTitle, @RequestBody CreateDocumentTypeCommand p) {
-        documentTypeService.updateDocumentType(currentTitle, p.getTitle());
+    public void updateDocumentType (@RequestParam ("currentTitle") @NotNull @Length(min=1) String currentTitle, @RequestBody CreateDocumentTypeCommand p, @ApiIgnore Authentication authentication) {
+        documentTypeService.updateDocumentType(currentTitle, p.getTitle(), authentication.getName());
     }
 
     @RequestMapping(value = "/{title}", method = RequestMethod.DELETE)
 //    @RequestMapping( method = RequestMethod.DELETE)
     @ApiOperation(value="Delete document type", notes="Deletes document type")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
-    public void deleteDocumentType (@PathVariable ("title")  @NotNull @Length(min=1) String title) {
+    public void deleteDocumentType ( @PathVariable ("title")  @NotNull @Length(min=1) String title, @ApiIgnore Authentication authentication) {
 //    public void deleteDocumentType ( String title) {
-        documentTypeService.deleteDocumentType(title);
+        documentTypeService.deleteDocumentType(title, authentication.getName());
     }
 
 

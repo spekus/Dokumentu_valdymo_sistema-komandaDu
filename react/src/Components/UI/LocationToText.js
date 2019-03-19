@@ -51,6 +51,9 @@ const LocationToText = (props) => {
         case '/statistics':
             name = "Statistika";
             break;
+        case '/auditlog':
+            name = "Veiksmų žurnalas";
+            break;
         default:
             return name = ""
     }

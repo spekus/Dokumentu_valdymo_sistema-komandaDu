@@ -1,5 +1,8 @@
 package it.akademija.users.service;
 
+import it.akademija.audit.AuditActionEnum;
+import it.akademija.audit.ObjectTypeEnum;
+import it.akademija.audit.service.AuditService;
 import it.akademija.auth.AppRoleEnum;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
@@ -39,11 +42,15 @@ public class UserGroupService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private AuditService auditService;
+
     public UserGroupService(UserGroupRepository userGroupRepository, DocumentTypeRepository documentTypeRepository,
-                            DocumentRepository documentRepository) {
+                            DocumentRepository documentRepository, AuditService auditService) {
         this.userGroupRepository = userGroupRepository;
         this.documentTypeRepository = documentTypeRepository;
         this.documentRepository = documentRepository;
+        this.auditService = auditService;
     }
 
     @Transactional
@@ -56,97 +63,167 @@ public class UserGroupService {
     }
 
     @Transactional
-    public void addNewUserGroup(CreateUserGroupCommand createUserGroupCommand) {
+    public void addNewUserGroup(CreateUserGroupCommand createUserGroupCommand, String username) {
         UserGroupEntity userGroupEntityFromDataBase = userGroupRepository.findGroupByTitle(createUserGroupCommand.getTitle());
         if (userGroupEntityFromDataBase == null) {
             UserGroupEntity userGroupEntity = new UserGroupEntity(createUserGroupCommand.getTitle(), createUserGroupCommand.getRole());
             userGroupRepository.save(userGroupEntity);
+
+            if (!username.isEmpty()) {
+                UserEntity user = userRepository.findUserByUsername(username);
+                if (user != null) {
+                    auditService.addNewAuditEntry(user, AuditActionEnum.CREATE_NEW_USERGROUP, ObjectTypeEnum.USERGROUP, createUserGroupCommand.getTitle());
+                }
+            }
         }
     }
 
     @Transactional
-    public void updateGroupByTitle(String title, String newTitle) {
+    public void updateGroupByTitle(String title, String newTitle, String username) {
         UserGroupEntity savedUserGroupEntity = userGroupRepository.findGroupByTitle(title);
         savedUserGroupEntity.setTitle(newTitle);
         UserGroupEntity updateUserGroupEntit = userGroupRepository.save(savedUserGroupEntity);
+
+        if (!username.isEmpty()) {
+            UserEntity user = userRepository.findUserByUsername(username);
+            if (user != null) {
+                auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP, title + " -> " + newTitle);
+            }
+        }
     }
 
 
     @Transactional
-    public void addGroupToUser(String userGroupTitle, String username) {
+    public void addGroupToUser(String userGroupTitle, String username, String myusername) {
         UserEntity userEntity = userRepository.findUserByUsername(username);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         Set<UserGroupEntity> allUserGroups = userEntity.getUserGroups();
         if (!allUserGroups.contains(userGroupEntity)) {
             allUserGroups.add(userGroupEntity);
             userRepository.save(userEntity);
+
+            if (!myusername.isEmpty()) {
+                UserEntity user = userRepository.findUserByUsername(myusername);
+                if (user != null) {
+                    auditService.addNewAuditEntry(user, AuditActionEnum.ADD_USER_TO_GROUP, ObjectTypeEnum.USER, username + " + group: " + userGroupTitle);
+                }
+            }
         }
     }
 
     @Transactional
-    public void removeGroupFromUser(String userGroupTitle, String username) {
+    public void removeGroupFromUser(String userGroupTitle, String username, String myusername) {
         UserEntity userEntity = userRepository.findUserByUsername(username);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
 
         if (userEntity != null && userGroupEntity != null) {
             userEntity.getUserGroups().remove(userGroupEntity);
+
+            if (!myusername.isEmpty()) {
+                UserEntity user = userRepository.findUserByUsername(myusername);
+                if (user != null) {
+                    auditService.addNewAuditEntry(user, AuditActionEnum.REMOVE_USER_FROM_GROUP, ObjectTypeEnum.USER, username + " - group: " + userGroupTitle);
+                }
+            }
         }
     }
 
     @Transactional
-    public void suspendUser(String username) {
+    public void suspendUser(String username, String myusername) {
         UserEntity userEntity = userRepository.findUserByUsername(username);
 //        userEntity.getUserGroups().clear();
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByRole(AppRoleEnum.ROLE_SUSPENDED);
         if (userGroupEntity != null) {
-            addGroupToUser(userGroupEntity.getTitle(), username);
+            addGroupToUser(userGroupEntity.getTitle(), username, myusername);
             userRepository.save(userEntity);
+
+            if (!myusername.isEmpty()) {
+                UserEntity user = userRepository.findUserByUsername(myusername);
+                if (user != null) {
+                    auditService.addNewAuditEntry(user, AuditActionEnum.SUSPEND_USER, ObjectTypeEnum.USER, username);
+                }
+            }
         }
     }
 
     @Transactional
-    public void addDocumentTypeToUpload(String userGroupTitle, String documentTypeTitle) {
+    public void addDocumentTypeToUpload(String userGroupTitle, String documentTypeTitle, String username) {
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
         if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.addAvailableDocumentTypeToUpload(documentTypeEntity);
+
+            if (!username.isEmpty()) {
+                UserEntity user = userRepository.findUserByUsername(username);
+                if (user != null) {
+                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP, userGroupTitle + " + upload: " + documentTypeTitle);
+                }
+            }
         }
+
 
 
     }
 
     @Transactional
-    public void addDocumentTypeToApprove(String userGroupTitle, String documentTypeTitle) {
+    public void addDocumentTypeToApprove(String userGroupTitle, String documentTypeTitle, String username) {
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
         if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.addAvailableDocumentTypeToApprove(documentTypeEntity);
+
+            if (!username.isEmpty()) {
+                UserEntity user = userRepository.findUserByUsername(username);
+                if (user != null) {
+                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP, userGroupTitle + " + approve: " + documentTypeTitle);
+                }
+            }
         }
     }
 
     @Transactional
-    public void removeDocumentTypeToUpload(String userGroupTitle, String documentTypeTitle) {
+    public void removeDocumentTypeToUpload(String userGroupTitle, String documentTypeTitle, String username) {
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
         if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.removeAvailableDocumentTypeToUpload(documentTypeEntity);
 
+            if (!username.isEmpty()) {
+                UserEntity user = userRepository.findUserByUsername(username);
+                if (user != null) {
+                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP, userGroupTitle + " - upload: " + documentTypeTitle);
+                }
+            }
         }
     }
 
     @Transactional
-    public void removeDocumentTypeToApprove(String userGroupTitle, String documentTypeTitle) {
+    public void removeDocumentTypeToApprove(String userGroupTitle, String documentTypeTitle, String username) {
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
         if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.removeAvailableDocumentTypeToApprove(documentTypeEntity);
+
+            if (!username.isEmpty()) {
+                UserEntity user = userRepository.findUserByUsername(username);
+                if (user != null) {
+                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP, userGroupTitle + " - approve: " + documentTypeTitle);
+                }
+            }
         }
     }
 
     @Transactional
     @Modifying
-    public void deleteGroupByTitle(String title) {
+    public void deleteGroupByTitle(String title, String username) {
         userGroupRepository.deleteGroupByTitle(title);
+
+        if (!username.isEmpty()) {
+            UserEntity user = userRepository.findUserByUsername(username);
+            if (user != null) {
+                auditService.addNewAuditEntry(user, AuditActionEnum.DELETE_USERGROUP, ObjectTypeEnum.USERGROUP, title);
+            }
+        }
     }
 
 

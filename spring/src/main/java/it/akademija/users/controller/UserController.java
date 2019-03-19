@@ -51,10 +51,10 @@ public class UserController {
     @ApiOperation(value = "Get user's documents by state", notes = "Returns wanted user's documents by state")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public Page<DocumentServiceObject> getDocuments(@ApiIgnore Authentication authentication,
-                                                   @ApiParam(value = "State", required = true)
-                                                   @Valid @PathVariable DocumentState state,
-                                                   @RequestParam("page") int page,
-                                                   @RequestParam("size") int size )throws IllegalArgumentException {
+                                                    @ApiParam(value = "State", required = true)
+                                                    @Valid @PathVariable DocumentState state,
+                                                    @RequestParam("page") int page,
+                                                    @RequestParam("size") int size) throws IllegalArgumentException {
         Pageable pagingInformation =
                 PageRequest.of(page, size);
         try {
@@ -73,7 +73,7 @@ public class UserController {
         Pageable sortedByTitle =
                 PageRequest.of(page, size, Sort.by("title").ascending());
         try {
-        return userService.getAllUserDocuments(authentication.getName(), sortedByTitle);
+            return userService.getAllUserDocuments(authentication.getName(), sortedByTitle);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
@@ -134,22 +134,22 @@ public class UserController {
 
     @RequestMapping(value = "user/get-documents-to-approve", method = RequestMethod.GET)
     public Page<DocumentServiceObject> getDocumentsToApprove(@ApiIgnore Authentication authentication,
-                                                            @RequestParam("page") int page,
-                                                            @RequestParam("size") int size) {
+                                                             @RequestParam("page") int page,
+                                                             @RequestParam("size") int size) {
         Pageable sortByTitle =
                 PageRequest.of(page, size, Sort.by("title").ascending());
-        try{
-        return userService.getDocumentsToApprove(authentication.getName(), sortByTitle);
+        try {
+            return userService.getDocumentsToApprove(authentication.getName(), sortByTitle);
         } catch (IllegalArgumentException e) {
-        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
     }
 
     @RequestMapping(value = "user/get-documents-to-approve-filtered", method = RequestMethod.GET)
     public Page<DocumentServiceObject> getDocumentsToApproveFiltered(@ApiIgnore Authentication authentication,
-                                                             @RequestParam("page") int page,
-                                                             @RequestParam("size") int size,
-                                                             @RequestParam("criteria") String criteria) {
+                                                                     @RequestParam("page") int page,
+                                                                     @RequestParam("size") int size,
+                                                                     @RequestParam("criteria") String criteria) {
         Pageable sortByTitle =
                 PageRequest.of(page, size, Sort.by("title").ascending());
         try {
@@ -162,12 +162,13 @@ public class UserController {
     @RequestMapping(value = "", method = RequestMethod.POST)
     @ApiOperation(value = "Create user", notes = "Creates new user")
     @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-    public void createNewUser(@RequestBody CreateUserCommand cuc) {
+    public void createNewUser(@ApiIgnore Authentication authentication,
+                              @RequestBody CreateUserCommand cuc) {
         try {
             userService.createNewUser(cuc.getFirstname(), cuc.getLastname(), cuc.getUsername(),
                     cuc.getPassword(
-                    ));
-        } catch (IllegalArgumentException e){
+                    ),authentication.getName());
+        } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
         }
     }
@@ -182,7 +183,7 @@ public class UserController {
         boolean isAdmin = request.isUserInRole("ADMIN");
         boolean isHimself = request.getRemoteUser().equals(username);
         if (isAdmin || isHimself) {
-            userService.updateUserInformation(username, newFirstname, newLastname);
+            userService.updateUserInformation(username, newFirstname, newLastname, request.getLocalName());
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to change other user's information!");
         }
@@ -195,14 +196,14 @@ public class UserController {
                                    @RequestParam("password") @NotNull @Length(min = 1) String password,
                                    @ApiIgnore HttpServletRequest request) {
 
-        // leidziam keisti passworda jeigu adminas arba jeigu naudotajas yra tas pats kaip prisijunges
+        // leidziam keisti passworda, jeigu adminas arba jeigu naudotojas yra tas pats, kaip prisijunges
         // kaip nustatyti, ar turi ADMIN role, mes suzinome is cia:
         // https://www.baeldung.com/spring-security-expressions-basic
         // 4 punktas
         boolean isAdmin = request.isUserInRole("ADMIN");
         boolean isHimself = request.getRemoteUser().equals(username);
         if (isAdmin || isHimself) {
-            userService.updateUserPassword(username, password);
+            userService.updateUserPassword(username, password, request.getLocalName());
         } else {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to change other user's password !");
         }

@@ -96,41 +96,41 @@ public class DemoData implements ApplicationRunner {
         createUserIfNotExists( "User", "Du", "user2", "user2");
 
 
-        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška");
-        userGroupService.addDocumentTypeToUpload("Vadybininkai","Darbo sutartis");
-        userGroupService.addDocumentTypeToUpload("Vadybininkai","Registruotas laiškas");
-        userGroupService.addDocumentTypeToUpload("Vadybininkai","Receptas");
-        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška2");
-        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška3");
-        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška4");
-        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška5");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška","");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Darbo sutartis","");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Registruotas laiškas","");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Receptas","");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška2","");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška3","");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška4","");
+        userGroupService.addDocumentTypeToUpload("Vadybininkai","Paraiška5","");
 
 
-        userGroupService.addGroupToUser("Administratoriai","admin");
-        userGroupService.addGroupToUser("Administratoriai","id123");
-        userGroupService.addGroupToUser("Vadovai","id123");
-        userGroupService.addGroupToUser("Vadybininkai","annpai");
-        userGroupService.addGroupToUser("Vadybininkai","user1");
-        userGroupService.addGroupToUser("Vadybininkai","user2");
+        userGroupService.addGroupToUser("Administratoriai","admin","");
+        userGroupService.addGroupToUser("Administratoriai","id123","");
+        userGroupService.addGroupToUser("Vadovai","id123","");
+        userGroupService.addGroupToUser("Vadybininkai","annpai","");
+        userGroupService.addGroupToUser("Vadybininkai","user1","");
+        userGroupService.addGroupToUser("Vadybininkai","user2","");
 
 
-        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška");
-        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška2");
-        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška3");
-        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška4");
-        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška5");
-        userGroupService.addDocumentTypeToUpload("Administratoriai","Darbo sutartis");
-        userGroupService.addDocumentTypeToUpload("Administratoriai","Registruotas laiškas");
+        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška","");
+        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška2","");
+        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška3","");
+        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška4","");
+        userGroupService.addDocumentTypeToUpload("Administratoriai","Paraiška5","");
+        userGroupService.addDocumentTypeToUpload("Administratoriai","Darbo sutartis","");
+        userGroupService.addDocumentTypeToUpload("Administratoriai","Registruotas laiškas","");
 
 
 
-        userGroupService.addDocumentTypeToApprove("Administratoriai", "Paraiška");
-        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška2");
-        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška3");
-        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška4");
-        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška5");
-        userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis");
-        userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas");
+        userGroupService.addDocumentTypeToApprove("Administratoriai", "Paraiška","");
+        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška2","");
+        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška3","");
+        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška4","");
+        userGroupService.addDocumentTypeToApprove("Administratoriai","Paraiška5","");
+        userGroupService.addDocumentTypeToApprove("Administratoriai","Darbo sutartis","");
+        userGroupService.addDocumentTypeToApprove( "Vadovai","Registruotas laiškas","");
 //        addDummydata2();
         createUserIfNotExists( "dummy", "dummy", "dummy", "dummy");
 
@@ -141,7 +141,7 @@ public class DemoData implements ApplicationRunner {
         UserEntity u = userRepository.findUserByUsername(un);
 
         if (u == null) {
-            userService.createNewUser(fn, ln, un, pswd);
+            userService.createNewUser(fn, ln, un, pswd,"");
         }
     }
 
@@ -149,14 +149,14 @@ public class DemoData implements ApplicationRunner {
         UserGroupEntity uge = userGroupRepository.findGroupByTitle(title);
 
         if (uge == null) {
-            userGroupService.addNewUserGroup(new CreateUserGroupCommand(title,role));
+            userGroupService.addNewUserGroup(new CreateUserGroupCommand(title,role),"");
         }
     }
     private void createDocumentTypeIfNotExists(String title) {
         DocumentTypeEntity dte = documentTypeRepository.findDocumentTypeByTitle(title);
 
         if (dte == null) {
-            documentTypeService.createNewDocumentType(title);
+            documentTypeService.createNewDocumentType(title, "");
         }
     }
 

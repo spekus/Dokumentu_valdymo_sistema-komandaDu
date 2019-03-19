@@ -11,8 +11,6 @@ class DownloadZip extends Component {
 
     }
 
-    componentDidMount() {
-    }
 
 
     downloadZip = () => {

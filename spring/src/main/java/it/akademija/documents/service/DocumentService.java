@@ -1,6 +1,9 @@
 package it.akademija.documents.service;
 
 
+import it.akademija.audit.AuditActionEnum;
+import it.akademija.audit.ObjectTypeEnum;
+import it.akademija.audit.service.AuditService;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
@@ -42,11 +45,21 @@ public class DocumentService {
     @Autowired
     private DocumentTypeRepository documentTypeRepository;
 
+    @Autowired
+    private AuditService auditService;
+
+//    @Autowired
+//    private AuditRepository auditRepository;
+//
+//    @Autowired
+//    private AuditEntryEntity auditEntryEntity;
+
 //    @Autowired
 //    private Logger LOGGER;
 
-//    private static Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
+    //    private static Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
     Logger LOGGER = LoggerFactory.getLogger(DocumentService.class);
+
     @Transactional
     public Set<DocumentServiceObject> getDocumentsByState(DocumentState state) {
         LOGGER.debug("getDocumentsByState");
@@ -63,7 +76,7 @@ public class DocumentService {
         if (documentFromDatabase == null) {
             throw new NullPointerException("Dokumentas su id '" + documentIdentifier + "'nerastas");
         }
-        LOGGER.debug("ducument - " + documentIdentifier + " is being returned ");
+        LOGGER.debug("document - " + documentIdentifier + " is being returned ");
         return SOfromEntity(documentFromDatabase);
     }
 
@@ -81,7 +94,7 @@ public class DocumentService {
         // surandame tipa, kuri prasoma sukurti. Patikrinam, kad egzistuoja toks.
         DocumentTypeEntity typeEntity = documentTypeRepository.findDocumentTypeByTitle(type);
         if (typeEntity == null) {
-            throw new IllegalArgumentException("Tipas '" + type +"' nerastas");
+            throw new IllegalArgumentException("Tipas '" + type + "' nerastas");
         }
 
         // susirinkime visus tipus, kuriuos sis naudotojas gali ikelti
@@ -101,11 +114,16 @@ public class DocumentService {
         newDocument.setAuthor(user.getUsername());
         user.addDocument(newDocument);
         documentRepository.save(newDocument);
+
+        auditService.addNewAuditEntry(user, AuditActionEnum.CREATE_NEW_DOCUMENT, ObjectTypeEnum.DOCUMENT, newDocument.getDocumentIdentifier());
+
         return newDocument;
+
+
     }
 
     @Transactional
-    public void submitDocument(String documentIdentifier)
+    public void submitDocument(String documentIdentifier, String username)
             throws IllegalArgumentException, NoApproverAvailableException {
         LOGGER.debug("submitDocument");
         DocumentEntity document = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
@@ -142,20 +160,26 @@ public class DocumentService {
         }
 
 
-            if (!groupWhichCanApproveDocumentTypeFound) {
-                throw new NoApproverAvailableException("Nėra grupės, kuri galėtų tvirtinti šį dokumentą");
-            }
-
-            if (!groupWhichCanApproveDocumentTypeAndHasUsersFound) {
-                throw new NoApproverAvailableException("Yra grupė(-s), bet nėra naudotojų, kurie galėtų tvirtinti šį dokumentą");
-            }
-
-
-            document.setDocumentState(DocumentState.SUBMITTED);
-            document.setPostedDate(LocalDateTime.now());
-            documentRepository.save(document);
-
+        if (!groupWhichCanApproveDocumentTypeFound) {
+            throw new NoApproverAvailableException("Nėra grupės, kuri galėtų tvirtinti šį dokumentą");
         }
+
+        if (!groupWhichCanApproveDocumentTypeAndHasUsersFound) {
+            throw new NoApproverAvailableException("Yra grupė(-s), bet nėra naudotojų, kurie galėtų tvirtinti šį dokumentą");
+        }
+
+
+        document.setDocumentState(DocumentState.SUBMITTED);
+        document.setPostedDate(LocalDateTime.now());
+        documentRepository.save(document);
+
+        UserEntity user = userRepository.findUserByUsername(username);
+        if (user != null) {
+            auditService.addNewAuditEntry(user, AuditActionEnum.SUBMIT_DOCUMENT, ObjectTypeEnum.DOCUMENT, document.getDocumentIdentifier());
+        }
+
+
+    }
 
 
     @Transactional
@@ -205,12 +229,14 @@ public class DocumentService {
                     document.setApprover(user.getUsername());
                     document.setRejectionReason(rejectedReason);
                     documentRepository.save(document);
+                    auditService.addNewAuditEntry(user, AuditActionEnum.REJECT_DOCUMENT, ObjectTypeEnum.DOCUMENT, document.getDocumentIdentifier());
                     break;
                 case APPROVED:
                     document.setDocumentState(newState);
                     document.setApprovalDate(LocalDateTime.now());
                     document.setApprover(user.getUsername());
                     documentRepository.save(document);
+                    auditService.addNewAuditEntry(user, AuditActionEnum.APPROVE_DOCUMENT, ObjectTypeEnum.DOCUMENT, document.getDocumentIdentifier());
                     break;
                 default:
                     throw new IllegalArgumentException("WRONG TYPE");
@@ -310,6 +336,11 @@ public class DocumentService {
             documentRepository.deleteDocumentByDocumentIdentifier(documentIdentifier);
 
         }
+    }
+
+    public long getDocumentCount(String username)
+    {
+        return documentRepository.getDocumentCountByUsername(username);
     }
 
     private DocumentServiceObject SOfromEntity(DocumentEntity entity) {

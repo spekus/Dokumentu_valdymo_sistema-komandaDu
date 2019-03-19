@@ -71,5 +71,7 @@ public interface DocumentRepository extends JpaRepository<DocumentEntity, Long> 
 
 //    public List<DocumentEntity> findByOrderByAuthorAscTitleAsc(String Author,Pageable pageable);
 
+    @Query("SELECT COUNT(d) FROM DocumentEntity d WHERE d.author =?1")
+    Long getDocumentCountByUsername(String username);
 }
 

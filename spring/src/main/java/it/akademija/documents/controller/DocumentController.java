@@ -84,12 +84,13 @@ public class DocumentController {
     @ApiOperation(value = "Submit document", notes = "Submits document for approval")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void submitDocument(
+            @ApiIgnore Authentication authentication, // reikalinga kad kontrolerio metodas gautu info apie useri
             @ApiParam(value = "DocumentEntity identifier", required = true)
             @Valid
             @PathVariable final @NotNull @Length(min = 1) String documentIdentifier) {
 
         try {
-            documentService.submitDocument(documentIdentifier);
+            documentService.submitDocument(documentIdentifier, authentication.getName()); // paduodam username is authentication
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 
@@ -154,5 +155,16 @@ public class DocumentController {
         documentService.deleteDocument(documentIdentifier);
     }
 
+    @RequestMapping(value = "/count", method = RequestMethod.GET)
+    @ResponseStatus(HttpStatus.OK)
+    @ApiOperation(value = "Get number of my documents")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
+    public long getDocumentCount(
+            @ApiIgnore Authentication authentication) {
+
+        return documentService.getDocumentCount(authentication.getName());
+
+
+    }
 
 }
