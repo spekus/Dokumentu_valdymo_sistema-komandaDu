@@ -23,6 +23,7 @@ import Spinner from "./Components/UI/Spinner";
 import LocationToText from "./Components/UI/LocationToText";
 import Charts from "./Components/Statistics/polarChart";
 import MainModalError from './Components/UI/MainModalError';
+import AuditLog from "./Components/Users/AuditLog";
 
 
 class App extends React.Component {
@@ -36,10 +37,10 @@ class App extends React.Component {
     menuItemsDefault = [
         {iconClass: 'fa fw fa-home', path: '', text: 'Pradžia'},
         {iconClass: 'fa fw fa-id-card', path: 'profile', text: 'Profilis'},
-        // {iconClass: 'fa fw fa-list', path: 'dashboard/documents/all', text: 'Dokumentai'},
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
         {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai', admin: true},
-        {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai', admin: true}
+        {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai', admin: true},
+        {iconClass: 'fa fw fa-list', path: 'auditlog', text: 'Audito žurnalas', admin: true},
 
     ];
 
@@ -230,6 +231,9 @@ class App extends React.Component {
                                                 <Route exact path="/user-registration" component={NewUserForm}/>
                                                 <Route exact path="/logout" render={() => this.handleLogOut()}/>
                                                 <Route exact path="/statistics" component={Charts}/>
+                                                 <Route exact path="/auditlog"
+                                                       render={(props) => <AuditLog
+                                                           user={this.state.user} {...props}/>}/>
                                                 {/* <Route exact path="/zip"
                                                    render={(props) => <DownloadZip 
                                                    user={this.state.user} {...props}/>}/>

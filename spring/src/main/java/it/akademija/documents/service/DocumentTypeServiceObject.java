@@ -5,7 +5,7 @@ public class DocumentTypeServiceObject {
     private String title;
 
     public DocumentTypeServiceObject(String title) {
-        this.title=title;
+        this.title = title;
     }
 
     public String getTitle() {

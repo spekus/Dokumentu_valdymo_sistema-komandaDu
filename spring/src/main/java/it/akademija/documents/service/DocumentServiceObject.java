@@ -1,15 +1,13 @@
 package it.akademija.documents.service;
 
 import it.akademija.documents.DocumentState;
-import it.akademija.files.repository.FileEntity;
 import it.akademija.files.service.FileServiceObject;
 
 import java.time.LocalDateTime;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 
-public class DocumentServiceObject implements Comparable<DocumentServiceObject>  {
+public class DocumentServiceObject implements Comparable<DocumentServiceObject> {
 
     private String documentIdentifier;
     private String author;
@@ -22,54 +20,46 @@ public class DocumentServiceObject implements Comparable<DocumentServiceObject> 
     private LocalDateTime rejectedDate;
     private String rejectedReason;
     private String approver;
+    private Set<FileServiceObject> filesAttachedToDocument = new HashSet<>();
 
-
-
-    private Set<FileServiceObject> filesAttachedToDocument=new HashSet<>();
-
-    public DocumentServiceObject(){
+    public DocumentServiceObject() {
 
     }
 
-
-
-    //What information document creator gets from API when the document is only created but not submitted
     public DocumentServiceObject(String documentIdentifier, String title, String type, String description) {
         this.title = title;
         this.type = type;
         this.description = description;
-        this.documentIdentifier =  documentIdentifier;
+        this.documentIdentifier = documentIdentifier;
 
     }
 
-
-    //What information document creator gets from database when the document is submitted
-    public DocumentServiceObject(String documentIdentifier, String title, String type, String description, LocalDateTime postedDate) {
+    public DocumentServiceObject(String documentIdentifier, String title, String type,
+                                 String description, LocalDateTime postedDate) {
         this.title = title;
         this.type = type;
         this.description = description;
         this.postedDate = postedDate;
-        this.documentIdentifier =  documentIdentifier;
+        this.documentIdentifier = documentIdentifier;
 
 
     }
 
-    //What information document creator gets from database when the document is approved
-    public DocumentServiceObject(String documentIdentifier, String title, String type, String description, LocalDateTime postedDate,
-                                 LocalDateTime approvalDate, String approver) {
+    public DocumentServiceObject(String documentIdentifier, String title, String type, String description,
+                                 LocalDateTime postedDate, LocalDateTime approvalDate, String approver) {
         this.title = title;
         this.type = type;
         this.description = description;
         this.postedDate = postedDate;
         this.approvalDate = approvalDate;
         this.approver = approver;
-        this.documentIdentifier =  documentIdentifier;
+        this.documentIdentifier = documentIdentifier;
 
     }
 
-    //What information document creator gets from database when the document is rejected
-    public DocumentServiceObject(String documentIdentifier, String title, String type, String description, LocalDateTime postedDate,
-                                 String approver, LocalDateTime rejectedDate, String rejectedReason) {
+    public DocumentServiceObject(String documentIdentifier, String title, String type, String description,
+                                 LocalDateTime postedDate, String approver, LocalDateTime rejectedDate,
+                                 String rejectedReason) {
         this.title = title;
         this.type = type;
         this.description = description;
@@ -77,23 +67,26 @@ public class DocumentServiceObject implements Comparable<DocumentServiceObject> 
         this.rejectedDate = rejectedDate;
         this.rejectedReason = rejectedReason;
         this.approver = approver;
-        this.documentIdentifier =  documentIdentifier;
+        this.documentIdentifier = documentIdentifier;
 
     }
 
-    //What information document approver gets from database when the document is submitted from user
-    public DocumentServiceObject(String documentIdentifier, String author, String title, String type, String description, LocalDateTime postedDate
+    public DocumentServiceObject(String documentIdentifier, String author, String title, String type,
+                                 String description, LocalDateTime postedDate
     ) {
         this.author = author;
         this.title = title;
         this.type = type;
         this.description = description;
         this.postedDate = postedDate;
-        this.documentIdentifier =  documentIdentifier;
+        this.documentIdentifier = documentIdentifier;
 
     }
 
-    public DocumentServiceObject(String documentIdentifier, String author, String title, String type, DocumentState documentState, String description, LocalDateTime postedDate, LocalDateTime approvalDate, LocalDateTime rejectedDate, String rejectedReason, String approver) {
+    public DocumentServiceObject(String documentIdentifier, String author, String title, String type,
+                                 DocumentState documentState, String description, LocalDateTime postedDate,
+                                 LocalDateTime approvalDate, LocalDateTime rejectedDate, String rejectedReason,
+                                 String approver) {
         this.documentIdentifier = documentIdentifier;
         this.author = author;
         this.title = title;
@@ -106,7 +99,6 @@ public class DocumentServiceObject implements Comparable<DocumentServiceObject> 
         this.rejectedReason = rejectedReason;
         this.approver = approver;
     }
-
 
 
     public String getAuthor() {
@@ -205,6 +197,7 @@ public class DocumentServiceObject implements Comparable<DocumentServiceObject> 
     public void setFilesAttachedToDocument(Set<FileServiceObject> filesAttachedToDocument) {
         this.filesAttachedToDocument = filesAttachedToDocument;
     }
+
     @Override
     public int compareTo(DocumentServiceObject o) {
         return this.getTitle().compareTo(o.getTitle());

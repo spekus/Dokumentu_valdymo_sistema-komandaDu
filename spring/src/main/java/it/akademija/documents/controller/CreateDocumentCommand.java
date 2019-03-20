@@ -7,17 +7,16 @@ import javax.validation.constraints.NotNull;
 public class CreateDocumentCommand {
 
     @NotNull
-    @Length(min=1, max=50)
+    @Length(min = 1, max = 50)
     private String title;
 
     @NotNull
-    @Length(min=1, max=100)
+    @Length(min = 1, max = 100)
     private String description;
 
     @NotNull
-    @Length(min=1, max=50)
+    @Length(min = 1, max = 50)
     private String type;
-
 
 
     public String getTitle() {

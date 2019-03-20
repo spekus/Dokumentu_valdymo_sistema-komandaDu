@@ -165,7 +165,7 @@ export default class FileUploader extends Component {
     }
 
     onFileChange = (event) => {
-
+        this.setState({ error: '', msg: '' });
         if (event.target.files[0].size <= 10000000 && event.target.files[0].type==="application/pdf") {
 
             this.setState({ files: [...this.state.files, event.target.files[0]] })
