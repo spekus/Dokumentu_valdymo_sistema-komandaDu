@@ -1,7 +1,5 @@
 package it.akademija.files.repository;
 
-import org.hibernate.validator.constraints.UniqueElements;
-
 import javax.persistence.*;
 
 @Entity
@@ -22,14 +20,9 @@ public class FileEntity {
     private String fileLocation;
 
     private long size;
-//
-//    @UniqueElements //crashina sitas, reikia kazkaip patikrin kad butu unique
-    @Column(name="identifier", unique=true)
-    private String identifier;
 
-//
-//    @Lob
-//    private byte[] data;
+    @Column(name = "identifier", unique = true)
+    private String identifier;
 
     public FileEntity() {
         generateUniqueIdentifier();
@@ -49,9 +42,8 @@ public class FileEntity {
 
     }
 
-    private void generateUniqueIdentifier (){
+    private void generateUniqueIdentifier() {
         this.identifier = this.fileName + (Math.random() * ((1000000000 - 0) + 1)) + 1;
-        //(Math.random() * ((max - min) + 1)) + min
     }
 
     public String getFileLocation() {
@@ -93,14 +85,6 @@ public class FileEntity {
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
-
-//    public byte[] getData() {
-//        return data;
-//    }
-//
-//    public void setData(byte[] data) {
-//        this.data = data;
-//    }
 
     public long getSize() {
         return size;

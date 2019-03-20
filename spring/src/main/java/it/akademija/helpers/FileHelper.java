@@ -22,10 +22,10 @@ public class FileHelper {
     public boolean IsFilePDF(MultipartFile multipartFile) throws Exception {
         String acceptableFileType = "application/pdf";
         String uploadingFileType = multipartFile.getContentType();
-        if(acceptableFileType.equals(uploadingFileType)){
+        if (acceptableFileType.equals(uploadingFileType)) {
             return true;
-        }else{
-            throw new Exception("File format is not valid, uploadingFileType is -" +  uploadingFileType);
+        } else {
+            throw new Exception("Netinkamas failo formatas, formatas - " + uploadingFileType);
         }
 
     }
@@ -34,20 +34,20 @@ public class FileHelper {
     public File uploadFileToLocalServer(MultipartFile fileInTransfer, String userName) throws Exception {
         try {
             createFolderSystem(userName);
-            File fileLocationDirectory =  getUserPDFAndCSVFolderLocation(userName);
+            File fileLocationDirectory = getUserPDFAndCSVFolderLocation(userName);
             File fileLocationOnServer = givingUniqueNameToFile(fileInTransfer, fileLocationDirectory);
             fileInTransfer.transferTo(fileLocationOnServer);
             return fileLocationOnServer;
         } catch (Exception e) {
             e.printStackTrace();
             LOGGER.error(e.getMessage() + Arrays.toString(e.getStackTrace()));
-            throw new Exception("issue with uploading file to local directory  " +
-                    ", exception message - " + e.getMessage());
+            throw new Exception("Klaida įkeliant failą į vietinį katalogą " +
+                    ", klaidos pranešimas - " + e.getMessage());
         }
 
     }
 
-    public void createFolderSystem(String userName) { // used to store user files
+    public void createFolderSystem(String userName) {
         LOGGER.info("Creating folders on server for user - " + userName);
         File mainFolderLocation = getMainFolderLocation();
         prepareDirectory(mainFolderLocation);
@@ -73,10 +73,9 @@ public class FileHelper {
     }
 
     private File givingUniqueNameToFile(MultipartFile file, File fileLocationDirectory) {
-        // to make each file unique we add date to file name
         String time = LocalDateTime.now()
                 .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
-        return new File(fileLocationDirectory + File.separator + time + file.getOriginalFilename() );
+        return new File(fileLocationDirectory + File.separator + time + file.getOriginalFilename());
     }
 
 
@@ -90,6 +89,7 @@ public class FileHelper {
         return new File(mainFolder
                 + File.separator + userName);
     }
+
     public File getUserZIPFolderLocation(String userName) {
         File mainFolder = getMainFolderLocation();
         return new File(mainFolder

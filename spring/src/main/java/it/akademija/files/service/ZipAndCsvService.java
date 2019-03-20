@@ -22,7 +22,6 @@ import java.util.zip.ZipOutputStream;
 
 
 @Service
-//BAISUS KODAS, KOL KAS NEZIURET :D
 public class ZipAndCsvService {
     private static Logger LOGGER = LoggerFactory.getLogger(FileHelper.class);
     @Autowired
@@ -33,7 +32,6 @@ public class ZipAndCsvService {
 
     @Transactional
     public File zippingUserFolder(String userName) throws IOException {
-        //ZIP saving locations
         LOGGER.info("user - " + userName + "is zipping its folder" );
         File zipFileLocation = prepareZipFileLocation(userName);
         initiateZiping(zipFileLocation, userName);
@@ -44,7 +42,7 @@ public class ZipAndCsvService {
         File zipFolderLocation = fileHelper.getUserZIPFolderLocation(userName);
         File zipFileLocation = new File(zipFolderLocation + File.separator
                 + FolderAndFileNames.CompressedFile + ".zip");
-        if(zipFileLocation.exists()){ // makes sure that old zippingUserFolder is deleted.
+        if(zipFileLocation.exists()){
             zipFileLocation.delete();
         }
         return zipFileLocation;
@@ -52,7 +50,7 @@ public class ZipAndCsvService {
     @Transactional
     private void initiateZiping(File zipFileLocation, String userName)throws IOException {
         FileOutputStream fos = new FileOutputStream(zipFileLocation);
-        //creates output stream
+
         ZipOutputStream zipOut = new ZipOutputStream(fos);
         String sourceFile = fileHelper.getUserPDFAndCSVFolderLocation(userName).toString();
         File fileToZip = new File(sourceFile);

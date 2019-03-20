@@ -71,7 +71,7 @@ public class FileController {
 
             return new ResponseEntity<>(zipFileStream, headers, HttpStatus.OK);
         }
-        throw new Exception("User - " + authentication.getName() + " does not have access , or User has yet to upload file");
+        throw new Exception("Vartotojas - " + authentication.getName() + " neturi prieigos arba or nėra įkėlęs failų");
     }
 
     @PostMapping
@@ -84,7 +84,7 @@ public class FileController {
             FileServiceObject fileServiceObject = fileService.findFile(uniqueIdentifier);
             return new ResponseTransfer(fileServiceObject.getIdentifier());
         }
-        throw new Exception("error during initial uploading");
+        throw new Exception("Klaida bandant įkelti failą");
     }
 
     @RequestMapping(value = "/addFileToDocument", method = RequestMethod.POST)
@@ -94,8 +94,8 @@ public class FileController {
                     , fileDocumentComand.getDocumentIdentifier());
             return ResponseEntity.status(HttpStatus.CREATED).build();
         } catch (Exception e) {
-            throw new Exception("Cant add file to document, file identifier - " + fileDocumentComand.getFileIdentifier() +
-                    " Document identifier - " + fileDocumentComand.getDocumentIdentifier());
+            throw new Exception("Nepavyksta susieti failo su dokumentu, failo identifikacinis numeris - " + fileDocumentComand.getFileIdentifier() +
+                    " Dokumento identifikacinis numeris - " + fileDocumentComand.getDocumentIdentifier());
         }
 
     }
