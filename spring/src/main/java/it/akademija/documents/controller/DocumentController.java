@@ -3,11 +3,8 @@ package it.akademija.documents.controller;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-
 import it.akademija.documents.DocumentState;
-
 import it.akademija.documents.repository.DocumentEntity;
-
 import it.akademija.documents.service.DocumentService;
 import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.exceptions.NoApproverAvailableException;
@@ -20,7 +17,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import springfox.documentation.annotations.ApiIgnore;
-
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
@@ -52,7 +48,6 @@ public class DocumentController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public DocumentServiceObject getDocument(@ApiIgnore Authentication authentication,
                                              @ApiParam(value = "DocumentIdentifier", required = true)
-
                                              @RequestParam @Valid @NotNull @Length(min = 1) String documentIdentifier) {
         try {
 
@@ -69,11 +64,12 @@ public class DocumentController {
     @ApiOperation(value = "Create user document", notes = "Creates new user's document")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public ResponseTransfer addDocument(@ApiIgnore Authentication authentication,
-                                        @ApiParam(value = "New document data", required = true) @Valid @RequestBody final CreateDocumentCommand p) {
-        //creates document
+                                        @ApiParam(value = "New document data", required = true)
+                                        @Valid @RequestBody final CreateDocumentCommand p) {
+
         DocumentEntity documentEntity =
-                documentService.createDocument(authentication.getName(), p.getTitle(), p.getType(), p.getDescription());
-        //this added so that somehow we can get document identifier to merge document and file.
+                documentService.createDocument(authentication.getName(), p.getTitle(),
+                        p.getType(), p.getDescription());
         return new ResponseTransfer(documentEntity.getDocumentIdentifier());
 
     }
@@ -83,13 +79,13 @@ public class DocumentController {
     @ApiOperation(value = "Submit document", notes = "Submits document for approval")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public void submitDocument(
-            @ApiIgnore Authentication authentication, // reikalinga kad kontrolerio metodas gautu info apie useri
+            @ApiIgnore Authentication authentication,
             @ApiParam(value = "DocumentEntity identifier", required = true)
             @Valid
             @PathVariable final @NotNull @Length(min = 1) String documentIdentifier) {
 
         try {
-            documentService.submitDocument(documentIdentifier, authentication.getName()); // paduodam username is authentication
+            documentService.submitDocument(documentIdentifier, authentication.getName());
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
 
@@ -109,14 +105,11 @@ public class DocumentController {
             @PathVariable @NotNull @Length(min = 1) String documentIdentifier,
             @ApiIgnore Authentication authentication) {
         try {
-            documentService.approveOrRejectDocument(documentIdentifier, authentication.getName(), DocumentState.APPROVED, "");
-        }
-        catch (IllegalArgumentException e)
-        {
+            documentService.approveOrRejectDocument(documentIdentifier, authentication.getName(),
+                    DocumentState.APPROVED, "");
+        } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-        catch (SecurityException e)
-        {
+        } catch (SecurityException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
     }
@@ -132,14 +125,11 @@ public class DocumentController {
             @ApiIgnore Authentication authentication,
             @RequestParam @NotNull @Length(min = 1) String rejectedReason) {
         try {
-            documentService.approveOrRejectDocument(documentIdentifier, authentication.getName(), DocumentState.REJECTED, rejectedReason);
-        }
-        catch (IllegalArgumentException e)
-        {
+            documentService.approveOrRejectDocument(documentIdentifier, authentication.getName(),
+                    DocumentState.REJECTED, rejectedReason);
+        } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
-        }
-        catch (SecurityException e)
-        {
+        } catch (SecurityException e) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, e.getMessage());
         }
 
