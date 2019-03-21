@@ -160,7 +160,7 @@ public class DemoData implements ApplicationRunner {
         return documentEntity;
     }
 
-    private void addDummydata2() throws NoApproverAvailableException {
+    private void addDummydata() throws NoApproverAvailableException {
         //for generating random realistic fiels
         Faker faker = new Faker();
         //setting user group

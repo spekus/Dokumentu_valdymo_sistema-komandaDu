@@ -43,9 +43,6 @@ export default class FileUploader extends Component {
             })
     }
 
-    // sleep = (ms) => {
-    //     return new Promise(resolve => setTimeout(resolve, ms));
-    // }
 
     handleSubmit = (event) => {
         event.preventDefault();
@@ -176,7 +173,6 @@ export default class FileUploader extends Component {
         arrayCopy.splice(index, 1);
         this.setState({files: arrayCopy});
     }
-
 
     render() {
         return (

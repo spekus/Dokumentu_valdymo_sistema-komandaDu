@@ -101,7 +101,10 @@ class AugisDokumentas extends Component {
     }
 
     rejectDocument = (props) => {
+
         let reason = window.prompt(" Įveskite atmetimo priežastį");
+
+
         let docID = this.state.documentInfo.documentIdentifier;
         axios.post("/api/documents/" + docID + "/reject", null, {
             params: {

@@ -29,6 +29,7 @@ public class FileService {
 
     @Transactional
     public String uploadFile(MultipartFile multipartFile, String userName) throws Exception {
+        LOGGER.info(userName + " is uploading file with name - " + multipartFile.getName());
         File fileLocationOnServer = file.uploadFileToLocalServer(multipartFile, userName);
         FileEntity fileEntity = new FileEntity(multipartFile.getOriginalFilename());
         fileEntity.setFileLocation(fileLocationOnServer.getAbsolutePath());

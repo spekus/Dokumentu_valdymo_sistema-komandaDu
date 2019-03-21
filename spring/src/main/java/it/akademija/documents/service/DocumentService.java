@@ -1,9 +1,9 @@
 package it.akademija.documents.service;
 
-
 import it.akademija.audit.AuditActionEnum;
 import it.akademija.audit.ObjectTypeEnum;
 import it.akademija.audit.service.AuditService;
+import it.akademija.auth.AppRoleEnum;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import sun.rmi.runtime.Log;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
@@ -54,7 +55,7 @@ public class DocumentService {
 
     @Transactional
     public Set<DocumentServiceObject> getDocumentsByState(DocumentState state) {
-        LOGGER.debug("getDocumentsByState");
+        LOGGER.info("getDocumentsByState , state - " + state);
         return documentRepository.findByDocumentState(state)
                 .stream()
                 .map(documentEntity -> SOfromEntity(documentEntity))
@@ -63,7 +64,7 @@ public class DocumentService {
 
     @Transactional
     public DocumentServiceObject getDocument(String documentIdentifier, String username) {
-        LOGGER.debug("getDocument");
+        LOGGER.info("getDocument  is being run");
         DocumentEntity documentFromDatabase = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
         if (documentFromDatabase == null) {
             throw new NullPointerException("Dokumentas su id '" + documentIdentifier + "'nerastas");
@@ -79,9 +80,12 @@ public class DocumentService {
                 || documentFromDatabase.getDocumentState() == DocumentState.APPROVED
                 || documentFromDatabase.getDocumentState() == DocumentState.REJECTED)
                 && (documentTypesUserCanApprove.contains(documentFromDatabase.getType()));
+        boolean isAdmin=isAdmin(username);
 
-        if (isAuthor || isApprover) {
+
+        if (isAuthor || isApprover||isAdmin) {
             LOGGER.debug("document - " + documentIdentifier + " is being returned ");
+
             return SOfromEntity(documentFromDatabase);
 
         } else {
@@ -89,10 +93,24 @@ public class DocumentService {
         }
     }
 
+    public boolean isAdmin (String username) {
+
+        UserEntity userEntity=userRepository.findUserByUsername(username);
+        Set<UserGroupEntity> userGroups = userEntity.getUserGroups();
+
+        for (UserGroupEntity userGroupEntity : userGroups) {
+            if (userGroupEntity.getRole().equals(AppRoleEnum.ROLE_ADMIN)) {
+                return true;
+            }
+        }
+        return false;
+
+    }
+
     @Transactional
     public DocumentEntity createDocument(String username, String title, String type, String description)
             throws IllegalArgumentException, SecurityException {
-        LOGGER.debug("createDocument");
+        LOGGER.info("createDocument is being run");
 
         UserEntity user = userRepository.findUserByUsername(username);
         if (user == null) {
@@ -118,7 +136,7 @@ public class DocumentService {
         newDocument.setAuthor(user.getUsername());
         user.addDocument(newDocument);
         documentRepository.save(newDocument);
-
+        LOGGER.info("document is being created by " +username + " with title - " + title + " and type -" + type);
         auditService.addNewAuditEntry(user, AuditActionEnum.CREATE_NEW_DOCUMENT,
                 ObjectTypeEnum.DOCUMENT, newDocument.getDocumentIdentifier());
         return newDocument;
@@ -127,33 +145,26 @@ public class DocumentService {
     @Transactional
     public void submitDocument(String documentIdentifier, String username)
             throws IllegalArgumentException, NoApproverAvailableException {
-        LOGGER.debug("submitDocument");
+        LOGGER.info("submitDocument  is being run");
         DocumentEntity document = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-
         if (document == null) {
             throw new IllegalArgumentException("Dokumentas su id '" + documentIdentifier + "' nerastas");
         }
-
         DocumentTypeEntity type = documentTypeRepository.findDocumentTypeByTitle(document.getType());
         if (type == null) {
             throw new IllegalArgumentException("Dokumentas su id '" + documentIdentifier + "' turi klaidingą tipą");
         }
-
         List<UserGroupEntity> allUserGroups = userGroupRepository.findAll();
-
         boolean groupWhichCanApproveDocumentTypeFound = false;
         boolean groupWhichCanApproveDocumentTypeAndHasUsersFound = false;
-
         for (UserGroupEntity group : allUserGroups) {
             if (!groupWhichCanApproveDocumentTypeAndHasUsersFound)
                 if (group.getAvailableDocumentTypesToApprove().contains(type)) {
                     groupWhichCanApproveDocumentTypeFound = true;
-
                     if (group.getGroupUsers().size() > 0) {
                         groupWhichCanApproveDocumentTypeAndHasUsersFound = true;
                     }
                 }
-
         }
 
         if (!groupWhichCanApproveDocumentTypeFound) {
@@ -167,13 +178,12 @@ public class DocumentService {
         document.setDocumentState(DocumentState.SUBMITTED);
         document.setPostedDate(LocalDateTime.now());
         documentRepository.save(document);
-
+        LOGGER.info("document is being submitted by " +username + " with document identifier - " + documentIdentifier );
         UserEntity user = userRepository.findUserByUsername(username);
         if (user != null) {
             auditService.addNewAuditEntry(user, AuditActionEnum.SUBMIT_DOCUMENT,
                     ObjectTypeEnum.DOCUMENT, document.getDocumentIdentifier());
         }
-
     }
 
     @Transactional
@@ -182,7 +192,7 @@ public class DocumentService {
                                         DocumentState newState,
                                         String rejectedReason) throws IllegalArgumentException, SecurityException {
         if (documentIdentifier != null && !documentIdentifier.isEmpty()) {
-            LOGGER.debug("approveOrRejectDocument");
+            LOGGER.info("approveOrRejectDocument");
             DocumentEntity document = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
             if (document == null) {
                 throw new IllegalArgumentException("Dokumentas, kurio ID '" + documentIdentifier + "', nerastas");
@@ -217,6 +227,7 @@ public class DocumentService {
                     documentRepository.save(document);
                     auditService.addNewAuditEntry(user, AuditActionEnum.REJECT_DOCUMENT,
                             ObjectTypeEnum.DOCUMENT, document.getDocumentIdentifier());
+                    LOGGER.info("document - " + documentIdentifier + "is being rejected by " + username );
                     break;
                 case APPROVED:
                     document.setDocumentState(newState);
@@ -225,14 +236,12 @@ public class DocumentService {
                     documentRepository.save(document);
                     auditService.addNewAuditEntry(user, AuditActionEnum.APPROVE_DOCUMENT,
                             ObjectTypeEnum.DOCUMENT, document.getDocumentIdentifier());
+                    LOGGER.info("document - " + documentIdentifier + "is being approved by " + username );
                     break;
                 default:
                     throw new IllegalArgumentException("Netinkamas tipas");
             }
-
-
         }
-
     }
 
     public DocumentRepository getDocumentRepository() {
@@ -252,7 +261,7 @@ public class DocumentService {
     }
 
     public void addFileToDocument(String documentIdentifier, FileEntity fileEntity) {
-        LOGGER.debug("addFileToDocument");
+        LOGGER.info("adding file " + fileEntity.getId() + " to document " + documentIdentifier);
         getDocumentEntityByDocumentIdentifier(documentIdentifier).addFileToDocument(fileEntity);
     }
 
@@ -284,7 +293,7 @@ public class DocumentService {
 
     @Transactional
     public void deleteDocument(String documentIdentifier) {
-        LOGGER.debug("deleteDocument");
+        LOGGER.info("deleteDocument by document identifier - " +documentIdentifier);
         DocumentEntity documentEntity = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
         if (documentEntity.getDocumentState().equals(DocumentState.CREATED) ||
                 documentEntity.getDocumentState().equals(DocumentState.REJECTED)) {

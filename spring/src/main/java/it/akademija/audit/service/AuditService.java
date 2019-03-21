@@ -74,7 +74,7 @@ public class AuditService {
                 .stream()
                 .map(auditEntryEntity -> SOfromEntity(auditEntryEntity))
                 .collect(Collectors.toList());
-        long auditEntriesCount = auditRepository.getTotalAuditEntriesCount();
+        long auditEntriesCount = auditRepository.getTotalFilteredAuditEntries(thing);
         PageImpl<AuditServiceObject> pagedData=new PageImpl<>(allentriesSOByCriteria,pageFormatDetails,auditEntriesCount);
         return pagedData;
     }
