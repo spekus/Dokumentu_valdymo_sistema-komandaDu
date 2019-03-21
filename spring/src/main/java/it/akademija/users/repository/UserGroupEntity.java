@@ -1,8 +1,6 @@
 package it.akademija.users.repository;
 
-
 import it.akademija.auth.AppRoleEnum;
-import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
@@ -21,7 +19,7 @@ public class UserGroupEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     protected long id;
-    @Column(name="title", unique=true)
+    @Column(name = "title", unique = true)
     private String title;
 
     @ManyToMany
@@ -84,7 +82,7 @@ public class UserGroupEntity {
         this.availableDocumentTypesToUpload = availableDocumentTypesToUpload;
     }
 
-     public void addAvailableDocumentTypeToUpload(DocumentTypeEntity documentTypeEntity) {
+    public void addAvailableDocumentTypeToUpload(DocumentTypeEntity documentTypeEntity) {
         this.availableDocumentTypesToUpload.add(documentTypeEntity);
     }
 
@@ -94,7 +92,6 @@ public class UserGroupEntity {
 
     public void removeAvailableDocumentTypeToUpload(DocumentTypeEntity documentTypeEntity) {
         this.availableDocumentTypesToUpload.remove(documentTypeEntity);
-
     }
 
     public void removeAvailableDocumentTypeToApprove(DocumentTypeEntity documentTypeEntity) {

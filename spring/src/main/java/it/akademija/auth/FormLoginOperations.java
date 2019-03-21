@@ -28,20 +28,18 @@ import springfox.documentation.spring.web.scanners.ApiModelReader;
 /***
  * This class needed to add login possibility to Swagger UI
  */
-public class FormLoginOperations extends ApiListingScanner
-{
+public class FormLoginOperations extends ApiListingScanner {
     @Autowired
     private TypeResolver typeResolver;
 
     @Autowired
-    public FormLoginOperations(ApiDescriptionReader apiDescriptionReader, ApiModelReader apiModelReader, DocumentationPluginsManager pluginsManager)
-    {
+    public FormLoginOperations(ApiDescriptionReader apiDescriptionReader, ApiModelReader apiModelReader,
+                               DocumentationPluginsManager pluginsManager) {
         super(apiDescriptionReader, apiModelReader, pluginsManager);
     }
 
     @Override
-    public Multimap<String, ApiListing> scan(ApiListingScanningContext context)
-    {
+    public Multimap<String, ApiListing> scan(ApiListingScanningContext context) {
         final Multimap<String, ApiListing> def = super.scan(context);
 
         final List<ApiDescription> apis = new LinkedList<>();
@@ -70,7 +68,6 @@ public class FormLoginOperations extends ApiListingScanner
 
 
         apis.add(new ApiDescription("/login", "Authentication documentation", operations, false));
-
 
         def.put("authentication", new ApiListingBuilder(context.getDocumentationContext().getApiDescriptionOrdering())
                 .apis(apis)

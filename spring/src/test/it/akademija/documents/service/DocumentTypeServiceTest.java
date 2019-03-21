@@ -52,7 +52,7 @@ public class DocumentTypeServiceTest {
     public void checkIfNewDocumentTypeCreatedAndSaved(){
         //given
         //when
-        documentTypeService.createNewDocumentType(anyString());
+        documentTypeService.createNewDocumentType(anyString(), anyString());
         //then
         verify(documentTypeRepository, times(1)).save(any(DocumentTypeEntity.class));
      }
@@ -62,7 +62,7 @@ public class DocumentTypeServiceTest {
         //given
          given(documentTypeRepository.findDocumentTypeByTitle(anyString())).willReturn(documentTypeEntity);
          //when
-         documentTypeService.updateDocumentType(OLDTITLE,NEWTITLE);
+         documentTypeService.updateDocumentType(OLDTITLE,NEWTITLE,anyString());
          //then
         assertEquals(documentTypeEntity.getTitle(),NEWTITLE);
 
@@ -73,7 +73,7 @@ public class DocumentTypeServiceTest {
         //given
         given(documentTypeRepository.findDocumentTypeByTitle(anyString())).willReturn(documentTypeEntity);
         //when
-        documentTypeService.updateDocumentType(OLDTITLE,null);
+        documentTypeService.updateDocumentType(OLDTITLE,null, anyString());
         //then
         assertEquals(documentTypeEntity.getTitle(),OLDTITLE);
         verify(documentTypeRepository, times(0)).save(any(DocumentTypeEntity.class));
@@ -84,7 +84,7 @@ public class DocumentTypeServiceTest {
         //given
         given(documentTypeRepository.findDocumentTypeByTitle(anyString())).willReturn(documentTypeEntity);
         //when
-        documentTypeService.updateDocumentType(OLDTITLE,"");
+        documentTypeService.updateDocumentType(OLDTITLE,"",anyString());
         //then
         assertEquals(documentTypeEntity.getTitle(),OLDTITLE);
         verify(documentTypeRepository, times(0)).save(any(DocumentTypeEntity.class));
@@ -94,7 +94,7 @@ public class DocumentTypeServiceTest {
     public void checkIfNewDocumentTypeDeleted(){
         //given
         //when
-        documentTypeService.deleteDocumentType(anyString());
+        documentTypeService.deleteDocumentType(anyString(),anyString());
         //then
         verify(documentTypeRepository, times(1)).deleteDocumentTypeByTitle(anyString());
     }

@@ -1,12 +1,7 @@
 package it.akademija.users.service;
 
-import it.akademija.users.repository.UserGroupEntity;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+        import java.util.HashSet;
+        import java.util.Set;
 
 public class UserServiceObject {
 
@@ -15,36 +10,11 @@ public class UserServiceObject {
     private String lastname;
     private String username;
     private String password;
-    private Set<UserGroupServiceObject> userGroups=new HashSet<>();
+    private Set<UserGroupServiceObject> userGroups = new HashSet<>();
 
 
     public UserServiceObject() {
     }
-//
-//    public UserServiceObject(String userIdentifier, String firstname, String lastname, String username, String password) {
-//        this.userIdentifier = userIdentifier;
-//        this.firstname = firstname;
-//        this.lastname = lastname;
-//        this.username = username;
-//        this.password = password;
-//    }
-//
-//    public UserServiceObject(String userIdentifier, String firstname, String lastname, String username) {
-//        this.userIdentifier = userIdentifier;
-//        this.firstname = firstname;
-//        this.lastname = lastname;
-//        this.username = username;
-//
-//    }
-//
-//    public UserServiceObject(String userIdentifier, String firstname, String lastname, String username, String password, Set<UserGroupEntity> userGroups) {
-//        this.userIdentifier = userIdentifier;
-//        this.firstname = firstname;
-//        this.lastname = lastname;
-//        this.username = username;
-//        this.password = password;
-//        this.userGroups = userGroups.stream().map(ug -> UserGroupService.SOfromEntity(ug)).collect(Collectors.toSet());
-//    }
 
     public String getUserIdentifier() {
         return userIdentifier;

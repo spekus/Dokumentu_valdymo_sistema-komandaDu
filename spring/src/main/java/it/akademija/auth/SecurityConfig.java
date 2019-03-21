@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
         return encoder;
     }
@@ -56,7 +56,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private SimpleUrlAuthenticationFailureHandler myFailureHandler;
 
     @Bean
-    public SimpleUrlAuthenticationFailureHandler failureHandler(){
+    public SimpleUrlAuthenticationFailureHandler failureHandler() {
         return new SimpleUrlAuthenticationFailureHandler();
     }
 
@@ -64,29 +64,27 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http
                 .headers()
-                    .disable()
+                .disable()
                 .formLogin()
-                    .successHandler(mySuccessHandler)
-                    .failureHandler(myFailureHandler)
-                    .and()
+                .successHandler(mySuccessHandler)
+                .failureHandler(myFailureHandler)
+                .and()
                 .logout()
-                    .and()
+                .and()
                 .csrf()
-                    .disable()
+                .disable()
                 .exceptionHandling()
-                    .authenticationEntryPoint(restAuthenticationEntryPoint)
-                    .and()
+                .authenticationEntryPoint(restAuthenticationEntryPoint)
+                .and()
                 .authorizeRequests()
                 .antMatchers("/api/**")
-//                .access("not(hasRole('SUSPENDED'))");
                 .authenticated();
     }
 
     @Primary
     @Bean
-    public ApiListingScanner addExtraOperations(ApiDescriptionReader apiDescriptionReader, ApiModelReader apiModelReader, DocumentationPluginsManager pluginsManager)
-    {
-        // Add login opearation to swagger
+    public ApiListingScanner addExtraOperations(ApiDescriptionReader apiDescriptionReader, ApiModelReader apiModelReader,
+                                                DocumentationPluginsManager pluginsManager) {
         return new FormLoginOperations(apiDescriptionReader, apiModelReader, pluginsManager);
     }
 }

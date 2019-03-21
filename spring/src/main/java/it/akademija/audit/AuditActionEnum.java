@@ -16,5 +16,4 @@ public enum AuditActionEnum {
     SUSPEND_USER,
     REMOVE_USER_FROM_GROUP,
     ADD_USER_TO_GROUP,
-
 }

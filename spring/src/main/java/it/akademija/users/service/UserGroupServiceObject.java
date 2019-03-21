@@ -16,12 +16,9 @@ public class UserGroupServiceObject {
 
     private Set<DocumentTypeServiceObject> typesToApprove = new HashSet<>();
 
-
     public UserGroupServiceObject() {
 
     }
-
-
 
     public String getTitle() {
         return title;
@@ -38,8 +35,6 @@ public class UserGroupServiceObject {
     public void setRole(AppRoleEnum role) {
         this.role = role;
     }
-
-
 
     public Set<DocumentTypeServiceObject> getTypesToApprove() {
         return typesToApprove;

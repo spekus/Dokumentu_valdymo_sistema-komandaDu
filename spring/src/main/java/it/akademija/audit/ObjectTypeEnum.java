@@ -5,5 +5,4 @@ public enum ObjectTypeEnum {
     DOCUMENT,
     USERGROUP,
     DOCUMENTTYPE
-
 }

@@ -24,7 +24,6 @@ import springfox.documentation.annotations.ApiIgnore;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 
@@ -46,7 +45,6 @@ public class UserController {
         this.userService = userService;
     }
 
-
     @RequestMapping(value = "user/documents/{state}", method = RequestMethod.GET)
     @ApiOperation(value = "Get user's documents by state", notes = "Returns wanted user's documents by state")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
@@ -58,7 +56,6 @@ public class UserController {
         Pageable pagingInformation =
                 PageRequest.of(page, size);
         try {
-//            return userService.getUserDocumentsByState(authentication.getName(), state);
             return userService.getUserDocumentsByState(authentication.getName(), state, pagingInformation);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
@@ -77,23 +74,14 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-//previous method, to be deleted
-//    public Page<DocumentServiceObject> getAllUserDocuments(@ApiParam(value = "UserIdentifier", required = true)
-//                                                          @Valid @PathVariable String userIdentifier
-//                                                          ,@RequestParam("page") int page,
-//                                                           @RequestParam("size") int size, UriComponentsBuilder uriBuilder,
-//                                                           HttpServletResponse response) {
-//        return documentService.pagingStuffTesting(userIdentifier, page, size);
     }
-
 
     @RequestMapping(value = "", method = RequestMethod.GET)
     @ApiOperation(value = "List all users and all related info", notes = "Lists all users all information")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public Page<UserServiceObject> getAllUsers(@RequestParam("page") int page,
                                                @RequestParam("size") int size) {
-
-        Pageable sortByUsername = PageRequest.of(page,size, Sort.by("username").ascending());
+        Pageable sortByUsername = PageRequest.of(page, size, Sort.by("username").ascending());
 
         try {
             return userService.getAllUsers(sortByUsername);
@@ -123,32 +111,24 @@ public class UserController {
         return userService.getUserDocumentTypesHeCanCreate(authentication.getName());
     }
 
-
     @RequestMapping(value = "/criteria", method = RequestMethod.GET)
     @ApiOperation(value = "criteria", notes = "Returns users by criteria")
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public Page<UserServiceObject> getUserByCriteria(@RequestParam("criteria") @NotNull @Length(min = 1) String criteria,
                                                      @RequestParam("page") int page,
                                                      @RequestParam("size") int size) {
-
-        Pageable sortByUsername=PageRequest.of(page,size,Sort.by("username").ascending());
-
+        Pageable sortByUsername = PageRequest.of(page, size, Sort.by("username").ascending());
         try {
             return userService.getUserByCriteria(criteria, sortByUsername);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, e.getMessage());
         }
-
-
     }
-
 
     @RequestMapping(value = "/whoami", method = RequestMethod.GET, produces = "application/json")
     @ApiOperation(value = "whoami", notes = "Returns user which is currently logged in")
-    //@PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public UserServiceObject getCurrentUser(@ApiIgnore Authentication authentication) {
         return userService.getUserByUsername(authentication.getName());
-
     }
 
     @RequestMapping(value = "user/get-documents-to-approve", method = RequestMethod.GET)
@@ -186,7 +166,7 @@ public class UserController {
         try {
             userService.createNewUser(cuc.getFirstname(), cuc.getLastname(), cuc.getUsername(),
                     cuc.getPassword(
-                    ),authentication.getName());
+                    ), authentication.getName());
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(HttpStatus.NOT_ACCEPTABLE, e.getMessage());
         }
@@ -215,10 +195,6 @@ public class UserController {
                                    @RequestParam("password") @NotNull @Length(min = 1) String password,
                                    @ApiIgnore HttpServletRequest request) {
 
-        // leidziam keisti passworda, jeigu adminas arba jeigu naudotojas yra tas pats, kaip prisijunges
-        // kaip nustatyti, ar turi ADMIN role, mes suzinome is cia:
-        // https://www.baeldung.com/spring-security-expressions-basic
-        // 4 punktas
         boolean isAdmin = request.isUserInRole("ADMIN");
         boolean isHimself = request.getRemoteUser().equals(username);
         if (isAdmin || isHimself) {
@@ -227,24 +203,4 @@ public class UserController {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to change other user's password !");
         }
     }
-
-
-//    @RequestMapping(value = "/{username}", method = RequestMethod.DELETE)
-//    @ApiOperation(value = "Delete user", notes = "Deletes user")
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
-//    public void deleteUser(@PathVariable("username") @NotNull @Length(min = 1) String username,
-//                           @ApiIgnore HttpServletRequest request) {
-//        // neleidziam naudotojui istrinti pati save
-//        // kaip nustatyti kitose koks naudotojo vardas kitose vietose, pravers sitas puslapis:
-//        // https://www.baeldung.com/get-user-in-spring-security
-//        // Galima naudoti "HttpServletRequest request" arba "Authentication authentication"
-//        if (request.getRemoteUser().equals(username)) {
-//            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "You are not allowed to delete yourself!");
-//            // parodome exception, kuri galima pasiimti axios ... catch (response => ... response.data.message)
-//        } else {
-//            userService.deleteUserByUsername(username);
-//        }
-//    }
-
-
 }

@@ -10,38 +10,36 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "AuditEntryEntities")
 
-//indexes and namequeries
 
 public class AuditEntryEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="username", nullable = false)
+    @Column(name = "username", nullable = false)
     private String username;
 
-    @Column(name="firstname", nullable = false)
+    @Column(name = "firstname", nullable = false)
     private String firstname;
 
-    @Column(name="lastname", nullable = false)
+    @Column(name = "lastname", nullable = false)
     private String lastname;
 
-    @Column(name="action_date", nullable = false)
+    @Column(name = "action_date", nullable = false)
     private LocalDateTime date;
 
-    @Column(name="action", nullable = false)
+    @Column(name = "action", nullable = false)
     @Enumerated(EnumType.STRING)
     private AuditActionEnum action;
 
-    @Column(name="object_type", nullable = false)
+    @Column(name = "object_type", nullable = false)
     @Enumerated(EnumType.STRING)
     private ObjectTypeEnum objectType;
 
-    @Column(name="object_Identifier", nullable = false)
-//    @Enumerated(EnumType.STRING)
+    @Column(name = "object_Identifier", nullable = false)
     private String objectIdentifier;
 
-    public AuditEntryEntity(){
+    public AuditEntryEntity() {
     }
 
     public AuditEntryEntity(String username, String firstname, String lastname, LocalDateTime date, AuditActionEnum action,
