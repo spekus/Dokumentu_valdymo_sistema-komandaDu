@@ -95,7 +95,7 @@ class SettingsDocumentTypes extends Component {
                             <thead>
                             <tr>
                                 <th>Pavadinimas</th>
-                                <th>Trinti</th>
+                                <th>Redaguoti</th>
                             </tr>
                             </thead>
                             <tbody>
