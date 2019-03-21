@@ -2,7 +2,6 @@ package it.akademija.statistics.controller;
 
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
-import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.statistics.repository.Statistics;
 import it.akademija.statistics.service.StatisticsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import springfox.documentation.annotations.ApiIgnore;
-
 
 import java.time.LocalDateTime;
 import java.util.Collection;
@@ -47,7 +45,6 @@ public class StatisticsController {
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         return statisticsService.getApprovedDocsStatistics(authentication.getName(), startDate, endDate);
-
     }
 
     @RequestMapping(value = "/rejected-docs", method = RequestMethod.GET, produces = "application/json")
@@ -59,7 +56,6 @@ public class StatisticsController {
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         return statisticsService.getRejectedDocsStatistics(authentication.getName(), startDate, endDate);
-
     }
 
     @RequestMapping(value = "/posted-docs", method = RequestMethod.GET, produces = "application/json")
@@ -71,7 +67,6 @@ public class StatisticsController {
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime startDate,
             @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime endDate) {
         return statisticsService.getPostedDocsStatistics(authentication.getName(), startDate, endDate);
-
     }
 
     @RequestMapping(value = "/userlist-by-posted-docs", method = RequestMethod.GET, produces = "application/json")
@@ -79,9 +74,7 @@ public class StatisticsController {
     @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
     public Collection<Statistics> getUserListByPostedDocs(@ApiIgnore Authentication authentication) {
         return statisticsService.getUserListByPostedDocs(authentication.getName());
-
     }
-
 }
 
 

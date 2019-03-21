@@ -2,19 +2,11 @@ package it.akademija.statistics.repository;
 
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
-import it.akademija.documents.repository.DocumentTypeEntity;
-import it.akademija.documents.service.DocumentTypeServiceObject;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-import org.springframework.format.annotation.DateTimeFormat;
-
-import java.awt.print.Pageable;
-import java.time.LocalDate;
 
 import java.time.LocalDateTime;
-import java.util.Collection;
-import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -46,8 +38,8 @@ public interface StatisticsRepository extends JpaRepository<DocumentEntity, Long
             "de.postedDate BETWEEN :startDate AND :endDate " +
             "GROUP BY de.type")
     List<Statistics> countPostedByState(@Param("types") Set<String> types,
-                                            @Param("startDate") LocalDateTime startDate,
-                                            @Param("endDate") LocalDateTime endDate);
+                                        @Param("startDate") LocalDateTime startDate,
+                                        @Param("endDate") LocalDateTime endDate);
 
 }
 

@@ -7,19 +7,19 @@ import javax.validation.constraints.NotNull;
 public class CreateUserCommand {
 
     @NotNull
-    @Length(min=1, max=50)
+    @Length(min = 1, max = 50)
     private String username;
 
     @NotNull
-    @Length(min=1, max=50)
+    @Length(min = 1, max = 50)
     private String firstname;
 
     @NotNull
-    @Length(min=1, max=50)
+    @Length(min = 1, max = 50)
     private String lastname;
 
     @NotNull
-    @Length(min=1, max=50)
+    @Length(min = 1, max = 50)
     private String password;
 
 

@@ -4,11 +4,9 @@ import it.akademija.audit.AuditActionEnum;
 import it.akademija.audit.ObjectTypeEnum;
 import it.akademija.audit.service.AuditService;
 import it.akademija.auth.AppRoleEnum;
-import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
 import it.akademija.documents.repository.DocumentTypeRepository;
-import it.akademija.documents.service.DocumentServiceObject;
 import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.users.controller.CreateUserGroupCommand;
 import it.akademija.users.repository.UserEntity;
@@ -21,11 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.Document;
 import javax.transaction.Transactional;
 import java.util.Collection;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -72,14 +67,15 @@ public class UserGroupService {
         LOGGER.info("addNewUserGroup is being run by user - " + username);
         UserGroupEntity userGroupEntityFromDataBase = userGroupRepository.findGroupByTitle(createUserGroupCommand.getTitle());
         if (userGroupEntityFromDataBase == null) {
-            UserGroupEntity userGroupEntity = new UserGroupEntity(createUserGroupCommand.getTitle(), createUserGroupCommand.getRole());
             LOGGER.info("User group by name - " + createUserGroupCommand.getTitle());
+            UserGroupEntity userGroupEntity = new UserGroupEntity(createUserGroupCommand.getTitle(),
+                    createUserGroupCommand.getRole());
             userGroupRepository.save(userGroupEntity);
-
             if (!username.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(username);
                 if (user != null) {
-                    auditService.addNewAuditEntry(user, AuditActionEnum.CREATE_NEW_USERGROUP, ObjectTypeEnum.USERGROUP, createUserGroupCommand.getTitle());
+                    auditService.addNewAuditEntry(user, AuditActionEnum.CREATE_NEW_USERGROUP, ObjectTypeEnum.USERGROUP,
+                            createUserGroupCommand.getTitle());
                 }
             }
         }
@@ -91,16 +87,15 @@ public class UserGroupService {
         UserGroupEntity savedUserGroupEntity = userGroupRepository.findGroupByTitle(title);
         savedUserGroupEntity.setTitle(newTitle);
         UserGroupEntity updateUserGroupEntit = userGroupRepository.save(savedUserGroupEntity);
-
         if (!username.isEmpty()) {
             LOGGER.info("Old user group title - " + title + " ,new title - " + newTitle);
             UserEntity user = userRepository.findUserByUsername(username);
             if (user != null) {
-                auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP, title + " -> " + newTitle);
+                auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP,
+                        ObjectTypeEnum.USERGROUP, title + " -> " + newTitle);
             }
         }
     }
-
 
     @Transactional
     public void addGroupToUser(String userGroupTitle, String username, String myusername) {
@@ -116,7 +111,8 @@ public class UserGroupService {
             if (!myusername.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(myusername);
                 if (user != null) {
-                    auditService.addNewAuditEntry(user, AuditActionEnum.ADD_USER_TO_GROUP, ObjectTypeEnum.USER, username + " + group: " + userGroupTitle);
+                    auditService.addNewAuditEntry(user, AuditActionEnum.ADD_USER_TO_GROUP,
+                            ObjectTypeEnum.USER, username + " + group: " + userGroupTitle);
                 }
             }
         }
@@ -136,7 +132,8 @@ public class UserGroupService {
             if (!myusername.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(myusername);
                 if (user != null) {
-                    auditService.addNewAuditEntry(user, AuditActionEnum.REMOVE_USER_FROM_GROUP, ObjectTypeEnum.USER, username + " - group: " + userGroupTitle);
+                    auditService.addNewAuditEntry(user, AuditActionEnum.REMOVE_USER_FROM_GROUP,
+                            ObjectTypeEnum.USER, username + " - group: " + userGroupTitle);
                 }
             }
         }
@@ -146,7 +143,6 @@ public class UserGroupService {
     public void suspendUser(String username, String myusername) {
         LOGGER.info("suspendUser is being run by user - " + myusername);
         UserEntity userEntity = userRepository.findUserByUsername(username);
-//        userEntity.getUserGroups().clear();
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByRole(AppRoleEnum.ROLE_SUSPENDED);
         if (userGroupEntity != null) {
             addGroupToUser(userGroupEntity.getTitle(), username, myusername);
@@ -173,13 +169,11 @@ public class UserGroupService {
             if (!username.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(username);
                 if (user != null) {
-                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP, userGroupTitle + " + upload: " + documentTypeTitle);
+                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP,
+                            userGroupTitle + " + upload: " + documentTypeTitle);
                 }
             }
         }
-
-
-
     }
 
     @Transactional
@@ -194,7 +188,8 @@ public class UserGroupService {
             if (!username.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(username);
                 if (user != null) {
-                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP, userGroupTitle + " + approve: " + documentTypeTitle);
+                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP,
+                            userGroupTitle + " + approve: " + documentTypeTitle);
                 }
             }
         }
@@ -212,7 +207,8 @@ public class UserGroupService {
             if (!username.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(username);
                 if (user != null) {
-                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP, userGroupTitle + " - upload: " + documentTypeTitle);
+                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP,
+                            userGroupTitle + " - upload: " + documentTypeTitle);
                 }
             }
         }
@@ -227,11 +223,11 @@ public class UserGroupService {
             userGroupEntity.removeAvailableDocumentTypeToApprove(documentTypeEntity);
             LOGGER.info("Document type - " + documentTypeTitle + " is being removed from group - " + userGroupTitle +
                     " , now this group should loose privilege to approve these document types");
-
             if (!username.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(username);
                 if (user != null) {
-                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP, userGroupTitle + " - approve: " + documentTypeTitle);
+                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP,
+                            userGroupTitle + " - approve: " + documentTypeTitle);
                 }
             }
         }
@@ -242,7 +238,6 @@ public class UserGroupService {
     public void deleteGroupByTitle(String title, String username) {
         LOGGER.info("deleteGroupByTitle is being run by user - " + username);
         userGroupRepository.deleteGroupByTitle(title);
-
         if (!username.isEmpty()) {
             UserEntity user = userRepository.findUserByUsername(username);
             if (user != null) {
@@ -251,8 +246,6 @@ public class UserGroupService {
             }
         }
     }
-
-
 
     static UserGroupServiceObject SOfromEntity(UserGroupEntity entity) {
         UserGroupServiceObject so = new UserGroupServiceObject();
@@ -266,7 +259,6 @@ public class UserGroupService {
         );
         return so;
     }
-
 }
 
 

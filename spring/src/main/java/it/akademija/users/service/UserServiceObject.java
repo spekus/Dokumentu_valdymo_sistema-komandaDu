@@ -1,12 +1,7 @@
 package it.akademija.users.service;
 
-import it.akademija.users.repository.UserGroupEntity;
-
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+        import java.util.HashSet;
+        import java.util.Set;
 
 public class UserServiceObject {
 
@@ -15,7 +10,7 @@ public class UserServiceObject {
     private String lastname;
     private String username;
     private String password;
-    private Set<UserGroupServiceObject> userGroups=new HashSet<>();
+    private Set<UserGroupServiceObject> userGroups = new HashSet<>();
 
 
     public UserServiceObject() {

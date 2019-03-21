@@ -14,23 +14,25 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication
 @EnableSwagger2
-@ImportResource({"classpath*:application-context.xml"}) // iesko sitam faile beans aprasymo
-public class App extends SpringBootServletInitializer {@Bean
-public Docket swaggerDocket() {
-	return new Docket(DocumentationType.SWAGGER_2)
-			.apiInfo(apiInfo())
-			.select()
-			.apis(RequestHandlerSelectors.basePackage("it.akademija"))
-			.build();
-}
-	private ApiInfo apiInfo() {
-		return new ApiInfoBuilder()
-				.title("REST Documentation")
-				.version("0.0.1-SNAPSHOT")
-				.build();
-	}
+@ImportResource({"classpath*:application-context.xml"})
+public class App extends SpringBootServletInitializer {
+    @Bean
+    public Docket swaggerDocket() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .apiInfo(apiInfo())
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("it.akademija"))
+                .build();
+    }
 
-	public static void main(String[] args) {
-		SpringApplication.run(App.class, args);
-	}
+    private ApiInfo apiInfo() {
+        return new ApiInfoBuilder()
+                .title("REST Documentation")
+                .version("0.0.1-SNAPSHOT")
+                .build();
+    }
+
+    public static void main(String[] args) {
+        SpringApplication.run(App.class, args);
+    }
 }

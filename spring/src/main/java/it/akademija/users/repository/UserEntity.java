@@ -1,18 +1,12 @@
 package it.akademija.users.repository;
 
-
 import it.akademija.documents.repository.DocumentEntity;
-import org.h2.engine.Role;
-import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.LazyCollection;
 import org.hibernate.annotations.LazyCollectionOption;
 
-
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 
-import java.util.List;
 import java.util.Set;
 
 
@@ -24,15 +18,13 @@ import java.util.Set;
 public class UserEntity {
 
     @Id
-//    @GeneratedValue(strategy = GenerationType.TABLE)
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
 
-    @Column(name="username", unique=true)
+    @Column(name = "username", unique = true)
     private String username;
     private String firstname;
     private String lastname;
-
     private String password;
 
 
@@ -46,7 +38,6 @@ public class UserEntity {
             joinColumns = @JoinColumn(name = "userEntity_id"),
             inverseJoinColumns = @JoinColumn(name = "userGroupEntity_id"))
     private Set<UserGroupEntity> userGroups = new HashSet<>();
-
 
     public UserEntity() {
     }
@@ -73,7 +64,6 @@ public class UserEntity {
 
     public void setUsername(String username) {
         this.username = username;
-
     }
 
     public String getFirstname() {
@@ -127,6 +117,5 @@ public class UserEntity {
     public void setUserGroups(Set<UserGroupEntity> userGroups) {
         this.userGroups = userGroups;
     }
-
 
 }

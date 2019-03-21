@@ -1,21 +1,18 @@
 package it.akademija.audit.repository;
 
-import org.hibernate.boot.model.source.spi.Sortable;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
 public interface AuditRepository extends PagingAndSortingRepository<AuditEntryEntity, Long> {
 
     List<AuditEntryEntity> findAllByOrderByDateDesc();
+
     List<AuditEntryEntity> findAll();
+
     List<AuditEntryEntity> findByUsernameIgnoreCase(String username);
-//    List<AuditEntryEntity> findByUsernameIgnoreCaseAndSort(String username);
 
     @Query("select a from AuditEntryEntity a where " +
             "lower(a.firstname)=?1 " +
