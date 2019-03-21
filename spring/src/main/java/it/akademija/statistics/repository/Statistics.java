@@ -1,4 +1,3 @@
-
 package it.akademija.statistics.repository;
 
 public class Statistics {

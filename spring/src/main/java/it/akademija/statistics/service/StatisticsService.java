@@ -1,11 +1,8 @@
 package it.akademija.statistics.service;
 
-
 import it.akademija.documents.DocumentState;
-import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
 import it.akademija.documents.repository.DocumentTypeEntity;
-import it.akademija.documents.service.DocumentTypeServiceObject;
 import it.akademija.statistics.repository.Statistics;
 import it.akademija.statistics.repository.StatisticsDao;
 import it.akademija.statistics.repository.StatisticsRepository;
@@ -16,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.awt.print.Pageable;
 import java.time.LocalDateTime;
 import java.util.Collection;
 import java.util.HashSet;
@@ -42,7 +38,8 @@ public class StatisticsService {
     public StatisticsService() {
     }
 
-    public StatisticsService(StatisticsRepository statisticsRepository, DocumentRepository documentRepository, UserRepository userRepository, StatisticsDao statisticsDao) {
+    public StatisticsService(StatisticsRepository statisticsRepository, DocumentRepository documentRepository,
+                             UserRepository userRepository, StatisticsDao statisticsDao) {
         this.statisticsRepository = statisticsRepository;
         this.documentRepository = documentRepository;
         this.userRepository = userRepository;
@@ -83,29 +80,36 @@ public class StatisticsService {
 
     //Gauname prisijungusio userio, patvirtintų dokumentų statistiką
     @Transactional
-    public Collection<Statistics> getApprovedDocsStatistics(String username, LocalDateTime startDate, LocalDateTime endDate) {
-        return statisticsRepository.countApprovementsByState(getDocTypesToApprove(username), startDate, endDate, DocumentState.APPROVED);
+    public Collection<Statistics> getApprovedDocsStatistics(String username, LocalDateTime startDate,
+                                                            LocalDateTime endDate) {
+        return statisticsRepository.countApprovementsByState(getDocTypesToApprove(username),
+                startDate, endDate, DocumentState.APPROVED);
     }
 
     //Gauname prisijungusio userio, atmestų dokumentų statistiką
     @Transactional
-    public Collection<Statistics> getRejectedDocsStatistics(String username, LocalDateTime startDate, LocalDateTime endDate) {
-        return statisticsRepository.countRejectionsByState(getDocTypesToApprove(username), startDate, endDate, DocumentState.REJECTED);
+    public Collection<Statistics> getRejectedDocsStatistics(String username, LocalDateTime startDate,
+                                                            LocalDateTime endDate) {
+        return statisticsRepository.countRejectionsByState(getDocTypesToApprove(username),
+                startDate, endDate, DocumentState.REJECTED);
     }
 
     //Gauname prisijungusio userio, gautų peržiūrai dokumentų statistiką
     @Transactional
-    public Collection<Statistics> getPostedDocsStatistics(String username, LocalDateTime startDate, LocalDateTime endDate) {
+    public Collection<Statistics> getPostedDocsStatistics(String username, LocalDateTime startDate,
+                                                          LocalDateTime endDate) {
         return statisticsRepository.countPostedByState(getDocTypesToApprove(username), startDate, endDate);
     }
 
-    //Gauname surikiotą vartotojų sąrašą, kurie pateikė daugiausiai dokumentų user'ui, kuris gali tvirtinti to tipo dokumentus.
+    /*Gauname surikiotą vartotojų sąrašą, kurie pateikė daugiausiai
+     dokumentų user'ui, kuris gali tvirtinti to tipo dokumentus.*/
     @Transactional
     public Collection<Statistics> getUserListByPostedDocs(String username) {
         return statisticsDao.userListByPostedDocs(getDocTypesToApprove(username));
     }
 
-    //Ištraukiame iš userio kokius dokumentų tipus jis gali tvirtinti, tam kad išfiltruoti pateiktų dokumentų sąrašą šitam useriui
+    /*Ištraukiame iš userio kokius dokumentų tipus jis gali tvirtinti,
+    tam kad išfiltruoti pateiktų dokumentų sąrašą šitam useriui*/
     @Transactional
     private Set<String> getDocTypesToApprove(String username) {
         UserEntity userEntity = userRepository.findUserByUsername(username);
@@ -116,19 +120,8 @@ public class StatisticsService {
                 allDocTypesUserCanApprove.addAll(userGroupEntity.getAvailableDocumentTypesToApprove());
             }
             return allDocTypesUserCanApprove.stream().map(documentTypeEntity ->
-                     documentTypeEntity.getTitle()).collect(Collectors.toSet());
+                    documentTypeEntity.getTitle()).collect(Collectors.toSet());
         }
         return null;
     }
-
-    //Ištraukiame iš userio kitus fieldus, pagal username(nežinau gal galima paprasčiau tiesiogiai iš security, neradau
-//    @Transactional
-//    private String getUserInitialsByUsername(String username) {
-//        UserEntity userEntity = userRepository.findUserByUsername(username);
-//        if (userEntity != null) {
-//            String initials = userEntity.getFirstname() + " " + userEntity.getLastname();
-//            return initials;
-//        }
-//        return null;
-//    }
 }

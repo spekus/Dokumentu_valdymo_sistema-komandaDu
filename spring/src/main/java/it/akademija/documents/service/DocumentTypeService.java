@@ -41,7 +41,6 @@ public class DocumentTypeService {
     public void createNewDocumentType(String title, String username) {
         DocumentTypeEntity newDocumentTypeEntity = new DocumentTypeEntity(title);
         documentTypeRepository.save(newDocumentTypeEntity);
-
         UserEntity user = userRepository.findUserByUsername(username);
         if (user != null) {
             auditService.addNewAuditEntry(user, AuditActionEnum.CREATE_NEW_DOCUMENT_TYPE,

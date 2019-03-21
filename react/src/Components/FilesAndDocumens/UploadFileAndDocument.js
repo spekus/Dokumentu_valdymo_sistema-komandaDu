@@ -43,31 +43,30 @@ export default class FileUploader extends Component {
             })
     }
 
-    sleep = (ms) => {
-        return new Promise(resolve => setTimeout(resolve, ms));
-    }
+    // sleep = (ms) => {
+    //     return new Promise(resolve => setTimeout(resolve, ms));
+    // }
 
-    handleSubmit = async (event) => {
-
+    handleSubmit = (event) => {
         event.preventDefault();
-        console.log("0 file_state: " + this.state.files.length);
-        this.setState({error: '', msg: ''});
-        this.setState({files: []})
-        console.log("1 file_state: " + this.state.files.length);
-
+        this.setState({ error: '', msg: '' });
         var fileIdentifiers = [];
 
         if (this.state.files.length === 0 || this.state.files === undefined) {
             this.setState({error: 'Pasirinkite failą'})
             return;
-        }
-
+        }    
+        console.log("count of file this.state.files - " + this.state.files)
+        console.log("we will print this.state.files")
+        console.log(this.state.files);
+        var promises = []
         this.state.files.forEach(file => {
 
             let data = new FormData();
             data.append('file', file);
             data.append('name', file.name);
-
+  
+            promises.push(
             axios.post('/api/files', data)
                 .then(response => {
 
@@ -75,34 +74,29 @@ export default class FileUploader extends Component {
                     if (response.data.text) {
                         var fileId = response.data.text;
                         fileIdentifiers.push(fileId);
-
-                        console.log("File identifiers length" + fileIdentifiers.length);
-
+                        console.log("File identifiers length" + fileIdentifiers.length)
                     }
                 })
                 .catch(err => {
                     this.setState({error: err.message})
 
                     showErrorObject(err);
-                });
+                }));
+            })
+        axios.all(promises).then( () => {
+            console.log("files are uploaded and now will be add to documents")
+                     
+                            let documentDetails = {
+                                title: this.state.title,
+                                type: this.state.type,
+                                description: this.state.description
+                            };
+                            console.log("document details bellow")
+                            console.log(documentDetails);
+                            this.addDocument(documentDetails, fileIdentifiers)
 
-
-        })
-
-        while (fileIdentifiers.length === 0) {
-            await this.sleep(1);
-            console.log("While cikle: " + fileIdentifiers.length);
-        }
-        let documentDetails = {
-            title: this.state.title,
-            type: this.state.type,
-            description: this.state.description
-        };
-
-        this.addDocument(documentDetails, fileIdentifiers);
-        this.setState({'title': '', 'description': ''});
-
-
+            this.setState({ files: [] })
+    })
     }
 
     addDocument(documentDetails, fileIdentifiers) {
@@ -165,8 +159,8 @@ export default class FileUploader extends Component {
     }
 
     onFileChange = (event) => {
-
-        if (event.target.files[0].size <= 10000000 && event.target.files[0].type === "application/pdf") {
+        this.setState({ error: '', msg: '' });
+        if (event.target.files[0].size <= 10000000 && event.target.files[0].type==="application/pdf") {
 
             this.setState({files: [...this.state.files, event.target.files[0]]})
         } else if (event.target.files[0].type !== "application/pdf") {
