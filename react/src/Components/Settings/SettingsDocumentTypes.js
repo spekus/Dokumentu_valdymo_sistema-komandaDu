@@ -48,6 +48,30 @@ class SettingsDocumentTypes extends Component {
             })
     }
 
+    editDocumentTitle = (title) => {
+        console.log("Type to edit " + title);
+        let newTitle = window.prompt("Įveskite naują dokumento tipo " + title + " pavadinimą");
+        let editedType = {title: newTitle};
+        // axios.put("/api/document-types", {params: {currentTitle: title}},  editedType)
+        axios({
+            method: 'put',
+            url: '/api/document-types',
+            params: {
+                currentTitle: title,
+            },
+            data: editedType,
+            headers: {'Content-Type': 'application/json;charset=utf-8'}
+        })
+            .then(response => {
+                this.getAllDocumentTypes();
+            })
+            .catch(error => {
+                console.log("Error from getAllDocumentTypes" + error.message);
+                showErrorObject(error);
+            })
+    }
+
+
     deleteDocumentType = (title) => {
         axios.delete('/api/document-types/' + title)
             .then(result => {
@@ -58,7 +82,6 @@ class SettingsDocumentTypes extends Component {
                 // $("#modalError").modal('show');
                 showErrorObject(error);
             })
-
     }
 
 
@@ -82,11 +105,11 @@ class SettingsDocumentTypes extends Component {
                                     <tr key={uuid()}>
                                         <td>{item.title}</td>
                                         <td>
-                                            <button className="buttonlink text-danger" onClick={() => {
-                                                this.deleteDocumentType(item.title)
-                                            }}>
-                                                X
-                                            </button>
+
+                                            <i className="fas fa-edit mr-3" id="iconsettings"
+                                               title="Koreguoti documento pavadinimą" onClick={() => {
+                                                this.editDocumentTitle(item.title)
+                                            }}> </i>
                                         </td>
                                     </tr>
                                 ))

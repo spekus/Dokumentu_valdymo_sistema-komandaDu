@@ -49,13 +49,6 @@ class AuditLog extends Component {
 
 
     getAllAuditEntries = () => {
-        // axios.get("/api/auditentries", {
-        //     params:
-        //         {
-        //             page: this.state.offset,
-        //             size: this.state.perPage,
-        //         }
-        // })
         axios({
             method: 'get',
             url: '/api/auditentries',
@@ -100,7 +93,6 @@ class AuditLog extends Component {
                     console.log("allEntries" + this.state.allEntries);
                 }
 
-                // this.setState({pageCount: Math.ceil(response.data.content.totalElements / this.state.perPage)});
                 this.setState({pageCount: Math.ceil(response.data.totalElements / this.state.perPage)});
                 console.log("totalElements - = " + response.data.totalElements);
 
@@ -120,15 +112,15 @@ class AuditLog extends Component {
             this.setState({offset: offset}, () => {
                 this.getAllAuditEntries();
                 console.log(this.state.offset);
-                console.log(this.state.searchField)
+                console.log(this.state.searchField);
 
             })
 
         } else {
             this.setState({offset: offset}, () => {
                 this.getFilteredAuditEntries();
-                console.log(this.state.offset)
-                console.log(this.state.searchField)
+                console.log(this.state.offset);
+                console.log(this.state.searchField);
             })
 
         }
@@ -160,7 +152,6 @@ class AuditLog extends Component {
                                 </div>
                                 <input className="form-control mr-sm-2" type="search"
                                        placeholder="Įveskite naudotojo vardą, pavardę, reg. vardą (username) arba objekto ID"
-                                    // onFocus="Įveskite naudotojo vardą, pavardę, reg. vardą (username) arba objekto ID"
                                        aria-label="Search" aria-describedby="basic-addon1"
                                        value={this.state.searchField}
                                        name="searchField"
