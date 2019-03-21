@@ -29,10 +29,10 @@ public class DocumentTypeService {
     private AuditService auditService;
 
     @Transactional
-    public Set<DocumentTypeServiceObject> getAllDocumentTypes () {
+    public Set<DocumentTypeServiceObject> getAllDocumentTypes() {
         return documentTypeRepository.findAll().stream().map(
                 (docType) ->
-                new DocumentTypeServiceObject(docType.getTitle()))
+                        new DocumentTypeServiceObject(docType.getTitle()))
                 .collect(Collectors.toSet());
 
     }
@@ -44,7 +44,8 @@ public class DocumentTypeService {
 
         UserEntity user = userRepository.findUserByUsername(username);
         if (user != null) {
-            auditService.addNewAuditEntry(user, AuditActionEnum.CREATE_NEW_DOCUMENT_TYPE, ObjectTypeEnum.DOCUMENTTYPE, title);
+            auditService.addNewAuditEntry(user, AuditActionEnum.CREATE_NEW_DOCUMENT_TYPE,
+                    ObjectTypeEnum.DOCUMENTTYPE, title);
         }
     }
 
@@ -57,7 +58,8 @@ public class DocumentTypeService {
 
             UserEntity user = userRepository.findUserByUsername(username);
             if (user != null) {
-                auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_DOCUMENT_TYPE, ObjectTypeEnum.DOCUMENTTYPE, wantedTitle);
+                auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_DOCUMENT_TYPE,
+                        ObjectTypeEnum.DOCUMENTTYPE, wantedTitle);
             }
         }
     }
