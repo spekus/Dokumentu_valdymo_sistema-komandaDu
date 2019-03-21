@@ -40,7 +40,7 @@ class App extends React.Component {
         {iconClass: 'fa fw fa-cloud-upload-alt', path: 'upload-file', text: 'Įkelti'},
         {iconClass: 'fa fw fa-users', path: 'user-administration-list', text: 'Naudotojai', admin: true},
         {iconClass: 'fa fw fa-cogs', path: 'settings', text: 'Nustatymai', admin: true},
-        {iconClass: 'fa fw fa-list', path: 'auditlog', text: 'Audito žurnalas', admin: true},
+        {iconClass: 'fa fw fa-list', path: 'auditlog', text: 'Įvykių žurnalas', admin: true},
 
     ];
 

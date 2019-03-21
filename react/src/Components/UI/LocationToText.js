@@ -31,10 +31,6 @@ const LocationToText = (props) => {
             name = "Atmesti dokumentai";
             break;
 
-        case '/dashboard/documents/rejected/':
-            name = "Atmesti dokumentai";
-            break;
-
         case '/dashboard/documents/to_aproove/':
             name = "Dokumentai tvirtinimui";
             break;
@@ -52,7 +48,7 @@ const LocationToText = (props) => {
             name = "Statistika";
             break;
         case '/auditlog':
-            name = "Veiksmų žurnalas";
+            name = "Įvykių žurnalas";
             break;
         default:
             return name = ""

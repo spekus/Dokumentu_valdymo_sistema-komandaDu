@@ -101,7 +101,7 @@ class AugisDokumentas extends Component {
     }
 
     rejectDocument = (props) => {
-        let reason = window.prompt("Iveskite atmetimo priezasti");
+        let reason = window.prompt(" Įveskite atmetimo priežastį");
         let docID = this.state.documentInfo.documentIdentifier;
         axios.post("/api/documents/" + docID + "/reject", null, {
             params: {
@@ -183,9 +183,6 @@ class AugisDokumentas extends Component {
                                                 key={file.identifier}>
                                                 <a href={'http://localhost:8181/api/files/download/' + file.identifier}
                                                    target='_blank' rel="noopener noreferrer">{file.fileName}</a>
-                                                {/* mes naudojame localhost:8181/api  todel, kad react-server proxy nesuveikia kai content tipas yra nustatytas
-                                                */}
-                                                {/*<a href='#' onClick={() => this.downloadOneFile(file.identifier)} >{file.fileName}</a>*/}
                                             </li>)
                                             : null
                                         }
@@ -194,7 +191,6 @@ class AugisDokumentas extends Component {
                             </tr>
                             <tr>
                                 <th>Dokumento statusas</th>
-                                {/*<td>{this.state.documentInfo.documentState}</td>*/}
                                 {this.state.documentInfo.documentState === 'CREATED' ? <td>Sukurtas</td> : null}
                                 {this.state.documentInfo.documentState === 'SUBMITTED' ? <td>Pateiktas tvirtinimui</td> : null}
                                 {this.state.documentInfo.documentState === 'APPROVED' ? <td>Patvirtintas</td> : null}
