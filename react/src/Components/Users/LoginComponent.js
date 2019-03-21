@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import axios from 'axios';
-// import $ from 'jquery';
+
 import "../../App.css"
 import "./LoginComponent.css"
-// import * as uuid from "uuid";
+
 import $ from 'jquery';
 
 
@@ -16,7 +16,7 @@ export default class Login extends Component {
     }
 
     tryLogin() {
-        this.setState({errorText: ''});
+        this.setState({ errorText: '' });
         axios.post('/login', null, {
             params: {
                 username: this.state.username,
@@ -24,17 +24,16 @@ export default class Login extends Component {
             }
         })
             .then(response => {
-                // mes prisijungeme, todel dabar galime suzinoti naudotojo informacija
-                // ta padarysim iskvieciant callback onLogin
+
                 this.props.onLogin();
             })
             .catch(error => {
                 let errorText = (typeof (error.response.data) === 'string') ? error.response.data : error.response.data.message;
-                this.setState({errorText: errorText});
+                this.setState({ errorText: errorText });
             })
     }
 
-    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
+    handleChangeInput = (event) => this.setState({ [event.target.name]: event.target.value });
 
     handleSubmit = (event) => {
         event.preventDefault();
@@ -58,24 +57,24 @@ export default class Login extends Component {
                         <div className='loginAlert'>
                             <h5>Prisijungimo klaida!</h5>{this.props.loginError}
                         </div>
-                    :null}
+                        : null}
                     <form>
                         <div className="form-group">
                             <input type="text"
-                                   name='username'
-                                   value={this.state.username}
-                                   placeholder="Naudotojo vardas"
-                                   onChange={this.handleChangeInput}/>
+                                name='username'
+                                value={this.state.username}
+                                placeholder="Naudotojo vardas"
+                                onChange={this.handleChangeInput} />
                         </div>
                         <div className="form-group">
                             <input type="password"
-                                   name='password'
-                                   value={this.state.password}
-                                   placeholder="Slaptažodis"
-                                   onChange={this.handleChangeInput}/>
+                                name='password'
+                                value={this.state.password}
+                                placeholder="Slaptažodis"
+                                onChange={this.handleChangeInput} />
                         </div>
                         <button type="submit" value="username" className="btn button1"
-                                onClick={this.handleSubmit}>Prisijungti
+                            onClick={this.handleSubmit}>Prisijungti
                         </button>
                     </form>
                 </div>

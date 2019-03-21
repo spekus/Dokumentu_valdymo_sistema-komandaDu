@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import axios from "axios";
-import {showErrorObject} from "../UI/MainModalError";
+import { showErrorObject } from "../UI/MainModalError";
 import '../../App.css';
 import uuid from 'uuid';
 import Link from "react-router-dom/es/Link";
-import {translateAction} from "./AuditLogTranslate";
+import { translateAction } from "./AuditLogTranslate";
 import ReactPaginate from "react-paginate";
 
 
@@ -18,7 +18,7 @@ class AuditLog extends Component {
         offset: 0,
     }
 
-    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
+    handleChangeInput = (event) => this.setState({ [event.target.name]: event.target.value });
 
     componentDidMount() {
         this.getAllAuditEntries();
@@ -27,21 +27,18 @@ class AuditLog extends Component {
     handleSearch = () => {
 
         if (this.state.searchField.length === 0) {
-            this.setState({allEntries: []})
-            this.setState({offset: 0}, () => {
+            this.setState({ allEntries: [] })
+            this.setState({ offset: 0 }, () => {
                 this.getAllAuditEntries();
-                console.log(this.state.offset);
-                console.log(this.state.searchField)
+
 
             })
 
         } else {
-            this.setState({allEntries: []})
-            this.setState({offset: 0}, () => {
+            this.setState({ allEntries: [] })
+            this.setState({ offset: 0 }, () => {
                 this.getFilteredAuditEntries();
-                console.log(this.state.offset);
-                console.log(this.state.searchField)
-                
+
 
             })
 
@@ -63,15 +60,14 @@ class AuditLog extends Component {
             },
         })
             .then(response => {
-                    if (response.data.content.length > 0) {
-                        this.setState({allEntries: response.data.content});
-                        console.log("allEntries" + this.state.allEntries.length);
-                        console.log("allEntries" + this.state.allEntries);
-                    }
+                if (response.data.content.length > 0) {
+                    this.setState({ allEntries: response.data.content });
 
-                    this.setState({pageCount: Math.ceil(response.data.totalElements / this.state.perPage)});
-                    console.log("totalElements - = " + response.data.totalElements);
                 }
+
+                this.setState({ pageCount: Math.ceil(response.data.totalElements / this.state.perPage) });
+
+            }
             )
             .catch(error => {
                 showErrorObject(error);
@@ -81,24 +77,22 @@ class AuditLog extends Component {
     getFilteredAuditEntries = () => {
         axios.get('/api/auditentries/search', {
             params:
-                {
-                    page: this.state.offset,
-                    size: this.state.perPage,
-                    criteria: this.state.searchField
-                }
+            {
+                page: this.state.offset,
+                size: this.state.perPage,
+                criteria: this.state.searchField
+            }
         })
-        
+
             .then(response => {
-                console.log("response");
-                console.log(response);
+                ;
                 if (response.data.content.length > 0) {
-                    this.setState({allEntries: response.data.content});
-                    console.log("allEntries" + this.state.allEntries.length);
-                    console.log("allEntries" + this.state.allEntries);
+                    this.setState({ allEntries: response.data.content });
+
                 }
 
-                this.setState({pageCount: Math.ceil(response.data.totalElements / this.state.perPage)});
-                console.log("totalElements - = " + response.data.totalElements);
+                this.setState({ pageCount: Math.ceil(response.data.totalElements / this.state.perPage) });
+
 
             })
             .catch(error => {
@@ -113,18 +107,16 @@ class AuditLog extends Component {
         let offset = Math.ceil(selected);
 
         if (this.state.searchField.length === 0) {
-            this.setState({offset: offset}, () => {
+            this.setState({ offset: offset }, () => {
                 this.getAllAuditEntries();
-                console.log(this.state.offset);
-                console.log(this.state.searchField);
+
 
             })
 
         } else {
-            this.setState({offset: offset}, () => {
+            this.setState({ offset: offset }, () => {
                 this.getFilteredAuditEntries();
-                console.log(this.state.offset);
-                console.log(this.state.searchField);
+
             })
 
         }
@@ -133,7 +125,7 @@ class AuditLog extends Component {
 
     handleKeyPress = (event) => {
         if (event.key === 'Enter') {
-            this.setState({[event.target.name]: event.target.value});
+            this.setState({ [event.target.name]: event.target.value });
             this.handleSearch();
         }
     }
@@ -143,7 +135,7 @@ class AuditLog extends Component {
             <div className="container">
 
 
-                <div className='mainelement borderMain my-3' style={{'width': '100%'}}>
+                <div className='mainelement borderMain my-3' style={{ 'width': '100%' }}>
 
 
                     <div className="form-group col-md-10 my-3">
@@ -151,20 +143,20 @@ class AuditLog extends Component {
                         <div className="row">
                             <div className="col-md-10 input-group">
                                 <div className="input-group-prepend">
-                                        <span className="input-group-text" id="basic-addon1" role="img"
-                                              aria-label="Search">🔎</span>
+                                    <span className="input-group-text" id="basic-addon1" role="img"
+                                        aria-label="Search">🔎</span>
                                 </div>
                                 <input className="form-control mr-sm-2" type="search"
-                                       placeholder="Įveskite naudotojo vardą, pavardę, reg. vardą (username) arba objekto ID"
-                                       aria-label="Search" aria-describedby="basic-addon1"
-                                       value={this.state.searchField}
-                                       name="searchField"
-                                       onChange={this.handleChangeInput}
-                                       onKeyPress={this.handleKeyPress}/>
+                                    placeholder="Įveskite naudotojo vardą, pavardę, reg. vardą (username) arba objekto ID"
+                                    aria-label="Search" aria-describedby="basic-addon1"
+                                    value={this.state.searchField}
+                                    name="searchField"
+                                    onChange={this.handleChangeInput}
+                                    onKeyPress={this.handleKeyPress} />
                             </div>
                             <div className="col-md-1">
                                 <button className="btn button2 my-2 my-sm-0 button1" type="submit"
-                                        onClick={this.handleSearch}
+                                    onClick={this.handleSearch}
                                 >Ieškoti
                                 </button>
                             </div>
@@ -172,39 +164,38 @@ class AuditLog extends Component {
                     </div>
                 </div>
 
-                <div className='mainelement borderMain' style={{'width': '100%'}}>
+                <div className='mainelement borderMain' style={{ 'width': '100%' }}>
                     <table className="table table-bordered table-hover table-sm my-3">
                         <thead>
-                        <tr>
-                            <th>Data</th>
-                            <th>Naudotojas</th>
-                            <th>Vardas</th>
-                            <th>Pavardė</th>
-                            <th>Veiksmas</th>
-                            <th>Objektas</th>
-                        </tr>
+                            <tr>
+                                <th>Data</th>
+                                <th>Naudotojas</th>
+                                <th>Vardas</th>
+                                <th>Pavardė</th>
+                                <th>Veiksmas</th>
+                                <th>Objektas</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {this.state.allEntries.map(entry => {
-                            let objectDetails = entry.objectIdentifier;
+                            {this.state.allEntries.map(entry => {
+                                let objectDetails = entry.objectIdentifier;
 
-                            if (entry.objectType === "DOCUMENT") {
-                                let address = "/documents/" + entry.objectIdentifier;
-                                objectDetails = <Link to={address}>Atidaryti</Link>
-                            }
+                                if (entry.objectType === "DOCUMENT") {
+                                    let address = "/documents/" + entry.objectIdentifier;
+                                    objectDetails = <Link to={address}>Atidaryti</Link>
+                                }
 
-                            return (
-                                <tr key={uuid()}>
-                                    <td>{entry.date}</td>
-                                    <td>{entry.username}</td>
-                                    <td>{entry.firstname}</td>
-                                    <td>{entry.lastname}</td>
-                                    <td>{translateAction(entry.action)}</td>
-                                    {/*<td>{entry.action}</td>*/}
-                                    {/*<td>{entry.objectType}</td>*/}
-                                    <td>{objectDetails}</td>
-                                </tr>)
-                        })}
+                                return (
+                                    <tr key={uuid()}>
+                                        <td>{entry.date}</td>
+                                        <td>{entry.username}</td>
+                                        <td>{entry.firstname}</td>
+                                        <td>{entry.lastname}</td>
+                                        <td>{translateAction(entry.action)}</td>
+
+                                        <td>{objectDetails}</td>
+                                    </tr>)
+                            })}
                         </tbody>
                     </table>
                 </div>

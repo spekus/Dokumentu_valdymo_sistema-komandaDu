@@ -1,10 +1,10 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import axios from 'axios'
 import $ from "jquery";
 import ModalError from "../UI/ModalError";
 import uuid from "uuid";
 import "../../App.css";
-import {showErrorObject} from "../../Components/UI/MainModalError";
+import { showErrorObject } from "../../Components/UI/MainModalError";
 
 class SettingsDocumentTypes extends Component {
     state = {
@@ -19,19 +19,18 @@ class SettingsDocumentTypes extends Component {
         this.getAllDocumentTypes();
     }
 
-    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
+    handleChangeInput = (event) => this.setState({ [event.target.name]: event.target.value });
 
 
     createDocumentType = (event) => {
         event.preventDefault();
-        var newType = {title: this.state.newDocumentTypeInputField}
+        var newType = { title: this.state.newDocumentTypeInputField }
         axios.post('/api/document-types', newType)
             .then(response => {
                 this.getAllDocumentTypes();
-                this.setState({newDocumentTypeInputField: ''});
+                this.setState({ newDocumentTypeInputField: '' });
             })
             .catch(error => {
-                console.log("Klaida is createDocumentType: " + error);
                 showErrorObject(error);
             })
 
@@ -40,10 +39,9 @@ class SettingsDocumentTypes extends Component {
     getAllDocumentTypes = () => {
         axios.get('/api/document-types')
             .then(result => {
-                this.setState({allDocumentTypes: result.data});
+                this.setState({ allDocumentTypes: result.data });
             })
             .catch(error => {
-                console.log("Klaida is getAllDocumentTypes: " + error.response.data.message);
                 showErrorObject(error);
             })
     }
@@ -51,8 +49,7 @@ class SettingsDocumentTypes extends Component {
     editDocumentTitle = (title) => {
         console.log("Type to edit " + title);
         let newTitle = window.prompt("Įveskite naują dokumento tipo " + title + " pavadinimą");
-        let editedType = {title: newTitle};
-        // axios.put("/api/document-types", {params: {currentTitle: title}},  editedType)
+        let editedType = { title: newTitle };
         axios({
             method: 'put',
             url: '/api/document-types',
@@ -60,13 +57,12 @@ class SettingsDocumentTypes extends Component {
                 currentTitle: title,
             },
             data: editedType,
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
+            headers: { 'Content-Type': 'application/json;charset=utf-8' }
         })
             .then(response => {
                 this.getAllDocumentTypes();
             })
             .catch(error => {
-                console.log("Error from getAllDocumentTypes" + error.message);
                 showErrorObject(error);
             })
     }
@@ -78,8 +74,6 @@ class SettingsDocumentTypes extends Component {
                 this.getAllDocumentTypes();
             })
             .catch(error => {
-                console.log("Klaida is getAllDocumentTypes: " + error);
-                // $("#modalError").modal('show');
                 showErrorObject(error);
             })
     }
@@ -88,32 +82,31 @@ class SettingsDocumentTypes extends Component {
     render() {
         return (
             <div className='p-3 mb-5 bg-white rounded borderMain'>
-                {/*<h5>Dokumentų tipų nustatymas</h5>*/}
                 <div className="row">
                     <div className="col-md-8">
                         <table className="table table-bordered table-hover">
                             <thead>
-                            <tr>
-                                <th>Pavadinimas</th>
-                                <th>Redaguoti</th>
-                            </tr>
+                                <tr>
+                                    <th>Pavadinimas</th>
+                                    <th>Redaguoti</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            {this.state.allDocumentTypes
-                                .sort((a, b) => a.title.localeCompare(b.title))
-                                .map(item => (
-                                    <tr key={uuid()}>
-                                        <td>{item.title}</td>
-                                        <td>
+                                {this.state.allDocumentTypes
+                                    .sort((a, b) => a.title.localeCompare(b.title))
+                                    .map(item => (
+                                        <tr key={uuid()}>
+                                            <td>{item.title}</td>
+                                            <td>
 
-                                            <i className="fas fa-edit mr-3" id="iconsettings"
-                                               title="Koreguoti documento pavadinimą" onClick={() => {
-                                                this.editDocumentTitle(item.title)
-                                            }}> </i>
-                                        </td>
-                                    </tr>
-                                ))
-                            }
+                                                <i className="fas fa-edit mr-3" id="iconsettings"
+                                                    title="Koreguoti documento pavadinimą" onClick={() => {
+                                                        this.editDocumentTitle(item.title)
+                                                    }}> </i>
+                                            </td>
+                                        </tr>
+                                    ))
+                                }
                             </tbody>
                         </table>
                     </div>
@@ -121,11 +114,11 @@ class SettingsDocumentTypes extends Component {
                         <form onSubmit={this.createDocumentType}>
                             <div className="form-group">
                                 <input type="text"
-                                       className="form-control"
-                                       placeholder="Naujas dokumentų tipas"
-                                       value={this.state.newDocumentTypeInputField}
-                                       name="newDocumentTypeInputField"
-                                       onChange={this.handleChangeInput}/>
+                                    className="form-control"
+                                    placeholder="Naujas dokumentų tipas"
+                                    value={this.state.newDocumentTypeInputField}
+                                    name="newDocumentTypeInputField"
+                                    onChange={this.handleChangeInput} />
                                 <button type="submit" className="btn button1 mt-2">Sukurti</button>
                             </div>
 
@@ -133,7 +126,7 @@ class SettingsDocumentTypes extends Component {
                     </div>
                 </div>
 
-                <ModalError errorText={this.state.errorMessage}/>
+                <ModalError errorText={this.state.errorMessage} />
             </div>
         );
     }

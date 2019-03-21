@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import axios from 'axios';
 import ModalError from "../UI/ModalError";
 import $ from 'jquery';
@@ -10,7 +10,6 @@ import "../../App.css"
 class SettingsUserGroups extends Component {
     state = {
         newUserGroupInputField: "",
-        // allUserGroups: [],
         errorMessage: "",
         infoMessage: "",
 
@@ -26,35 +25,34 @@ class SettingsUserGroups extends Component {
 
 
 
-    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
+    handleChangeInput = (event) => this.setState({ [event.target.name]: event.target.value });
 
     createUserGroup = (event) => {
         event.preventDefault();
-        axios.post('/api/usergroups', {title: this.state.newUserGroupInputField, role: 'ROLE_USER'})
+        axios.post('/api/usergroups', { title: this.state.newUserGroupInputField, role: 'ROLE_USER' })
             .then(reponse => {
-                    this.getAllGroupsFromServer();
-                    this.setState({newUserGroupInputField: ""})
-                }
+                this.getAllGroupsFromServer();
+                this.setState({ newUserGroupInputField: "" })
+            }
             );
     }
 
-       componentDidMount() {
+    componentDidMount() {
         this.getAllGroupsFromServer();
         this.getAllTypes();
     }
 
-    handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
+    handleChangeSelect = (event) => this.setState({ [event.target.name]: event.target.options[event.target.selectedIndex].value });
 
     getAllGroupsFromServer = () => {
         axios.get("/api/usergroups")
             .then(response => {
                 if (response.data.length > 0) {
                     let allgroups = response.data;
-                    this.setState({allgroups: allgroups});
+                    this.setState({ allgroups: allgroups });
 
-                    if (this.state.groupBeingEdited.title !== '')
-                    {
-                       this.setState({groupBeingEdited: allgroups.find((g) => g.title === this.state.groupBeingEdited.title )})
+                    if (this.state.groupBeingEdited.title !== '') {
+                        this.setState({ groupBeingEdited: allgroups.find((g) => g.title === this.state.groupBeingEdited.title) })
                     }
                 }
             })
@@ -70,9 +68,7 @@ class SettingsUserGroups extends Component {
                 if (response.data.length > 0) {
                     let allTypes = response.data;
                     allTypes.sort((a, b) => a.title.localeCompare(b.title));
-                    this.setState({allTypes: allTypes});
-                    // this.setState({type: result.data[0].title});
-                    console.log("allTypes - " + allTypes);
+                    this.setState({ allTypes: allTypes });
                 }
             })
             .catch(error => {
@@ -82,9 +78,9 @@ class SettingsUserGroups extends Component {
 
 
     editGroupTitle = (group) => {
-        console.log("Group to edit " + group.title);
+
         let newTitle = window.prompt("Įveskite naują grupės " + group.title + " pavadinimą");
-        axios.post("/api/usergroups/" + group.title, null, {params: {newTitle: newTitle}})
+        axios.post("/api/usergroups/" + group.title, null, { params: { newTitle: newTitle } })
             .then(response => {
                 this.getAllGroupsFromServer();
             })
@@ -95,7 +91,7 @@ class SettingsUserGroups extends Component {
 
 
     deleteGroup = (group) => {
-        console.log("Group to remove " + group.title);
+
         axios.delete('/api/usergroups/' + group.title)
             .then(response => {
                 this.getAllGroupsFromServer();
@@ -107,8 +103,8 @@ class SettingsUserGroups extends Component {
     }
 
     editGroup = (group) => {
-        this.setState({groupBeingEdited: group});
-        // document.getElementById('editGroupTypes').style.visibility = 'visible';
+        this.setState({ groupBeingEdited: group });
+
         $('#typeModal').modal('show');
         this.getAllTypes();
         $('#typeModal').on('hidden.bs.modal', this.getAllGroupsFromServer)
@@ -119,21 +115,21 @@ class SettingsUserGroups extends Component {
     render() {
         return (
             <div className='p-3 mb-5 bg-white rounded borderMain'>
-                {/*<h5>Naudotojų grupės</h5>*/}
+
                 <div className="row">
                     <div className="col-md-8">
                         <div>
                             <table className="table table-hover table-bordered table-sm">
                                 <thead>
-                                <tr>
-                                    <th>Naudotojų grupė</th>
-                                    <th>Dokumentų tipai kūrimui</th>
-                                    <th>Dokumentų tipai tvirtinimui</th>
-                                    <th>Veiksmai</th>
-                                </tr>
+                                    <tr>
+                                        <th>Naudotojų grupė</th>
+                                        <th>Dokumentų tipai kūrimui</th>
+                                        <th>Dokumentų tipai tvirtinimui</th>
+                                        <th>Veiksmai</th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                {this.state.allgroups.map(group => (
+                                    {this.state.allgroups.map(group => (
                                         <tr key={uuid()}>
                                             <th>
                                                 {group.title}
@@ -145,16 +141,16 @@ class SettingsUserGroups extends Component {
                                                 {group.typesToUpload
                                                     .sort((a, b) => a.title.localeCompare(b.title))
                                                     .map(type => (
-                                                    <div className="row" key={uuid()}>
-                                                        <div className="col-md-10">
-                                                            <li>{type.title}</li>
-                                                        </div>
-                                                        <div className="col-md-2">
+                                                        <div className="row" key={uuid()}>
+                                                            <div className="col-md-10">
+                                                                <li>{type.title}</li>
+                                                            </div>
+                                                            <div className="col-md-2">
+
+                                                            </div>
 
                                                         </div>
-
-                                                    </div>
-                                                ))}
+                                                    ))}
 
                                             </td>
                                             <td>
@@ -163,36 +159,33 @@ class SettingsUserGroups extends Component {
                                                 {group.typesToApprove
                                                     .sort((a, b) => a.title.localeCompare(b.title))
                                                     .map(type => (
-                                                    <div className="row" key={uuid()}>
-                                                        <div className="col-md-9">
-                                                            <li>{type.title}</li>
+                                                        <div className="row" key={uuid()}>
+                                                            <div className="col-md-9">
+                                                                <li>{type.title}</li>
+                                                            </div>
+                                                            <div className="col-md-3">
+
+                                                            </div>
                                                         </div>
-                                                        <div className="col-md-3">
-
-                                                        </div>
-                                                    </div>
 
 
-                                                ))}
+                                                    ))}
 
 
                                             </td>
                                             <td className='settingstd'>
                                                 <i className="fas fa-edit mr-3 " title="Koreguoti grupės pavadinimą"
-                                                   onClick={() => this.editGroupTitle(group)}> </i>
+                                                    onClick={() => this.editGroupTitle(group)}> </i>
 
-                                                <i className="fas fa-tasks mr-3 "  title="Redaguoti tipus"
-                                                   onClick={() => this.editGroup(group)}
-                                                   group={group}></i>
+                                                <i className="fas fa-tasks mr-3 " title="Redaguoti tipus"
+                                                    onClick={() => this.editGroup(group)}
+                                                    group={group}></i>
 
-
-                                                {/*<i className="fas fa-trash-alt" title="Ištrinti grupę"*/}
-                                                   {/*onClick={() => this.deleteGroup(group)}></i>*/}
 
                                             </td>
                                         </tr>
                                     )
-                                )}
+                                    )}
                                 </tbody>
                             </table>
 
@@ -200,8 +193,8 @@ class SettingsUserGroups extends Component {
                             <div>
                                 <ModalContainer id='typeModal'>
                                     <SettingsEditGroupTypes group={this.state.groupBeingEdited}
-                                                            alltypes={this.state.allTypes}
-                                                            onChange={this.getAllGroupsFromServer}/>
+                                        alltypes={this.state.allTypes}
+                                        onChange={this.getAllGroupsFromServer} />
                                 </ModalContainer>
                             </div>
 
@@ -214,11 +207,11 @@ class SettingsUserGroups extends Component {
                         <form onSubmit={this.createUserGroup}>
                             <div className="form-group">
                                 <input type="text"
-                                       className="form-control"
-                                       placeholder="Nauja grupė"
-                                       value={this.state.newUserGroupInputField}
-                                       name="newUserGroupInputField"
-                                       onChange={this.handleChangeInput}/>
+                                    className="form-control"
+                                    placeholder="Nauja grupė"
+                                    value={this.state.newUserGroupInputField}
+                                    name="newUserGroupInputField"
+                                    onChange={this.handleChangeInput} />
                                 <button type="submit" className="btn button1 mt-2">Sukurti</button>
                             </div>
 
@@ -226,7 +219,7 @@ class SettingsUserGroups extends Component {
                     </div>
                 </div>
 
-                <ModalError errorText={this.state.errorMessage}/>
+                <ModalError errorText={this.state.errorMessage} />
             </div>
         );
     }

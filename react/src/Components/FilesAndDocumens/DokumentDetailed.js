@@ -1,9 +1,9 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import FileSaver from "file-saver";
 import axios from 'axios';
 import DateWithTime from "../UI/DateWithTime";
 import "../../App.css";
-import {showErrorObject} from "../UI/MainModalError";
+import { showErrorObject } from "../UI/MainModalError";
 
 class AugisDokumentas extends Component {
     state = {
@@ -28,7 +28,7 @@ class AugisDokumentas extends Component {
 
     }
 
-    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
+    handleChangeInput = (event) => this.setState({ [event.target.name]: event.target.value });
 
     getDocumentInformation = () => {
 
@@ -38,18 +38,14 @@ class AugisDokumentas extends Component {
             }
         })
             .then(result => {
-                //kelyje turi but uzsifruotas dokumento id
-                console.log("Dokumento kelio id - " + this.props.match.params.id);
-                console.log("getDocumentInformation" + result)
-
                 let documentInfo = result.data;
 
                 documentInfo.postedDate = new Date(documentInfo.postedDate);
                 documentInfo.approvalDate = new Date(documentInfo.approvalDate);
                 documentInfo.rejectedDate = new Date(documentInfo.rejectedDate);
 
-                this.setState({documentInfo: documentInfo});
-                // this.getFileList();
+                this.setState({ documentInfo: documentInfo });
+
             })
             .catch(error => {
                 console.log("Atsakymas is getDocumentInformation - " + error);
@@ -60,10 +56,7 @@ class AugisDokumentas extends Component {
 
 
     downloadOneFile = (fileIdentifier) => {
-        // cia reiketu susitvarkyti su downloaderiu/filesaveriu
-        // atsakymas kuris grizta yra dvejetainis, ir jame yra pats failas kuri norime atsisiusti
-        // reikia gauti ji kaip BLOB'a (Binary Large OBject) ir issaugoti
-        console.log("downloadOneFile start")
+
         axios.get('/api/files/download/' + fileIdentifier)
             .then(response => {
                 FileSaver.SaveAs(response.data);
@@ -123,99 +116,94 @@ class AugisDokumentas extends Component {
                     <div className='p-3 mb-5 bg-white rounded borderMain' align="center">
                         <table className='table table-bordered col-md-12 table-hover'>
                             <thead>
-                            <tr>
-                                <th colSpan='2' className="text-center table-secondary">DOKUMENTO DETALĖS</th>
-                            </tr>
+                                <tr>
+                                    <th colSpan='2' className="text-center table-secondary">DOKUMENTO DETALĖS</th>
+                                </tr>
                             </thead>
                             <tbody>
-                            <tr>
-                                <th>Dokumento pavadinimas</th>
-                                <td>{this.state.documentInfo.title}</td>
-                            </tr>
-                            <tr>
-                                <th>Dokumento tipas</th>
-                                <td>{this.state.documentInfo.type}</td>
-                            </tr>
-                            <tr>
-                                <th>Aprašymas</th>
-                                <td>{this.state.documentInfo.description}</td>
-                            </tr>
-
-
-                            <tr>
-                                <th>Dokumento autorius</th>
-                                <td>{this.state.documentInfo.author}</td>
-                            </tr>
-
-                            <tr>
-                                <th>Pateikimo data</th>
-                                <td><DateWithTime date={this.state.documentInfo.postedDate}/></td>
-                            </tr>
-                            {this.state.documentInfo.documentState === "APPROVED" ?
                                 <tr>
-                                    <th>Patvirtinimo data</th>
-                                    <td><DateWithTime date={this.state.documentInfo.approvalDate}/></td>
-                                </tr> : null}
-
-                            {this.state.documentInfo.documentState === "REJECTED" ?
+                                    <th>Dokumento pavadinimas</th>
+                                    <td>{this.state.documentInfo.title}</td>
+                                </tr>
                                 <tr>
-                                    <th>Atmetimo data</th>
-                                    <td><DateWithTime date={this.state.documentInfo.rejectedDate}/></td>
-                                </tr> : null}
-
-                            {this.state.documentInfo.documentState === "REJECTED" ?
+                                    <th>Dokumento tipas</th>
+                                    <td>{this.state.documentInfo.type}</td>
+                                </tr>
                                 <tr>
-                                    <th>Atmetimo priežastis</th>
-                                    <td>{this.state.documentInfo.rejectedReason}</td>
-                                </tr> : null}
+                                    <th>Aprašymas</th>
+                                    <td>{this.state.documentInfo.description}</td>
+                                </tr>
 
-                            <tr>
-                                <th>Tvirtintojas</th>
-                                <td>{this.state.documentInfo.approver}</td>
-                            </tr>
 
-                            <tr>
-                                <th>Failo pavadinimas</th>
-                                <td>
-                                    <ul>
-                                        {this.state.documentInfo.filesAttachedToDocument ?
-                                            this.state.documentInfo.filesAttachedToDocument.map(file => <li
-                                                key={file.identifier}>
-                                                <a href={'http://localhost:8181/api/files/download/' + file.identifier}
-                                                   target='_blank' rel="noopener noreferrer">{file.fileName}</a>
-                                                {/* mes naudojame localhost:8181/api  todel, kad react-server proxy nesuveikia kai content tipas yra nustatytas
-                                                */}
-                                                {/*<a href='#' onClick={() => this.downloadOneFile(file.identifier)} >{file.fileName}</a>*/}
-                                            </li>)
-                                            : null
-                                        }
-                                    </ul>
-                                </td>
-                            </tr>
-                            <tr>
-                                <th>Dokumento statusas</th>
-                                {/*<td>{this.state.documentInfo.documentState}</td>*/}
-                                {this.state.documentInfo.documentState === 'CREATED' ? <td>Sukurtas</td> : null}
-                                {this.state.documentInfo.documentState === 'SUBMITTED' ? <td>Pateiktas tvirtinimui</td> : null}
-                                {this.state.documentInfo.documentState === 'APPROVED' ? <td>Patvirtintas</td> : null}
-                                {this.state.documentInfo.documentState === 'REJECTED' ? <td>Atmestas</td> : null}
-                            </tr>
+                                <tr>
+                                    <th>Dokumento autorius</th>
+                                    <td>{this.state.documentInfo.author}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Pateikimo data</th>
+                                    <td><DateWithTime date={this.state.documentInfo.postedDate} /></td>
+                                </tr>
+                                {this.state.documentInfo.documentState === "APPROVED" ?
+                                    <tr>
+                                        <th>Patvirtinimo data</th>
+                                        <td><DateWithTime date={this.state.documentInfo.approvalDate} /></td>
+                                    </tr> : null}
+
+                                {this.state.documentInfo.documentState === "REJECTED" ?
+                                    <tr>
+                                        <th>Atmetimo data</th>
+                                        <td><DateWithTime date={this.state.documentInfo.rejectedDate} /></td>
+                                    </tr> : null}
+
+                                {this.state.documentInfo.documentState === "REJECTED" ?
+                                    <tr>
+                                        <th>Atmetimo priežastis</th>
+                                        <td>{this.state.documentInfo.rejectedReason}</td>
+                                    </tr> : null}
+
+                                <tr>
+                                    <th>Tvirtintojas</th>
+                                    <td>{this.state.documentInfo.approver}</td>
+                                </tr>
+
+                                <tr>
+                                    <th>Failo pavadinimas</th>
+                                    <td>
+                                        <ul>
+                                            {this.state.documentInfo.filesAttachedToDocument ?
+                                                this.state.documentInfo.filesAttachedToDocument.map(file => <li
+                                                    key={file.identifier}>
+                                                    <a href={'http://localhost:8181/api/files/download/' + file.identifier}
+                                                        target='_blank' rel="noopener noreferrer">{file.fileName}</a>
+                                                </li>)
+                                                : null
+                                            }
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th>Dokumento statusas</th>
+
+                                    {this.state.documentInfo.documentState === 'CREATED' ? <td>Sukurtas</td> : null}
+                                    {this.state.documentInfo.documentState === 'SUBMITTED' ? <td>Pateiktas tvirtinimui</td> : null}
+                                    {this.state.documentInfo.documentState === 'APPROVED' ? <td>Patvirtintas</td> : null}
+                                    {this.state.documentInfo.documentState === 'REJECTED' ? <td>Atmestas</td> : null}
+                                </tr>
 
                             </tbody>
                         </table>
 
-
-                        {/*Dokumentui kuris yra CREATED parodysima "Pateikti"*/}
                         {this.state.documentInfo.documentState === 'CREATED' && this.props.user.username === this.state.documentInfo.author ?
                             <button className="btn mr-4 button1" onClick={this.submitDocument}>Pateikti</button>
                             : ''}
 
-                        {/*Dokumentui kuris yra SUBMITTED parodysime "Patvirtinti" ir "Atmesti"*/}
+
                         {this.state.documentInfo.documentState === 'SUBMITTED' && this.props.user.username !== this.state.documentInfo.author ?
                             <React.Fragment>
                                 <button className="btn button1 mr-5"
-                                        onClick={this.approveDocument}
-                                // showErrorObject={this.showErrorObject}
+                                    onClick={this.approveDocument}
+
                                 >Patvirtinti
                                 </button>
                                 <button className="btn btn-danger buttonReject mr-5" onClick={this.rejectDocument}>Atmesti

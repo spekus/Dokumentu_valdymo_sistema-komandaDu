@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import axios from 'axios'
 import uuid from 'uuid';
 import $ from "jquery";
@@ -20,12 +20,12 @@ class NewUserForm extends Component {
     }
 
 
-    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
+    handleChangeInput = (event) => this.setState({ [event.target.name]: event.target.value });
 
 
     handleSubmit = (event) => {
         event.preventDefault();
-        console.log(this.state);
+
         var newUser = {
             username: this.state.username,
             firstname: this.state.firstname,
@@ -33,7 +33,7 @@ class NewUserForm extends Component {
             password: this.state.password,
         };
 
-        console.log("New User: " + newUser);
+
 
         if (this.state.editmode && this.state.password.length === 0) {
             axios({
@@ -43,7 +43,7 @@ class NewUserForm extends Component {
                     firstname: newUser.firstname,
                     lastname: newUser.lastname
                 },
-                headers: {'Content-Type': 'application/json;charset=utf-8'}
+                headers: { 'Content-Type': 'application/json;charset=utf-8' }
 
 
             })
@@ -61,7 +61,7 @@ class NewUserForm extends Component {
                     lastname: newUser.lastname,
                 }
                 ,
-                headers: {'Content-Type': 'application/json;charset=utf-8'}
+                headers: { 'Content-Type': 'application/json;charset=utf-8' }
 
 
             })
@@ -73,7 +73,7 @@ class NewUserForm extends Component {
                             password: newUser.password
                         }
                         ,
-                        headers: {'Content-Type': 'application/json;charset=utf-8'}
+                        headers: { 'Content-Type': 'application/json;charset=utf-8' }
 
 
                     })
@@ -81,7 +81,7 @@ class NewUserForm extends Component {
         } else {
             axios.post('/api/users', newUser)
                 .then(response => {
-                    console.log(response);
+
                     this.setState(this.emptyState);
                     this.props.afterSubmit(newUser.username);
 
@@ -111,54 +111,54 @@ class NewUserForm extends Component {
                                 <div className="form-group">
                                     <label>Vardas</label>
                                     <input type="text" className="form-control" id={uuid()}
-                                           minLength="2"
-                                           maxLength="50"
-                                           pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z]+['-]?)+$"
-                                           title="Only letters should be provided!"
-                                           placeholder="Įveskite darbuotojo vardą" name="firstname"
-                                           value={this.state.firstname}
-                                           onChange={this.handleChangeInput} required/>
+                                        minLength="2"
+                                        maxLength="50"
+                                        pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z]+['-]?)+$"
+                                        title="Only letters should be provided!"
+                                        placeholder="Įveskite darbuotojo vardą" name="firstname"
+                                        value={this.state.firstname}
+                                        onChange={this.handleChangeInput} required />
                                 </div>
 
                                 <div className="form-group">
                                     <label>Pavardė</label>
                                     <input type="text" className="form-control" id={uuid()}
-                                           minLength="2"
-                                           maxLength="50"
-                                           pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z]+['-]?)+$"
-                                           title="Only letters should be provided!"
-                                           placeholder="Įveskite darbuotojo pavardę" name="lastname"
-                                           value={this.state.lastname}
-                                           onChange={this.handleChangeInput} required/>
+                                        minLength="2"
+                                        maxLength="50"
+                                        pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z]+['-]?)+$"
+                                        title="Only letters should be provided!"
+                                        placeholder="Įveskite darbuotojo pavardę" name="lastname"
+                                        value={this.state.lastname}
+                                        onChange={this.handleChangeInput} required />
                                 </div>
                                 {this.props.editmode ?
                                     <div className="form-group">
                                         <label>Naudotojo vardas</label>
                                         <input type="text" className="form-control" id={uuid()}
-                                               readOnly
-                                               minLength="2"
-                                               maxLength="50"
-                                               pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
-                                               title="Only letters and numbers should be provided!"
-                                               placeholder="Įveskite vartotojo prisijungimo vardą" name="username"
-                                               value={this.state.username}
-                                               onChange={this.handleChangeInput}
-                                               autoComplete="off"
-                                               required/>
+                                            readOnly
+                                            minLength="2"
+                                            maxLength="50"
+                                            pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
+                                            title="Only letters and numbers should be provided!"
+                                            placeholder="Įveskite vartotojo prisijungimo vardą" name="username"
+                                            value={this.state.username}
+                                            onChange={this.handleChangeInput}
+                                            autoComplete="off"
+                                            required />
                                     </div>
                                     :
                                     <div className="form-group">
                                         <label>Naudotojo vardas</label>
                                         <input type="text" className="form-control" id={uuid()}
-                                               minLength="2"
-                                               maxLength="50"
-                                               pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
-                                               title="Only letters and numbers should be provided!"
-                                               placeholder="Įveskite vartotojo prisijungimo vardą" name="username"
-                                               value={this.state.username}
-                                               onChange={this.handleChangeInput}
-                                               autoComplete="off"
-                                               required/>
+                                            minLength="2"
+                                            maxLength="50"
+                                            pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
+                                            title="Only letters and numbers should be provided!"
+                                            placeholder="Įveskite vartotojo prisijungimo vardą" name="username"
+                                            value={this.state.username}
+                                            onChange={this.handleChangeInput}
+                                            autoComplete="off"
+                                            required />
                                     </div>
                                 }
 
@@ -166,32 +166,29 @@ class NewUserForm extends Component {
 
                                 {this.props.editmode ?
                                     <input type="password" id={uuid()} className="form-control"
-                                           minLength="8"
-                                           maxLength="20"
-                                           pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
-                                           title="Password must be 8-20 symbols length!"
-                                           value={this.state.password}
-                                           aria-describedby="passwordHelpBlock" onChange={this.handleChangeInput}
-                                           autoComplete="off"
-                                           name="password"
+                                        minLength="8"
+                                        maxLength="20"
+                                        pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
+                                        title="Password must be 8-20 symbols length!"
+                                        value={this.state.password}
+                                        aria-describedby="passwordHelpBlock" onChange={this.handleChangeInput}
+                                        autoComplete="off"
+                                        name="password"
                                     />
                                     :
                                     <input type="password" id={uuid()} className="form-control"
-                                           minLength="8"
-                                           maxLength="20"
-                                           pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
-                                           title="Password must be 8-20 symbols length!"
-                                           value={this.state.password}
-                                           aria-describedby="passwordHelpBlock" onChange={this.handleChangeInput}
-                                           name="password"
-                                           autoComplete="off"
-                                           required
+                                        minLength="8"
+                                        maxLength="20"
+                                        pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?|[A-Za-z0-9]+['-]?)+$"
+                                        title="Password must be 8-20 symbols length!"
+                                        value={this.state.password}
+                                        aria-describedby="passwordHelpBlock" onChange={this.handleChangeInput}
+                                        name="password"
+                                        autoComplete="off"
+                                        required
                                     />
                                 }
                                 <small id={uuid()} className="form-text text-muted">
-                                    {/*Your password must be 8-20 characters long, contain letters and numbers, and must*/}
-                                    {/*not*/}
-                                    {/*contain spaces, special characters, or emoji.*/}
                                     Slaptažodis privalo būti 8-20 simbolių ilgio.
                                 </small>
                                 <div className="text-center">
