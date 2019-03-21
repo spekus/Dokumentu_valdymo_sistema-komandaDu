@@ -43,12 +43,8 @@ export default class FileUploader extends Component {
             })
     }
 
-    // sleep = (ms) => {
-    //     return new Promise(resolve => setTimeout(resolve, ms));
-    // }
 
     handleSubmit = (event) => {
-        console.log("handleSubmit");
         event.preventDefault();
         this.setState({ error: '', msg: '' });
         var fileIdentifiers = [];
@@ -160,9 +156,8 @@ export default class FileUploader extends Component {
     }
 
     onFileChange = (event) => {
-        console.log("fileCHange");
         this.setState({ error: '', msg: '' });
-        if (event.target.files && event.target.files[0].size <= 10000000 && event.target.files[0].type==="application/pdf") {
+        if (event.target.files[0].size <= 10000000 && event.target.files[0].type==="application/pdf") {
 
             this.setState({files: [...this.state.files, event.target.files[0]]})
         } else if (event.target.files[0].type !== "application/pdf") {
@@ -172,13 +167,12 @@ export default class FileUploader extends Component {
         }
     }
 
-    removeFile = (event, index) => {
+    removeFile = (index, event) => {
         event.preventDefault();
         var arrayCopy = [...this.state.files];
         arrayCopy.splice(index, 1);
         this.setState({files: arrayCopy});
     }
-
 
     render() {
         return (
@@ -243,7 +237,7 @@ export default class FileUploader extends Component {
                                                     <li key={index}>
                                                         {file === undefined ? '' : file.name}
                                                         <button className="border-0"
-                                                                onClick={(event ) => this.removeFile(event, index)}
+                                                                onClick={(event) => this.removeFile(index, event)}
 
                                                                 style={{
                                                                     color: 'red',

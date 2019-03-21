@@ -196,6 +196,7 @@ public class UserService implements UserDetailsService {
         }
     }
 
+
     @Transactional
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         LOGGER.info("loadUserByUsername");

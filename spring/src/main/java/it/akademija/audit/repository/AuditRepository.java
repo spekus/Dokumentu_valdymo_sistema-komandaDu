@@ -21,6 +21,13 @@ public interface AuditRepository extends PagingAndSortingRepository<AuditEntryEn
             "OR lower(a.objectIdentifier) LIKE CONCAT('%', ?1, '%')  ORDER BY date desc")
     List<AuditEntryEntity> findByAnything(String criteria, Pageable pageAble);
 
+    @Query("select count(a.id) from AuditEntryEntity a where " +
+            "lower(a.firstname)=?1 " +
+            "OR lower(a.lastname)=?1 " +
+            "OR lower(a.username)=?1 " +
+            "OR lower(a.objectIdentifier) LIKE CONCAT('%', ?1, '%')")
+    long getTotalFilteredAuditEntries(String criteria);
+
 
     @Query("select a from AuditEntryEntity a")
     List<AuditEntryEntity> getAllAuditEntries(Pageable pageAble);
