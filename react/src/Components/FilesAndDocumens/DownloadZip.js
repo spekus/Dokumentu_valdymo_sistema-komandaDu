@@ -12,8 +12,6 @@ class DownloadZip extends Component {
 
     }
 
-
-
     downloadZip = () => {
         console.log("zip runssss");
         fetch(`http://localhost:8181/api/files/zip`)
@@ -24,21 +22,6 @@ class DownloadZip extends Component {
         console.error("Could not Download zip file from the server.", response);
     });
     }
-//     downloadZip = () => {
-//         // neparasius pilno adreso su localhostu programa atsiuncia nesamone.
-//         //speju cia kazkas susije su security,
-//         const FileDownload = require('js-file-download');
-//         fetch('http://localhost:8181/api/files/zip')
-//             .then(response => {
-//                 // console.log(response)
-//                 // console.log(response.url)
-//                 console.log(response)
-//                 FileDownload(response.data);
-
-//             }).catch((response) => {
-//             console.error("Could not Download zip file from the server.", response);
-// });
-//     }
 
     render() {
         return (

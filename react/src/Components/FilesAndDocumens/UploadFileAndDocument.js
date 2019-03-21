@@ -1,12 +1,9 @@
-import React, { Component } from 'react';
-// import FileSaver from 'file-saver';
+import React, {Component} from 'react';
+
 import axios from 'axios';
 import '../../App.css';
-import { showErrorObject } from "../../Components/UI/MainModalError";
+import {showErrorObject} from "../../Components/UI/MainModalError";
 
-
-
-// run npm install file-saver --save
 
 export default class FileUploader extends Component {
 
@@ -22,9 +19,8 @@ export default class FileUploader extends Component {
     }
 
 
-
-    handleChangeInput = (event) => this.setState({ [event.target.name]: event.target.value });
-    handleChangeSelect = (event) => this.setState({ [event.target.name]: event.target.options[event.target.selectedIndex].value });
+    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
+    handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
 
     componentWillMount() {
         this.getAllowedTypes();
@@ -38,8 +34,8 @@ export default class FileUploader extends Component {
         axios.get('/api/users/user/document-types')
             .then(result => {
                 if (result.data.length > 0) {
-                    this.setState({ availableTypes: result.data });
-                    this.setState({ type: result.data[0].title });
+                    this.setState({availableTypes: result.data});
+                    this.setState({type: result.data[0].title});
                 }
             })
             .catch(error => {
@@ -55,14 +51,14 @@ export default class FileUploader extends Component {
 
         event.preventDefault();
         console.log("0 file_state: " + this.state.files.length);
-        this.setState({ error: '', msg: '' });
-        this.setState({ files: [] })
+        this.setState({error: '', msg: ''});
+        this.setState({files: []})
         console.log("1 file_state: " + this.state.files.length);
 
         var fileIdentifiers = [];
 
         if (this.state.files.length === 0 || this.state.files === undefined) {
-            this.setState({ error: 'Pasirinkite failą' })
+            this.setState({error: 'Pasirinkite failą'})
             return;
         }
 
@@ -75,7 +71,7 @@ export default class FileUploader extends Component {
             axios.post('/api/files', data)
                 .then(response => {
 
-                    
+
                     if (response.data.text) {
                         var fileId = response.data.text;
                         fileIdentifiers.push(fileId);
@@ -86,41 +82,35 @@ export default class FileUploader extends Component {
                 })
                 .catch(err => {
                     this.setState({error: err.message})
-              
+
                     showErrorObject(err);
                 });
 
 
-
         })
 
-            while (fileIdentifiers.length === 0) {
-                await this.sleep(1);
-                console.log("While cikle: " + fileIdentifiers.length);
-            }
-            let documentDetails = {
-                title: this.state.title,
-                type: this.state.type,
-                description: this.state.description
-            };
+        while (fileIdentifiers.length === 0) {
+            await this.sleep(1);
+            console.log("While cikle: " + fileIdentifiers.length);
+        }
+        let documentDetails = {
+            title: this.state.title,
+            type: this.state.type,
+            description: this.state.description
+        };
 
-         
-            this.addDocument(documentDetails, fileIdentifiers);
-            
-        
-        this.setState({ 'title': '', 'description': '' });
+        this.addDocument(documentDetails, fileIdentifiers);
+        this.setState({'title': '', 'description': ''});
 
 
     }
-
-
 
     addDocument(documentDetails, fileIdentifiers) {
         console.log("running addDocument");
 
         axios.post('/api/documents', documentDetails)
             .then(response => {
-                this.setState({ 'title': '', 'description': '' });
+                this.setState({'title': '', 'description': ''});
 
                 if (response.data.text) {
                     var docId = response.data.text;
@@ -138,7 +128,7 @@ export default class FileUploader extends Component {
                 }
             })
             .catch(err => {
-                this.setState({ error: err.message })
+                this.setState({error: err.message})
                 console.log("Error from /api/documents/ - " + err)
             });
     }
@@ -159,7 +149,7 @@ export default class FileUploader extends Component {
         axios.post('/api/files/addFileToDocument'
             , fileDocumentCommand)
             .then(response => {
-                this.setState({ [this.state.name]: '' });
+                this.setState({[this.state.name]: ''});
                 console.log("Response from addFileToDocument - " + response)
                 console.log(" " + response.status)
                 console.log(" " + response.statusText)
@@ -171,25 +161,25 @@ export default class FileUploader extends Component {
 
             });
 
-            this.setState({ error: '', msg: 'Dokumentas sukurtas sėkmingai' });
+        this.setState({error: '', msg: 'Dokumentas sukurtas sėkmingai'});
     }
 
     onFileChange = (event) => {
 
-        if (event.target.files[0].size <= 10000000 && event.target.files[0].type==="application/pdf") {
+        if (event.target.files[0].size <= 10000000 && event.target.files[0].type === "application/pdf") {
 
-            this.setState({ files: [...this.state.files, event.target.files[0]] })
-        } else if (event.target.files[0].type !=="application/pdf") {
-            this.setState({ error: 'Galima pridėti tik PDF dokumentus' })
+            this.setState({files: [...this.state.files, event.target.files[0]]})
+        } else if (event.target.files[0].type !== "application/pdf") {
+            this.setState({error: 'Galima pridėti tik PDF dokumentus'})
         } else {
-            this.setState({ error: 'Failo dydis viršija 10MB' })
+            this.setState({error: 'Failo dydis viršija 10MB'})
         }
     }
 
     removeFile = (index) => {
         var arrayCopy = [...this.state.files];
         arrayCopy.splice(index, 1);
-        this.setState({ files: arrayCopy });
+        this.setState({files: arrayCopy});
     }
 
 
@@ -206,18 +196,19 @@ export default class FileUploader extends Component {
                                     <div className="form-group col-md-10">
                                         <label htmlFor="titleInput">Pavadinimas</label>
                                         <input type="text" className="form-control" id="titleInput"
-                                            minLength="3"
-                                            maxLength="50"
-                                            pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?[ ]?|[A-Za-z0-9]+['-]?)+$"
-                                            title="Only letters and numbers should be provided!"
-                                            placeholder="Įveskite dokumento pavadinimą" name="title"
-                                            value={this.state.title}
-                                            onChange={this.handleChangeInput} required />
+                                               minLength="3"
+                                               maxLength="50"
+                                               pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?[ ]?|[A-Za-z0-9]+['-]?)+$"
+                                               title="Only letters and numbers should be provided!"
+                                               placeholder="Įveskite dokumento pavadinimą" name="title"
+                                               value={this.state.title}
+                                               onChange={this.handleChangeInput} required/>
                                     </div>
                                     <div className="form-group col-md-10">
                                         <label htmlFor="typeInput">Dokumento tipas</label>
                                         <select className="form-control" id="typeInput"
-                                            value={this.state.type} onChange={this.handleChangeSelect} name="type" required>
+                                                value={this.state.type} onChange={this.handleChangeSelect} name="type"
+                                                required>
                                             {this.state.availableTypes
                                                 .sort((a, b) => a.title.localeCompare(b.title))
                                                 .map(item => (
@@ -229,43 +220,48 @@ export default class FileUploader extends Component {
                                     <div className="form-group col-md-10">
                                         <label htmlFor="descInput">Aprašymas</label>
                                         <textarea className="form-control" id="descInput" rows="3"
-                                            minLength="8"
-                                            maxLength="255"
-                                            pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?[ ]?|[A-Za-z0-9]+['-]?)+$"
-                                            placeholder="Įveskite trumpą dokumento aprašymą"
-                                            name="description"
-                                            value={this.state.description}
-                                            onChange={this.handleChangeInput} required />
+                                                  minLength="8"
+                                                  maxLength="255"
+                                                  pattern="^([a-zA-ąĄčČęĘėĖįĮšŠųŪžŽ]+[,.]?[ ]?|[A-Za-z0-9]+['-]?)+$"
+                                                  placeholder="Įveskite trumpą dokumento aprašymą"
+                                                  name="description"
+                                                  value={this.state.description}
+                                                  onChange={this.handleChangeInput} required/>
                                     </div>
 
                                     <div className="form-group col-md-9 mt-4">
 
                                         <input onChange={this.onFileChange}
-                                            multiple type="file" accept=".pdf"
+                                               multiple type="file" accept=".pdf"
                                             //to hide unwanted text
-                                            style={{ color: 'white' }}
-                                        ></input><br />
+                                               style={{color: 'white'}}
+                                        ></input><br/>
 
                                         <label
 
-                                            style={{ marginTop: '20px' }}> {this.state.files.length > 0 ? 'Pridėti failai:' : ''}  </label>
+                                            style={{marginTop: '20px'}}> {this.state.files.length > 0 ? 'Pridėti failai:' : ''}  </label>
                                         <ul>
                                             {
                                                 this.state.files.map((file, index) => (
                                                     <li key={index}>
                                                         {file === undefined ? '' : file.name}
-                                                        <button className="border-0" onClick={() => this.removeFile(index)}
+                                                        <button className="border-0"
+                                                                onClick={() => this.removeFile(index)}
 
-                                                            style={{ color: 'red', marginLeft: '8px', fontWeight: 'bold' }}>
+                                                                style={{
+                                                                    color: 'red',
+                                                                    marginLeft: '8px',
+                                                                    fontWeight: 'bold'
+                                                                }}>
 
                                                             X
-                                                    </button>
+                                                        </button>
                                                     </li>
                                                 ))}
 
                                         </ul>
-                                        <h4 style={{ color: 'red' }}>{this.state.error}</h4>
-                                        <h4 style={{ color: 'green' }}>{this.state.msg}</h4>
+                                        <h4 style={{color: 'red'}}>{this.state.error}</h4>
+                                        <h4 style={{color: 'green'}}>{this.state.msg}</h4>
 
                                     </div>
 

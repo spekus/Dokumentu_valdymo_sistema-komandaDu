@@ -52,31 +52,12 @@ class AugisDokumentas extends Component {
                 // this.getFileList();
             })
             .catch(error => {
-                console.log("Atsakymas is getDocumentInformation - " + error)
+                console.log("Atsakymas is getDocumentInformation - " + error);
+                showErrorObject(error);
             })
 
     }
-    // getFileList = () => {
-    //     console.log("getFileList is being run")
-    //     axios.get('/api/files/findAllFilesByDocumentIdentifier', {
-    //         params: {
-    //             documentIdentifier: this.props.match.params.id
-    //         }
-    //     })
-    //         .then(result => {
-    //             this.setState({attachedFileIdentifier: result.data[0].identifier});
-    //             this.setState({attachedFileName: result.data[0].fileName});
-    //             console.log("failo Pavadinimas -  "
-    //                 + result.data[0].fileName)
-    //             console.log("failo identifier "
-    //                 + this.state.attachedFileIdentifier)
-    //             // this.setState({type: result.data[0]});
 
-    //         })
-    //         .catch(error => {
-    //             console.log("Atsakymas is getFileList - " + error)
-    //         })
-    // }
 
     downloadOneFile = (fileIdentifier) => {
         // cia reiketu susitvarkyti su downloaderiu/filesaveriu
@@ -92,31 +73,6 @@ class AugisDokumentas extends Component {
             })
     }
 
-    // downloadFile = () => {
-    //     // neparasius pilno adreso su localhostu programa atsiuncia nesamone.
-    //     //speju cia kazkas susije su security,
-    //     fetch("http://localhost:8181/api/files/download/" + this.state.attachedFileIdentifier)
-    //         .then(response => {
-
-    //             console.log(response);
-    //             console.log("download " + this.state.attachedFileIdentifier);
-    //             // Log somewhat to show that the browser actually exposes the custom HTTP header
-    //             const fileNameHeader = "x-suggested-filename";
-    //             const suggestedFileName = response.headers[fileNameHeader];
-    //             const effectiveFileName = (suggestedFileName === undefined
-    //                 ? "document.txt"
-    //                 : suggestedFileName);
-    //             console.log("Received header [" + fileNameHeader + "]: " + suggestedFileName
-    //                 + ", effective fileName: " + effectiveFileName);
-
-    //             // Let the user save the file.
-    //             FileSaver.saveAs(response.url, suggestedFileName);
-
-
-    //         }).catch((response) => {
-    //         console.error("Could not Download the Excel report from the backend.", response);
-    //     });
-    // }
 
 
     submitDocument = (props) => {
@@ -127,12 +83,6 @@ class AugisDokumentas extends Component {
 
             })
             .catch(error => {
-                // if (error.response.data.message) {
-                //     window.alert("Klaida: " + error.response.data.message);
-                //     console.log(error.response);
-                // } else {
-                //     window.alert("Klaida is submitDocument - " + error.message);
-                // }
                 showErrorObject(error);
             })
     }
