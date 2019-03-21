@@ -177,7 +177,6 @@ export default class FileUploader extends Component {
         this.setState({files: arrayCopy});
     }
 
-
     render() {
         return (
             <React.Fragment>
