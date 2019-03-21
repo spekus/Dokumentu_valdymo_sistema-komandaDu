@@ -51,67 +51,58 @@ export default class FileUploader extends Component {
         return new Promise(resolve => setTimeout(resolve, ms));
     }
 
-    handleSubmit =  (event) => {
-
+    handleSubmit = (event) => {
         event.preventDefault();
-        console.log("0 file_state: " + this.state.files.length);
         this.setState({ error: '', msg: '' });
-        this.setState({ files: [] })
-        console.log("1 file_state: " + this.state.files.length);
-
         var fileIdentifiers = [];
 
         if (this.state.files.length === 0 || this.state.files === undefined) {
             this.setState({ error: 'Pasirinkite failą' })
             return;
-        }
-
+        }    
+        console.log("count of file this.state.files - " + this.state.files)
+        console.log("we will print this.state.files")
+        console.log(this.state.files);
+        var promises = []
         this.state.files.forEach(file => {
 
             let data = new FormData();
             data.append('file', file);
             data.append('name', file.name);
-
+  
+            promises.push(
             axios.post('/kodas-spring-1.0-SNAPSHOT/api/files', data)
                 .then(response => {
-                    console.log("kodas-spring-1.0-SNAPSHOT/api/files', data)")
+
+                    
                     if (response.data.text) {
                         var fileId = response.data.text;
                         fileIdentifiers.push(fileId);
-                        console.log("response.data.text" + response.data.text)
-
-                        console.log("File identifiers length" + fileIdentifiers.length);
-                        if(fileId != null){
-                            let documentDetails = {
-                                title: this.state.title,
-                                type: this.state.type,
-                                description: this.state.description
-                            };
-                            this.addDocument(documentDetails, fileIdentifiers);
-                        }
-
-
+                        console.log("File identifiers length" + fileIdentifiers.length)
                     }
-                    
                 })
                 .catch(err => {
                     this.setState({error: err.message})
               
                     showErrorObject(err);
-                });
+                }));
+            })
+        axios.all(promises).then( () => {
+            console.log("files are uploaded and now will be add to documents")
+                     
+                            let documentDetails = {
+                                title: this.state.title,
+                                type: this.state.type,
+                                description: this.state.description
+                            };
+                            console.log("document details bellow")
+                            console.log(documentDetails);
+                            this.addDocument(documentDetails, fileIdentifiers)
 
-
-
-        })
-
-            // while (fileIdentifiers.length === 0) {
-            //     await this.sleep(1);
-            //     console.log("While cikle: " + fileIdentifiers.length);
-            // }
-
-
-
+            this.setState({ files: [] })
+    })
     }
+
 
 
 
