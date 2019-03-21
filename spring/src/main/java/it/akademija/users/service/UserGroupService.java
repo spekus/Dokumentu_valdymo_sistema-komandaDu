@@ -13,6 +13,8 @@ import it.akademija.users.repository.UserEntity;
 import it.akademija.users.repository.UserGroupEntity;
 import it.akademija.users.repository.UserGroupRepository;
 import it.akademija.users.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.stereotype.Service;
@@ -40,6 +42,8 @@ public class UserGroupService {
     @Autowired
     private AuditService auditService;
 
+    private Logger LOGGER = LoggerFactory.getLogger(UserGroupService.class);
+
     public UserGroupService(UserGroupRepository userGroupRepository, DocumentTypeRepository documentTypeRepository,
                             DocumentRepository documentRepository, AuditService auditService) {
         this.userGroupRepository = userGroupRepository;
@@ -50,6 +54,7 @@ public class UserGroupService {
 
     @Transactional
     public Collection<UserGroupServiceObject> getAllGroups() {
+        LOGGER.info("getAllGroups is being run");
         return userGroupRepository.
                 findAll()
                 .stream()
@@ -59,8 +64,10 @@ public class UserGroupService {
 
     @Transactional
     public void addNewUserGroup(CreateUserGroupCommand createUserGroupCommand, String username) {
+        LOGGER.info("addNewUserGroup is being run by user - " + username);
         UserGroupEntity userGroupEntityFromDataBase = userGroupRepository.findGroupByTitle(createUserGroupCommand.getTitle());
         if (userGroupEntityFromDataBase == null) {
+            LOGGER.info("User group by name - " + createUserGroupCommand.getTitle());
             UserGroupEntity userGroupEntity = new UserGroupEntity(createUserGroupCommand.getTitle(),
                     createUserGroupCommand.getRole());
             userGroupRepository.save(userGroupEntity);
@@ -76,10 +83,12 @@ public class UserGroupService {
 
     @Transactional
     public void updateGroupByTitle(String title, String newTitle, String username) {
+        LOGGER.info("updateGroupByTitle is being run by user - " + username);
         UserGroupEntity savedUserGroupEntity = userGroupRepository.findGroupByTitle(title);
         savedUserGroupEntity.setTitle(newTitle);
         UserGroupEntity updateUserGroupEntit = userGroupRepository.save(savedUserGroupEntity);
         if (!username.isEmpty()) {
+            LOGGER.info("Old user group title - " + title + " ,new title - " + newTitle);
             UserEntity user = userRepository.findUserByUsername(username);
             if (user != null) {
                 auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP,
@@ -90,12 +99,15 @@ public class UserGroupService {
 
     @Transactional
     public void addGroupToUser(String userGroupTitle, String username, String myusername) {
+        LOGGER.info("addGroupToUser is being run by user - " + myusername);
         UserEntity userEntity = userRepository.findUserByUsername(username);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         Set<UserGroupEntity> allUserGroups = userEntity.getUserGroups();
         if (!allUserGroups.contains(userGroupEntity)) {
             allUserGroups.add(userGroupEntity);
             userRepository.save(userEntity);
+            LOGGER.info("person who is added to group - " + username + " ,person who is adding to the group- " + myusername
+                    + " usergroup title - " +userGroupTitle);
             if (!myusername.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(myusername);
                 if (user != null) {
@@ -108,11 +120,14 @@ public class UserGroupService {
 
     @Transactional
     public void removeGroupFromUser(String userGroupTitle, String username, String myusername) {
+        LOGGER.info("addGroupToUser is being run by user - " + myusername);
         UserEntity userEntity = userRepository.findUserByUsername(username);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
 
         if (userEntity != null && userGroupEntity != null) {
             userEntity.getUserGroups().remove(userGroupEntity);
+            LOGGER.info("person who is removed from group - " + username + " ,person who is removed from the group- " + myusername
+                    + " usergroup title - " +userGroupTitle);
 
             if (!myusername.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(myusername);
@@ -126,11 +141,13 @@ public class UserGroupService {
 
     @Transactional
     public void suspendUser(String username, String myusername) {
+        LOGGER.info("suspendUser is being run by user - " + myusername);
         UserEntity userEntity = userRepository.findUserByUsername(username);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByRole(AppRoleEnum.ROLE_SUSPENDED);
         if (userGroupEntity != null) {
             addGroupToUser(userGroupEntity.getTitle(), username, myusername);
             userRepository.save(userEntity);
+            LOGGER.info("person who is being suspended - " + username);
             if (!myusername.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(myusername);
                 if (user != null) {
@@ -142,11 +159,13 @@ public class UserGroupService {
 
     @Transactional
     public void addDocumentTypeToUpload(String userGroupTitle, String documentTypeTitle, String username) {
+        LOGGER.info("addDocumentTypeToUpload is being run by user - " + username);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
         if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.addAvailableDocumentTypeToUpload(documentTypeEntity);
-
+            LOGGER.info("Document type - " + documentTypeTitle + " is being added to group - " + userGroupTitle +
+                    " , now users from the group should be able to upload these document types");
             if (!username.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(username);
                 if (user != null) {
@@ -159,10 +178,13 @@ public class UserGroupService {
 
     @Transactional
     public void addDocumentTypeToApprove(String userGroupTitle, String documentTypeTitle, String username) {
+        LOGGER.info("addDocumentTypeToApprove is being run by user - " + username);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
         if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.addAvailableDocumentTypeToApprove(documentTypeEntity);
+            LOGGER.info("Document type - " + documentTypeTitle + " is being added to group - " + userGroupTitle +
+                    " , now users from the group should be able to above these document types");
             if (!username.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(username);
                 if (user != null) {
@@ -175,14 +197,18 @@ public class UserGroupService {
 
     @Transactional
     public void removeDocumentTypeToUpload(String userGroupTitle, String documentTypeTitle, String username) {
+        LOGGER.info("removeDocumentTypeToUpload is being run by user - " + username);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
         if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.removeAvailableDocumentTypeToUpload(documentTypeEntity);
+            LOGGER.info("Document type - " + documentTypeTitle + " is being removed from group - " + userGroupTitle +
+                    " , now users from the group should no longer be able to upload these document types");
             if (!username.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(username);
                 if (user != null) {
-                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP, userGroupTitle + " - upload: " + documentTypeTitle);
+                    auditService.addNewAuditEntry(user, AuditActionEnum.MODIFY_USERGROUP, ObjectTypeEnum.USERGROUP,
+                            userGroupTitle + " - upload: " + documentTypeTitle);
                 }
             }
         }
@@ -190,10 +216,13 @@ public class UserGroupService {
 
     @Transactional
     public void removeDocumentTypeToApprove(String userGroupTitle, String documentTypeTitle, String username) {
+        LOGGER.info("removeDocumentTypeToUpload is being run by user - " + username);
         UserGroupEntity userGroupEntity = userGroupRepository.findGroupByTitle(userGroupTitle);
         DocumentTypeEntity documentTypeEntity = documentTypeRepository.findDocumentTypeByTitle(documentTypeTitle);
         if (userGroupEntity != null && documentTypeEntity != null) {
             userGroupEntity.removeAvailableDocumentTypeToApprove(documentTypeEntity);
+            LOGGER.info("Document type - " + documentTypeTitle + " is being removed from group - " + userGroupTitle +
+                    " , now this group should loose privilege to approve these document types");
             if (!username.isEmpty()) {
                 UserEntity user = userRepository.findUserByUsername(username);
                 if (user != null) {
@@ -207,10 +236,12 @@ public class UserGroupService {
     @Transactional
     @Modifying
     public void deleteGroupByTitle(String title, String username) {
+        LOGGER.info("deleteGroupByTitle is being run by user - " + username);
         userGroupRepository.deleteGroupByTitle(title);
         if (!username.isEmpty()) {
             UserEntity user = userRepository.findUserByUsername(username);
             if (user != null) {
+                LOGGER.info(username + " is deleting group - " + title);
                 auditService.addNewAuditEntry(user, AuditActionEnum.DELETE_USERGROUP, ObjectTypeEnum.USERGROUP, title);
             }
         }
