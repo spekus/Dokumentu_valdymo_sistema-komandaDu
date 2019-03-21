@@ -48,6 +48,7 @@ export default class FileUploader extends Component {
     // }
 
     handleSubmit = (event) => {
+        console.log("handleSubmit");
         event.preventDefault();
         this.setState({ error: '', msg: '' });
         var fileIdentifiers = [];
@@ -159,8 +160,9 @@ export default class FileUploader extends Component {
     }
 
     onFileChange = (event) => {
+        console.log("fileCHange");
         this.setState({ error: '', msg: '' });
-        if (event.target.files[0].size <= 10000000 && event.target.files[0].type==="application/pdf") {
+        if (event.target.files && event.target.files[0].size <= 10000000 && event.target.files[0].type==="application/pdf") {
 
             this.setState({files: [...this.state.files, event.target.files[0]]})
         } else if (event.target.files[0].type !== "application/pdf") {
@@ -170,7 +172,8 @@ export default class FileUploader extends Component {
         }
     }
 
-    removeFile = (index) => {
+    removeFile = (event, index) => {
+        event.preventDefault();
         var arrayCopy = [...this.state.files];
         arrayCopy.splice(index, 1);
         this.setState({files: arrayCopy});
@@ -240,7 +243,7 @@ export default class FileUploader extends Component {
                                                     <li key={index}>
                                                         {file === undefined ? '' : file.name}
                                                         <button className="border-0"
-                                                                onClick={() => this.removeFile(index)}
+                                                                onClick={(event ) => this.removeFile(event, index)}
 
                                                                 style={{
                                                                     color: 'red',

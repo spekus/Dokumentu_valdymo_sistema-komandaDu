@@ -1,6 +1,5 @@
 package it.akademija.documents.service;
 
-
 import it.akademija.audit.AuditActionEnum;
 import it.akademija.audit.ObjectTypeEnum;
 import it.akademija.audit.service.AuditService;
@@ -129,31 +128,24 @@ public class DocumentService {
             throws IllegalArgumentException, NoApproverAvailableException {
         LOGGER.debug("submitDocument");
         DocumentEntity document = documentRepository.findDocumentByDocumentIdentifier(documentIdentifier);
-
         if (document == null) {
             throw new IllegalArgumentException("Dokumentas su id '" + documentIdentifier + "' nerastas");
         }
-
         DocumentTypeEntity type = documentTypeRepository.findDocumentTypeByTitle(document.getType());
         if (type == null) {
             throw new IllegalArgumentException("Dokumentas su id '" + documentIdentifier + "' turi klaidingą tipą");
         }
-
         List<UserGroupEntity> allUserGroups = userGroupRepository.findAll();
-
         boolean groupWhichCanApproveDocumentTypeFound = false;
         boolean groupWhichCanApproveDocumentTypeAndHasUsersFound = false;
-
         for (UserGroupEntity group : allUserGroups) {
             if (!groupWhichCanApproveDocumentTypeAndHasUsersFound)
                 if (group.getAvailableDocumentTypesToApprove().contains(type)) {
                     groupWhichCanApproveDocumentTypeFound = true;
-
                     if (group.getGroupUsers().size() > 0) {
                         groupWhichCanApproveDocumentTypeAndHasUsersFound = true;
                     }
                 }
-
         }
 
         if (!groupWhichCanApproveDocumentTypeFound) {
@@ -173,7 +165,6 @@ public class DocumentService {
             auditService.addNewAuditEntry(user, AuditActionEnum.SUBMIT_DOCUMENT,
                     ObjectTypeEnum.DOCUMENT, document.getDocumentIdentifier());
         }
-
     }
 
     @Transactional
@@ -229,10 +220,7 @@ public class DocumentService {
                 default:
                     throw new IllegalArgumentException("Netinkamas tipas");
             }
-
-
         }
-
     }
 
     public DocumentRepository getDocumentRepository() {
