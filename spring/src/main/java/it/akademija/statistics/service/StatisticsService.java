@@ -120,15 +120,4 @@ public class StatisticsService {
         }
         return null;
     }
-
-    //Ištraukiame iš userio kitus fieldus, pagal username(nežinau gal galima paprasčiau tiesiogiai iš security, neradau
-//    @Transactional
-//    private String getUserInitialsByUsername(String username) {
-//        UserEntity userEntity = userRepository.findUserByUsername(username);
-//        if (userEntity != null) {
-//            String initials = userEntity.getFirstname() + " " + userEntity.getLastname();
-//            return initials;
-//        }
-//        return null;
-//    }
 }

@@ -83,25 +83,6 @@ public class UserService implements UserDetailsService {
         return pagedData;
     }
 
-//    @Transactional
-//    public Page<DocumentServiceObject> getDocumentsToApprove(String userName, Pageable pageFormatDetails) {
-//        LOGGER.info("getDocumentsToApprove");
-//
-//        List<String> documentTypesUserCanAproove =
-//                document.getDocumentTypesUserCanAprooveBy(userName);
-//        List<DocumentServiceObject> documentsUserCanAproove =
-//                document.getDocumentsBy(documentTypesUserCanAproove, pageFormatDetails);
-//        // we need total ammount of documents to be displayed for pagination to work, thus we need second query.
-//        long documentCount = documentRepository.getDocumentsToApproveSize(documentTypesUserCanAproove);
-//
-//        PageImpl<DocumentServiceObject> pagedData = new PageImpl<>(documentsUserCanAproove,
-//                pageFormatDetails, documentCount);
-//        LOGGER.info(" documents for approval of user - " +userName + " are being returned "+
-//                " , returning page - " +pageFormatDetails.getPageNumber() +"\n" + " size of page is "
-//                + pageFormatDetails.getPageSize() + " size of total data points  is - " + pagedData.getTotalElements());
-//
-//        return pagedData;
-//    }
 
     @Transactional
     public UserServiceObject getUserByUsername(String username) {
@@ -172,32 +153,12 @@ public class UserService implements UserDetailsService {
         throw new IllegalArgumentException("No Users with criteria - " + criteria + " have been found");
     }
 
-//    @Transactional
-//    public Page<UserServiceObject> getAllUsers(Pageable pageFormatDetails) {
-//        LOGGER.info("getAllUsers");
-//        List<UserEntity> allUsers = userRepository.getAllUsers(pageFormatDetails);
-//        List<UserServiceObject> allUsersAsServiceObjects = allUsers.stream()
-//                .map(userEntity ->
-//                        SOfromEntity(userEntity))
-//                .collect(Collectors.toList());
-//        long userCount = userRepository.getTotalUsersCount();
-//
-//        PageImpl<UserServiceObject> pagedData=new PageImpl<>(allUsersAsServiceObjects,pageFormatDetails,userCount);
-//        LOGGER.info("returning all users");
-//        return pagedData;
-//    }
 
 
     @Transactional
     public void createNewUser(String firstname, String lastname, String username, String password, String myusername) {
         LOGGER.info("createNewUser");
-//        UserEntity userEntityFromDataBase1 = userRepository.findUserByUsername(username);
-//        UserEntity userEntityFromDataBase2 = userRepository.findUserByUsername(username);
-
         UserEntity existingUser = userRepository.findByUsernameIgnoreCase(username);
-
-//        if (userEntityFromDataBase1 == null && userEntityFromDataBase2 == null) {
-
         if (existingUser == null) {
             UserEntity userEntity = new UserEntity(firstname, lastname, username, passwordEncoder.encode(password));
             userRepository.save(userEntity);
@@ -252,13 +213,6 @@ public class UserService implements UserDetailsService {
         }
     }
 
-//
-//    @Transactional
-//    @Modifying
-//    public void deleteUserByUsername(String username) {
-//        LOGGER.info("deleteUserByUsername has been involved and is carried away");
-//            userRepository.deleteUserByUsername(username);
-//    }
 
 
     @Transactional

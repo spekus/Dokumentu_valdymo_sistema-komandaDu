@@ -20,31 +20,6 @@ public class UserServiceObject {
 
     public UserServiceObject() {
     }
-//
-//    public UserServiceObject(String userIdentifier, String firstname, String lastname, String username, String password) {
-//        this.userIdentifier = userIdentifier;
-//        this.firstname = firstname;
-//        this.lastname = lastname;
-//        this.username = username;
-//        this.password = password;
-//    }
-//
-//    public UserServiceObject(String userIdentifier, String firstname, String lastname, String username) {
-//        this.userIdentifier = userIdentifier;
-//        this.firstname = firstname;
-//        this.lastname = lastname;
-//        this.username = username;
-//
-//    }
-//
-//    public UserServiceObject(String userIdentifier, String firstname, String lastname, String username, String password, Set<UserGroupEntity> userGroups) {
-//        this.userIdentifier = userIdentifier;
-//        this.firstname = firstname;
-//        this.lastname = lastname;
-//        this.username = username;
-//        this.password = password;
-//        this.userGroups = userGroups.stream().map(ug -> UserGroupService.SOfromEntity(ug)).collect(Collectors.toSet());
-//    }
 
     public String getUserIdentifier() {
         return userIdentifier;
