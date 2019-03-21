@@ -41,6 +41,7 @@ class AuditLog extends Component {
                 this.getFilteredAuditEntries();
                 console.log(this.state.offset);
                 console.log(this.state.searchField)
+                
 
             })
 
@@ -86,7 +87,10 @@ class AuditLog extends Component {
                     criteria: this.state.searchField
                 }
         })
+        
             .then(response => {
+                console.log("response");
+                console.log(response);
                 if (response.data.content.length > 0) {
                     this.setState({allEntries: response.data.content});
                     console.log("allEntries" + this.state.allEntries.length);
