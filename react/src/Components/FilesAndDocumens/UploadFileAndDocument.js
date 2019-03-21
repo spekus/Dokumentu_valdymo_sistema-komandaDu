@@ -43,9 +43,6 @@ export default class FileUploader extends Component {
             })
     }
 
-    // sleep = (ms) => {
-    //     return new Promise(resolve => setTimeout(resolve, ms));
-    // }
 
     handleSubmit = (event) => {
         event.preventDefault();
