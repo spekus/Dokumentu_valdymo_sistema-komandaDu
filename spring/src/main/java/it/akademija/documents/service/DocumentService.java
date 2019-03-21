@@ -4,6 +4,7 @@ package it.akademija.documents.service;
 import it.akademija.audit.AuditActionEnum;
 import it.akademija.audit.ObjectTypeEnum;
 import it.akademija.audit.service.AuditService;
+import it.akademija.auth.AppRoleEnum;
 import it.akademija.documents.DocumentState;
 import it.akademija.documents.repository.DocumentEntity;
 import it.akademija.documents.repository.DocumentRepository;
@@ -80,14 +81,31 @@ public class DocumentService {
                 || documentFromDatabase.getDocumentState() == DocumentState.APPROVED
                 || documentFromDatabase.getDocumentState() == DocumentState.REJECTED)
                 && (documentTypesUserCanApprove.contains(documentFromDatabase.getType()));
+        boolean isAdmin=isAdmin(username);
 
-        if (isAuthor || isApprover) {
-            LOGGER.info("document - " + documentIdentifier + " is being returned to user - " + username);
+
+        if (isAuthor || isApprover||isAdmin) {
+            LOGGER.debug("document - " + documentIdentifier + " is being returned ");
+
             return SOfromEntity(documentFromDatabase);
 
         } else {
             throw new SecurityException("Šio dokumento negalite peržiūrėti dėl prieigos teisių");
         }
+    }
+
+    public boolean isAdmin (String username) {
+
+        UserEntity userEntity=userRepository.findUserByUsername(username);
+        Set<UserGroupEntity> userGroups = userEntity.getUserGroups();
+
+        for (UserGroupEntity userGroupEntity : userGroups) {
+            if (userGroupEntity.getRole().equals(AppRoleEnum.ROLE_ADMIN)) {
+                return true;
+            }
+        }
+        return false;
+
     }
 
     @Transactional

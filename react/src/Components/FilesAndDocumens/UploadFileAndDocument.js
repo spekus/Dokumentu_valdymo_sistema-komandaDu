@@ -167,12 +167,12 @@ export default class FileUploader extends Component {
         }
     }
 
-    removeFile = (index) => {
+    removeFile = (index, event) => {
+        event.preventDefault();
         var arrayCopy = [...this.state.files];
         arrayCopy.splice(index, 1);
         this.setState({files: arrayCopy});
     }
-
 
     render() {
         return (
@@ -237,7 +237,7 @@ export default class FileUploader extends Component {
                                                     <li key={index}>
                                                         {file === undefined ? '' : file.name}
                                                         <button className="border-0"
-                                                                onClick={() => this.removeFile(index)}
+                                                                onClick={(event) => this.removeFile(index, event)}
 
                                                                 style={{
                                                                     color: 'red',
