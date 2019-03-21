@@ -33,9 +33,6 @@ const AugustasDocumentsList = (props) => {
                     </tr>
                 ))}
                 </tbody>
-                {/* <Button variant="primary" onClick= {doStufff}>
-                    Primary</Button> */}
-
 
             </table>
             </div>

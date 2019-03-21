@@ -24,9 +24,7 @@ class SettingsUserGroups extends Component {
         type: ''
     }
 
-    // componentDidMount() {
-    //     this.getUserGroups();
-    // }
+
 
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
 
@@ -39,30 +37,6 @@ class SettingsUserGroups extends Component {
                 }
             );
     }
-
-    // getUserGroups = () => {
-    //     axios.get('/api/usergroups')
-    //         .then(result => {
-    //             this.setState({allUserGroups: result.data});
-    //         })
-    //         .catch(error => {
-    //             console.log(error);
-    //         })
-    // }
-    //
-    // deleteUserGroup = (userGroupTitle) => {
-    //     axios.delete('/api/usergroups/' + userGroupTitle)
-    //         .then(result => {
-    //             this.getUserGroups();
-    //         })
-    //         .catch(error => {
-    //             this.setState({errorMessage: error.response.data.message});
-    //             $("#modalError").modal('show');
-    //         })
-    // }
-
-
-
 
        componentDidMount() {
         this.getAllGroupsFromServer();

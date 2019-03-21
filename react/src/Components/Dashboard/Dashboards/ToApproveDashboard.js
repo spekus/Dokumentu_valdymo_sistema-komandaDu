@@ -166,11 +166,6 @@ class ToApproveDashboard extends Component {
 
                         <div className='col-lg-12 container mt-3 p-3 mb-5 bg-white rounded mainelement borderMain'>
 
-                            {/*{this.state.userDocuments.map(item => (*/}
-                            {/*<p value={item.title}>{item.title}</p>*/}
-                            {/*))}*/}
-                            {/*/!*<p>Hello {this.state.userDocuments[0]}</p>*!/*/}
-
                             <div className="form-group col-md-8 my-3">
                                 <label>Dokumento tvirtinimui paieška</label>
                                 <div className="row">

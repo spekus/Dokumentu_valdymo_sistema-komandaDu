@@ -23,10 +23,10 @@ class UserAdminisrationList extends Component {
         modalMessageText: '',
 
         //pagingInformation
-        pageCount : 3,
-        perPage : 7,
+        pageCount: 3,
+        perPage: 7,
         offset: 0, //identifies which page is used
-        isPaginationOn:false
+        isPaginationOn: false
     }
 
     handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
@@ -36,29 +36,29 @@ class UserAdminisrationList extends Component {
     }
 
     getFilteredUsers = () => {
-        this.setState({isPaginationOn:true});
+        this.setState({isPaginationOn: true});
         console.log("searchfield " + this.state.searchField.length);
         if (this.state.searchField.length === 0) {
-        this.setState({userlist:[]})
-        console.log(this.state.userlist);
-        this.setState({offset:0}, () => {
-            console.log(this.state.offset);
-            this.loadAllUsers();
+            this.setState({userlist: []})
+            console.log(this.state.userlist);
+            this.setState({offset: 0}, () => {
+                console.log(this.state.offset);
+                this.loadAllUsers();
 
-        })
-    } else {
-        this.setState({userlist:[]})
-        this.setState({offset: 0}, () => {
-            this.getFilteredUsersByCriteria(this.state.searchField);
-        })
+            })
+        } else {
+            this.setState({userlist: []})
+            this.setState({offset: 0}, () => {
+                this.getFilteredUsersByCriteria(this.state.searchField);
+            })
 
+        }
     }
-}
 
     getFilteredUsersByCriteria = (criteria) => {
         console.log("getFilteredUsersByCriteria");
 
-        this.setState({offset:0});
+        this.setState({offset: 0});
         this.setState({searchField: ''});
         this.setState({lastSearchCriteria: criteria});
         console.log("criteria" + criteria)
@@ -67,8 +67,8 @@ class UserAdminisrationList extends Component {
             '/api/users/criteria', {
                 params: {
                     criteria: criteria,
-                    page:this.state.offset,
-                    size:this.state.perPage,
+                    page: this.state.offset,
+                    size: this.state.perPage,
 
                 }
             })
@@ -77,9 +77,11 @@ class UserAdminisrationList extends Component {
                 if (response.data.content.length > 0) {
                     console.log("bbbbbbbbbbbbbb");
                     this.setState({userlist: response.data.content});
-                    this.setState({pageCount:
-                        Math.ceil(response.data.totalElements
-                            / this.state.perPage)})
+                    this.setState({
+                        pageCount:
+                            Math.ceil(response.data.totalElements
+                                / this.state.perPage)
+                    })
 
                     let userlistExtended = this.state.userlist.map(user => {
                         let isSuspended = false;
@@ -183,12 +185,12 @@ class UserAdminisrationList extends Component {
         console.log("selected: " + selected);
         console.log("offset " + offset);
 
-        this.setState({ offset: offset }, () => {
-          this.loadAllUsers();
+        this.setState({offset: offset}, () => {
+            this.loadAllUsers();
         });
     };
 
-    loadAllUsers =() => {
+    loadAllUsers = () => {
 
         axios({
             method: 'get',
@@ -201,21 +203,24 @@ class UserAdminisrationList extends Component {
 
         })
 
-        .then(response => {
-            document.getElementById('userListTable').style.visibility = 'visible';
-            console.log("Response length " + response.data.length);
-            if (response.data.content.length>0) {
-            this.setState({userlist:response.data.content});
-            console.log(this.state.userlist);
-            console.log("totalElements " + response.data.totalElements)
-            this.setState({pageCount:
-                Math.ceil(response.data.totalElements
-                    / this.state.perPage)})
+            .then(response => {
+                document.getElementById('userListTable').style.visibility = 'visible';
+                console.log("Response length " + response.data.length);
+                if (response.data.content.length > 0) {
+                    this.setState({userlist: response.data.content});
+                    console.log(this.state.userlist);
+                    console.log("totalElements " + response.data.totalElements)
+                    this.setState({
+                        pageCount:
+                            Math.ceil(response.data.totalElements
+                                / this.state.perPage)
+                    })
                     console.log("aaaa" + this.state.pageCount);
-        }})
-        .catch(error => {
-            showErrorObject(error);
-        })
+                }
+            })
+            .catch(error => {
+                showErrorObject(error);
+            })
     }
 
 
@@ -317,22 +322,22 @@ class UserAdminisrationList extends Component {
                                                     key={index}>{group.title} {index < user.userGroups.length - 1 ? '|' : ''} </span>)}
                                     </td>
                                     <td>
-                                        <span style={{ 'white-space' :'nowrap'}}>
+                                        <span style={{'white-space': 'nowrap'}}>
                                         <button className="btn button1 btn-sm mr-2"
                                                 onClick={() => this.handleChangeUser(user)}>Redaguoti
                                         </button>
                                         <button className="btn button1 btn-sm mr-2"
                                                 onClick={() => this.handleChangeUserGroup(user)}>Grupės
                                         </button>
-                                        {user.isSuspended ?
-                                            <button className="btn button1 btn-sm"
-                                                    onClick={() => this.removeUserFromGroup(user)}>Atblokuoti
-                                            </button>
-                                            :
-                                            <button className="btn button1 btn-sm"
-                                                    onClick={() => this.suspendUser(user)}>Blokuoti
-                                            </button>
-                                        }
+                                            {user.isSuspended ?
+                                                <button className="btn button1 btn-sm"
+                                                        onClick={() => this.removeUserFromGroup(user)}>Atblokuoti
+                                                </button>
+                                                :
+                                                <button className="btn button1 btn-sm"
+                                                        onClick={() => this.suspendUser(user)}>Blokuoti
+                                                </button>
+                                            }
                                         </span>
 
                                     </td>
@@ -355,14 +360,14 @@ class UserAdminisrationList extends Component {
 
                                      afterSubmit={(username) => {
                                          $('#userEditModal').modal('hide');
-                                         this.setState({searchField:''})
+                                         this.setState({searchField: ''})
                                          console.log("searchfield " + this.state.searchField);
                                          // eslint-disable-next-line no-lone-blocks
                                          console.log("after submit username  " + username);
                                          console.log("after submit lastsearchcriteria " + this.state.lastSearchCriteria);
-                                    //      {this.state.lastSearchCriteria.length === 0 ?
-                                        this.getFilteredUsersByCriteria(username);
-                                    // :this.getFilteredUsersByCriteria(this.state.lastSearchCriteria) }
+                                         //      {this.state.lastSearchCriteria.length === 0 ?
+                                         this.getFilteredUsersByCriteria(username);
+                                         // :this.getFilteredUsersByCriteria(this.state.lastSearchCriteria) }
 
                                      }}
                         />
@@ -386,33 +391,33 @@ class UserAdminisrationList extends Component {
                                         onGroupsChanged={this.handleGroupsChanged}/>
                     </ModalContainer>
 
-                    {this.state.isPaginationOn?
-                    <div>
-                       {/* pagination */}
-                <div className='container-fluid mt-2'>
-                <div className="row">
-                <div className="col-lg-12 my-auto center-block text-center">
-                {/* <div key={this.state.paginationIncarnation}> */}
-                <ReactPaginate
-                forcePage={this.state.offset}
-                previousLabel={'ankstesnis puslapis'}
-                nextLabel={'kitas puslapis'}
-                breakLabel={'...'}
-                breakClassName={'break-me'}
-                pageCount={this.state.pageCount}
-                marginPagesDisplayed={2}
-                pageRangeDisplayed={5}
-                onPageChange={this.handlePageClick}
-                containerClassName={'pagination'}
-                subContainerClassName={'pagesPagination'}
-                activeClassName={'active'}
-                />
-                </div>
-                </div>
-                </div>
-                </div>
-                :
-                null}
+                    {this.state.isPaginationOn ?
+                        <div>
+                            {/* pagination */}
+                            <div className='container-fluid mt-2'>
+                                <div className="row">
+                                    <div className="col-lg-12 my-auto center-block text-center">
+                                        {/* <div key={this.state.paginationIncarnation}> */}
+                                        <ReactPaginate
+                                            forcePage={this.state.offset}
+                                            previousLabel={'ankstesnis puslapis'}
+                                            nextLabel={'kitas puslapis'}
+                                            breakLabel={'...'}
+                                            breakClassName={'break-me'}
+                                            pageCount={this.state.pageCount}
+                                            marginPagesDisplayed={2}
+                                            pageRangeDisplayed={5}
+                                            onPageChange={this.handlePageClick}
+                                            containerClassName={'pagination'}
+                                            subContainerClassName={'pagesPagination'}
+                                            activeClassName={'active'}
+                                        />
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        :
+                        null}
 
 
                 </div>

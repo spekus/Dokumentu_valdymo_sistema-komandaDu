@@ -113,7 +113,7 @@ public class UserController {
 
     @RequestMapping(value = "/criteria", method = RequestMethod.GET)
     @ApiOperation(value = "criteria", notes = "Returns users by criteria")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN') or hasAuthority('ROLE_USER')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Page<UserServiceObject> getUserByCriteria(@RequestParam("criteria") @NotNull @Length(min = 1) String criteria,
                                                      @RequestParam("page") int page,
                                                      @RequestParam("size") int size) {
