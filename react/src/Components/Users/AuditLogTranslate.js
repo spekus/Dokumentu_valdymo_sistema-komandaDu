@@ -21,7 +21,5 @@ const auditActionTranslations = [
 export const translateAction = (action) =>{
     let result =  auditActionTranslations.find(t => t.value === action);
 
-    // return translation if we have result
-    // return input if we have not found a translation
     return result ? result.translation : action;
 }

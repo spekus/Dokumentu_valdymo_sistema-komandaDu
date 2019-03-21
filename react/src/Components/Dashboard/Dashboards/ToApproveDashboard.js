@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import DocumentsList from "./ElementsOfDashBoard/DocumentsList";
 import axios from 'axios';
 import ReactPaginate from 'react-paginate';
@@ -10,7 +10,6 @@ class ToApproveDashboard extends Component {
         userDocuments: [],
         searchField: '',
 
-        // used for paging
         pageCount: 3,
         perPage: 7,
         offset: 0,
@@ -24,20 +23,15 @@ class ToApproveDashboard extends Component {
     handleSearch = () => {
 
         if (this.state.searchField.length === 0) {
-            this.setState({userDocuments: []})
-            this.setState({offset: 0}, () => {
+            this.setState({ userDocuments: [] })
+            this.setState({ offset: 0 }, () => {
                 this.getDocumentsToApprove();
-                console.log(this.state.offset);
-                console.log(this.state.searchField)
-
             })
 
         } else {
-            this.setState({userDocuments: []})
-            this.setState({offset: 0}, () => {
+            this.setState({ userDocuments: [] })
+            this.setState({ offset: 0 }, () => {
                 this.getFilteredDocumentsToApprove();
-                console.log(this.state.offset);
-                console.log(this.state.searchField)
 
             })
 
@@ -52,7 +46,7 @@ class ToApproveDashboard extends Component {
             params: {
                 page: this.state.offset,
                 size:
-                this.state.perPage
+                    this.state.perPage
             }
             ,
             headers: {
@@ -61,8 +55,6 @@ class ToApproveDashboard extends Component {
             },
         })
             .then(response => {
-                //we use response.data.content, becouse files re under content
-                //data. allso holds paging information
 
                 let userDocuments = response.data.content.map(document => {
                     return ({
@@ -73,14 +65,13 @@ class ToApproveDashboard extends Component {
                     })
                 });
 
-                this.setState({userDocuments: userDocuments});
+                this.setState({ userDocuments: userDocuments });
                 this.setState({
                     pageCount:
                         Math.ceil(response.data.totalElements
                             / this.state.perPage)
                 })
-                console.log("totalElements - = " + response.data.totalElements)
-                console.log(this.state.pageCount);
+
             })
             .catch(error => {
                 console.log("Klaida is getDocumentsToApprove metodo - " + error.message)
@@ -96,7 +87,7 @@ class ToApproveDashboard extends Component {
                 size: this.state.perPage,
                 criteria: this.state.searchField
             },
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
+            headers: { 'Content-Type': 'application/json;charset=utf-8' }
 
         })
             .then(response => {
@@ -110,19 +101,18 @@ class ToApproveDashboard extends Component {
                     })
                 });
 
-                this.setState({userDocuments: userDocuments});
+                this.setState({ userDocuments: userDocuments });
                 this.setState({
                     pageCount:
                         Math.ceil(response.data.totalElements
                             / this.state.perPage)
                 })
-                console.log("totalElements - = " + response.data.totalElements)
 
             })
             .catch(error => {
                 console.log("Klaida is getDocumentsToApproveFiltered metodo - " + error.message)
             })
-        // }
+
     }
 
     handlePageClick = data => {
@@ -130,28 +120,24 @@ class ToApproveDashboard extends Component {
         let offset = Math.ceil(selected);
 
         if (this.state.searchField.length === 0) {
-            this.setState({offset: offset}, () => {
+            this.setState({ offset: offset }, () => {
                 this.getDocumentsToApprove();
-                console.log(this.state.offset);
-                console.log(this.state.searchField)
 
             })
 
         } else {
-            this.setState({offset: offset}, () => {
+            this.setState({ offset: offset }, () => {
                 this.getFilteredDocumentsToApprove();
-                console.log(this.state.offset)
-                console.log(this.state.searchField)
             })
 
         }
     }
 
-    handleChangeInput = (event) => this.setState({[event.target.name]: event.target.value});
+    handleChangeInput = (event) => this.setState({ [event.target.name]: event.target.value });
 
     handleKeyPress = (event) => {
         if (event.key === 'Enter') {
-            this.setState({[event.target.name]: event.target.value});
+            this.setState({ [event.target.name]: event.target.value });
             this.handleSearch();
         }
     }
@@ -162,7 +148,7 @@ class ToApproveDashboard extends Component {
             <React.Fragment>
                 <div className='container'>
                     <div className="row mt-2">
-                        <DashboardNavigation/>
+                        <DashboardNavigation />
 
                         <div className='col-lg-12 container mt-3 p-3 mb-5 bg-white rounded mainelement borderMain'>
 
@@ -171,33 +157,32 @@ class ToApproveDashboard extends Component {
                                 <div className="row">
                                     <div className="col-md-10 input-group">
                                         <div className="input-group-prepend">
-                                        <span className="input-group-text" id="basic-addon1" role="img"
-                                              aria-label="Search">🔎</span>
+                                            <span className="input-group-text" id="basic-addon1" role="img"
+                                                aria-label="Search">🔎</span>
                                         </div>
                                         <input className="form-control mr-sm-2" type="search"
-                                               placeholder="Įveskite dokumento tipą arba autoriaus naudotojo vardą"
-                                               aria-label="Search" aria-describedby="basic-addon1"
+                                            placeholder="Įveskite dokumento tipą arba autoriaus naudotojo vardą"
+                                            aria-label="Search" aria-describedby="basic-addon1"
 
-                                               value={this.state.searchField}
-                                               name="searchField"
-                                               onChange={this.handleChangeInput}
-                                               onKeyPress={this.handleKeyPress}/>
+                                            value={this.state.searchField}
+                                            name="searchField"
+                                            onChange={this.handleChangeInput}
+                                            onKeyPress={this.handleKeyPress} />
                                     </div>
                                     <div className="col-md-2">
                                         <button className="btn button2 my-2 my-sm-0 button1" type="submit"
-                                                onClick={this.handleSearch}>Ieškoti
+                                            onClick={this.handleSearch}>Ieškoti
                                         </button>
                                     </div>
                                 </div>
                             </div>
 
-                            <DocumentsList list={this.state.userDocuments}/>
+                            <DocumentsList list={this.state.userDocuments} />
 
 
                         </div>
                     </div>
 
-                    {/* pagination */}
                     <div className='container mt-5'>
                         <div className="row">
                             <div className="col-lg-12 my-auto center-block text-center">

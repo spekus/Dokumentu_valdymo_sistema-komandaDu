@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import axios from "axios";
 import SettingsEditGroupTypes from "./SettingsEditGroupTypes";
 import $ from "jquery";
@@ -21,18 +21,17 @@ class SettingsGroupsTypes extends Component {
         this.getAllTypes();
     }
 
-    handleChangeSelect = (event) => this.setState({[event.target.name]: event.target.options[event.target.selectedIndex].value});
+    handleChangeSelect = (event) => this.setState({ [event.target.name]: event.target.options[event.target.selectedIndex].value });
 
     getAllGroupsFromServer = () => {
         axios.get("/api/usergroups")
             .then(response => {
                 if (response.data.length > 0) {
                     let allgroups = response.data;
-                    this.setState({allgroups: allgroups});
+                    this.setState({ allgroups: allgroups });
 
-                    if (this.state.groupBeingEdited.title !== '')
-                    {
-                       this.setState({groupBeingEdited: allgroups.find((g) => g.title === this.state.groupBeingEdited.title )})
+                    if (this.state.groupBeingEdited.title !== '') {
+                        this.setState({ groupBeingEdited: allgroups.find((g) => g.title === this.state.groupBeingEdited.title) })
                     }
                 }
             })
@@ -48,9 +47,7 @@ class SettingsGroupsTypes extends Component {
                 if (response.data.length > 0) {
                     let allTypes = response.data;
                     allTypes.sort((a, b) => a.title.localeCompare(b.title));
-                    this.setState({allTypes: allTypes});
-                    // this.setState({type: result.data[0].title});
-                    console.log("allTypes - " + allTypes);
+                    this.setState({ allTypes: allTypes });
                 }
             })
             .catch(error => {
@@ -60,9 +57,9 @@ class SettingsGroupsTypes extends Component {
 
 
     editGroupTitle = (group) => {
-        console.log("Group to edit " + group.title);
+
         let newTitle = window.prompt("Įveskite naują grupės " + group.title + " pavadinimą");
-        axios.post("/api/usergroups/" + group.title, null, {params: {newTitle: newTitle}})
+        axios.post("/api/usergroups/" + group.title, null, { params: { newTitle: newTitle } })
             .then(response => {
                 this.getAllGroupsFromServer();
             })
@@ -73,7 +70,7 @@ class SettingsGroupsTypes extends Component {
 
 
     deleteGroup = (group) => {
-        console.log("Group to remove " + group.title);
+
         axios.delete('/api/usergroups/' + group.title)
             .then(response => {
                 this.getAllGroupsFromServer();
@@ -85,8 +82,8 @@ class SettingsGroupsTypes extends Component {
     }
 
     editGroup = (group) => {
-        this.setState({groupBeingEdited: group});
-        // document.getElementById('editGroupTypes').style.visibility = 'visible';
+        this.setState({ groupBeingEdited: group });
+
         $('#typeModal').modal('show');
         this.getAllTypes();
         $('#typeModal').on('hidden.bs.modal', this.getAllGroupsFromServer)
@@ -99,15 +96,15 @@ class SettingsGroupsTypes extends Component {
                 <div>
                     <table className="table table-hover table-bordered table-sm">
                         <thead>
-                        <tr>
-                            <th>Vartotojų grupė</th>
-                            <th>Dokumentų tipai kūrimui</th>
-                            <th>Dokumentų tipai tvirtinimui</th>
-                            <th>Veiksmai</th>
-                        </tr>
+                            <tr>
+                                <th>Vartotojų grupė</th>
+                                <th>Dokumentų tipai kūrimui</th>
+                                <th>Dokumentų tipai tvirtinimui</th>
+                                <th>Veiksmai</th>
+                            </tr>
                         </thead>
                         <tbody>
-                        {this.state.allgroups.map(group => (
+                            {this.state.allgroups.map(group => (
                                 <tr>
                                     <th>
                                         {group.title}
@@ -150,30 +147,26 @@ class SettingsGroupsTypes extends Component {
                                     </td>
                                     <td>
                                         <i className="fas fa-edit mr-3" id="isettings" title="Koreguoti grupės pavadinimą"
-                                           onClick={() => this.editGroupTitle(group)}> </i>
+                                            onClick={() => this.editGroupTitle(group)}> </i>
 
                                         <i className="fas fa-tasks mr-3 isettings" title="Redaguoti tipus"
-                                           onClick={() => this.editGroup(group)}
-                                           group={group}></i>
-
-
-                                        {/*<i className="fas fa-trash-alt isettings" title="Ištrinti grupę"*/}
-                                           {/*onClick={() => this.deleteGroup(group)}></i>*/}
+                                            onClick={() => this.editGroup(group)}
+                                            group={group}></i>
 
                                     </td>
                                 </tr>
                             )
-                        )}
+                            )}
                         </tbody>
                     </table>
 
 
 
-                        <div>
-                            <ModalContainer id='typeModal'>
-                                <SettingsEditGroupTypes group={this.state.groupBeingEdited} alltypes={this.state.allTypes} onChange={this.getAllGroupsFromServer}/>
-                            </ModalContainer>
-                        </div>
+                    <div>
+                        <ModalContainer id='typeModal'>
+                            <SettingsEditGroupTypes group={this.state.groupBeingEdited} alltypes={this.state.allTypes} onChange={this.getAllGroupsFromServer} />
+                        </ModalContainer>
+                    </div>
 
 
                     {/*</div>*/}

@@ -2,20 +2,20 @@
 .loginDialog {
     width: 400px;
 
-    /* uzapvalintas borderis*/
+   
     border: 1px solid black;
     border-radius: 10px;
 
-    /* pusiau permatomas dialogas*/
+   
     background: rgba(255, 255, 255, 0.5);
 
-    /* viduje padarome kad elementai butu nepriklijuoti prie sonu*/
+   
     padding: 10px 30px;
-    /*display: block;*/
+   
 
     text-align: center;
 
-    /*Padarome kad dialogas butu per centra ir tai veiktu su visomis narsyklemis*/
+
     position: fixed;
     top: 50%;
     left: 50%;
@@ -40,10 +40,10 @@
 }
 
 .loginAlert {
-    /* pusiau permatomas dialogas*/
+    
     background: rgba(255, 153, 102, 0.5);
 
-    /* su borderiais kurie tamsiai pilki ir apvalinti*/
+   
     border: 1px solid #444444;
     border-radius: 5px;
 

@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import FileSaver from "file-saver";
 import '../../App.css'
 import axios from 'axios';
@@ -15,21 +15,20 @@ class DownloadZip extends Component {
     downloadZip = () => {
         console.log("zip runssss");
         fetch(`http://localhost:8181/api/files/zip`)
-         .then((response) => {
-            FileSaver.saveAs(response.url);
-            // FileSaver.saveAs(response.url, "suggestedFileName");
+            .then((response) => {
+                FileSaver.saveAs(response.url);
             }).catch((response) => {
-        console.error("Could not Download zip file from the server.", response);
-    });
+                console.error("Could not Download zip file from the server.", response);
+            });
     }
 
     render() {
         return (
-        <React.Fragment>
-        < button className="btn button1"
-        onClick={this.downloadZip}>Zippo
+            <React.Fragment>
+                < button className="btn button1"
+                    onClick={this.downloadZip}>Zippo
         </button>
-        </React.Fragment>
+            </React.Fragment>
         );
     }
 }

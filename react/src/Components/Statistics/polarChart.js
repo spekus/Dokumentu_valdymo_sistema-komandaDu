@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, { Component } from 'react';
 import axios from "axios/index";
 import DateRangePicker from '@wojtekmaj/react-daterange-picker';
 import { Polar } from "react-chartjs-2";
@@ -10,197 +10,193 @@ class Charts extends Component {
 
     state = {
         date: [new Date().toISOString(), new Date().toISOString()],
-        approvedStatistics: [],              //Patvirtintų dokumentų statistika per nustatytą laikotarpį
-        rejectedStatistics: [],              //Atmestų dokumentų statistika per nustatytą laikotarpį
-        postedStatistics: [],                //Pateiktų dokumentų statistika per nustatytą laikotarpį
-        userListByPostedDocs: [],            //Vartotojų sąrašas, surikiuotas pagal daugiausiai pateiktų dokumentų skaičių
-            dataPolarApproved:{},           //Grafikų duomenų masyvai
-            dataPolarRejected:{},
-            dataPolarPosted:{},
-            dataPolarUserlist:{},
-        dropDownValue:1
+        approvedStatistics: [],
+        rejectedStatistics: [],
+        postedStatistics: [],
+        userListByPostedDocs: [],
+        dataPolarApproved: {},
+        dataPolarRejected: {},
+        dataPolarPosted: {},
+        dataPolarUserlist: {},
+        dropDownValue: 1
     }
 
 
     handleChangeSelect = (event) => {
-        this.setState({dropDownValue:parseInt(event.target.value)})
-        console.log("eventas "+event.target.value)
-        console.log("handle change "+this.state.dropDownValue)
+        this.setState({ dropDownValue: parseInt(event.target.value) })
+
 
     }
 
-//########## kalendorius ##########
+
     onChange = date => {
-        if(date!==null){
+        if (date !== null) {
             this.setState({ date })
         }
-        else { this.setState({date:''})}
+        else { this.setState({ date: '' }) }
     }
 
-//########## mygtuko paspaudimas "Rodyti statistiką" iškviečia AXIOS duomenų gavimui iš back'endo ##########
-    getStatistics=()=>{
-        console.log("metode "+this.state.dropDownValue)
-         if(this.state.dropDownValue===1){
-             console.log("patvirtinti")
-             this.getApprovedData();
-         }
 
-        if(this.state.dropDownValue===2){
-             console.log("atmesti")
+    getStatistics = () => {
+
+        if (this.state.dropDownValue === 1) {
+
+            this.getApprovedData();
+        }
+
+        if (this.state.dropDownValue === 2) {
+
             this.getRejectedData();
         }
 
-        if(this.state.dropDownValue===3){
-            console.log("postinti")
+        if (this.state.dropDownValue === 3) {
+
             this.getPostedData();
         }
 
-        if(this.state.dropDownValue===4){
-            console.log("useriai")
+        if (this.state.dropDownValue === 4) {
+
             this.getUserListByPostedDocs();
         }
-     }
-
-//########## Graikų duomenų masyvai, kurie užpildomi gaunant data iš BACKendo ##########
-    dataApproved=[];
-    dataRejected=[];
-    dataPosted=[];
-    dataUserList=[];
-    backgroundColorApproved=[];
-    backgroundColorRejected=[];
-    backgroundColorPosted=[];
-    backgroundColorUserList=[];
-    labelsApproved=[];
-    labelsRejected=[];
-    labelsPosted=[];
-    labelsUserList=[];
-
-//########## Iškviečiant mygtuku statistiką prasivalo masyvai, kad nekaupti duomenų jose ##########
-    resetState=()=>{
-        this.dataApproved=[];
-        this.dataRejected=[];
-        this.dataPosted=[];
-        this.dataUserList=[];
-        this.backgroundColorApproved=[];
-        this.backgroundColorRejected=[];
-        this.backgroundColorPosted=[];
-        this.backgroundColorUserList=[];
-        this.labelsApproved=[];
-        this.labelsRejected=[];
-        this.labelsPosted=[];
-        this.labelsUserList=[];
     }
 
-//########## Metodai, ateinančių duomenų iš BACKENDO apdorojimui ir sukišimui į statistikos masyvus ##########
-    approvedData=()=>{  
-        // choose colors here http://google.github.io/palette.js/
+
+    dataApproved = [];
+    dataRejected = [];
+    dataPosted = [];
+    dataUserList = [];
+    backgroundColorApproved = [];
+    backgroundColorRejected = [];
+    backgroundColorPosted = [];
+    backgroundColorUserList = [];
+    labelsApproved = [];
+    labelsRejected = [];
+    labelsPosted = [];
+    labelsUserList = [];
+
+
+    resetState = () => {
+        this.dataApproved = [];
+        this.dataRejected = [];
+        this.dataPosted = [];
+        this.dataUserList = [];
+        this.backgroundColorApproved = [];
+        this.backgroundColorRejected = [];
+        this.backgroundColorPosted = [];
+        this.backgroundColorUserList = [];
+        this.labelsApproved = [];
+        this.labelsRejected = [];
+        this.labelsPosted = [];
+        this.labelsUserList = [];
+    }
+
+
+    approvedData = () => {
+
         var seq = palette('cb-Set2', 7);
-        var counter =0;
+        var counter = 0;
         this.resetState();
         this.state.approvedStatistics.forEach(item => {
             this.dataApproved.push(parseInt(item.count));
             this.backgroundColorApproved.push("#" + seq[counter]);
-             counter = counter + 1;
+            counter = counter + 1;
             this.labelsApproved.push(item.type)
         });
-        let mydata={
-            datasets:[
+        let mydata = {
+            datasets: [
                 {
-                    data:this.dataApproved,
-                    backgroundColor:this.backgroundColorApproved,
+                    data: this.dataApproved,
+                    backgroundColor: this.backgroundColorApproved,
                     label: "My dataset"
                 }
             ],
-            labels:this.labelsApproved
+            labels: this.labelsApproved
         }
 
-        this.setState({dataPolarApproved:mydata})
-        this.setState({state:this.state.dataPolarApproved});
+        this.setState({ dataPolarApproved: mydata })
+        this.setState({ state: this.state.dataPolarApproved });
     }
 
-    rejectedData=()=>{
+    rejectedData = () => {
         var seq = palette('cb-Set2', 7);
-        var counter =0;
+        var counter = 0;
         this.resetState();
         this.state.rejectedStatistics.forEach(item => {
             this.dataRejected.push(parseInt(item.count));
- 
-            // this.backgroundColorRejected.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
+
             this.backgroundColorRejected.push("#" + seq[counter]);
             counter = counter + 1;
             this.labelsRejected.push(item.type)
         });
-        let mydata={
-            datasets:[
+        let mydata = {
+            datasets: [
                 {
-                    data:this.dataRejected,
-                    backgroundColor:this.backgroundColorRejected,
+                    data: this.dataRejected,
+                    backgroundColor: this.backgroundColorRejected,
                     label: "My dataset"
                 }
             ],
-            labels:this.labelsRejected
+            labels: this.labelsRejected
         }
 
-        this.setState({dataPolarRejected:mydata})
-        this.setState({state:this.state.dataPolarRejected});
+        this.setState({ dataPolarRejected: mydata })
+        this.setState({ state: this.state.dataPolarRejected });
     }
 
-    postedData=()=>{
+    postedData = () => {
         var seq2 = palette('cb-Set2', 7);
         var counter = 0;
         this.resetState();
         this.state.postedStatistics.forEach(item => {
             this.dataPosted.push(parseInt(item.count));
 
-            // this.backgroundColorPosted.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
             this.backgroundColorPosted.push("#" + seq2[counter]);
             counter = counter + 1;
             this.labelsPosted.push(item.type)
         });
-        let mydata={
-            datasets:[
+        let mydata = {
+            datasets: [
                 {
-                    data:this.dataPosted,
-                    backgroundColor:this.backgroundColorPosted,
+                    data: this.dataPosted,
+                    backgroundColor: this.backgroundColorPosted,
                     label: "My dataset"
                 }
             ],
-            labels:this.labelsPosted
+            labels: this.labelsPosted
         }
 
-        this.setState({dataPolarPosted:mydata})
-        this.setState({state:this.state.dataPolarPosted});
+        this.setState({ dataPolarPosted: mydata })
+        this.setState({ state: this.state.dataPolarPosted });
     }
 
-    userListData=()=>{
+    userListData = () => {
         var seq = palette('cb-Set2', 7);
-        var counter =0;
+        var counter = 0;
         this.resetState();
         this.state.userListByPostedDocs.forEach(item => {
             this.dataUserList.push(parseInt(item.count));
-            // this.backgroundColorUserList.push("#" + ("000000" + Math.floor(Math.random() * 16777216).toString(16)).substr(-6));
+
             this.backgroundColorUserList.push("#" + seq[counter]);
             counter = counter + 1;
             this.labelsUserList.push(item.type)
         });
-       let mydata={
-            datasets:[
+        let mydata = {
+            datasets: [
                 {
-                    data:this.dataUserList,
-                    backgroundColor:this.backgroundColorUserList,
+                    data: this.dataUserList,
+                    backgroundColor: this.backgroundColorUserList,
                     label: "My dataset"
                 }
             ],
-                labels:this.labelsUserList
+            labels: this.labelsUserList
         }
 
-        this.setState({dataPolarUserlist:mydata})
-        this.setState({state:this.state.dataPolarUserlist});
+        this.setState({ dataPolarUserlist: mydata })
+        this.setState({ state: this.state.dataPolarUserlist });
     }
 
-//########## Duomenų gavimas iš BACKENDO ##########
 
-    getApprovedData=()=>{
+    getApprovedData = () => {
         axios({
             method: 'get',
             url: '/api/statistics/approved-docs',
@@ -208,11 +204,11 @@ class Charts extends Component {
                 startDate: this.state.date[0],
                 endDate: this.state.date[1]
             },
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
+            headers: { 'Content-Type': 'application/json;charset=utf-8' }
         })
             .then(response => {
-                this.setState({approvedStatistics: response.data});
-                console.log("response Approved come"+response.data)
+                this.setState({ approvedStatistics: response.data });
+
             })
             .then(this.approvedData)
             .catch(error => {
@@ -220,7 +216,7 @@ class Charts extends Component {
             })
     }
 
-    getRejectedData=()=>{
+    getRejectedData = () => {
         axios({
             method: 'get',
             url: '/api/statistics/rejected-docs',
@@ -228,11 +224,11 @@ class Charts extends Component {
                 startDate: this.state.date[0],
                 endDate: this.state.date[1]
             },
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
+            headers: { 'Content-Type': 'application/json;charset=utf-8' }
         })
             .then(response => {
-                this.setState({rejectedStatistics: response.data});
-                console.log("response Rejected come"+response.data)
+                this.setState({ rejectedStatistics: response.data });
+
             })
             .then(this.rejectedData)
             .catch(error => {
@@ -240,7 +236,7 @@ class Charts extends Component {
             })
     }
 
-    getPostedData=()=>{
+    getPostedData = () => {
         axios({
             method: 'get',
             url: '/api/statistics/posted-docs',
@@ -248,11 +244,11 @@ class Charts extends Component {
                 startDate: this.state.date[0],
                 endDate: this.state.date[1]
             },
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
+            headers: { 'Content-Type': 'application/json;charset=utf-8' }
         })
             .then(response => {
-                this.setState({postedStatistics: response.data});
-                console.log("response Posted come"+response.data)
+                this.setState({ postedStatistics: response.data });
+
             })
             .then(this.postedData)
             .catch(error => {
@@ -260,15 +256,15 @@ class Charts extends Component {
             })
     }
 
-    getUserListByPostedDocs=()=>{
+    getUserListByPostedDocs = () => {
         axios({
             method: 'get',
             url: '/api/statistics/userlist-by-posted-docs',
-            headers: {'Content-Type': 'application/json;charset=utf-8'}
+            headers: { 'Content-Type': 'application/json;charset=utf-8' }
         })
             .then(response => {
-                this.setState({userListByPostedDocs: response.data});
-                console.log(response.data)
+                this.setState({ userListByPostedDocs: response.data });
+
             })
             .then(this.userListData)
             .catch(error => {
@@ -276,43 +272,43 @@ class Charts extends Component {
             })
     }
 
-    render(){
-        console.log("renderio "+this.state.dropDownValue)
-        if(this.state.dropDownValue===1) {
+    render() {
+
+        if (this.state.dropDownValue === 1) {
             var chartApproved = <MDBContainer>
                 <h5>Patvirtintų dokumentų statistika</h5>
-                <Polar data={this.state.dataPolarApproved} options={{responsive: true}}/>
+                <Polar data={this.state.dataPolarApproved} options={{ responsive: true }} />
             </MDBContainer>
         }
 
-        if(this.state.dropDownValue===2) {
+        if (this.state.dropDownValue === 2) {
             var chartRejected = <MDBContainer>
                 <h5>Atmestų dokumentų statistika</h5>
-                <Polar data={this.state.dataPolarRejected} options={{responsive: true}}/>
+                <Polar data={this.state.dataPolarRejected} options={{ responsive: true }} />
             </MDBContainer>
         }
 
-        if(this.state.dropDownValue===3){
-        var chartPosted=<MDBContainer>
-            <h5>Pateiktų dokumentų statistika</h5>
-            <Polar data={this.state.dataPolarPosted} options={{ responsive: true }} />
-        </MDBContainer>
+        if (this.state.dropDownValue === 3) {
+            var chartPosted = <MDBContainer>
+                <h5>Pateiktų dokumentų statistika</h5>
+                <Polar data={this.state.dataPolarPosted} options={{ responsive: true }} />
+            </MDBContainer>
         }
 
-         if(this.state.dropDownValue===4) {
+        if (this.state.dropDownValue === 4) {
             var userList = <MDBContainer>
                 <h5>Pateiktų dokumentų pagal vartotojų skaičių statistika</h5>
-                <Polar data={this.state.dataPolarUserlist} options={{responsive: true}}/>
+                <Polar data={this.state.dataPolarUserlist} options={{ responsive: true }} />
             </MDBContainer>
         }
 
-        return(
+        return (
             <div className="container">
                 <h5>Laiko intervalas</h5>
                 <div className='shadow p-3 mb-5 bg-white rounded'>
                     <div className="row">
                         <div className="col-md-3 mr-5">
-                            <DateRangePicker onChange={this.onChange} value={this.state.date}/>
+                            <DateRangePicker onChange={this.onChange} value={this.state.date} />
                         </div>
 
                         <div className="col-md-4 mr-5">
